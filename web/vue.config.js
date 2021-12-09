@@ -11,6 +11,15 @@ module.exports = {
         compress: true,
         hot: true,
         historyApiFallback: true,
+        proxy: {
+          '/kuboardspray/default/api/': {
+            target: 'http://localhost:8006',
+            changeOrigin: true,
+            pathRewrite: {
+              '^/kuboardspray/default/api/': '/kuboardspray/default/api/'
+            }
+          },
+        }
     },
     configureWebpack: config => {
       if (process.env.NODE_ENV === 'production') {

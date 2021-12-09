@@ -15,5 +15,7 @@
 # vendor/
 kuboard-spray
 build-temp
+.vscode
+
 
 __debug_bin

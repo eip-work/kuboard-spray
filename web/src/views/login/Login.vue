@@ -36,7 +36,7 @@ zh:
             <template #label>
               <span style="font-weight: bolder">密 码</span>
             </template>
-            <el-input ref="passwordInput" v-model="form.password" placeholder="请输入密码" autofocus show-password @keyup.enter="verifyPassword"></el-input>
+            <el-input ref="passwordInput" v-model="form.password" placeholder="请输入密码" autofocus show-password @keyup.enter="login"></el-input>
           </el-form-item>
           <div style="height: 40px;">
             <!-- <el-checkbox v-if="!mfaPolicy.forceSession" style="float: left;" v-model="rememberLogin" @change="changeRememberLogin">7天内保持登录</el-checkbox> -->
@@ -46,7 +46,7 @@ zh:
             </span> -->
           </div>
           <div>
-            <el-button style="width: 100%;" size="large" type="primary" icon="el-icon-s-promotion" @click="verifyPassword">登 录</el-button>
+            <el-button style="width: 100%;" size="large" type="primary" icon="el-icon-s-promotion" @click="login">登 录</el-button>
           </div>
         </el-form>
       </el-card>
@@ -56,6 +56,8 @@ zh:
 </template>
 
 <script>
+import {setupCookie} from '../../utils/axios.js'
+
 export default {
   props: {
   },
@@ -73,8 +75,15 @@ export default {
   mounted () {
   },
   methods: {
-    verifyPassword() {
+    login() {
       console.log(this.form)
+      this.kuboardSprayApi.post('/login', this.form).then(resp => {
+        console.log(resp)
+        setupCookie(resp.data.data.token, 7)
+        this.$router.replace('/')
+      }).catch(e => {
+        console.log(e.response)
+      })
     }
   }
 }

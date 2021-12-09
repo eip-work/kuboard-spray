@@ -1,10 +1,18 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
+let kuboardSprayId = 'default'
+let splitedPath = location.pathname.split('/')
+if (splitedPath[0] === 'kuboardspray' && splitedPath[1] !== undefined) {
+  kuboardSprayId = splitedPath[1]
+}
+
 const kuboardSprayApi = axios.create({
-  baseURL: `/kuboard-api/`,
+  baseURL: `/kuboardspray/${kuboardSprayId}/api`,
   timeout: 30000,
-  // httpAgent: new http.Agent({ keepAlive: true })
+  headers: {
+    Authorization: 'Bearer ' + Cookies.get('KuboardToken')
+  }
 })
 kuboardSprayApi.interceptors.response.use(function (response) {
   return response;
@@ -24,9 +32,10 @@ kuboardSprayApi.interceptors.response.use(function (response) {
 export {kuboardSprayApi}
 
 export function clearAllCookie() {
-  // Cookies.remove('KuboardToken', { path: '/kuboard-api/' })
-  // Cookies.remove('KuboardToken', { path: '/k8s-api/' })
-  // Cookies.remove('KuboardToken', { path: '/k8s-ws/' })
-  Cookies.remove('KuboardToken', { path: '/' })
-  Cookies.remove('KuboardLogin', { path: '/' })
+  Cookies.remove('KuboardToken', { path: location.pathname })
+  Cookies.remove('KuboardLogin', { path: location.pathname })
+}
+
+export function setupCookie(token, expires) {
+  Cookies.set('KuboardToken', token, { path: location.pathname, expires: expires } )
 }

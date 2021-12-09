@@ -35,6 +35,7 @@ export default {
   },
   components: { },
   mounted () {
+    this.kuboardSprayApi.get('/clusters')
   },
   methods: {
 

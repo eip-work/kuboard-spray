@@ -81,19 +81,8 @@ export default {
   },
   methods: {
     logout () {
-      if (this.userInfo.loginType === 'default' || this.userInfo.loginType === 'ldap') {
-        clearAllCookie()
-        location.href = '/login'
-      } else if (this.userInfo.loginType === 'gitlab' || this.userInfo.loginType === 'github') {
-        this.$confirm(this.$t(this.$t('logoutAction', {type: this.userInfo.loginType})), this.$t('message.prompt'), {
-          type: 'warning'
-        }).then(() => {
-          clearAllCookie()
-          location.href = this.userInfo.logoutUrl
-        }).catch(() => {
-          this.$message.info(this.$t('stayLogin'))
-        });
-      }
+      clearAllCookie()
+      this.$router.push('/login')
     },
     changeActAs() {
       location.reload()

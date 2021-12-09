@@ -3,6 +3,7 @@ package login
 import (
 	"net/http"
 
+	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,10 +16,7 @@ func AuthHandler(c *gin.Context) {
 	var user UserInfo
 	err := c.ShouldBind(&user)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code":    http.StatusBadRequest,
-			"message": "Wrong parameters.",
-		})
+		common.HandleError(c, http.StatusBadRequest, "Wrong parameters.")
 		return
 	}
 
@@ -32,5 +30,6 @@ func AuthHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusUnauthorized, gin.H{"code": http.StatusUnauthorized, "message": "Failed to authorize."})
+	common.HandleError(c, http.StatusUnauthorized, "Failed to authorize.")
+
 }

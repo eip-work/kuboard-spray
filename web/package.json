@@ -1,0 +1,62 @@
+{
+  "name": "system-monitor-config-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@element-plus/icons": "^0.0.11",
+    "@intlify/vue-i18n-loader": "^4.0.1",
+    "axios": "^0.24.0",
+    "clone": "^2.1.2",
+    "codemirror": "^5.62.3",
+    "codemirror-editor-vue3": "^0.2.4",
+    "core-js": "^3.6.5",
+    "date-fns": "^2.23.0",
+    "element-plus": "^1.0.2-beta.71",
+    "element-theme": "^2.0.1",
+    "js-base64": "^3.6.1",
+    "js-cookie": "^3.0.1",
+    "js-yaml": "^4.1.0",
+    "vue": "^3.2.24",
+    "vue-codemirror": "^4.0.6",
+    "vue-i18n": "^9.2.0-beta.23",
+    "vue-router": "4",
+    "vuex": "^4.0.2",
+    "yaml-loader": "^0.6.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.0",
+    "babel-eslint": "^10.1.0",
+    "element-theme-chalk": "^2.15.5",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^7.0.0",
+    "sass": "1.44.0",
+    "sass-loader": "^10.2.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

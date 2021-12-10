@@ -15,11 +15,11 @@ const i18n = createI18n({
 const messages = {
   en: {
     kuboardspray: 'Kuboard Spray',
-    loginRequired: 'Login Required.'
+    loginRequired: 'Login Required.',
   },
   zh: { 
     kuboardspray: 'Kuboard Spray',
-    loginRequired: '请先登录。'
+    loginRequired: '请先登录。',
   },
 }
 

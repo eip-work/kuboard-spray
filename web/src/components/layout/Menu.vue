@@ -99,6 +99,7 @@ export default {
       let map = {
         'Home': '0',
         'Clusters': '1',
+        'Cluster': '1',
         'Resources': '2-1',
         'Kuboard': '2-2'
       }

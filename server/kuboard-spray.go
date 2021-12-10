@@ -16,6 +16,7 @@ func setupRouter() *gin.Engine {
 
 	api := root.Group("/api", login.JWTAuthMiddleware())
 	api.GET("/clusters", cluster.ListClusters)
+	api.GET("/clusters/:name", cluster.GetCluster)
 
 	vue.ServeVue(router, root)
 

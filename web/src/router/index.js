@@ -26,6 +26,12 @@ const constantRouterMap = [
         path: '',
         name: 'Clusters',
         component: () => import('../views/clusters/Clusters.vue')
+      },
+      {
+        path: ':name',
+        name: 'Cluster',
+        component: () => import('../views/clusters/Cluster.vue'),
+        props: route => ({ name: route.params.name })
       }
     ],
   },

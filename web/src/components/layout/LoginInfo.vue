@@ -59,16 +59,7 @@ export default {
       userInfo: 'user/userInfo',
     }),
     displayName () {
-      // if (this.$route.path.split('/')[1] === 'kubernetes') {
-      //   if (this.userInfo.actAs.type === 'kuboard-admin' || this.userInfo.actAs.type === 'kuboard-viewer') {
-      //     return this.userInfo.actAs.type
-      //   } else {
-      //     return this.userInfo.username
-      //   }
-      // } else {
-      //   return this.userInfo.username
-      // }
-      return 'ds'
+      return 'admin'
     }
   },
   components: {},

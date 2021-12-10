@@ -48,6 +48,8 @@ $--color-text-regular: mix($--color-white, $--color-text-primary, 30%) !default;
 $--color-text-secondary: mix($--color-white, $--color-text-primary, 50%) !default;
 $--color-text-placeholder: mix($--color-white, $--color-text-primary, 70%) !default;
 
+$--border-color-light: #E4E7ED !default;
+
 $--colors: () !default;
 $--colors: map.deep-merge(
   (

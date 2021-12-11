@@ -131,8 +131,8 @@ $--font-path: '~element-plus/lib/theme-chalk/fonts';
   border-bottom-color: $--color-warning;
   border-bottom-width: 4px;
   transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-  padding-left: 40px !important;
-  padding-right: 40px !important;
+  // padding-left: 40px !important;
+  // padding-right: 40px !important;
 }
 
 .el-tabs--border-card > .el-tabs__header .el-tabs__item.is-active {

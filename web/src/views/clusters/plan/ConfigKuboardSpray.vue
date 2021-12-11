@@ -1,0 +1,192 @@
+<i18n>
+en:
+  proxy: Proxy
+  createResource: "Add Resource Package"
+  included: Included
+  not_included: Not included
+  addons: Addons
+  cni: Cni plugins
+  dependency: Dependencies
+  package_content: Package Content
+zh:
+  proxy: 代理
+  createResource: '添加资源包'
+  included: 已包含
+  not_included: 未包含
+  addons: 可选组件
+  cni: 网络插件
+  dependency: 依赖组件
+  package_content: 资源包内容
+</i18n>
+
+<template>
+  <div>
+    <ConfigSection v-model:enabled="useResourcePackage" disabled
+      :label="$t('obj.resources')"
+      :description="$t('obj.resources') + ' ' + (inventory.all.hosts.localhost.kuboardspray_resource_package ? inventory.all.hosts.localhost.kuboardspray_resource_package : '')">
+      <FieldSelect :holder="inventory.all.hosts.localhost" fieldName="kuboardspray_resource_package" :loadOptions="loadResourceList">
+        <el-button style="margin-left: 10px;" type="primary" icon="el-icon-plus">{{$t('createResource')}}</el-button>
+      </FieldSelect>
+      <div v-if="resourcePackage" class="app_form_mini">
+        <el-divider border-style="dashed">{{$t('package_content')}}</el-divider>
+        <div class="package_title">kubespray</div>
+        <div class="package_info">
+          <PackageContentField :holder="resourcePackage.kuboardspray" fieldName="kubespray_version"></PackageContentField>
+        </div>
+        <div class="package_title">kubernetes</div>
+        <div class="package_info">
+          <PackageContentField :holder="resourcePackage.kubernetes" fieldName="image_arch"></PackageContentField>
+          <PackageContentField :holder="resourcePackage.kubernetes" fieldName="gcr_image_repo"></PackageContentField>
+          <PackageContentField :holder="resourcePackage.kubernetes" fieldName="kube_image_repo"></PackageContentField>
+          <PackageContentField :holder="resourcePackage.kubernetes" fieldName="kube_version"></PackageContentField>
+          <PackageContentField :holder="resourcePackage.kubernetes" fieldName="container_manager"></PackageContentField>
+        </div>
+        <div class="package_title">etcd</div>
+        <div class="package_info">
+          <PackageContentField :holder="resourcePackage.etcd" fieldName="etcd_version"></PackageContentField>
+          <PackageContentField :holder="resourcePackage.etcd" fieldName="etcd_deployment_type"></PackageContentField>
+        </div>
+        <div class="package_title">{{$t('dependency')}}</div>
+        <div class="package_info">
+          <template v-for="(item, index) in resourcePackage.dependency" :key="index + 'dependency'">
+            <el-form-item :label="item.target" label-width="160px">
+              <div class="app_text_mono">
+                {{item.version}}
+              </div>
+            </el-form-item>
+          </template>
+        </div>
+        <div class="package_title">{{$t('cni')}}</div>
+        <div class="package_info">
+          <template v-for="(item, index) in resourcePackage.cni" :key="index + 'cni'">
+            <el-form-item :label="item.target" label-width="160px">
+              <div class="app_text_mono">
+                {{item.version}}
+              </div>
+            </el-form-item>
+          </template>
+        </div>
+        <div class="package_title">{{$t('addons')}}</div>
+        <div class="package_info">
+          <template v-for="(item, index) in resourcePackage.addons" :key="index + 'addons'">
+            <el-form-item label-width="160px">
+              <template #label>
+                <div style="font-weight: bolder;">{{item.name}}</div>
+              </template>
+              <div class="app_text_mono">
+                <el-tag type="success" v-if="item.included">{{$t('included')}}</el-tag>
+                <el-tag type="info" v-else>{{$t('not_included')}}</el-tag>
+              </div>
+            </el-form-item>
+            <div class="package_info">
+              <template v-for="(value, key) in item.params" :key="key + 'addons' + index">
+                <el-form-item :label="key" label-width="220px">
+                  <template #label>
+                    <div style="font-size: 12px">{{key}}</div>
+                  </template>
+                  <div class="app_text_mono" style="font-size: 12px">
+                    {{value}}
+                  </div>
+                </el-form-item>
+              </template>
+            </div>
+          </template>
+        </div>
+      </div>
+    </ConfigSection>
+    <ConfigSection v-model:enabled="proxyEnabled" :label="$t('proxy')">
+      <FieldString :holder="inventory.all.hosts.localhost" fieldName="http_proxy" prop="all.hosts.localhost" required></FieldString>
+      <FieldString :holder="inventory.all.hosts.localhost" fieldName="https_proxy" prop="all.hosts.localhost" required></FieldString>
+      <FieldString :holder="inventory.all.hosts.localhost" fieldName="no_proxy" prop="all.hosts.localhost" required></FieldString>
+    </ConfigSection>
+    <ConfigSection v-model:enabled="bastionEnabled" :label="$t('proxy')">
+    </ConfigSection>
+  </div>
+</template>
+
+<script>
+import ConfigSection from './ConfigSection.vue'
+import PackageContentField from './common/PackageContentField.vue'
+
+export default {
+  props: {
+    inventory: { type: Object, required: true }
+  },
+  data () {
+    return {
+      localhostRules: [
+        {
+          validator: (rule, value, callback) => {
+            callback('ErrorMessage')
+          },
+          trigger: 'blur'
+        }
+      ],
+      useResourcePackage: true,
+      resourcePackage: undefined,
+    }
+  },
+  computed: {
+    inventoryRef: {
+      get () {
+        return this.inventory
+      },
+      set () {}
+    },
+    proxyEnabled: {
+      get () {
+        if (this.inventoryRef.all.hosts.localhost.vars) {
+          return this.inventoryRef.all.hosts.localhost.vars.http_proxy !== undefined
+        }
+        return false
+      },
+      set (v) {
+        if (v) {
+          this.inventoryRef.all.hosts.localhost.vars = this.inventoryRef.all.hosts.localhost.vars || {}
+          this.inventoryRef.all.hosts.localhost.vars.http_proxy = ''
+        } else {
+          delete this.inventoryRef.all.hosts.localhost.vars.http_proxy
+        }
+      }
+    }
+  },
+  components: { ConfigSection, PackageContentField },
+  mounted () {
+  },
+  watch: {
+    'inventory.all.hosts.localhost.kuboardspray_resource_package': function(newValue, oldValue) {
+      console.log(newValue, oldValue)
+      this.resourcePackage = undefined
+      if (newValue) {
+        this.kuboardSprayApi.get(`/resources/${newValue}`).then(resp => {
+          this.resourcePackage = resp.data.data.package
+        }).catch(e => {
+          console.log(e)
+        })
+      }
+    }
+  },
+  methods: {
+    async loadResourceList () {
+      let result = []
+      await this.kuboardSprayApi.get('/resources').then(resp => {
+        for (let res of resp.data.data) {
+          result.push({ label: res, value: res })
+        }
+      }).catch(e => {
+        console.log(e)
+      })
+      return result
+    }
+  }
+}
+</script>
+
+<style scoped lang="scss">
+.package_title {
+  font-weight: bolder;
+}
+.package_info {
+  margin-left: 20px;
+}
+</style>

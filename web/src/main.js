@@ -14,6 +14,7 @@ import i18n from './i18n'
 import {kuboardSprayApi} from './utils/axios'
 
 import version from './version.json'
+import components from './components/index.js'
 
 import App from './App.vue'
 
@@ -25,6 +26,8 @@ app.use(store)
 app.use(router)
 app.use(i18n)
 icons(app)
+app.use(components)
 app.config.globalProperties.kuboardSprayApi = kuboardSprayApi
+app.config.unwrapInjectedRef = true
 initKuboardMfe(app)
 app.mount('#app')

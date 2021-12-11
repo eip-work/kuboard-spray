@@ -14,6 +14,10 @@ func GET_DATA_INVENTORY_DIR() string {
 	return GET_DATA_DIR() + "/inventory"
 }
 
+func GET_DATA_RESOURCE_DIR() string {
+	return GET_DATA_DIR() + "/resource"
+}
+
 func GET_DATA_DIR() string {
 	val, ex := os.LookupEnv("KUBOARD_SPRAY_DATA_DIR")
 	if !ex {

@@ -11,7 +11,7 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
 import store from './store'
 import i18n from './i18n'
-import {kuboardSprayApi} from './utils/axios'
+import initAxios from './utils/axios'
 
 import version from './version.json'
 import components from './components/index.js'
@@ -27,7 +27,7 @@ app.use(router)
 app.use(i18n)
 icons(app)
 app.use(components)
-app.config.globalProperties.kuboardSprayApi = kuboardSprayApi
+app.use(initAxios)
 app.config.unwrapInjectedRef = true
 initKuboardMfe(app)
 app.mount('#app')

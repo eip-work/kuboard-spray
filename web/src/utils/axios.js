@@ -9,41 +9,50 @@ if (splitedPath[0] === 'kuboardspray' && splitedPath[1] !== undefined) {
 
 var kuboardSprayApi
 
-function initAxios() {
+const baseURL = `/kuboardspray/${kuboardSprayId}/api`
+
+var vueapp
+
+const comp = {
+  install(app) {
+    vueapp = app
     kuboardSprayApi = axios.create({
-    baseURL: `/kuboardspray/${kuboardSprayId}/api`,
-    timeout: 30000,
-    headers: {
-      Authorization: 'Bearer ' + Cookies.get('KuboardToken')
-    }
-  })
-  kuboardSprayApi.interceptors.response.use(function (response) {
-    return response;
-  }, function (error) {
-    if (error.response && error.response.status === 401) {
-      if (error.response.data && error.response.data.kind === 'KuboardErrorResponse') {
-        alert(window.VueAppComponent.$t('loginRequired'))
-        clearAllCookie()
-        location.href = '/login'
+      baseURL: baseURL,
+      timeout: 30000,
+      headers: {
+        Authorization: 'Bearer ' + Cookies.get('KuboardToken')
       }
-    } else if (error.response && error.response.status === 424 && error.response.data.reason === 'AuditDbNotReady') {
-      location.href = `/init-status-check/`
-    }
-    return Promise.reject(error);
-  });
+    })
+    kuboardSprayApi.interceptors.response.use(function (response) {
+      return response;
+    }, function (error) {
+      if (error.response && error.response.status === 401) {
+        if (error.response.data && error.response.data.kind === 'KuboardErrorResponse') {
+          alert(window.VueAppComponent.$t('loginRequired'))
+          clearAllCookie()
+          location.href = '/login'
+        }
+      } else if (error.response && error.response.status === 424 && error.response.data.reason === 'AuditDbNotReady') {
+        location.href = `/init-status-check/`
+      }
+      return Promise.reject(error);
+    });
+    app.config.globalProperties.kuboardSprayApi = kuboardSprayApi
+  }
 }
 
-initAxios()
+export default comp
 
-export {kuboardSprayApi}
+export {baseURL}
 
 export function clearAllCookie() {
   Cookies.remove('KuboardToken', { path: location.pathname })
   Cookies.remove('KuboardLogin', { path: location.pathname })
-  initAxios()
+  comp.install(vueapp)
 }
 
 export function setupCookie(token, expires) {
+  console.log(token)
   Cookies.set('KuboardToken', token, { path: location.pathname, expires: expires } )
-  initAxios()
+  comp.install(vueapp)
 }

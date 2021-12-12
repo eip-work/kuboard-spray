@@ -6,14 +6,18 @@ zh:
 </i18n>
 
 <template>
-  <div>
-
-  </div>
+  <ConfigSection v-model:enabled="enabledMetricsServer" label="Metrics" :description="$t('obj.addon', {name: 'metrics_server'})">
+    Hello
+  </ConfigSection>
 </template>
 
 <script>
+import ConfigSection from '../ConfigSection.vue'
+
 export default {
   props: {
+    inventory: { type: Object, required: true },
+    resourcePackage: { type: Object, required: false, default: undefined },
   },
   data() {
     return {
@@ -21,8 +25,16 @@ export default {
     }
   },
   computed: {
+    enabledMetricsServer: {
+      get () {
+        return false
+      },
+      set (v) {
+        console.log(v)
+      }
+    }
   },
-  components: { },
+  components: { ConfigSection },
   mounted () {
   },
   methods: {

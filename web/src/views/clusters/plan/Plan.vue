@@ -79,7 +79,7 @@ zh:
             </template>
             <el-scrollbar max-height="calc(100vh - 274px)" ref="configKuboardSprayScroll">
               <div class="tab_content">
-                <ConfigKuboardSpray :inventory="inventory" :cluster="cluster"></ConfigKuboardSpray>
+                <ConfigKuboardSpray v-model:resourcePackage="resourcePackage" :inventory="inventory" :cluster="cluster"></ConfigKuboardSpray>
               </div>
             </el-scrollbar>
           </el-tab-pane>
@@ -99,7 +99,7 @@ zh:
             </template>
             <el-scrollbar max-height="calc(100vh - 274px)">
               <div class="tab_content">
-                <ConfigK8sCluster :inventory="inventory" :clusterName="cluster.name"></ConfigK8sCluster>
+                <ConfigK8sCluster :resourcePackage="resourcePackage" :inventory="inventory" :clusterName="cluster.name"></ConfigK8sCluster>
               </div>
             </el-scrollbar>
           </el-tab-pane>
@@ -119,7 +119,7 @@ zh:
             </template>
             <el-scrollbar max-height="calc(100vh - 274px)">
               <div class="tab_content">
-                <ConfigEtcd :inventory="inventory" :clusterName="cluster.name"></ConfigEtcd>
+                <ConfigEtcd :resourcePackage="resourcePackage" :inventory="inventory" :clusterName="cluster.name"></ConfigEtcd>
               </div>
             </el-scrollbar>
           </el-tab-pane>
@@ -139,7 +139,7 @@ zh:
             </template>
             <el-scrollbar max-height="calc(100vh - 274px)">
               <div class="tab_content">
-                <ConfigNode :inventory="inventory" :clusterName="cluster.name" :nodeName="currentPropertiesTab.slice(5)"></ConfigNode>
+                <ConfigNode :resourcePackage="resourcePackage" :inventory="inventory" :clusterName="cluster.name" :nodeName="currentPropertiesTab.slice(5)"></ConfigNode>
               </div>
             </el-scrollbar>
           </el-tab-pane>
@@ -176,6 +176,7 @@ export default {
     return {
       currentPropertiesTab: 'k8s_cluster',
       mode: 'edit',
+      resourcePackage: undefined,
     }
   },
   provide () {

@@ -9,16 +9,23 @@ zh:
 <template>
   <div>
     <SshParams :clusterName="clusterName" :holder="inventory.all.children.k8s_cluster.vars" prop="all.children.k8s_cluster.vars" :description="$t('sshcommon')"></SshParams>
+    <K8sCluster :resourcePackage="resourcePackage" :inventory="inventory"></K8sCluster>
+    <NetworkPlugin :resourcePackage="resourcePackage" :inventory="inventory"></NetworkPlugin>
+    <AddonMetricsServer :resourcePackage="resourcePackage" :inventory="inventory"></AddonMetricsServer>
   </div>
 </template>
 
 <script>
 import SshParams from './common/SshParams.vue'
+import AddonMetricsServer from './k8s_cluster/AddonMetricsServer.vue'
+import NetworkPlugin from './k8s_cluster/NetworkPlugin.vue'
+import K8sCluster from './k8s_cluster/K8sCluster.vue'
 
 export default {
   props: {
     clusterName: { type: String, required: true },
     inventory: { type: Object, required: true },
+    resourcePackage: { type: Object, required: false, default: undefined },
   },
   data() {
     return {
@@ -27,7 +34,7 @@ export default {
   },
   computed: {
   },
-  components: { SshParams },
+  components: { SshParams, AddonMetricsServer, NetworkPlugin, K8sCluster },
   mounted () {
   },
   methods: {

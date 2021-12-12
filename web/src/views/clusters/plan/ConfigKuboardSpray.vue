@@ -38,70 +38,98 @@ zh:
         <el-button style="margin-left: 10px;" type="primary" icon="el-icon-plus">{{$t('createResource')}}</el-button>
       </FieldSelect>
       <div v-if="resourcePackage" class="app_form_mini">
-        <el-divider border-style="dashed">{{$t('package_content')}}</el-divider>
-        <div class="package_title">kubespray</div>
-        <div class="package_info">
-          <PackageContentField :holder="resourcePackage.kuboardspray" fieldName="kubespray_version"></PackageContentField>
-        </div>
-        <div class="package_title">kubernetes</div>
-        <div class="package_info">
-          <PackageContentField :holder="resourcePackage.kubernetes" fieldName="image_arch"></PackageContentField>
-          <PackageContentField :holder="resourcePackage.kubernetes" fieldName="gcr_image_repo"></PackageContentField>
-          <PackageContentField :holder="resourcePackage.kubernetes" fieldName="kube_image_repo"></PackageContentField>
-          <PackageContentField :holder="resourcePackage.kubernetes" fieldName="kube_version"></PackageContentField>
-          <PackageContentField :holder="resourcePackage.kubernetes" fieldName="container_manager"></PackageContentField>
-        </div>
-        <div class="package_title">etcd</div>
-        <div class="package_info">
-          <PackageContentField :holder="resourcePackage.etcd" fieldName="etcd_version"></PackageContentField>
-          <PackageContentField :holder="resourcePackage.etcd" fieldName="etcd_deployment_type"></PackageContentField>
-        </div>
-        <div class="package_title">{{$t('dependency')}}</div>
-        <div class="package_info">
-          <template v-for="(item, index) in resourcePackage.dependency" :key="index + 'dependency'">
-            <el-form-item :label="item.target" label-width="160px">
-              <div class="app_text_mono">
-                {{item.version}}
-              </div>
-            </el-form-item>
-          </template>
-        </div>
-        <div class="package_title">{{$t('cni')}}</div>
-        <div class="package_info">
-          <template v-for="(item, index) in resourcePackage.cni" :key="index + 'cni'">
-            <el-form-item :label="item.target" label-width="160px">
-              <div class="app_text_mono">
-                {{item.version}}
-              </div>
-            </el-form-item>
-          </template>
-        </div>
-        <div class="package_title">{{$t('addons')}}</div>
-        <div class="package_info">
-          <template v-for="(item, index) in resourcePackage.addons" :key="index + 'addons'">
-            <el-form-item label-width="160px">
-              <template #label>
-                <div style="font-weight: bolder;">{{item.name}}</div>
-              </template>
-              <div class="app_text_mono">
-                <el-tag type="success" v-if="item.included">{{$t('included')}}</el-tag>
-                <el-tag type="info" v-else>{{$t('not_included')}}</el-tag>
-              </div>
-            </el-form-item>
+        <div style="text-align: center; margin-bottom: 10px; margin-top: -10px; font-weight: bold;">[ {{$t('package_content')}} ]</div>
+        <el-collapse v-model="activeNames">
+          <el-collapse-item name="1">
+            <template #title>
+              <span class="package_title">kubespray</span>
+            </template>
             <div class="package_info">
-              <template v-for="(value, key) in item.params" :key="key + 'addons' + index">
-                <el-form-item :label="key" label-width="220px">
-                  <template #label>
-                    <div style="font-size: 12px">{{key}}</div>
-                  </template>
-                  <div class="app_text_mono" style="font-size: 12px">
-                    {{value}}
+              <PackageContentField :holder="resourcePackage.kuboardspray" fieldName="kubespray_version"></PackageContentField>
+            </div>
+          </el-collapse-item>
+          <el-collapse-item name="2">
+            <template #title>
+              <span class="package_title">kubernetes</span>
+            </template>
+            <div class="package_info">
+              <PackageContentField :holder="resourcePackage.kubernetes" fieldName="image_arch"></PackageContentField>
+              <PackageContentField :holder="resourcePackage.kubernetes" fieldName="gcr_image_repo"></PackageContentField>
+              <PackageContentField :holder="resourcePackage.kubernetes" fieldName="kube_image_repo"></PackageContentField>
+              <PackageContentField :holder="resourcePackage.kubernetes" fieldName="kube_version"></PackageContentField>
+              <el-form-item label="container_manager" label-width="160px">
+                <span class="app_text_mono">{{resourcePackage.docker_engine.container_manager}}_{{resourcePackage.docker_engine.version}}</span>
+              </el-form-item>
+            </div>
+          </el-collapse-item>
+          <el-collapse-item name="3">
+            <template #title>
+              <span class="package_title">etcd</span>
+            </template>
+            <div class="package_info">
+              <PackageContentField :holder="resourcePackage.etcd" fieldName="etcd_version"></PackageContentField>
+              <PackageContentField :holder="resourcePackage.etcd" fieldName="etcd_deployment_type"></PackageContentField>
+            </div>
+          </el-collapse-item>
+          <el-collapse-item name="4">
+            <template #title>
+              <span class="package_title">{{$t('cni')}}</span>
+            </template>
+            <div class="package_info">
+              <template v-for="(item, index) in resourcePackage.cni" :key="index + 'cni'">
+                <el-form-item :label="item.target" label-width="160px">
+                  <div class="app_text_mono">
+                    {{item.version}}
                   </div>
                 </el-form-item>
               </template>
             </div>
-          </template>
-        </div>
+          </el-collapse-item>
+          <el-collapse-item name="5">
+            <template #title>
+              <span class="package_title">{{$t('dependency')}}</span>
+            </template>
+            <div class="package_info">
+              <template v-for="(item, index) in resourcePackage.dependency" :key="index + 'dependency'">
+                <el-form-item :label="item.target" label-width="160px">
+                  <div class="app_text_mono">
+                    {{item.version}}
+                  </div>
+                </el-form-item>
+              </template>
+            </div>
+          </el-collapse-item>
+          <el-collapse-item name="6">
+            <template #title>
+              <span class="package_title">{{$t('addons')}}</span>
+            </template>
+            <div class="package_info">
+              <template v-for="(item, index) in resourcePackage.addons" :key="index + 'addons'">
+                <el-form-item label-width="160px">
+                  <template #label>
+                    <div style="font-weight: bolder;">{{item.name}}</div>
+                  </template>
+                  <div class="app_text_mono">
+                    <el-tag type="success" v-if="item.included">{{$t('included')}}</el-tag>
+                    <el-tag type="info" v-else>{{$t('not_included')}}</el-tag>
+                  </div>
+                </el-form-item>
+                <div class="package_info">
+                  <template v-for="(value, key) in item.params" :key="key + 'addons' + index">
+                    <el-form-item :label="key" label-width="220px">
+                      <template #label>
+                        <div style="font-size: 12px">{{key}}</div>
+                      </template>
+                      <div class="app_text_mono" style="font-size: 12px">
+                        {{value}}
+                      </div>
+                    </el-form-item>
+                  </template>
+                </div>
+              </template>
+            </div>
+          </el-collapse-item>
+        </el-collapse>
       </div>
     </ConfigSection>
     <ConfigSection v-model:enabled="proxyEnabled" :label="$t('proxy')">
@@ -145,6 +173,7 @@ export default {
       ],
       useResourcePackage: true,
       resourcePackage: undefined,
+      activeNames: ['2'],
     }
   },
   computed: {
@@ -188,12 +217,12 @@ export default {
   mounted () {
   },
   watch: {
-    'inventory.all.hosts.localhost.kuboardspray_resource_package': function(newValue, oldValue) {
-      console.log(newValue, oldValue)
+    'inventory.all.hosts.localhost.kuboardspray_resource_package': function(newValue) {
       this.resourcePackage = undefined
       if (newValue) {
         this.kuboardSprayApi.get(`/resources/${newValue}`).then(resp => {
           this.resourcePackage = resp.data.data.package
+          this.$emit('update:resourcePackage', this.resourcePackage)
         }).catch(e => {
           console.log(e)
         })

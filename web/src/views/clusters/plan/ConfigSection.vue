@@ -8,8 +8,8 @@ zh:
 <template>
   <el-form-item label-width="80px" class="config_section_section">
     <template #label>
-      <el-checkbox v-model="enabledRef" :disabled="disabled">
-        <span class="enableButton">{{label}}</span>
+      <el-checkbox v-model="enabledRef" :disabled="disabled"
+        ><span class="enableButton">{{label}}</span>
       </el-checkbox>
     </template>
     <div>

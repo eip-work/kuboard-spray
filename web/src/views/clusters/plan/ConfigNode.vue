@@ -37,6 +37,7 @@ export default {
     inventory: { type: Object, required: true },
     clusterName: { type: String, required: true },
     nodeName: { type: String, required: true },
+    resourcePackage: { type: Object, required: false, default: undefined },
   },
   data() {
     return {

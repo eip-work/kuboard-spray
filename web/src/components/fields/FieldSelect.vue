@@ -5,8 +5,8 @@
     </template>
     <div style="display: flex;" v-if="editMode !== 'view'">
       <el-select v-model.trim="obj[fieldName]" style="flex-grow: 1;" clearable
-        :placeholder="$t('field.' + fieldName + '_placeholder')" @visible-change="load">
-        <el-option v-for="(item, index) in options" :key="'i' + index" :value="item.value">
+        :placeholder="$t('field.' + fieldName + '_placeholder')" @visible-change="load($event)">
+        <el-option v-for="(item, index) in options" :key="'i' + index" :value="item.value" :label="item.label">
           {{item.label}}
         </el-option>
       </el-select>
@@ -53,7 +53,7 @@ export default {
             }
             return callback(message)
           },
-          trigger: 'blur'
+          trigger: 'change'
         })
       }
       result.push(... this.rules)
@@ -62,14 +62,17 @@ export default {
   },
   components: { },
   mounted () {
+    this.load(true)
   },
   methods: {
-    load () {
-      this.loadOptions.call(this.$parent).then(ops => {
-        this.options = ops
-      }).catch(e => {
-        console.log(e)
-      })
+    load (flag) {
+      if (flag) {
+        this.loadOptions.call(this.$parent).then(ops => {
+          this.options = ops
+        }).catch(e => {
+          console.log(e)
+        })
+      }
     }
   }
 }

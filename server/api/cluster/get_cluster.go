@@ -11,16 +11,16 @@ import (
 )
 
 type GetClusterRequest struct {
-	Name string `uri:"name"`
+	Cluster string `uri:"cluster"`
 }
 
 func GetCluster(c *gin.Context) {
 	var req GetClusterRequest
 	c.ShouldBindUri(&req)
 
-	inventoryContent, err := ioutil.ReadFile(ClusterInventoryPath(req.Name))
+	inventoryContent, err := ioutil.ReadFile(ClusterInventoryPath(req.Cluster))
 	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "cannot open file: "+ClusterInventoryPath(req.Name))
+		common.HandleError(c, http.StatusInternalServerError, "cannot open file: "+ClusterInventoryPath(req.Cluster))
 		return
 	}
 
@@ -32,10 +32,11 @@ func GetCluster(c *gin.Context) {
 		"message": "success",
 		"data": gin.H{
 			"inventory": inventory,
+			"name":      req.Cluster,
 		},
 	})
 }
 
-func ClusterInventoryPath(name string) string {
-	return constants.GET_DATA_INVENTORY_DIR() + "/" + name + "/inventory.yaml"
+func ClusterInventoryPath(cluster string) string {
+	return constants.GET_DATA_INVENTORY_DIR() + "/" + cluster + "/inventory.yaml"
 }

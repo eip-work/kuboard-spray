@@ -1,23 +1,14 @@
-<i18n>
-en:
-  kube_control_plane: control plane
-  kube_node: worker node
-  etcd: etcd node
-zh:
-  kube_control_plane: 控制节点
-  kube_node: 工作节点
-  etcd: etcd
-</i18n>
-
 <template>
   <div :class="active ? 'node active' : 'node'">
     <div class="app_text_mono" style="font-weight: bold;">
-      {{ name }}
+      <span v-if="name !== 'localhost' && name !== 'bastion'">{{ name }}</span>
+      <span v-else>{{ $t('obj.' + name) }}</span>
     </div>
     <div class="app_text_mono" v-if="inventory.all.hosts[name]">
       {{ inventory.all.hosts[name].ansible_host }}
     </div>
-    <div :class="role + ' role app_text_mono'" v-for="(_, role) in roles" :key="'r' + role">{{$t(role)}}</div>
+    <div :class="role + ' role app_text_mono'" v-for="(_, role) in roles" :key="'r' + role">{{$t('node.' + role)}}</div>
+    <slot></slot>
   </div>
 </template>
 

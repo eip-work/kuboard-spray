@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/eip-work/kuboard-spray/api/cluster"
+	"github.com/eip-work/kuboard-spray/api/private_key"
 	"github.com/eip-work/kuboard-spray/api/resource"
 	"github.com/eip-work/kuboard-spray/login"
 	"github.com/eip-work/kuboard-spray/vue"
@@ -17,7 +18,9 @@ func setupRouter() *gin.Engine {
 
 	api := root.Group("/api", login.JWTAuthMiddleware())
 	api.GET("/clusters", cluster.ListClusters)
-	api.GET("/clusters/:name", cluster.GetCluster)
+	api.GET("/clusters/:cluster", cluster.GetCluster)
+	api.GET("/clusters/:cluster/private-keys", private_key.ListPrivateKey)
+	api.GET("/clusters/:cluster/private-keys/:name", private_key.GetPrivateKey)
 
 	api.GET("/resources", resource.ListResources)
 	api.GET("/resources/:name", resource.GetResource)

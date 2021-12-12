@@ -1,22 +1,18 @@
 <i18n>
 en:
-  localhost: KuboardSpray
-  bastion: Bastion
-  kube_control_plane: control plane
-  kube_node: worker node
-  etcd: etcd node
   singleNode: Specific Node
   global_config: Global Config
-  k8s_cluster: K8s Params
+  enabledBation: Enabled
+  disabledBation: Disabled
+  selectANode: Please select a node from the diagram to the left.
+  bastionPrompt: Bastion params are placed at the bottom of KuboardSpray tab.
 zh:
-  bastion: 堡垒机
-  localhost: KuboardSpray
-  kube_control_plane: 控制节点
-  kube_node: 工作节点
-  etcd: etcd
-  singleNode: 某个节点
+  singleNode: 单个节点
   global_config: 全局设置
-  k8s_cluster: K8S 参数
+  enabledBation: 使用堡垒机
+  disabledBation: 不使用堡垒机
+  selectANode: 请从左侧图中选择一个节点
+  bastionPrompt: 堡垒机参数设置在 KuboardSpray 标签页的最后
 </i18n>
 
 <template>
@@ -27,7 +23,7 @@ zh:
         <div>
           <Node class="localhost" name="localhost" :inventory="inventory" style="width: 100px;"
             :active="currentPropertiesTab === 'localhost' || currentPropertiesTab === 'global_config'" @click="currentPropertiesTab = 'localhost'">
-            {{ $t('localhost') }}
+            <!-- <div class="role">{{$t('agent')}}</div> -->
           </Node>
         </div>
         <div>
@@ -36,17 +32,20 @@ zh:
         </div>
         <div>
           <Node class="bastion" name="bastion" :inventory="inventory" style="width: 100px;"
-            :active="currentPropertiesTab === 'bastion'" @click="currentPropertiesTab = 'bastion'">
-            {{ $t('bastion') }}
+            :active="currentPropertiesTab === 'bastion'" @click="showBastion">
+            <div style="margin-top: 10px;">
+              <el-tag v-if="bastionEnabled" type="danger" effect="dark" size="small" style="width: 100px; text-align: center;">{{$t('enabledBation')}}</el-tag>
+              <el-tag v-else type="info" effect="light" size="small" style="width: 100px; text-align: center;">{{$t('disabledBation')}}</el-tag>
+            </div>
           </Node>
-          <div v-if="bastionEnabled" class="horizontalConnection"></div>
+          <div class="horizontalConnection" :style="bastionEnabled ? '' : 'border-color: white;'"></div>
         </div>
-        <el-button @click="$refs.form.validate()">校验</el-button>
+        <!-- <el-button @click="$refs.form.validate()">校验</el-button>
         <el-radio-group v-model="mode">
           <el-radio-button label="create"></el-radio-button>
           <el-radio-button label="edit"></el-radio-button>
           <el-radio-button label="view"></el-radio-button>
-        </el-radio-group>
+        </el-radio-group> -->
       </div>
       <div class="right">
         <el-scrollbar height="calc(100vh - 240px)">
@@ -76,25 +75,15 @@ zh:
         <el-tabs type="card" v-model="currentPropertiesTab">
           <el-tab-pane name="localhost">
             <template #label>
-              {{ $t('localhost') }}
+              {{ $t('obj.localhost') }}
             </template>
-            <el-scrollbar max-height="calc(100vh - 274px)">
+            <el-scrollbar max-height="calc(100vh - 274px)" ref="configKuboardSprayScroll">
               <div class="tab_content">
-                <ConfigKuboardSpray :inventory="inventory"></ConfigKuboardSpray>
+                <ConfigKuboardSpray :inventory="inventory" :cluster="cluster"></ConfigKuboardSpray>
               </div>
             </el-scrollbar>
           </el-tab-pane>
-          <el-tab-pane name="bastion">
-            <template #label>
-              {{ $t('bastion') }}
-            </template>
-            <el-scrollbar max-height="calc(100vh - 274px)">
-              <div class="tab_content">
-                <el-switch v-model="bastionEnabled"></el-switch>
-              </div>
-            </el-scrollbar>
-          </el-tab-pane>
-          <el-tab-pane name="global_config">
+          <!-- <el-tab-pane name="global_config">
             <template #label>
               {{ $t('global_config') }}
             </template>
@@ -103,54 +92,54 @@ zh:
                 {{ currentPropertiesTab }}
               </div>
             </el-scrollbar>
-          </el-tab-pane>
+          </el-tab-pane> -->
           <el-tab-pane name="k8s_cluster">
             <template #label>
-              {{ $t('k8s_cluster') }}
+              {{ $t('node.k8s_cluster') }}
             </template>
             <el-scrollbar max-height="calc(100vh - 274px)">
               <div class="tab_content">
-                {{ currentPropertiesTab }}
+                <ConfigK8sCluster :inventory="inventory" :clusterName="cluster.name"></ConfigK8sCluster>
               </div>
             </el-scrollbar>
           </el-tab-pane>
-          <el-tab-pane name="kube_control_plane">
+          <!-- <el-tab-pane name="kube_control_plane">
             <template #label>
-              {{ $t('kube_control_plane') }}
+              {{ $t('node.kube_control_plane') }}
             </template>
             <el-scrollbar max-height="calc(100vh - 274px)">
               <div class="tab_content">
                 {{ currentPropertiesTab }}
               </div>
             </el-scrollbar>
-          </el-tab-pane>
+          </el-tab-pane> -->
           <el-tab-pane name="etcd">
             <template #label>
-              {{ $t('etcd') }}
+              {{ $t('node.etcd') }}
             </template>
             <el-scrollbar max-height="calc(100vh - 274px)">
               <div class="tab_content">
-                {{ currentPropertiesTab }}
+                <ConfigEtcd :inventory="inventory" :clusterName="cluster.name"></ConfigEtcd>
               </div>
             </el-scrollbar>
           </el-tab-pane>
-          <el-tab-pane name="kube_node">
+          <!-- <el-tab-pane name="kube_node">
             <template #label>
-              {{ $t('kube_node') }}
+              {{ $t('node.kube_node') }}
             </template>
             <el-scrollbar max-height="calc(100vh - 274px)">
               <div class="tab_content">
                 {{ currentPropertiesTab }}
               </div>
             </el-scrollbar>
-          </el-tab-pane>
+          </el-tab-pane> -->
           <el-tab-pane :name="currentPropertiesTab" v-if="currentPropertiesTab.startsWith('NODE_')">
             <template #label>
               <div style="width: 100px; text-align: center;">{{ currentPropertiesTab.slice(5) }}</div>
             </template>
             <el-scrollbar max-height="calc(100vh - 274px)">
               <div class="tab_content">
-                {{ currentPropertiesTab }}
+                <ConfigNode :inventory="inventory" :clusterName="cluster.name" :nodeName="currentPropertiesTab.slice(5)"></ConfigNode>
               </div>
             </el-scrollbar>
           </el-tab-pane>
@@ -160,7 +149,8 @@ zh:
             </template>
             <el-scrollbar max-height="calc(100vh - 274px)">
               <div class="tab_content">
-                {{ currentPropertiesTab }}
+                <el-alert type="warning" :closable="false" :title="$t('selectANode')">
+                </el-alert>
               </div>
             </el-scrollbar>
           </el-tab-pane>
@@ -174,6 +164,9 @@ zh:
 import { computed } from 'vue'
 import Node from './Node.vue'
 import ConfigKuboardSpray from './ConfigKuboardSpray.vue'
+import ConfigK8sCluster from './ConfigK8sCluster.vue'
+import ConfigNode from './ConfigNode.vue'
+import ConfigEtcd from './ConfigEtcd.vue'
 
 export default {
   props: {
@@ -181,8 +174,7 @@ export default {
   },
   data () {
     return {
-      currentPropertiesTab: 'localhost',
-      bastionEnabled: false,
+      currentPropertiesTab: 'k8s_cluster',
       mode: 'edit',
     }
   },
@@ -200,8 +192,11 @@ export default {
         console.log(v)
       }
     },
+    bastionEnabled() {
+      return this.cluster.inventory.all.children.bastion !== undefined
+    },
   },
-  components: { Node, ConfigKuboardSpray },
+  components: { Node, ConfigKuboardSpray, ConfigK8sCluster, ConfigNode, ConfigEtcd },
   mounted () {
   },
   methods: {
@@ -231,6 +226,16 @@ export default {
     isEtcdAndNotControlPlane (name) {
       let roles = this.nodeRoles(name)
       return roles.etcd && !roles.kube_control_plane
+    },
+    showBastion () {
+      this.currentPropertiesTab = 'localhost'; 
+      // setTimeout(() => {
+      //   this.$refs.configKuboardSprayScroll.setScrollTop(10)
+      // }, 200)
+      setTimeout(() => {
+        this.$refs.configKuboardSprayScroll.setScrollTop(3000)
+      }, 400)
+      this.$message.info(this.$t('bastionPrompt'))
     }
   }
 }
@@ -295,7 +300,7 @@ export default {
 .properties {
   flex-grow: 1;
   max-width: 45%;
-  min-width: 200px;
+  min-width: 45%;
   margin-left: 20px;
   .tab_content {
     padding: 10px;

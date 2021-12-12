@@ -14,8 +14,16 @@ const messages = {
     field: field.en,
     pkg: pkg.en,
     obj: {
-      resources: 'Resource Package'
+      resources: 'Resource Package',
+      bastion: 'Bastion',
+      localhost: 'KuboardSpray',
     },
+    node: {
+      kube_control_plane: 'control plane',
+      kube_node: 'worker node',
+      etcd: 'etcd node',
+      k8s_cluster: 'K8s Cluster',
+    }
   },
   zh: { 
     kuboardspray: 'Kuboard Spray',
@@ -24,15 +32,23 @@ const messages = {
     field: field.zh,
     pkg: pkg.zh,
     obj: {
-      resources: '资源包'
+      resources: '资源包',
+      bastion: '堡垒机',
+      localhost: 'KuboardSpray',
     },
+    node: {
+      kube_control_plane: '控制节点',
+      kube_node: '工作节点',
+      etcd: 'ETCD节点',
+      k8s_cluster: 'K8s 集群',
+    }
   },
 }
 
 const i18n = createI18n({
   fallbackLocale: 'zh',
-  // globalInjection:true,
-  // legacy: false,
+  globalInjection:true,
+  legacy: true,
   silentFallbackWarn: true,
   locale: language.split("-")[0] || "zh",
   messages,

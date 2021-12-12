@@ -11,7 +11,7 @@ zh:
     <FieldString v-if="isNode" :holder="holder" fieldName="ansible_host"></FieldString>
     <FieldString :holder="holder" fieldName="ansible_user"></FieldString>
     <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList">
-      <el-button type="primary" style="margin-left: 10px;" icon="el-icon-plus">{{$t('addSshKey')}}</el-button>
+      <el-button type="primary" style="margin-left: 10px;" icon="el-icon-plus" @click="$refs.addPrivateKey.show()">{{$t('addSshKey')}}</el-button>
     </FieldSelect>
     <FieldString :holder="holder" fieldName="ansible_password" show-password></FieldString>
     <FieldBool :holder="holder" fieldName="ansible_become"></FieldBool>
@@ -19,11 +19,13 @@ zh:
       <FieldString :holder="holder" fieldName="ansible_become_user"></FieldString>
       <FieldString :holder="holder" fieldName="ansible_become_password"></FieldString>
     </template>
+    <SshAddPrivateKey ref="addPrivateKey" :clusterName="clusterName"></SshAddPrivateKey>
   </ConfigSection>
 </template>
 
 <script>
 import ConfigSection from '../ConfigSection.vue'
+import SshAddPrivateKey from './SshAddPrivateKey.vue'
 
 export default {
   props: {
@@ -48,7 +50,7 @@ export default {
       }
     }
   },
-  components: { ConfigSection },
+  components: { ConfigSection, SshAddPrivateKey },
   mounted () {
   },
   methods: {
@@ -56,7 +58,7 @@ export default {
       let result = []
       await this.kuboardSprayApi.get(`/clusters/${this.clusterName}/private-keys`).then(resp => {
         for (let item of resp.data.data) {
-          result.push({ label: item, value: item })
+          result.push({ label: item, value: '{{ kuboardspray_cluster_dir }}/private-key/' + item })
         }
       })
       return result

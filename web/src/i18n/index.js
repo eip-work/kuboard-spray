@@ -17,12 +17,20 @@ const messages = {
       resources: 'Resource Package',
       bastion: 'Bastion',
       localhost: 'KuboardSpray',
+      addon: 'Addon: {name}',
     },
     node: {
       kube_control_plane: 'control plane',
       kube_node: 'worker node',
       etcd: 'etcd node',
       k8s_cluster: 'K8s Cluster',
+    },
+    msg: {
+      ok: 'OK',
+      save: 'Save',
+      close: 'Close',
+      cancel: 'Cancel',
+      upload: 'Upload',
     }
   },
   zh: { 
@@ -35,12 +43,20 @@ const messages = {
       resources: '资源包',
       bastion: '堡垒机',
       localhost: 'KuboardSpray',
+      addon: '可选组件：{name}',
     },
     node: {
       kube_control_plane: '控制节点',
       kube_node: '工作节点',
       etcd: 'ETCD节点',
       k8s_cluster: 'K8s 集群',
+    },
+    msg: {
+      ok: '确 定',
+      save: '保 存',
+      close: '关 闭',
+      cancel: '取 消',
+      upload: '上 传',
     }
   },
 }

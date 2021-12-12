@@ -21,6 +21,8 @@ func setupRouter() *gin.Engine {
 	api.GET("/clusters/:cluster", cluster.GetCluster)
 	api.GET("/clusters/:cluster/private-keys", private_key.ListPrivateKey)
 	api.GET("/clusters/:cluster/private-keys/:name", private_key.GetPrivateKey)
+	api.POST("/clusters/:cluster/private-keys/:name", private_key.UploadPrivateKeyFile)
+	api.DELETE("/clusters/:cluster/private-keys/:name", private_key.DeletePrivateKey)
 
 	api.GET("/resources", resource.ListResources)
 	api.GET("/resources/:name", resource.GetResource)

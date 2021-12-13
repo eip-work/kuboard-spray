@@ -4,7 +4,7 @@
       {{ $t('field.' + fieldName) }}
     </template>
     <el-input v-if="editMode !== 'view'" v-model.trim="obj[fieldName]" :show-password="showPassword"
-      :placeholder="$t('field.' + fieldName + '_placeholder')"></el-input>
+      :placeholder="placeholder || $t('field.' + fieldName + '_placeholder')"></el-input>
     <div v-else class="app_text_mono">{{ obj[fieldName] }}</div>
   </el-form-item>
 </template>
@@ -18,7 +18,8 @@ export default {
     prop: { type: String, required: false },
     required: { type: Boolean, required: false, default: false },
     rules: { type: Array, required: false, default: () => ([])},
-    showPassword: { type: Boolean, required: false, default: false }
+    showPassword: { type: Boolean, required: false, default: false },
+    placeholder: { type: String, required: false, default: undefined },
   },
   data () {
     return {

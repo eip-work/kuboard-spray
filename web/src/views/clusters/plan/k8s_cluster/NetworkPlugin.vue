@@ -1,16 +1,16 @@
 <i18n>
 en:
   label: NetworkPlugin
-  selectResourcePackageFirst: Please select resource package from KuboardSpray tab first.
+  // selectResourcePackageFirst: Please select resource package from KuboardSpray tab first.
 zh:
   label: 网络插件
-  selectResourcePackageFirst: 请先在 KuboardSpray 标签页选择资源包
+  // selectResourcePackageFirst: 请先在 KuboardSpray 标签页选择资源包
 </i18n>
 
 
 <template>
   <ConfigSection v-model:enabled="enabled" :label="$t('label')" disabled>
-    <FieldSelect ref="kube_network_plugin"
+    <FieldSelect ref="kube_network_plugin" :disabled="!inventory.all.hosts.localhost.kuboardspray_resource_package"
       :holder="inventory.all.children.k8s_cluster.vars" fieldName="kube_network_plugin"
       :loadOptions="loadNetworkCandidates"></FieldSelect>
   </ConfigSection>
@@ -55,7 +55,7 @@ export default {
           result.push({ value: item.name, label: `${item.name}_${item.version}`})
         }
       } else {
-        this.$message.error(this.$t('selectResourcePackageFirst'))
+        // this.$message.error(this.$t('selectResourcePackageFirst'))
       }
       return result
     }

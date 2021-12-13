@@ -31,14 +31,16 @@ zh:
             {{item}}
           </div>
         </el-card>
-        <el-button type="primary" size="large" icon="el-icon-plus">{{$t('addCluster')}}</el-button>
+        <el-button type="primary" size="large" icon="el-icon-plus" @click="$refs.create.show()">{{$t('addCluster')}}</el-button>
       </div>
     </el-card>
+    <CreateCluster ref="create"></CreateCluster>
   </div>
 </template>
 
 <script>
 import mixin from '../../mixins/mixin.js'
+import CreateCluster from './create/CreateCluster.vue'
 
 export default {
   mixins: [mixin],
@@ -59,7 +61,7 @@ export default {
   },
   computed: {
   },
-  components: { },
+  components: { CreateCluster },
   mounted () {
     this.kuboardSprayApi.get('/clusters').then(resp => {
       this.clusters = resp.data.data

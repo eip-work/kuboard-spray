@@ -48,7 +48,7 @@ zh:
         </el-radio-group> -->
       </div>
       <div class="right">
-        <el-scrollbar height="calc(100vh - 240px)">
+        <el-scrollbar height="calc(100vh - 245px)">
           <div class="masters">
             <Node v-for="(item, index) in inventory.all.children.k8s_cluster.children.kube_control_plane.hosts" :key="'control_plane' + index"
               @click="currentPropertiesTab = 'NODE_' + index"
@@ -77,9 +77,9 @@ zh:
             <template #label>
               {{ $t('obj.localhost') }}
             </template>
-            <el-scrollbar max-height="calc(100vh - 274px)" ref="configKuboardSprayScroll">
+            <el-scrollbar max-height="calc(100vh - 276px)" ref="configKuboardSprayScroll">
               <div class="tab_content">
-                <ConfigKuboardSpray v-model:resourcePackage="resourcePackage" :inventory="inventory" :cluster="cluster"></ConfigKuboardSpray>
+                <ConfigKuboardSpray :resourcePackage="cluster.resourcePackage" :inventory="inventory" :cluster="cluster"></ConfigKuboardSpray>
               </div>
             </el-scrollbar>
           </el-tab-pane>
@@ -87,7 +87,7 @@ zh:
             <template #label>
               {{ $t('global_config') }}
             </template>
-            <el-scrollbar max-height="calc(100vh - 274px)">
+            <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
                 {{ currentPropertiesTab }}
               </div>
@@ -97,9 +97,9 @@ zh:
             <template #label>
               {{ $t('node.k8s_cluster') }}
             </template>
-            <el-scrollbar max-height="calc(100vh - 274px)">
+            <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
-                <ConfigK8sCluster :resourcePackage="resourcePackage" :inventory="inventory" :clusterName="cluster.name"></ConfigK8sCluster>
+                <ConfigK8sCluster :resourcePackage="cluster.resourcePackage" :inventory="inventory" :clusterName="cluster.name"></ConfigK8sCluster>
               </div>
             </el-scrollbar>
           </el-tab-pane>
@@ -107,7 +107,7 @@ zh:
             <template #label>
               {{ $t('node.kube_control_plane') }}
             </template>
-            <el-scrollbar max-height="calc(100vh - 274px)">
+            <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
                 {{ currentPropertiesTab }}
               </div>
@@ -117,9 +117,9 @@ zh:
             <template #label>
               {{ $t('node.etcd') }}
             </template>
-            <el-scrollbar max-height="calc(100vh - 274px)">
+            <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
-                <ConfigEtcd :resourcePackage="resourcePackage" :inventory="inventory" :clusterName="cluster.name"></ConfigEtcd>
+                <ConfigEtcd :resourcePackage="cluster.resourcePackage" :inventory="inventory" :clusterName="cluster.name"></ConfigEtcd>
               </div>
             </el-scrollbar>
           </el-tab-pane>
@@ -127,7 +127,7 @@ zh:
             <template #label>
               {{ $t('node.kube_node') }}
             </template>
-            <el-scrollbar max-height="calc(100vh - 274px)">
+            <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
                 {{ currentPropertiesTab }}
               </div>
@@ -137,9 +137,9 @@ zh:
             <template #label>
               <div style="width: 100px; text-align: center;">{{ currentPropertiesTab.slice(5) }}</div>
             </template>
-            <el-scrollbar max-height="calc(100vh - 274px)">
+            <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
-                <ConfigNode :resourcePackage="resourcePackage" :inventory="inventory" :clusterName="cluster.name" :nodeName="currentPropertiesTab.slice(5)"></ConfigNode>
+                <ConfigNode :resourcePackage="cluster.resourcePackage" :inventory="inventory" :clusterName="cluster.name" :nodeName="currentPropertiesTab.slice(5)"></ConfigNode>
               </div>
             </el-scrollbar>
           </el-tab-pane>
@@ -147,7 +147,7 @@ zh:
             <template #label>
               <div style="width: 100px; text-align: center;">{{ $t('singleNode') }}</div>
             </template>
-            <el-scrollbar max-height="calc(100vh - 274px)">
+            <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
                 <el-alert type="warning" :closable="false" :title="$t('selectANode')">
                 </el-alert>
@@ -176,7 +176,6 @@ export default {
     return {
       currentPropertiesTab: 'k8s_cluster',
       mode: 'edit',
-      resourcePackage: undefined,
     }
   },
   provide () {
@@ -305,7 +304,7 @@ export default {
   margin-left: 20px;
   .tab_content {
     padding: 10px;
-    min-height: calc(100vh - 294px);
+    min-height: calc(100vh - 296px);
     background-color: #f1f4fa;
   }
 }

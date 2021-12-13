@@ -4,7 +4,7 @@
       {{ $t('field.' + fieldName) }}
     </template>
     <div style="display: flex;" v-if="editMode !== 'view'">
-      <el-select v-model.trim="obj[fieldName]" style="flex-grow: 1;" clearable
+      <el-select v-model.trim="obj[fieldName]" style="flex-grow: 1;" clearable :disabled="disabled"
         :placeholder="$t('field.' + fieldName + '_placeholder')" @visible-change="load($event)">
         <el-option v-for="(item, index) in options" :key="'i' + index" :value="item.value" :label="item.label">
           {{item.label}}
@@ -26,6 +26,7 @@ export default {
     required: { type: Boolean, required: false, default: false },
     rules: { type: Array, required: false, default: () => ([])},
     loadOptions: { type: Function, required: true },
+    disabled: { type: Boolean, required: false, default: false },
   },
   data () {
     return {

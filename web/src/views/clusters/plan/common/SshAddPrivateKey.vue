@@ -23,7 +23,7 @@ zh:
 
 <template>
   <div>
-    <el-dialog v-model="dialogVisible" :close-on-click-modal="false"
+    <el-dialog v-model="dialogVisible" :close-on-click-modal="false" :modal="true"
       :title="$t('manageSshKey')" width="60%">
       <div class="app_block_title_small">
         {{$t('existingSshKeyFiles', {clusterName: clusterName})}}

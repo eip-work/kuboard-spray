@@ -159,7 +159,8 @@ import PackageContentField from './common/PackageContentField.vue'
 
 export default {
   props: {
-    inventory: { type: Object, required: true }
+    inventory: { type: Object, required: true },
+    resourcePackage: { type: Object, required: false, default: undefined },
   },
   data () {
     return {
@@ -172,7 +173,6 @@ export default {
         }
       ],
       useResourcePackage: true,
-      resourcePackage: undefined,
       activeNames: ['2'],
     }
   },
@@ -215,19 +215,6 @@ export default {
   },
   components: { ConfigSection, PackageContentField },
   mounted () {
-  },
-  watch: {
-    'inventory.all.hosts.localhost.kuboardspray_resource_package': function(newValue) {
-      this.resourcePackage = undefined
-      if (newValue) {
-        this.kuboardSprayApi.get(`/resources/${newValue}`).then(resp => {
-          this.resourcePackage = resp.data.data.package
-          this.$emit('update:resourcePackage', this.resourcePackage)
-        }).catch(e => {
-          console.log(e)
-        })
-      }
-    }
   },
   methods: {
     async loadResourceList () {

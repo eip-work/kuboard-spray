@@ -7,6 +7,7 @@ import (
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	yaml "gopkg.in/yaml.v3"
 )
 
@@ -25,7 +26,13 @@ func GetCluster(c *gin.Context) {
 	}
 
 	inventory := gin.H{}
-	yaml.Unmarshal(inventoryContent, inventory)
+	err = yaml.Unmarshal(inventoryContent, inventory)
+
+	if err != nil {
+		logrus.Warning("cannot parse file: "+ClusterInventoryPath(req.Cluster), err)
+		common.HandleError(c, http.StatusInternalServerError, "cannot parse file: "+ClusterInventoryPath(req.Cluster)+" "+err.Error())
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"code":    http.StatusOK,

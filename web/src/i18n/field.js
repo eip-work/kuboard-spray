@@ -46,6 +46,7 @@ const field = {
 
     kube_network_plugin: '网络插件',
     cluster_name: '集群名称',
+    cluster_name_placeholder: 'cluster domain name',
     event_ttl_duration: '事件保留时长',
     auto_renew_certificates: '自动更新证书',
 

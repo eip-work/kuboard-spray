@@ -57,7 +57,7 @@ func initLogrus() {
 	logrus.SetReportCaller(true)
 	logrus.SetOutput(os.Stdout)
 
-	value := os.Getenv("KUBOARD_SERVER_LOGRUS_LEVEL")
+	value := os.Getenv("KUBOARD_SPRAY_LOGRUS_LEVEL")
 	if value == "" {
 		value = "trace"
 	}
@@ -66,7 +66,7 @@ func initLogrus() {
 		fmt.Println("设置日志级别为 " + value)
 		logrus.SetLevel(level)
 	} else {
-		fmt.Println("请检查 KUBOARD_SERVER_LOGRUS_LEVEL 的值，可选的有 panic / fatal / error / warn / info / debug / trace ，当前为： " + value)
+		fmt.Println("请检查 KUBOARD_SPRAY_LOGRUS_LEVEL 的值，可选的有 panic / fatal / error / warn / info / debug / trace ，当前为： " + value)
 		logrus.SetLevel(logrus.InfoLevel)
 	}
 

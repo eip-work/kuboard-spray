@@ -119,6 +119,7 @@ export default {
           this.kuboardSprayApi.put(`/clusters/${this.name}`, this.cluster.inventory).then(() => {
             this.$message.success(this.$t('msg.save_succeeded'))
             this.refresh()
+            this.$router.replace(`/clusters/${this.name}`)
           }).catch(e => {
             this.$message.error(this.$t('msg.save_failed', e.response.data.message))
           })

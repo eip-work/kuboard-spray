@@ -15,14 +15,14 @@ zh:
     <ConfigSection v-model:enabled="enabledRoles" :label="$t('roles')" :description="$t('roleDescription', {nodeName: nodeName})" disabled>
       <el-form-item :label="$t('roles')">
         <div class="roles">
-          <NodeRoleTag :enabled="isEtcd" role="etcd" @click="isEtcd = !isEtcd"></NodeRoleTag>
           <NodeRoleTag :enabled="isKubeControlPlane" role="kube_control_plane" @click="isKubeControlPlane = !isKubeControlPlane"></NodeRoleTag>
           <NodeRoleTag :enabled="isKubeNode" role="kube_node" @click="isKubeNode = !isKubeNode"></NodeRoleTag>
+          <NodeRoleTag :enabled="isEtcd" role="etcd" @click="isEtcd = !isEtcd"></NodeRoleTag>
         </div>
       </el-form-item>
     </ConfigSection>
     <ConfigSection v-if="enabledEtcd" v-model:enabled="enabledEtcd" label="ETCD" :description="$t('etcd', {nodeName: nodeName})">
-      <FieldString :holder="inventory.all.children.k8s_cluster.children.etcd.hosts[nodeName]" :prop="`all.children.k8s_cluster.children.etcd.hosts.${nodeName}`" fieldName="etcd_member_name"></FieldString>
+      <FieldString :holder="inventory.all.children.etcd.hosts[nodeName]" :prop="`all.children.etcd.hosts.${nodeName}`" fieldName="etcd_member_name"></FieldString>
     </ConfigSection>
   </div>
 </template>
@@ -55,7 +55,7 @@ export default {
     },
     enabledEtcd: {
       get () {
-        for (let key in this.inventory.all.children.k8s_cluster.children.etcd.hosts) {
+        for (let key in this.inventory.all.children.etcd.hosts) {
           if (key === this.nodeName) {
             return true
           }
@@ -117,12 +117,12 @@ export default {
       set (v) {
         console.log('setEtcd', v)
         if (v) {
-          this.inventoryRef.all.children.k8s_cluster.children.etcd.hosts[this.nodeName] = {}
+          this.inventoryRef.all.children.etcd.hosts[this.nodeName] = {}
         } else {
           if (!this.isKubeControlPlane && !this.isKubeNode) {
             this.$message.error(this.$t('requiresAtLeastOneRole'))
           } else {
-            delete this.inventoryRef.all.children.k8s_cluster.children.etcd.hosts[this.nodeName]
+            delete this.inventoryRef.all.children.etcd.hosts[this.nodeName]
           }
         }
       }

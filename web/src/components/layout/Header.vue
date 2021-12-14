@@ -23,7 +23,7 @@ zh:
             <HeaderBreadCrumb :label="$t('homePage')" to="/" :kind="$t('homePage')" key="home" :hasNext="breadcrumb.length > 0"></HeaderBreadCrumb>
             <HeaderBreadCrumb v-for="(item, index) in breadcrumb" :key="index + 'bc' + item.label"
               :label="item.label" :to="item.to" :kind="item.kind" :hasNext="index < breadcrumb.length - 1"></HeaderBreadCrumb>
-            <KbButton v-if="refresh" style="margin-left: 0px;" icon="el-icon-refresh" :loading="percentage < 100" key="refresh"
+            <KbButton v-if="refresh" style="margin-left: 20px;" icon="el-icon-refresh" :loading="percentage < 100" key="refresh"
               @click="refresh.refresh.call(refresh.ref)"></KbButton>
           </transition-group>
         </div>

@@ -48,13 +48,17 @@ zh:
         </el-radio-group> -->
       </div>
       <div class="right">
-        <el-scrollbar height="calc(100vh - 245px)">
+        <div style="padding: 5px; font-weight: bolder; font-size: 14px; height: 28px; line-height: 28px;">
+          Kubernetes Cluster
+          <AddNode v-if="mode !== 'view'" :inventory="inventory"></AddNode>
+        </div>
+        <el-scrollbar height="calc(100vh - 283px)">
           <div class="masters">
             <Node v-for="(item, index) in inventory.all.children.k8s_cluster.children.kube_control_plane.hosts" :key="'control_plane' + index"
               @click="currentPropertiesTab = 'NODE_' + index"
               :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"
               :name="index" :inventory="inventory"></Node>
-            <template v-for="(item, index) in inventory.all.children.k8s_cluster.children.etcd.hosts" :key="'etcd' + index">
+            <template v-for="(item, index) in inventory.all.children.etcd.hosts" :key="'etcd' + index">
               <Node v-if="isEtcdAndNotControlPlane(index)" :name="index" :inventory="inventory"
                 @click="currentPropertiesTab = 'NODE_' + index"
                 :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"></Node>
@@ -167,15 +171,17 @@ import ConfigKuboardSpray from './ConfigKuboardSpray.vue'
 import ConfigK8sCluster from './ConfigK8sCluster.vue'
 import ConfigNode from './ConfigNode.vue'
 import ConfigEtcd from './ConfigEtcd.vue'
+import AddNode from './common/AddNode.vue'
 
 export default {
   props: {
-    cluster: { type: Object, required: true }
+    cluster: { type: Object, required: true },
+    mode: { type: String, required: false, default: 'view' },
   },
   data () {
     return {
       currentPropertiesTab: 'k8s_cluster',
-      mode: 'edit',
+      
     }
   },
   provide () {
@@ -196,7 +202,7 @@ export default {
       return this.cluster.inventory.all.children.bastion !== undefined
     },
   },
-  components: { Node, ConfigKuboardSpray, ConfigK8sCluster, ConfigNode, ConfigEtcd },
+  components: { Node, ConfigKuboardSpray, ConfigK8sCluster, ConfigNode, ConfigEtcd, AddNode },
   mounted () {
   },
   methods: {
@@ -207,6 +213,11 @@ export default {
           if (n === name) {
             roles[role] = true
           }
+        }
+      }
+      for (let n in this.inventory.all.children.etcd.hosts) {
+        if (n === name) {
+          roles.etcd = true
         }
       }
       return roles
@@ -236,7 +247,7 @@ export default {
         this.$refs.configKuboardSprayScroll.setScrollTop(3000)
       }, 400)
       this.$message.info(this.$t('bastionPrompt'))
-    }
+    },
   }
 }
 </script>

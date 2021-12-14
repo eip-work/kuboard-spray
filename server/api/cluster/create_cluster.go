@@ -86,20 +86,20 @@ func getInventoryTemplate() string {
       ansible_connection: local
       kuboardspray_resource_package: KUBOARDSPRAY_RESOURCE_PACKAGE
   children:
+    etcd:
+      hosts: {}
+      vars:
+        etcd_deployment_type: host
+        etcd_data_dir: /var/lib/etcd
+        etcd_kubeadm_enabled: false
     k8s_cluster:
       children:
         kube_control_plane:
-          hosts:
+          hosts: {}
         kube_node:
-          hosts:
-        etcd:
-          hosts:
-          vars:
-            etcd_deployment_type: host
-            etcd_data_dir: /var/lib/etcd
-            etcd_kubeadm_enabled: false
+          hosts: {}
         calico_rr:
-          hosts:
+          hosts: {}
       vars:
         # addons.yaml
         helm_enabled: false

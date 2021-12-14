@@ -15,20 +15,27 @@ zh:
   <div>
     <ControlBar :title="name">
       <!-- <el-select style="margin-right: 10px;"></el-select> -->
-      <el-button type="success">{{name}}</el-button>
-      <el-button type="primary">History</el-button>
+      <template v-if="mode === 'view'">
+        <el-button type="primary" icon="el-icon-edit" @click="$router.replace(`/clusters/${name}?mode=edit`)">{{$t('msg.edit')}}</el-button>
+      </template>
+      <template v-if="mode === 'edit'">
+        <el-button type="default" icon="el-icon-close" @click="$router.replace(`/clusters/${name}`)">{{$t('msg.cancel')}}</el-button>
+        <el-button type="primary" icon="el-icon-check">{{$t('msg.save')}}</el-button>
+      </template>
+      <template v-if="mode === 'create'">
+        <el-button type="primary" icon="el-icon-check">{{$t('msg.save')}}</el-button>
+      </template>
     </ControlBar>
     <el-tabs type="border-card">
       <el-tab-pane :label="$t('plan')">
-        <Plan v-if="cluster" :cluster="cluster"></Plan>
+        <Plan v-if="cluster" :cluster="cluster" :mode="mode"></Plan>
       </el-tab-pane>
-      <!-- <el-tab-pane :label="$t('nodes')">正在建设...</el-tab-pane> -->
-      <el-tab-pane label="健康检查">检查集群的状态与集群规划内容的匹配情况（正在建设...）</el-tab-pane>
-      <el-tab-pane label="备份">备份 etcd 内容（正在建设...）</el-tab-pane>
-      <el-tab-pane label="CIS扫描">
+      <el-tab-pane disabled label="健康检查">检查集群的状态与集群规划内容的匹配情况（正在建设...）</el-tab-pane>
+      <el-tab-pane disabled label="备份">备份 etcd 内容（正在建设...）</el-tab-pane>
+      <el-tab-pane disabled label="CIS扫描">
         <li>https://github.com/aquasecurity/kube-bench</li>
       </el-tab-pane>
-      <el-tab-pane label="升级包检测">检查是否有更新的 KuboardSpray 资源包（正在建设...）</el-tab-pane>
+      <el-tab-pane disabled label="升级包检测">检查是否有更新的 KuboardSpray 资源包（正在建设...）</el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -41,6 +48,7 @@ export default {
   mixins: [mixin],
   props: {
     name: { type: String, required: true },
+    mode: { type: String, required: false, default: 'view' },
   },
   percentage () {
     return this.loading ? 10 : 100

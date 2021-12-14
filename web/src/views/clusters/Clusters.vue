@@ -23,9 +23,10 @@ zh:
         </div>
       </el-alert>
     </div>
-    <el-card shadow="none">
-      <div style="display: flex; flex-wrap: wrap;">
-        <el-card v-for="(item, index) in clusters" :key="'cluster' + index" shadow="none" class="cluster" 
+    <el-card shadow="none" style="min-height: 234px;">
+      <el-skeleton v-if="loading" :rows="5" animated />
+      <div v-else style="display: flex; flex-wrap: wrap;">
+        <el-card v-for="(item, index) in clusters" :key="'cluster' + index" shadow="none" class="cluster"
           @click="$router.push(`/clusters/${item}`)">
           <div class="noselect">
             {{item}}
@@ -54,23 +55,31 @@ export default {
       { label: this.$t('clusterList') }
     ]
   },
+  refresh () {
+    this.refresh()
+  },
   data() {
     return {
-      clusters: []
+      clusters: [],
+      loading: false,
     }
   },
   computed: {
   },
   components: { CreateCluster },
   mounted () {
-    this.kuboardSprayApi.get('/clusters').then(resp => {
-      this.clusters = resp.data.data
-    }).catch(e => {
-      this.$message.error('Error: ' + e)
-    })
+    this.refresh()
   },
   methods: {
-
+    async refresh () {
+      this.loading = true
+      await this.kuboardSprayApi.get('/clusters').then(resp => {
+        this.clusters = resp.data.data
+      }).catch(e => {
+        this.$message.error('Error: ' + e)
+      })
+      this.loading = false
+    }
   }
 }
 </script>

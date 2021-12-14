@@ -30,6 +30,11 @@ export default {
           }
         }
       }
+      for (let n in this.inventory.all.children.etcd.hosts) {
+        if (n === this.name) {
+          result['etcd'] = true
+        }
+      }
       return result
     }
   },

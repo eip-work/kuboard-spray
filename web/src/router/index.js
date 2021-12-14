@@ -31,7 +31,7 @@ const constantRouterMap = [
         path: ':name',
         name: 'Cluster',
         component: () => import('../views/clusters/Cluster.vue'),
-        props: route => ({ name: route.params.name })
+        props: route => ({ name: route.params.name, mode: route.query.mode })
       }
     ],
   },

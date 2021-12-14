@@ -22,7 +22,8 @@ zh:
       </el-form-item>
     </ConfigSection>
     <ConfigSection v-if="enabledEtcd" v-model:enabled="enabledEtcd" label="ETCD" :description="$t('etcd', {nodeName: nodeName})">
-      <FieldString :holder="inventory.all.children.etcd.hosts[nodeName]" :prop="`all.children.etcd.hosts.${nodeName}`" fieldName="etcd_member_name"></FieldString>
+      <FieldString :holder="inventory.all.children.etcd.hosts[nodeName]" fieldName="etcd_member_name"
+        :prop="`all.children.etcd.hosts.${nodeName}`" required></FieldString>
     </ConfigSection>
   </div>
 </template>

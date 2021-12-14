@@ -72,6 +72,7 @@ const i18n = createI18n({
   globalInjection:true,
   legacy: true,
   silentFallbackWarn: true,
+  silentTranslationWarn: true,
   locale: language.split("-")[0] || "zh",
   messages,
 });

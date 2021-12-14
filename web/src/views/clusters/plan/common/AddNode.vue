@@ -41,6 +41,7 @@ zh:
 export default {
   props: {
     inventory: { type: Object, required: true },
+    currentPropertiesTab: { type: String, required: false},
   },
   data () {
     return {
@@ -88,7 +89,7 @@ export default {
               this.inventoryRef.all.children.k8s_cluster.children[role].hosts[this.addNodeForm.name] = {}
             }
           }
-          this.currentPropertiesTab = 'NODE_' + this.addNodeForm.name
+          this.$emit('update:currentPropertiesTab', 'NODE_' + this.addNodeForm.name)
           this.addNodeForm.visible = false
         }
       })

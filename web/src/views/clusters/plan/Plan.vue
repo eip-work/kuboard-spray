@@ -44,7 +44,7 @@ zh:
       <div class="right">
         <div style="padding: 5px; font-weight: bolder; font-size: 14px; height: 28px; line-height: 28px;">
           <span style="margin-right: 20px;">Kubernetes Cluster</span>
-          <AddNode :inventory="inventory"></AddNode>
+          <AddNode :inventory="inventory" v-model:currentPropertiesTab="currentPropertiesTab"></AddNode>
         </div>
         <el-scrollbar height="calc(100vh - 283px)">
           <div class="masters">
@@ -200,6 +200,9 @@ export default {
   mounted () {
   },
   methods: {
+    validate (callback) {
+      this.$refs.form.validate(callback)
+    },
     nodeRoles (name) {
       let roles = {}
       for (let role in this.inventory.all.children.k8s_cluster.children) {

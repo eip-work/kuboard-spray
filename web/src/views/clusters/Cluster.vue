@@ -20,7 +20,7 @@ zh:
       </template>
       <template v-if="mode === 'edit'">
         <el-button type="default" icon="el-icon-close" @click="$router.replace(`/clusters/${name}`)">{{$t('msg.cancel')}}</el-button>
-        <el-button type="primary" icon="el-icon-check">{{$t('msg.save')}}</el-button>
+        <el-button type="primary" icon="el-icon-check" :disabled="noSaveRequired" @click="save">{{$t('msg.save')}}</el-button>
       </template>
       <template v-if="mode === 'create'">
         <el-button type="primary" icon="el-icon-check">{{$t('msg.save')}}</el-button>
@@ -31,7 +31,7 @@ zh:
     </el-card>
     <el-tabs type="border-card" v-else>
       <el-tab-pane :label="$t('plan')">
-        <Plan v-if="cluster" :cluster="cluster" :mode="mode"></Plan>
+        <Plan v-if="cluster" ref="plan" :cluster="cluster" :mode="mode"></Plan>
       </el-tab-pane>
       <el-tab-pane disabled label="健康检查">检查集群的状态与集群规划内容的匹配情况（正在建设...）</el-tab-pane>
       <el-tab-pane disabled label="备份">备份 etcd 内容（正在建设...）</el-tab-pane>
@@ -46,6 +46,7 @@ zh:
 <script>
 import mixin from '../../mixins/mixin.js'
 import Plan from './plan/Plan.vue'
+import yaml from 'js-yaml'
 
 export default {
   mixins: [mixin],
@@ -69,9 +70,16 @@ export default {
     return {
       loading: false,
       cluster: undefined,
+      originalInventoryYaml: '',
     }
   },
   computed: {
+    noSaveRequired () {
+      if (this.cluster === undefined) {
+        return true
+      } 
+      return this.originalInventoryYaml == yaml.dump(this.cluster.inventory)
+    }
   },
   components: { Plan },
   watch: {
@@ -87,6 +95,7 @@ export default {
       this.loading = true
       await this.kuboardSprayApi.get(`/clusters/${this.name}`).then(resp => {
         this.cluster = resp.data.data
+        this.originalInventoryYaml = yaml.dump(this.cluster.inventory)
         this.loadResourcePackage()
       }).catch(e => {
         console.log(e.response)
@@ -103,6 +112,18 @@ export default {
           console.log(e)
         })
       }
+    },
+    save () {
+      this.$refs.plan.validate(flag => {
+        if (flag) {
+          this.kuboardSprayApi.put(`/clusters/${this.name}`, this.cluster.inventory).then(() => {
+            this.$message.success(this.$t('msg.save_succeeded'))
+            this.refresh()
+          }).catch(e => {
+            this.$message.error(this.$t('msg.save_failed', e.response.data.message))
+          })
+        }
+      })
     }
   }
 }

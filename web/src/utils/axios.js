@@ -27,13 +27,12 @@ const comp = {
       return response;
     }, function (error) {
       if (error.response && error.response.status === 401) {
-        if (error.response.data && error.response.data.kind === 'KuboardErrorResponse') {
-          alert(window.VueAppComponent.$t('loginRequired'))
-          clearAllCookie()
-          location.href = '/login'
-        }
-      } else if (error.response && error.response.status === 424 && error.response.data.reason === 'AuditDbNotReady') {
-        location.href = `/init-status-check/`
+        window.VueAppComponent.$alert(window.VueAppComponent.$t('loginRequired'), this.VueAppComponent.$t('loginRequired'), {
+          callback: () => {
+            clearAllCookie()
+            window.VueAppComponent.$router.push('/login')
+          }
+        })
       }
       return Promise.reject(error);
     });

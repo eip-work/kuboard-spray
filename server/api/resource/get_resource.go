@@ -20,7 +20,7 @@ func GetResource(c *gin.Context) {
 
 	packageContent, err := ioutil.ReadFile(GET_RESOURCE_YAML_PATH(req.Name))
 	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "cannot open file: "+GET_RESOURCE_YAML_PATH(req.Name))
+		common.HandleError(c, http.StatusInternalServerError, "cannot open file: "+GET_RESOURCE_YAML_PATH(req.Name), err)
 		return
 	}
 

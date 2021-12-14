@@ -7,7 +7,6 @@ import (
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	yaml "gopkg.in/yaml.v3"
 )
 
@@ -21,7 +20,7 @@ func GetCluster(c *gin.Context) {
 
 	inventoryContent, err := ioutil.ReadFile(ClusterInventoryPath(req.Cluster))
 	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "cannot open file: "+ClusterInventoryPath(req.Cluster))
+		common.HandleError(c, http.StatusInternalServerError, "cannot open file: "+ClusterInventoryPath(req.Cluster), err)
 		return
 	}
 
@@ -29,8 +28,7 @@ func GetCluster(c *gin.Context) {
 	err = yaml.Unmarshal(inventoryContent, inventory)
 
 	if err != nil {
-		logrus.Warning("cannot parse file: "+ClusterInventoryPath(req.Cluster), err)
-		common.HandleError(c, http.StatusInternalServerError, "cannot parse file: "+ClusterInventoryPath(req.Cluster)+" "+err.Error())
+		common.HandleError(c, http.StatusInternalServerError, "cannot parse file: "+ClusterInventoryPath(req.Cluster), err)
 		return
 	}
 

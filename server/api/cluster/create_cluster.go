@@ -9,7 +9,6 @@ import (
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 
@@ -23,7 +22,7 @@ func CreateCluster(c *gin.Context) {
 	e := c.ShouldBindJSON(&req)
 
 	if e != nil {
-		common.HandleError(c, http.StatusBadRequest, "request should include field name and resourcePackage")
+		common.HandleError(c, http.StatusBadRequest, "request should include field name and resourcePackage", e)
 		return
 	}
 
@@ -31,14 +30,13 @@ func CreateCluster(c *gin.Context) {
 
 	_, err := ioutil.ReadDir(clusterDir)
 	if err == nil {
-		common.HandleError(c, http.StatusConflict, "conflict with a existing cluster.")
+		common.HandleError(c, http.StatusConflict, "conflict with a existing cluster", err)
 		return
 	}
 	err = common.CreateDirIfNotExists(clusterDir)
 
 	if err != nil {
-		logrus.Warning("failed to create folder: "+clusterDir, err)
-		common.HandleError(c, http.StatusInternalServerError, "failed to create folder: "+clusterDir)
+		common.HandleError(c, http.StatusInternalServerError, "failed to create folder", err)
 		return
 	}
 
@@ -46,8 +44,7 @@ func CreateCluster(c *gin.Context) {
 	inventoryFile, err := os.OpenFile(inventoryFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
 
 	if err != nil {
-		logrus.Warning("failed to create inventory file: "+inventoryFilePath, err)
-		common.HandleError(c, http.StatusInternalServerError, "failed to create inventory file: "+inventoryFilePath)
+		common.HandleError(c, http.StatusInternalServerError, "failed to create inventory file "+inventoryFilePath, err)
 		return
 	}
 
@@ -59,16 +56,14 @@ func CreateCluster(c *gin.Context) {
 	_, err = inventoryFile.WriteString(template)
 
 	if err != nil {
-		logrus.Warning("failed to write inventory file: "+inventoryFilePath, err)
-		common.HandleError(c, http.StatusInternalServerError, "failed to write inventory file: "+inventoryFilePath)
+		common.HandleError(c, http.StatusInternalServerError, "failed to write inventory file: "+inventoryFilePath, err)
 	}
 
 	data := gin.H{}
 
 	err = yaml.Unmarshal([]byte(template), &data)
 	if err != nil {
-		logrus.Warning("cannot parse file: "+inventoryFilePath, err)
-		common.HandleError(c, http.StatusInternalServerError, "cannot parse file: "+inventoryFilePath+" "+err.Error())
+		common.HandleError(c, http.StatusInternalServerError, "cannot parse file: "+inventoryFilePath, err)
 		return
 	}
 

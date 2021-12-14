@@ -17,12 +17,12 @@ func ListClusters(c *gin.Context) {
 
 		err1 := common.CreateDirIfNotExists(constants.GET_DATA_DIR())
 		if err1 != nil {
-			common.HandleError(c, http.StatusInternalServerError, "cannot create folder: "+constants.GET_DATA_DIR())
+			common.HandleError(c, http.StatusInternalServerError, "cannot create folder: "+constants.GET_DATA_DIR(), err1)
 			return
 		}
 		err2 := common.CreateDirIfNotExists(constants.GET_DATA_INVENTORY_DIR())
 		if err2 != nil {
-			common.HandleError(c, http.StatusInternalServerError, "cannot create folder: "+constants.GET_DATA_INVENTORY_DIR())
+			common.HandleError(c, http.StatusInternalServerError, "cannot create folder: "+constants.GET_DATA_INVENTORY_DIR(), err2)
 			return
 		}
 		logrus.Warning("已成功创建该文件夹: " + constants.GET_DATA_INVENTORY_DIR())

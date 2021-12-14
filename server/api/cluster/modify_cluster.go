@@ -22,8 +22,7 @@ func ModifyCluster(c *gin.Context) {
 	logrus.Trace(string(buf))
 
 	if err != nil {
-		logrus.Warning("failed to read request", err)
-		common.HandleError(c, http.StatusInternalServerError, "failed to read request: "+err.Error())
+		common.HandleError(c, http.StatusInternalServerError, "failed to read request", err)
 		return
 	}
 
@@ -31,16 +30,14 @@ func ModifyCluster(c *gin.Context) {
 	err = json.Unmarshal(buf, &inventory)
 
 	if err != nil {
-		logrus.Warning("failed to parse request", err)
-		common.HandleError(c, http.StatusInternalServerError, "failed to parse request: "+err.Error())
+		common.HandleError(c, http.StatusInternalServerError, "failed to parse request", err)
 		return
 	}
 
 	inventoryYamleBytes, err := yaml.Marshal(inventory)
 
 	if err != nil {
-		logrus.Warning("failed to convert request into yaml: ", err)
-		common.HandleError(c, http.StatusBadRequest, "failed to convert request into yaml: "+err.Error())
+		common.HandleError(c, http.StatusBadRequest, "failed to convert request into yaml", err)
 		return
 	}
 
@@ -51,16 +48,14 @@ func ModifyCluster(c *gin.Context) {
 	inventoryFile, err := os.OpenFile(inventoryFilePath, os.O_RDWR|os.O_TRUNC, 0777)
 
 	if err != nil {
-		logrus.Warning("failed to open inventory file: "+inventoryFilePath, err)
-		common.HandleError(c, http.StatusInternalServerError, "failed to open inventory file: "+inventoryFilePath)
+		common.HandleError(c, http.StatusInternalServerError, "failed to open inventory file: "+inventoryFilePath, err)
 		return
 	}
 
 	err = syscall.Flock(int(inventoryFile.Fd()), syscall.LOCK_EX|syscall.LOCK_NB)
 
 	if err != nil {
-		logrus.Warning("failed to lock inventory file: "+inventoryFilePath, err)
-		common.HandleError(c, http.StatusInternalServerError, "failed to lock inventory file: "+inventoryFilePath)
+		common.HandleError(c, http.StatusInternalServerError, "failed to lock inventory file: "+inventoryFilePath, err)
 		return
 	}
 
@@ -69,8 +64,7 @@ func ModifyCluster(c *gin.Context) {
 
 	_, err = inventoryFile.Write(inventoryYamleBytes)
 	if err != nil {
-		logrus.Warning("failed to save inventory file: "+inventoryFilePath, err)
-		common.HandleError(c, http.StatusInternalServerError, "failed to save inventory file: "+inventoryFilePath)
+		common.HandleError(c, http.StatusInternalServerError, "failed to save inventory file: "+inventoryFilePath, err)
 		return
 	}
 

@@ -16,7 +16,7 @@ func AuthHandler(c *gin.Context) {
 	var user UserInfo
 	err := c.ShouldBind(&user)
 	if err != nil {
-		common.HandleError(c, http.StatusBadRequest, "Wrong parameters.")
+		common.HandleError(c, http.StatusBadRequest, "Wrong parameters.", err)
 		return
 	}
 
@@ -30,6 +30,6 @@ func AuthHandler(c *gin.Context) {
 		return
 	}
 
-	common.HandleError(c, http.StatusUnauthorized, "Failed to authorize.")
+	common.HandleError(c, http.StatusUnauthorized, "Failed to authorize.", err)
 
 }

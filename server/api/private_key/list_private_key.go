@@ -24,7 +24,7 @@ func ListPrivateKey(c *gin.Context) {
 
 		err2 := common.CreateDirIfNotExists(ClusterPrivateKeyPath(req.Cluster))
 		if err2 != nil {
-			common.HandleError(c, http.StatusInternalServerError, "cannot create folder: "+ClusterPrivateKeyPath(req.Cluster))
+			common.HandleError(c, http.StatusInternalServerError, "cannot create folder: "+ClusterPrivateKeyPath(req.Cluster), err)
 			return
 		}
 		logrus.Warning("已成功创建该文件夹: " + ClusterPrivateKeyPath(req.Cluster))

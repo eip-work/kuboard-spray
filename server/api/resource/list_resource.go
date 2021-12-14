@@ -12,17 +12,17 @@ import (
 func ListResources(c *gin.Context) {
 	err1 := common.CreateDirIfNotExists(constants.GET_DATA_DIR())
 	if err1 != nil {
-		common.HandleError(c, http.StatusInternalServerError, "cannot create folder: "+constants.GET_DATA_DIR())
+		common.HandleError(c, http.StatusInternalServerError, "cannot create folder: "+constants.GET_DATA_DIR(), err1)
 		return
 	}
 	err2 := common.CreateDirIfNotExists(constants.GET_DATA_RESOURCE_DIR())
 	if err2 != nil {
-		common.HandleError(c, http.StatusInternalServerError, "cannot create folder: "+constants.GET_DATA_RESOURCE_DIR())
+		common.HandleError(c, http.StatusInternalServerError, "cannot create folder: "+constants.GET_DATA_RESOURCE_DIR(), err2)
 		return
 	}
 	fileInfoList, err := ioutil.ReadDir(constants.GET_DATA_RESOURCE_DIR())
 	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "cannot read folder: "+constants.GET_DATA_RESOURCE_DIR())
+		common.HandleError(c, http.StatusInternalServerError, "cannot read folder: "+constants.GET_DATA_RESOURCE_DIR(), err)
 		return
 	}
 

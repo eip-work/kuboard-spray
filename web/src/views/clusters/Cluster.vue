@@ -26,7 +26,10 @@ zh:
         <el-button type="primary" icon="el-icon-check">{{$t('msg.save')}}</el-button>
       </template>
     </ControlBar>
-    <el-tabs type="border-card">
+    <el-card shadow="none" v-if="loading">
+      <el-skeleton animated :rows="10"></el-skeleton>
+    </el-card>
+    <el-tabs type="border-card" v-else>
       <el-tab-pane :label="$t('plan')">
         <Plan v-if="cluster" :cluster="cluster" :mode="mode"></Plan>
       </el-tab-pane>
@@ -59,6 +62,9 @@ export default {
       { label: this.name }
     ]
   },
+  refresh () {
+    this.refresh()
+  },
   data () {
     return {
       loading: false,
@@ -74,19 +80,24 @@ export default {
     }
   },
   mounted () {
-    this.kuboardSprayApi.get(`/clusters/${this.name}`).then(resp => {
-      this.cluster = resp.data.data
-      this.loadResourcePackage()
-    }).catch(e => {
-      console.log(e.response)
-    })
+    this.refresh()
   },
   methods: {
-    loadResourcePackage () {
+    async refresh() {
+      this.loading = true
+      await this.kuboardSprayApi.get(`/clusters/${this.name}`).then(resp => {
+        this.cluster = resp.data.data
+        this.loadResourcePackage()
+      }).catch(e => {
+        console.log(e.response)
+      })
+      this.loading = false
+    },
+    async loadResourcePackage () {
       this.cluster.resourcePackage = undefined
       let newValue = this.cluster.inventory.all.hosts.localhost.kuboardspray_resource_package
       if (newValue) {
-        this.kuboardSprayApi.get(`/resources/${newValue}`).then(resp => {
+        await this.kuboardSprayApi.get(`/resources/${newValue}`).then(resp => {
           this.cluster.resourcePackage = resp.data.data.package
         }).catch(e => {
           console.log(e)

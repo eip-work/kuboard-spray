@@ -76,13 +76,13 @@ export default {
       return window.KuboardSpray.version.version
     }
   },
-  watch: {
-    loading (value) {
-      if (value) {
-        this.$showErrorMsg()
-      }
-    }
-  },
+  // watch: {
+  //   loading (value) {
+  //     if (value) {
+  //       this.$showErrorMsg()
+  //     }
+  //   }
+  // },
   mounted () {
     this.interval = setInterval(() => {
       this.current = this.current + 1

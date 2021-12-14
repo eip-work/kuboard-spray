@@ -40,17 +40,11 @@ zh:
           </Node>
           <div class="horizontalConnection" :style="bastionEnabled ? '' : 'border-color: white;'"></div>
         </div>
-        <!-- <el-button @click="$refs.form.validate()">校验</el-button>
-        <el-radio-group v-model="mode">
-          <el-radio-button label="create"></el-radio-button>
-          <el-radio-button label="edit"></el-radio-button>
-          <el-radio-button label="view"></el-radio-button>
-        </el-radio-group> -->
       </div>
       <div class="right">
         <div style="padding: 5px; font-weight: bolder; font-size: 14px; height: 28px; line-height: 28px;">
-          Kubernetes Cluster
-          <AddNode v-if="mode !== 'view'" :inventory="inventory"></AddNode>
+          <span style="margin-right: 20px;">Kubernetes Cluster</span>
+          <AddNode :inventory="inventory"></AddNode>
         </div>
         <el-scrollbar height="calc(100vh - 283px)">
           <div class="masters">

@@ -15,7 +15,8 @@ zh:
   <el-popover placement="right-start" :title="$t('addNode')"
     v-model:visible="addNodeForm.visible" :width="420" trigger="manual">
     <template #reference>
-      <el-button icon="el-icon-plus" type="primary" style="margin-left: 20px;" @click="addNodeForm.visible = true">{{$t('addNode')}}</el-button>
+      <el-button icon="el-icon-plus" type="primary" @click="addNodeForm.visible = true"
+        :disabled="editMode === 'view'">{{$t('addNode')}}</el-button>
     </template>
     <el-form label-position="left" label-width="80px" ref="addNodeForm" :model="addNodeForm">
       <el-form-item :label="$t('nodeName')" prop="name" :rules="nodeNameRules">
@@ -74,6 +75,7 @@ export default {
       set () {},
     }
   },
+  inject: ['editMode'],
   methods: {
     addNode () {
       this.$refs.addNodeForm.validate(flag => {

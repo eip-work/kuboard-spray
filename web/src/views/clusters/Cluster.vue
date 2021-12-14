@@ -4,33 +4,45 @@ en:
   clusterList: Clusters List
   plan: Cluster Plan
   node: Nodes Maintainance
+  apply: Apply
+  confirmToApply: Do the installation of Kubernetes Cluster, are you sure?
 zh:
   clusterList: 集群列表
   cluster: 集群
   plan: 集群规划
   nodes: 节点维护
+  apply: 执 行
+  confirmToApply: 将执行集群安装动作，请确认已完成集群规划！
 </i18n>
 
 <template>
   <div>
     <ControlBar :title="name">
       <!-- <el-select style="margin-right: 10px;"></el-select> -->
-      <template v-if="mode === 'view'">
-        <el-button type="primary" icon="el-icon-edit" @click="$router.replace(`/clusters/${name}?mode=edit`)">{{$t('msg.edit')}}</el-button>
-      </template>
-      <template v-if="mode === 'edit'">
-        <el-button type="default" icon="el-icon-close" @click="$router.replace(`/clusters/${name}`)">{{$t('msg.cancel')}}</el-button>
-        <el-button type="primary" icon="el-icon-check" :disabled="noSaveRequired" @click="save">{{$t('msg.save')}}</el-button>
-      </template>
-      <template v-if="mode === 'create'">
-        <el-button type="primary" icon="el-icon-check">{{$t('msg.save')}}</el-button>
+      <template v-if="currentTab === 'plan'">
+        <template v-if="mode === 'view'">
+          <el-button type="primary" icon="el-icon-edit" @click="$router.replace(`/clusters/${name}?mode=edit`)">{{$t('msg.edit')}}</el-button>
+          <el-popconfirm :confirm-button-text="$t('msg.ok')" :cancel-button-text="$t('msg.cancel')" placement="bottom-start"
+            icon="el-icon-lightning" icon-color="red" :title="$t('confirmToApply')" @confirm="applyPlan">
+            <template #reference>
+              <el-button type="danger" icon="el-icon-lightning">{{$t('apply')}}</el-button>
+            </template>
+          </el-popconfirm>
+        </template>
+        <template v-if="mode === 'edit'">
+          <el-button type="default" icon="el-icon-close" @click="$router.replace(`/clusters/${name}`)">{{$t('msg.cancel')}}</el-button>
+          <el-button type="primary" icon="el-icon-check" :disabled="noSaveRequired" @click="save">{{$t('msg.save')}}</el-button>
+        </template>
+        <template v-if="mode === 'create'">
+          <el-button type="primary" icon="el-icon-check">{{$t('msg.save')}}</el-button>
+        </template>
       </template>
     </ControlBar>
     <el-card shadow="none" v-if="loading">
       <el-skeleton animated :rows="10"></el-skeleton>
     </el-card>
-    <el-tabs type="border-card" v-else>
-      <el-tab-pane :label="$t('plan')">
+    <el-tabs type="border-card" v-else v-model="currentTab">
+      <el-tab-pane :label="$t('plan')" name="plan">
         <Plan v-if="cluster" ref="plan" :cluster="cluster" :mode="mode"></Plan>
       </el-tab-pane>
       <el-tab-pane disabled label="健康检查">检查集群的状态与集群规划内容的匹配情况（正在建设...）</el-tab-pane>
@@ -71,6 +83,7 @@ export default {
       loading: false,
       cluster: undefined,
       originalInventoryYaml: '',
+      currentTab: 'plan'
     }
   },
   computed: {
@@ -124,6 +137,13 @@ export default {
             this.$message.error(this.$t('msg.save_failed', e.response.data.message))
           })
         }
+      })
+    },
+    applyPlan () {
+      this.kuboardSprayApi.post(`/clusters/${this.name}/apply`).then(resp => {
+        console.log(resp.data)
+      }).catch(e => {
+        this.$message.error('' + e.response.data.message)
       })
     }
   }

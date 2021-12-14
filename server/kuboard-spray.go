@@ -27,6 +27,8 @@ func setupRouter() *gin.Engine {
 	api.GET("/clusters/:cluster", cluster.GetCluster)
 	api.PUT("/clusters/:cluster", cluster.ModifyCluster)
 
+	api.POST("/clusters/:cluster/apply", cluster.ApplyPlan)
+
 	api.GET("/clusters/:cluster/private-keys", private_key.ListPrivateKey)
 	api.GET("/clusters/:cluster/private-keys/:name", private_key.GetPrivateKey)
 	api.POST("/clusters/:cluster/private-keys/:name", private_key.UploadPrivateKeyFile)

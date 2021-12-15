@@ -26,8 +26,9 @@ const comp = {
     kuboardSprayApi.interceptors.response.use(function (response) {
       return response;
     }, function (error) {
+      console.log(error.response.status, error.response.data)
       if (error.response && error.response.status === 401) {
-        window.VueAppComponent.$alert(window.VueAppComponent.$t('loginRequired'), this.VueAppComponent.$t('loginRequired'), {
+        window.VueAppComponent.$alert(window.VueAppComponent.$t('loginRequired'), window.VueAppComponent.$t('loginRequired'), {
           callback: () => {
             clearAllCookie()
             window.VueAppComponent.$router.push('/login')

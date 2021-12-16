@@ -38,6 +38,8 @@ export default {
       if (this.required) {
         let message = this.$t('field.' + this.fieldName) + ' ' + this.$t('isRequiredField')
         result.push({
+          required: true,
+          message: message,
           validator: (rule, value, callback) => {
             if (value !== undefined && value !== '') {
               return callback()

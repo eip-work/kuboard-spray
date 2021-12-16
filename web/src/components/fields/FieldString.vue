@@ -3,7 +3,7 @@
     <template #label>
       {{ $t('field.' + fieldName) }}
     </template>
-    <el-input v-if="editMode !== 'view'" v-model.trim="obj[fieldName]" :show-password="showPassword"
+    <el-input v-if="editMode !== 'view'" v-model.trim="obj[fieldName]" :show-password="showPassword" :disabled="disabled"
       :placeholder="placeholder || $t('field.' + fieldName + '_placeholder')"></el-input>
     <div v-else class="app_text_mono">{{ obj[fieldName] }}</div>
   </el-form-item>
@@ -20,6 +20,7 @@ export default {
     rules: { type: Array, required: false, default: () => ([])},
     showPassword: { type: Boolean, required: false, default: false },
     placeholder: { type: String, required: false, default: undefined },
+    disabled: { type: Boolean, required: false, default: false },
   },
   data () {
     return {
@@ -41,12 +42,14 @@ export default {
       if (this.required) {
         let message = this.$t('field.' + this.fieldName) + ' ' + this.$t('isRequiredField')
         result.push({
+          required: true,
           validator: (rule, value, callback) => {
             if (value !== undefined && value !== '') {
               return callback()
             }
             return callback(message)
           },
+          message: message,
           trigger: 'blur'
         })
       }

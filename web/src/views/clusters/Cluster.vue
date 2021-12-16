@@ -28,6 +28,7 @@ zh:
               <el-button type="danger" icon="el-icon-lightning">{{$t('apply')}}</el-button>
             </template>
           </el-popconfirm>
+          <el-button type="warning" icon="el-icon-lightning" @click="applyPlan">{{$t('apply')}}</el-button>
         </template>
         <template v-if="mode === 'edit'">
           <el-button type="default" icon="el-icon-close" @click="$router.replace(`/clusters/${name}`)">{{$t('msg.cancel')}}</el-button>
@@ -140,8 +141,9 @@ export default {
       })
     },
     applyPlan () {
-      this.kuboardSprayApi.post(`/clusters/${this.name}/apply`).then(resp => {
+      this.kuboardSprayApi.post(`/clusters/${this.name}/install`).then(resp => {
         console.log(resp.data)
+        this.openUrlInBlank(`/#/clusters/${this.name}/history/lastrun/tail/command.log`)
       }).catch(e => {
         this.$message.error('' + e.response.data.message)
       })

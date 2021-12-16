@@ -11,6 +11,7 @@
     "@element-plus/icons": "^0.0.11",
     "@intlify/vue-i18n-loader": "^4.0.1",
     "axios": "^0.24.0",
+    "base64-url": "^2.3.3",
     "clone": "^2.1.2",
     "codemirror": "^5.62.3",
     "codemirror-editor-vue3": "^0.2.4",
@@ -26,6 +27,9 @@
     "vue-i18n": "^9.2.0-beta.23",
     "vue-router": "4",
     "vuex": "^4.0.2",
+    "xterm": "^4.15.0",
+    "xterm-addon-fit": "^0.5.0",
+    "xterm-addon-search": "^0.8.1",
     "yaml-loader": "^0.6.0"
   },
   "devDependencies": {

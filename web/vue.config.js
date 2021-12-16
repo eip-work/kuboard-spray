@@ -5,20 +5,29 @@ module.exports = {
     devServer: {
         port: 25702,
         host: '0.0.0.0',
-        public: 'localhost:25702',
+        public: 'kb:25702',
         allowedHosts: ['kb'],
         disableHostCheck: true,
         compress: true,
         hot: true,
         historyApiFallback: true,
         proxy: {
-          '/kuboardspray/default/api/': {
+          '/kuboardspray/': {
             target: 'http://localhost:8006',
             changeOrigin: true,
+            ws: true,
             pathRewrite: {
-              '^/kuboardspray/default/api/': '/kuboardspray/default/api/'
+              '^/kuboardspray/': '/kuboardspray/'
             }
           },
+          // '/clusters/': {
+          //   target: 'http://localhost:8006',
+          //   changeOrigin: true,
+          //   ws: true,
+          //   pathRewrite: {
+          //     '^/clusters/': '/clusters/'
+          //   }
+          // },
         }
     },
     configureWebpack: config => {

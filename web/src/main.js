@@ -11,7 +11,8 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
 import store from './store'
 import i18n from './i18n'
-import initAxios from './utils/axios'
+import initAxios from './utils/axios.js'
+import openUrlInBlank from './utils/open-in-blank.js'
 
 import version from './version.json'
 import components from './components/index.js'
@@ -28,6 +29,7 @@ app.use(i18n)
 icons(app)
 app.use(components)
 app.use(initAxios)
+app.use(openUrlInBlank)
 app.config.unwrapInjectedRef = true
 initKuboardMfe(app)
 app.mount('#app')

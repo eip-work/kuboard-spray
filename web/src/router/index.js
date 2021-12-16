@@ -36,6 +36,11 @@ const constantRouterMap = [
     ],
   },
   {
+    path: '/clusters/:name/history/:pid/tail/:file',
+    component: () => import('../views/logs/TailFile.vue'),
+    props: route => ({ cluster: route.params.name, pid: route.params.pid, file: route.params.file })
+  },
+  {
     path: '/settings',
     component: () => import('../components/layout/Layout.vue'),
     children: [

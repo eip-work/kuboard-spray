@@ -7,7 +7,7 @@ import (
 
 func HandleError(c *gin.Context, code int, message string, err error) {
 	if err != nil {
-		logrus.Warn(message, err)
+		logrus.Warning(message, err)
 		c.JSON(code, gin.H{
 			"code":    code,
 			"message": message + " : " + err.Error(),

@@ -32,6 +32,7 @@ const messages = {
       cancel: 'Cancel',
       upload: 'Upload',
       edit: 'Edit',
+      prompt: 'Prompt',
       save_succeeded: 'Succeeded in saving.',
       save_failed: 'Failed in saving. {msg}',
     }
@@ -61,6 +62,7 @@ const messages = {
       cancel: '取 消',
       upload: '上 传',
       edit: '编 辑',
+      prompt: '提 示',
       save_succeeded: '保存成功',
       save_failed: '保存失败： {msg}',
     }

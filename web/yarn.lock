@@ -2203,6 +2203,11 @@ base64-js@^1.0.2:
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
 
+base64-url@^2.3.3:
+  version "2.3.3"
+  resolved "https://registry.npm.taobao.org/base64-url/download/base64-url-2.3.3.tgz#645b71455c75109511f27d98450327e455f488ec"
+  integrity sha1-ZFtxRVx1EJUR8n2YRQMn5FX0iOw=
+
 base@^0.11.1:
   version "0.11.2"
   resolved "https://registry.yarnpkg.com/base/-/base-0.11.2.tgz#7bde5ced145b6d551a90db87f83c558b4eb48a8f"
@@ -10543,6 +10548,21 @@ xtend@~3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-3.0.0.tgz#5cce7407baf642cba7becda568111c493f59665a"
   integrity sha1-XM50B7r2Qsunvs2laBEcST9ZZlo=
+
+xterm-addon-fit@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.npmmirror.com/xterm-addon-fit/download/xterm-addon-fit-0.5.0.tgz#2d51b983b786a97dcd6cde805e700c7f913bc596"
+  integrity sha1-LVG5g7eGqX3NbN6AXnAMf5E7xZY=
+
+xterm-addon-search@^0.8.1:
+  version "0.8.1"
+  resolved "https://registry.npmmirror.com/xterm-addon-search/download/xterm-addon-search-0.8.1.tgz#dfc557e9bcf5fd8ed96292c0d271aa865bc545d5"
+  integrity sha1-38VX6bz1/Y7ZYpLA0nGqhlvFRdU=
+
+xterm@^4.15.0:
+  version "4.15.0"
+  resolved "https://registry.npmmirror.com/xterm/download/xterm-4.15.0.tgz#e52038507eba7e0d36d47f81e29fe548c82b9561"
+  integrity sha1-5SA4UH66fg021H+B4p/lSMgrlWE=
 
 y18n@^4.0.0:
   version "4.0.3"

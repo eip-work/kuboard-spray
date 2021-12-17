@@ -6,7 +6,6 @@ import (
 
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 )
 
 func JWTAuthMiddleware() func(c *gin.Context) {
@@ -31,7 +30,6 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 			}
 		}
 
-		logrus.Trace(token)
 		mc, err := ParseToken(token)
 		if err != nil {
 			common.HandleError(c, http.StatusUnauthorized, "Invalid authorization token.", err)
@@ -39,6 +37,6 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 		}
 		// 将当前请求的username信息保存到请求的上下文c上
 		c.Set("username", mc.Username)
-		c.Next() // 后续的处理函数可以用过c.Get("username")来获取当前请求的用户信息
+		c.Next() // 用户已认证
 	}
 }

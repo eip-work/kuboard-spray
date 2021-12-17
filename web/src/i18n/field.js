@@ -25,7 +25,9 @@ const field = {
     'ansible_connection-ssh': 'ssh',
 
     ansible_host: '主机',
-    ansible_host_placeholder: 'KuboardSpray 连接该主机时所使用的主机名或 IP 地址',
+    ansible_port: 'SSH 端口',
+    ansible_port_placeholder: 'KuboardSpray 连接该主机时所使用的 SHH 端口',
+    
     ansible_user: '用户名',
     ansible_user_placeholder: 'KuboardSpray 连接该主机时所使用的用户名',
     ansible_password: '密码',

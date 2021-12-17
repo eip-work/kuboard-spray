@@ -6,6 +6,7 @@ import (
 
 	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/api/command"
+	"github.com/eip-work/kuboard-spray/api/node"
 	"github.com/eip-work/kuboard-spray/api/private_key"
 	"github.com/eip-work/kuboard-spray/api/resource"
 	"github.com/eip-work/kuboard-spray/log"
@@ -31,6 +32,8 @@ func setupRouter() *gin.Engine {
 	api.POST("/clusters/:cluster/install", cluster.InstallCluster)
 	api.GET("/clusters/:cluster/history/:pid/tail/:file", command.TailFile)
 	// router.GET("/kuboardspray/:kuboardsprayID/api/clusters/:cluster/history/:pid/tail/:file", command.TailFile)
+
+	api.POST("/clusters/:cluster/facts/:node", node.GetNodeFacts)
 
 	api.GET("/clusters/:cluster/private-keys", private_key.ListPrivateKey)
 	api.GET("/clusters/:cluster/private-keys/:name", private_key.GetPrivateKey)

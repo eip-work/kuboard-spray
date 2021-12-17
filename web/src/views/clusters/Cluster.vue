@@ -42,7 +42,7 @@ zh:
     <el-card shadow="none" v-if="loading">
       <el-skeleton animated :rows="10"></el-skeleton>
     </el-card>
-    <el-tabs type="border-card" v-else v-model="currentTab">
+    <el-tabs type="border-card" v-show="!loading" v-model="currentTab">
       <el-tab-pane :label="$t('plan')" name="plan">
         <Plan v-if="cluster" ref="plan" :cluster="cluster" :mode="mode"></Plan>
       </el-tab-pane>

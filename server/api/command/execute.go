@@ -13,10 +13,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type ErrorHolder struct {
-	Error error
-}
-
 type Execute struct {
 	Cmd     string
 	Args    []string

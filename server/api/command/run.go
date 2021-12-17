@@ -51,7 +51,7 @@ func (run *Run) Run() ([]byte, []byte, error) {
 
 	logrus.Trace("run command: ", run.ToString())
 	cmd := exec.Command(run.Cmd, run.Args...)
-	cmd.Env = []string{"ANSIBLE_HOST_KEY_CHECKING=True"}
+	cmd.Env = []string{"ANSIBLE_HOST_KEY_CHECKING=False"}
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {

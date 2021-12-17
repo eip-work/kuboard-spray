@@ -218,13 +218,22 @@ export default {
   components: { SshParamsNode, ConfigSection, NodeRoleTag, PackageContentField },
   mounted () {
   },
+  watch: {
+    nodeName: function() {
+      this.fact = undefined
+      setTimeout(() => {
+        this.loadFacts(true)
+      }, 200)
+    }
+  },
   methods: {
-    async loadFacts() {
+    async loadFacts(fromCache) {
+      this.fact = undefined
       this.$refs.form.validate(async flag => {
         if (flag) {
-          this.fact = undefined
           this.loadingFact = true
           let req = {
+            from_cache: fromCache,
             ansible_host: this.inventory.all.hosts[this.nodeName].ansible_host || this.inventory.all.children.k8s_cluster.vars.ansible_host,
             ansible_port: this.inventory.all.hosts[this.nodeName].ansible_port || this.inventory.all.children.k8s_cluster.vars.ansible_port,
             ansible_user: this.inventory.all.hosts[this.nodeName].ansible_user || this.inventory.all.children.k8s_cluster.vars.ansible_user,

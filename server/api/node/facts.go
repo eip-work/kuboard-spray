@@ -18,6 +18,7 @@ import (
 type GetNodeFactRequest struct {
 	Cluster        string `uri:"cluster"`
 	Node           string `uri:"node"`
+	FromCache      bool   `json:"from_cache"`
 	Ip             string `json:"ansible_host" binding:"required"`
 	Port           string `json:"ansible_port" binding:"required"`
 	User           string `json:"ansible_user" binding:"required"`
@@ -34,7 +35,14 @@ func GetNodeFacts(c *gin.Context) {
 	c.ShouldBindJSON(&req)
 	c.ShouldBindUri(&req)
 
-	result, err := NodeFacts(req)
+	var result *gin.H
+	var err error
+
+	if req.FromCache {
+		result, err = nodefact_cached(req)
+	} else {
+		result, err = nodefacts(req)
+	}
 
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "Failed to get node facts: ", err)
@@ -45,7 +53,7 @@ func GetNodeFacts(c *gin.Context) {
 
 }
 
-func NodeFacts(req GetNodeFactRequest) (*gin.H, error) {
+func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 
 	inventory := gin.H{
 		"all": gin.H{
@@ -59,6 +67,7 @@ func NodeFacts(req GetNodeFactRequest) (*gin.H, error) {
 					"ansible_become":               req.Become,
 					"ansible_become_user":          req.BecomeUser,
 					"ansible_become_password":      req.BecomePassword,
+					"host_key_checking":            false,
 				},
 			},
 		},

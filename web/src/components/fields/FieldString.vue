@@ -5,7 +5,10 @@
     </template>
     <el-input v-if="editMode !== 'view'" v-model.trim="obj[fieldName]" :show-password="showPassword" :disabled="disabled"
       :placeholder="placeholder || $t('field.' + fieldName + '_placeholder')"></el-input>
-    <div v-else class="app_text_mono">{{ obj[fieldName] }}</div>
+    <div v-else class="app_text_mono">
+      <span v-if="obj[fieldName]">{{ obj[fieldName] }}</span>
+      <span v-else class="field_placeholder">{{ placeholder }}</span>
+    </div>
   </el-form-item>
 </template>
 
@@ -67,5 +70,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+.field_placeholder {
+  color: $--color-text-placeholder;
+  font-size: 12px;
+}
 </style>

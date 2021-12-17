@@ -1,5 +1,5 @@
 <template>
-  <div :class="(enabled ? 'role noselect selected ' : 'role noselect ') + role">
+  <div :class="(enabled ? 'role noselect selected ' : 'role noselect ') + role" @click="click">
     <el-icon style="vertical-align: middle; margin-top: -3px;">
       <circle-check v-if="enabled"/>
       <circle-close v-else/>
@@ -21,13 +21,18 @@ export default {
 
     }
   },
+  inject: ['editMode'],
   computed: {
   },
   components: { CircleCheck, CircleClose },
   mounted () {
   },
   methods: {
-
+    click () {
+      if (this.editMode !== 'view') {
+        this.$emit('clickTag')
+      }
+    }
   }
 }
 </script>

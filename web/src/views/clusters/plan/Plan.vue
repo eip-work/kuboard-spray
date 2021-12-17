@@ -21,9 +21,8 @@ zh:
       <div class="left">
         <div style="padding: 5px; font-weight: bolder; font-size: 14px;">Kuboard Spray</div>
         <div>
-          <Node class="localhost" name="localhost" :inventory="inventory" style="width: 100px;"
+          <Node class="localhost" name="localhost" :inventory="inventory" style="width: 100px;" hideDeleteButton
             :active="currentPropertiesTab === 'localhost' || currentPropertiesTab === 'global_config'" @click="currentPropertiesTab = 'localhost'">
-            <!-- <div class="role">{{$t('agent')}}</div> -->
           </Node>
         </div>
         <div>
@@ -31,7 +30,7 @@ zh:
           <div v-else class="horizontalConnection"></div>
         </div>
         <div>
-          <Node class="bastion" name="bastion" :inventory="inventory" style="width: 100px;"
+          <Node class="bastion" name="bastion" :inventory="inventory" style="width: 100px;" hideDeleteButton
             :active="currentPropertiesTab === 'bastion'" @click="showBastion">
             <div style="margin-top: 10px;">
               <el-tag v-if="bastionEnabled" type="danger" effect="dark" size="small" style="width: 100px; text-align: center;">{{$t('enabledBation')}}</el-tag>
@@ -49,19 +48,19 @@ zh:
         <el-scrollbar height="calc(100vh - 283px)">
           <div class="masters">
             <Node v-for="(item, index) in inventory.all.children.k8s_cluster.children.kube_control_plane.hosts" :key="'control_plane' + index"
-              @click="currentPropertiesTab = 'NODE_' + index"
+              @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)"
               :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"
               :name="index" :inventory="inventory"></Node>
             <template v-for="(item, index) in inventory.all.children.etcd.hosts" :key="'etcd' + index">
               <Node v-if="isEtcdAndNotControlPlane(index)" :name="index" :inventory="inventory"
-                @click="currentPropertiesTab = 'NODE_' + index"
+                @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)"
                 :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"></Node>
             </template>
           </div>
           <div class="workers">
             <template v-for="(item, index) in inventory.all.children.k8s_cluster.children.kube_node.hosts" :key="'node' + index">
               <Node v-if="isNode(index)" :name="index" :inventory="inventory"
-                @click="currentPropertiesTab = 'NODE_' + index"
+                @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)"
                 :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"></Node>
             </template>
           </div>
@@ -131,7 +130,7 @@ zh:
               </div>
             </el-scrollbar>
           </el-tab-pane> -->
-          <el-tab-pane :name="currentPropertiesTab" v-if="currentPropertiesTab.startsWith('NODE_')">
+          <el-tab-pane :name="currentPropertiesTab" v-if="currentPropertiesTab.indexOf('NODE_') === 0 && inventory.all.hosts[currentPropertiesTab.slice(5)]">
             <template #label>
               <div style="width: 100px; text-align: center;">{{ currentPropertiesTab.slice(5) }}</div>
             </template>
@@ -199,6 +198,13 @@ export default {
   components: { Node, ConfigKuboardSpray, ConfigK8sCluster, ConfigNode, ConfigEtcd, AddNode },
   mounted () {
   },
+  watch: {
+    'inventory.all.hosts': function() {
+      if (this.inventory.all.hosts[this.currentPropertiesTab.slice(5)] === undefined) {
+        this.currentPropertiesTab = 'node_nodes'
+      }
+    }
+  },
   methods: {
     validate (callback) {
       this.$refs.form.validate(callback)
@@ -245,6 +251,12 @@ export default {
       }, 400)
       this.$message.info(this.$t('bastionPrompt'))
     },
+    deleteNode(nodeName) {
+      delete this.inventory.all.hosts[nodeName]
+      delete this.inventory.all.children.k8s_cluster.children.kube_control_plane.hosts[nodeName]
+      delete this.inventory.all.children.k8s_cluster.children.kube_node.hosts[nodeName]
+      delete this.inventory.all.children.etcd.hosts[nodeName]
+    }
   }
 }
 </script>

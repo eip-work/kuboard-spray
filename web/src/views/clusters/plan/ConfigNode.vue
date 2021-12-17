@@ -2,6 +2,7 @@
 en:
   sshcommon: SSH Params (apply to node {nodeName})
   etcd: "ETCD params (scope: node {nodeName})"
+  etcd_member_name_required: Please input etcd_member_name
   roles: Node Role
   roleDescription: 'Node Role (scope: node {nodeName})'
   requiresAtLeastOneRole: Requires at least one role
@@ -16,6 +17,7 @@ en:
 zh:
   sshcommon: SSH 连接参数（适用范围：节点 {nodeName}）
   etcd: "ETCD 参数（适用范围：节点 {nodeName}）"
+  etcd_member_name_required: 请填写 ETCD 成员名称
   roles: 节点角色
   roleDescription: 节点角色（适用范围：节点 {nodeName}）
   requiresAtLeastOneRole: 至少需要一个角色
@@ -34,7 +36,7 @@ zh:
     <SshParamsNode :inventory="inventory" :holder="inventory.all.hosts[nodeName]" :prop="`all.hosts.${nodeName}`" :clusterName="clusterName" :nodeName="nodeName" :description="$t('sshcommon', {nodeName: nodeName})" isNode>
       <el-form-item>
         <div style="text-align: right;">
-          <el-button type="primary" :loading="loadingFact" icon="el-icon-refresh-left" @click="loadFacts">{{$t('validate')}}</el-button>
+          <el-button type="primary" :loading="loadingFact" icon="el-icon-refresh-left" @click="loadFacts(false)">{{$t('validate')}}</el-button>
         </div>
       </el-form-item>
       <el-skeleton v-if="loadingFact" animated></el-skeleton>
@@ -97,9 +99,9 @@ zh:
     <ConfigSection v-model:enabled="enabledRoles" :label="$t('roles')" :description="$t('roleDescription', {nodeName: nodeName})" disabled>
       <el-form-item :label="$t('roles')">
         <div class="roles">
-          <NodeRoleTag :enabled="isKubeControlPlane" role="kube_control_plane" @click="isKubeControlPlane = !isKubeControlPlane"></NodeRoleTag>
-          <NodeRoleTag :enabled="isKubeNode" role="kube_node" @click="isKubeNode = !isKubeNode"></NodeRoleTag>
-          <NodeRoleTag :enabled="isEtcd" role="etcd" @click="isEtcd = !isEtcd"></NodeRoleTag>
+          <NodeRoleTag :enabled="isKubeControlPlane" role="kube_control_plane" @clickTag="isKubeControlPlane = !isKubeControlPlane"></NodeRoleTag>
+          <NodeRoleTag :enabled="isKubeNode" role="kube_node" @clickTag="isKubeNode = !isKubeNode"></NodeRoleTag>
+          <NodeRoleTag :enabled="isEtcd" role="etcd" @clickTag="isEtcd = !isEtcd"></NodeRoleTag>
         </div>
       </el-form-item>
     </ConfigSection>
@@ -217,6 +219,7 @@ export default {
   },
   components: { SshParamsNode, ConfigSection, NodeRoleTag, PackageContentField },
   mounted () {
+    this.loadFacts(true)
   },
   watch: {
     nodeName: function() {
@@ -230,6 +233,9 @@ export default {
     async loadFacts(fromCache) {
       this.fact = undefined
       this.$refs.form.validate(async flag => {
+        if (this.inventoryRef.all.children.etcd.hosts[this.nodeName] && !this.inventoryRef.all.children.etcd.hosts[this.nodeName].etcd_member_name && !fromCache) {
+          this.$message.warning(this.$t('etcd_member_name_required'))
+        }
         if (flag) {
           this.loadingFact = true
           let req = {
@@ -244,7 +250,13 @@ export default {
             ansible_become_password: this.inventory.all.hosts[this.nodeName].ansible_become_password || this.inventory.all.children.k8s_cluster.vars.ansible_host,
           }
           await this.kuboardSprayApi.post(`/clusters/${this.clusterName}/facts/${this.nodeName}`, req).then(resp => {
-            this.fact = resp.data
+            if (fromCache) {
+              if (resp.data.ansible_facts !== undefined) {
+                this.fact = resp.data
+              }
+            } else {
+              this.fact = resp.data
+            }
           }).catch(e => {
             this.fact = {
               changed: false,

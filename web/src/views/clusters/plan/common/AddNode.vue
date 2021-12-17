@@ -12,7 +12,7 @@ zh:
 </i18n>
 
 <template>
-  <el-popover placement="right-start" :title="$t('addNode')"
+  <el-popover placement="right-start" :title="$t('addNode')" v-if="editMode !== 'view'"
     v-model:visible="addNodeForm.visible" :width="420" trigger="manual">
     <template #reference>
       <el-button icon="el-icon-plus" type="primary" @click="addNodeForm.visible = true"

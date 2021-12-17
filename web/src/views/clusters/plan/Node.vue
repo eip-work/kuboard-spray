@@ -1,14 +1,30 @@
+<i18n>
+en:
+  confirmDelete: Are you sure to delete this node ?
+zh:
+  confirmDelete: 您是否确认要删除此节点？
+</i18n>
+
 <template>
-  <div :class="active ? 'node active' : 'node'">
-    <div class="app_text_mono" style="font-weight: bold;">
-      <span v-if="name !== 'localhost' && name !== 'bastion'">{{ name }}</span>
-      <span v-else>{{ $t('obj.' + name) }}</span>
+  <div class="node_wrapper">
+    <div class="delete_button" v-if="!hideDeleteButton && editMode !== 'view'">
+        <el-popconfirm icon="el-icon-info" icon-color="red" :title="$t('confirmDelete')" @confirm="$emit('delete_button')" placement="right-start">
+          <template #reference>
+            <el-button icon="el-icon-delete" type="danger" circle @click.prevent.stop></el-button>
+          </template>
+        </el-popconfirm>
     </div>
-    <div class="app_text_mono" v-if="inventory.all.hosts[name]">
-      {{ inventory.all.hosts[name].ansible_host }}
+    <div :class="active ? 'node active' : 'node'">
+      <div class="app_text_mono" style="font-weight: bold;">
+        <span v-if="name !== 'localhost' && name !== 'bastion'">{{ name }}</span>
+        <span v-else>{{ $t('obj.' + name) }}</span>
+      </div>
+      <div class="app_text_mono" v-if="inventory.all.hosts[name]">
+        {{ inventory.all.hosts[name].ansible_host }}
+      </div>
+      <div :class="role + ' role app_text_mono'" v-for="(_, role) in roles" :key="'r' + role">{{$t('node.' + role)}}</div>
+      <slot></slot>
     </div>
-    <div :class="role + ' role app_text_mono'" v-for="(_, role) in roles" :key="'r' + role">{{$t('node.' + role)}}</div>
-    <slot></slot>
   </div>
 </template>
 
@@ -19,7 +35,9 @@ export default {
     name: { type: String, required: true },
     inventory: { type: Object, required: true },
     active: { type: Boolean, required: false, default: false },
+    hideDeleteButton: { type: Boolean, required: false, default: false },
   },
+  inject: ['editMode'],
   computed: {
     roles () {
       let result = {}
@@ -38,7 +56,6 @@ export default {
       return result
     }
   },
-  components: { },
   mounted () {
   },
   methods: {
@@ -48,6 +65,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.node_wrapper{
+  .delete_button {
+    height: 0px;
+    text-align: right;
+    display: none;
+  }
   .node {
     border: solid 1px $--border-color-light;
     border-radius: 5px;
@@ -107,11 +130,16 @@ export default {
       background-color: $--color-warning;
     }
   }
-  .node.active:hover {
-    filter: alpha(opacity=80);
-    -moz-opacity: 0.8;
-    -khtml-opacity: 0.8;
-    opacity: 0.8;
-  }
+  // .node.active:hover {
+  //   filter: alpha(opacity=80);
+  //   -moz-opacity: 0.8;
+  //   -khtml-opacity: 0.8;
+  //   opacity: 0.8;
+  // }
+}
+
+.node_wrapper:hover .delete_button {
+  display: block;
+}
 
 </style>

@@ -13,6 +13,7 @@ zh:
   nodes: 节点维护
   apply: 执 行
   confirmToApply: 将执行集群安装动作，请确认已完成集群规划！
+  confirmToCancel: 将丢失已修改内容，确认取消编辑？
 </i18n>
 
 <template>
@@ -31,7 +32,12 @@ zh:
           <el-button type="warning" icon="el-icon-lightning" @click="applyPlan">{{$t('apply')}}</el-button>
         </template>
         <template v-if="mode === 'edit'">
-          <el-button type="default" icon="el-icon-close" @click="$router.replace(`/clusters/${name}`)">{{$t('msg.cancel')}}</el-button>
+          <el-popconfirm :confirm-button-text="$t('msg.ok')" :cancel-button-text="$t('msg.cancel')" placement="bottom-start"
+            icon="el-icon-warning" icon-color="red" :title="$t('confirmToCancel')" @confirm="cancelEdit">
+            <template #reference>
+              <el-button type="default" icon="el-icon-close">{{$t('msg.cancel')}}</el-button>
+            </template>
+          </el-popconfirm>
           <el-button type="primary" icon="el-icon-check" :disabled="noSaveRequired" @click="save">{{$t('msg.save')}}</el-button>
         </template>
         <template v-if="mode === 'create'">
@@ -105,6 +111,10 @@ export default {
     this.refresh()
   },
   methods: {
+    cancelEdit () {
+      this.$router.replace(`/clusters/${this.name}`)
+      this.refresh()
+    },
     async refresh() {
       this.loading = true
       await this.kuboardSprayApi.get(`/clusters/${this.name}`).then(resp => {

@@ -220,27 +220,31 @@ export default {
   },
   methods: {
     async loadFacts() {
-      this.fact = undefined
-      this.loadingFact = true
-      let req = {
-        ansible_host: this.inventory.all.hosts[this.nodeName].ansible_host || this.inventory.all.children.k8s_cluster.vars.ansible_host,
-        ansible_port: this.inventory.all.hosts[this.nodeName].ansible_port || this.inventory.all.children.k8s_cluster.vars.ansible_port,
-        ansible_user: this.inventory.all.hosts[this.nodeName].ansible_user || this.inventory.all.children.k8s_cluster.vars.ansible_user,
-        ansible_password: this.inventory.all.hosts[this.nodeName].ansible_password || this.inventory.all.children.k8s_cluster.vars.ansible_password,
-        ansible_ssh_private_key_file: this.inventory.all.hosts[this.nodeName].ansible_ssh_private_key_file || this.inventory.all.children.k8s_cluster.vars.ansible_ssh_private_key_file,
-        ansible_become: this.inventory.all.hosts[this.nodeName].ansible_become || this.inventory.all.children.k8s_cluster.vars.ansible_become,
-        ansible_become_user: this.inventory.all.hosts[this.nodeName].ansible_become_user || this.inventory.all.children.k8s_cluster.vars.ansible_become_user,
-        ansible_become_password: this.inventory.all.hosts[this.nodeName].ansible_become_password || this.inventory.all.children.k8s_cluster.vars.ansible_host,
-      }
-      await this.kuboardSprayApi.post(`/clusters/${this.clusterName}/facts/${this.nodeName}`, req).then(resp => {
-        this.fact = resp.data
-      }).catch(e => {
-        this.fact = {
-          changed: false,
-          msg: '' + e,
+      this.$refs.form.validate(async flag => {
+        if (flag) {
+          this.fact = undefined
+          this.loadingFact = true
+          let req = {
+            ansible_host: this.inventory.all.hosts[this.nodeName].ansible_host || this.inventory.all.children.k8s_cluster.vars.ansible_host,
+            ansible_port: this.inventory.all.hosts[this.nodeName].ansible_port || this.inventory.all.children.k8s_cluster.vars.ansible_port,
+            ansible_user: this.inventory.all.hosts[this.nodeName].ansible_user || this.inventory.all.children.k8s_cluster.vars.ansible_user,
+            ansible_password: this.inventory.all.hosts[this.nodeName].ansible_password || this.inventory.all.children.k8s_cluster.vars.ansible_password,
+            ansible_ssh_private_key_file: this.inventory.all.hosts[this.nodeName].ansible_ssh_private_key_file || this.inventory.all.children.k8s_cluster.vars.ansible_ssh_private_key_file,
+            ansible_become: this.inventory.all.hosts[this.nodeName].ansible_become || this.inventory.all.children.k8s_cluster.vars.ansible_become,
+            ansible_become_user: this.inventory.all.hosts[this.nodeName].ansible_become_user || this.inventory.all.children.k8s_cluster.vars.ansible_become_user,
+            ansible_become_password: this.inventory.all.hosts[this.nodeName].ansible_become_password || this.inventory.all.children.k8s_cluster.vars.ansible_host,
+          }
+          await this.kuboardSprayApi.post(`/clusters/${this.clusterName}/facts/${this.nodeName}`, req).then(resp => {
+            this.fact = resp.data
+          }).catch(e => {
+            this.fact = {
+              changed: false,
+              msg: '' + e,
+            }
+          })
+          this.loadingFact = false
         }
       })
-      this.loadingFact = false
     }
   }
 }

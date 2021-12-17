@@ -18,12 +18,14 @@ zh:
     <FieldString :holder="holder" fieldName="ansible_user" :placeholder="placeholder('ansible_user')"></FieldString>
     <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList"
       :placeholder="placeholder('ansible_ssh_private_key_file')">
-      <el-button type="primary" style="margin-left: 10px;" icon="el-icon-plus" @click="$refs.addPrivateKey.show()">{{$t('addSshKey')}}</el-button>
+      <el-button type="primary" plain style="margin-left: 10px;" icon="el-icon-plus" @click="$refs.addPrivateKey.show()">{{$t('addSshKey')}}</el-button>
     </FieldSelect>
     <FieldString :holder="holder" fieldName="ansible_password" show-password
       :placeholder="placeholder('ansible_password')"></FieldString>
-    <FieldBool :holder="holder" fieldName="ansible_become"></FieldBool>
-    <template v-if="holder.ansible_become">
+    <el-form-item :label="$t('field.ansible_become')">
+      <el-switch v-model="ansible_become"></el-switch>
+    </el-form-item>
+    <template v-if="ansible_become">
       <FieldString :holder="holder" fieldName="ansible_become_user" :placeholder="placeholder('ansible_become_user')"></FieldString>
       <FieldString :holder="holder" fieldName="ansible_become_password" :placeholder="placeholder('ansible_become_password')"></FieldString>
     </template>
@@ -60,6 +62,21 @@ export default {
         console.log(v)
       }
     },
+    holderRef: {
+      get () {return this.holder},
+      set () {}
+    },
+    ansible_become: {
+      get () {
+        if (this.holder.ansible_become !== undefined) {
+          return this.holder.ansible_become
+        }
+        return this.inventory.all.children.k8s_cluster.vars.ansible_become 
+      },
+      set (v) {
+        this.holderRef.ansible_become = v
+      }
+    }
   },
   components: { ConfigSection, SshAddPrivateKey },
   mounted () {

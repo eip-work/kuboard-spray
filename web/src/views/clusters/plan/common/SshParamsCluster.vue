@@ -14,7 +14,7 @@ zh:
     <FieldString :holder="holder" fieldName="ansible_port"></FieldString>
     <FieldString :holder="holder" fieldName="ansible_user"></FieldString>
     <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList">
-      <el-button type="primary" style="margin-left: 10px;" icon="el-icon-plus" @click="$refs.addPrivateKey.show()">{{$t('addSshKey')}}</el-button>
+      <el-button type="primary" plain style="margin-left: 10px;" icon="el-icon-plus" @click="$refs.addPrivateKey.show()">{{$t('addSshKey')}}</el-button>
     </FieldSelect>
     <FieldString :holder="holder" fieldName="ansible_password" show-password></FieldString>
     <FieldBool :holder="holder" fieldName="ansible_become"></FieldBool>

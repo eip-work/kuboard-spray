@@ -22,6 +22,7 @@ type Execute struct {
 	Type    string
 	Prepare func(string) error
 	Dir     string
+	Env     []string
 }
 
 func (execute *Execute) ToString(runDirPath string) string {
@@ -110,6 +111,7 @@ func (execute *Execute) exec() {
 	cmd.Stdout = logFile
 	cmd.Stderr = logFile
 	cmd.Dir = execute.Dir
+	cmd.Env = execute.Env
 
 	if err := cmd.Start(); err != nil {
 		execute.Error = errors.New("failed to start command " + execute.ToString(runDirPath) + " : " + err.Error())

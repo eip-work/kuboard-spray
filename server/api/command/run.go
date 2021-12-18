@@ -16,6 +16,7 @@ type Run struct {
 	Cmd     string
 	Args    []string
 	Cluster string
+	Env     []string
 }
 
 func (run *Run) ToString() string {
@@ -51,7 +52,7 @@ func (run *Run) Run() ([]byte, []byte, error) {
 
 	logrus.Trace("run command: ", run.ToString())
 	cmd := exec.Command(run.Cmd, run.Args...)
-	cmd.Env = []string{"ANSIBLE_HOST_KEY_CHECKING=False"}
+	cmd.Env = run.Env
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {

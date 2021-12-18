@@ -200,6 +200,9 @@ export default {
   },
   watch: {
     'inventory.all.hosts': function() {
+      if (this.currentPropertiesTab.indexOf('NODE_') !== 0) {
+        return
+      }
       if (this.inventory.all.hosts[this.currentPropertiesTab.slice(5)] === undefined) {
         this.currentPropertiesTab = 'node_nodes'
       }

@@ -114,7 +114,7 @@ export default {
           this.kuboardSprayApi.post('/clusters', req).then(resp => {
             console.log(resp.data.data)
             this.$message.success(this.$t('msg.save_succeeded'))
-            this.$router.push(`/clusters/${this.form.create.cluster_name}`)
+            this.$router.push(`/clusters/${this.form.create.cluster_name}?mode=edit`)
           }).catch(e => {
             this.$message.error(this.$t('msg.save_failed', {msg: e.response.data.message}))
           })

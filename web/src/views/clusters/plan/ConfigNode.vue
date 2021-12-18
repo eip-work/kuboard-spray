@@ -281,9 +281,13 @@ export default {
             }
           }).catch(e => {
             if (e.response.status !== 417) {
+              let msg = '' + e
+              if (e.response && e.response.data && e.response.data.message){
+                msg = e.response.data.message
+              }
               this.fact = {
                 changed: false,
-                msg: '' + e,
+                msg: msg,
               }
             } else {
               this.fact = {

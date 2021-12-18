@@ -47,7 +47,7 @@ func GetNodeFacts(c *gin.Context) {
 	} else {
 		result, err = nodefacts(req)
 		if err != nil {
-			common.HandleError(c, http.StatusInternalServerError, "Failed to get node facts: ", err)
+			common.HandleError(c, http.StatusInternalServerError, "failed to get node facts.", err)
 			return
 		}
 	}
@@ -98,13 +98,14 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 		Cmd:     "ansible",
 		Args:    []string{req.Node, "-m", "setup", "-i", inventoryPath},
 		Cluster: req.Cluster,
+		Sync:    false,
 	}
 
 	stdout, _, err := run.Run()
 
 	if strings.Contains(string(stdout), req.Node+" | ") {
 		stdout = stdout[strings.Index(string(stdout), "{"):]
-	} else {
+	} else if len(stdout) > 0 {
 		return nil, errors.New(string(stdout))
 	}
 	if err != nil {

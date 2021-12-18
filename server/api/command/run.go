@@ -17,6 +17,7 @@ type Run struct {
 	Args    []string
 	Cluster string
 	Env     []string
+	Sync    bool
 }
 
 func (run *Run) ToString() string {
@@ -32,23 +33,25 @@ func (run *Run) ToString() string {
 }
 
 func (run *Run) Run() ([]byte, []byte, error) {
-	// create lockfile
-	lockFilePath := constants.GET_DATA_INVENTORY_DIR() + "/" + run.Cluster + "/inventory.lastrun"
-	logrus.Trace("lockFilePath: ", lockFilePath)
-	lockFile, err := os.OpenFile(lockFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0777)
-	if err != nil {
-		return nil, nil, errors.New("Cannot open file " + lockFilePath + " : " + err.Error())
+	if run.Sync {
+		// create lockfile
+		lockFilePath := constants.GET_DATA_INVENTORY_DIR() + "/" + run.Cluster + "/inventory.lastrun"
+		logrus.Trace("lockFilePath: ", lockFilePath)
+		lockFile, err := os.OpenFile(lockFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0777)
+		if err != nil {
+			return nil, nil, errors.New("Cannot open file " + lockFilePath + " : " + err.Error())
+		}
+
+		// get lock
+		err = syscall.Flock(int(lockFile.Fd()), syscall.LOCK_EX|syscall.LOCK_NB)
+
+		if err != nil {
+			return nil, nil, errors.New("Cannot lock file " + lockFilePath + " : " + err.Error())
+		}
+
+		defer lockFile.Close()
+		defer syscall.Flock(int(lockFile.Fd()), syscall.LOCK_UN)
 	}
-
-	// get lock
-	err = syscall.Flock(int(lockFile.Fd()), syscall.LOCK_EX|syscall.LOCK_NB)
-
-	if err != nil {
-		return nil, nil, errors.New("Cannot lock file " + lockFilePath + " : " + err.Error())
-	}
-
-	defer lockFile.Close()
-	defer syscall.Flock(int(lockFile.Fd()), syscall.LOCK_UN)
 
 	logrus.Trace("run command: ", run.ToString())
 	cmd := exec.Command(run.Cmd, run.Args...)

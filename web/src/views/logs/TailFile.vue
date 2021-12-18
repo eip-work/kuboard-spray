@@ -145,7 +145,7 @@ export default {
     refresh() {
       let _this = this
       this.xterm = new Terminal({
-        fontFamily: 'monospace, Melon, Ubuntu Mono, courier-new, courier',
+        fontFamily: 'Consolas,Menlo,Bitstream Vera Sans Mono,Monaco,"微软雅黑",monospace',
         fontSize: this.fontSize,
         theme: { selection: 'rgba(255,36,36,0.5)', foreground: localStorage.getItem('terminalForegroundColor') || '#ccc' }
       })

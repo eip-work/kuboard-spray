@@ -18,7 +18,7 @@ zh:
       <el-button icon="el-icon-plus" type="primary" @click="addNodeForm.visible = true"
         :disabled="editMode === 'view'">{{$t('addNode')}}</el-button>
     </template>
-    <el-form label-position="left" label-width="80px" ref="addNodeForm" :model="addNodeForm">
+    <el-form label-position="left" label-width="80px" ref="addNodeForm" :model="addNodeForm" @submit.enter.prevent>
       <el-form-item :label="$t('nodeName')" prop="name" :rules="nodeNameRules">
         <el-input v-model.trim="addNodeForm.name"></el-input>
       </el-form-item>

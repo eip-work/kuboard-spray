@@ -15,18 +15,21 @@ import (
 
 type Execute struct {
 	Cmd     string
-	Args    []string
+	Args    func(string) []string
 	Cluster string
 	mutex   *sync.Mutex
 	Error   error
 	Type    string
+	Prepare func(string) error
+	Dir     string
 }
 
-func (execute *Execute) ToString() string {
+func (execute *Execute) ToString(runDirPath string) string {
 	result := "--" + execute.Cluster + "-- [" + execute.Cmd + ", "
-	for index, arg := range execute.Args {
+	args := execute.Args(runDirPath)
+	for index, arg := range args {
 		result += arg
-		if index < len(execute.Args)-1 {
+		if index < len(args)-1 {
 			result += ", "
 		}
 	}
@@ -86,6 +89,14 @@ func (execute *Execute) exec() {
 		return
 	}
 
+	if execute.Prepare != nil {
+		if err := execute.Prepare(runDirPath); err != nil {
+			execute.Error = errors.New("failed to prepare for the task : " + err.Error())
+			execute.mutex.Unlock()
+			return
+		}
+	}
+
 	logFilePath := runDirPath + "/command.log"
 	logFile, err := os.OpenFile(logFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
 	if err != nil {
@@ -94,18 +105,20 @@ func (execute *Execute) exec() {
 		return
 	}
 
-	cmd := exec.Command(execute.Cmd, execute.Args...)
+	cmd := exec.Command(execute.Cmd, execute.Args(runDirPath)...)
 
 	cmd.Stdout = logFile
 	cmd.Stderr = logFile
+	cmd.Dir = execute.Dir
 
 	if err := cmd.Start(); err != nil {
-		execute.Error = errors.New("failed to start command " + execute.ToString())
+		execute.Error = errors.New("failed to start command " + execute.ToString(runDirPath) + " : " + err.Error())
+		os.Remove(runDirPath)
 		execute.mutex.Unlock()
 		return
 	}
 
-	logrus.Trace("started command "+execute.ToString(), pid)
+	logrus.Trace("started command "+execute.ToString(runDirPath), pid)
 
 	if err := lockFile.Truncate(0); err != nil {
 		execute.Error = errors.New("failed to truncate lockFile " + lockFilePath + " : " + err.Error())

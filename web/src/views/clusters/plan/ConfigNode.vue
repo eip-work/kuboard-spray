@@ -3,6 +3,7 @@ en:
   sshcommon: SSH Params (apply to node {nodeName})
   etcd: "ETCD params (scope: node {nodeName})"
   etcd_member_name_required: Please input etcd_member_name
+  etcd_member_name_conflict: "etcd_member_name conflict with that in node {nodeName}"
   roles: Node Role
   roleDescription: 'Node Role (scope: node {nodeName})'
   requiresAtLeastOneRole: Requires at least one role
@@ -18,6 +19,7 @@ zh:
   sshcommon: SSH 连接参数（适用范围：节点 {nodeName}）
   etcd: "ETCD 参数（适用范围：节点 {nodeName}）"
   etcd_member_name_required: 请填写 ETCD 成员名称
+  etcd_member_name_conflict: "ETCD成员名称与节点 {nodeName} 的ETCD成员名称冲突"
   roles: 节点角色
   roleDescription: 节点角色（适用范围：节点 {nodeName}）
   requiresAtLeastOneRole: 至少需要一个角色
@@ -106,7 +108,7 @@ zh:
       </el-form-item>
     </ConfigSection>
     <ConfigSection v-if="enabledEtcd" v-model:enabled="enabledEtcd" label="ETCD" :description="$t('etcd', {nodeName: nodeName})" disabled>
-      <FieldString :holder="inventory.all.children.etcd.hosts[nodeName]" fieldName="etcd_member_name"
+      <FieldString :holder="inventory.all.children.etcd.hosts[nodeName]" fieldName="etcd_member_name" :rules="etcd_member_name_rules"
         :prop="`all.children.etcd.hosts.${nodeName}`" required></FieldString>
     </ConfigSection>
   </el-form>
@@ -130,7 +132,20 @@ export default {
       enabledRoles: true,
       fact: undefined,
       loadingFact: false,
-      activeNames: ['1']
+      activeNames: ['1'],
+      etcd_member_name_rules: [
+        {
+          validator: (rule, value, callback) => {
+            for (let key in this.inventory.all.children.etcd.hosts) {
+              if (key !== this.nodeName && this.inventory.all.children.etcd.hosts[key].etcd_member_name === value) {
+                return callback(this.$t('etcd_member_name_conflict', {nodeName: key}))
+              }
+            }
+            return callback()
+          },
+          trigger: 'blur',
+        }
+      ]
     }
   },
   computed: {

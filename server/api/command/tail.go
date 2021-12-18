@@ -125,7 +125,7 @@ func TailFile(c *gin.Context) {
 	}
 	defer ws.Close()
 
-	filePath := constants.GET_DATA_INVENTORY_DIR() + "/" + reqParams.Cluster + "/history/" + pid + "/command.log"
+	filePath := constants.GET_DATA_INVENTORY_DIR() + "/" + reqParams.Cluster + "/history/" + pid + "/" + reqParams.File
 	logrus.Trace("[", filePath, "]")
 	go writer(ws, filePath)
 	reader(ws)

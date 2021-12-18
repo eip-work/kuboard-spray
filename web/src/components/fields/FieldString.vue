@@ -3,10 +3,10 @@
     <template #label>
       {{ $t('field.' + fieldName) }}
     </template>
-    <el-input v-if="editMode !== 'view'" v-model.trim="obj[fieldName]" :show-password="showPassword" :disabled="disabled"
+    <el-input v-if="editMode !== 'view'" v-model.trim="value" :show-password="showPassword" :disabled="disabled"
       :placeholder="placeholder || $t('field.' + fieldName + '_placeholder')"></el-input>
     <div v-else class="app_text_mono">
-      <span v-if="obj[fieldName]">{{ obj[fieldName] }}</span>
+      <span v-if="value">{{ value }}</span>
       <span v-else class="field_placeholder">{{ placeholder }}</span>
     </div>
   </el-form-item>
@@ -58,6 +58,18 @@ export default {
       }
       result.push(... this.rules)
       return result
+    },
+    value: {
+      get () {
+        return this.holder[this.fieldName]
+      },
+      set (v) {
+        if (v) {
+          this.obj[this.fieldName] = v
+        } else {
+          delete this.obj[this.fieldName]
+        }
+      }
     }
   },
   components: { },

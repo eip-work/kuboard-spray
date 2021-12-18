@@ -34,7 +34,7 @@ zh:
     <ConfigSection v-model:enabled="useResourcePackage" disabled
       :label="$t('obj.resources')"
       :description="$t('obj.resources') + ' ' + (inventory.all.hosts.localhost.kuboardspray_resource_package ? inventory.all.hosts.localhost.kuboardspray_resource_package : '')">
-      <FieldSelect :holder="inventory.all.hosts.localhost" fieldName="kuboardspray_resource_package" :loadOptions="loadResourceList" prop="all.hosts.localhost" required>
+      <FieldSelect :holder="inventory.all.hosts.localhost" fieldName="kuboardspray_resource_package" :loadOptions="loadResourceList" prop="all.hosts.localhost" required :disabled="isInstalled">
         <el-button style="margin-left: 10px;" type="primary" icon="el-icon-plus">{{$t('createResource')}}</el-button>
       </FieldSelect>
       <div v-if="resourcePackage" class="app_form_mini">
@@ -159,8 +159,7 @@ import PackageContentField from './common/PackageContentField.vue'
 
 export default {
   props: {
-    inventory: { type: Object, required: true },
-    resourcePackage: { type: Object, required: false, default: undefined },
+    cluster: { type: Object, required: true },
   },
   data () {
     return {
@@ -176,39 +175,44 @@ export default {
       activeNames: ['2'],
     }
   },
+  inject: ['isInstalled'],
   computed: {
-    inventoryRef: {
+    inventory: {
       get () {
-        return this.inventory
+        return this.cluster.inventory
       },
+      set () {}
+    },
+    resourcePackage: {
+      get () { return this.cluster.resourcePackage},
       set () {}
     },
     proxyEnabled: {
       get () {
-        if (this.inventoryRef.all.hosts.localhost.vars) {
-          return this.inventoryRef.all.hosts.localhost.vars.http_proxy !== undefined
+        if (this.inventory.all.hosts.localhost.vars) {
+          return this.inventory.all.hosts.localhost.vars.http_proxy !== undefined
         }
         return false
       },
       set (v) {
         if (v) {
-          this.inventoryRef.all.hosts.localhost.vars = this.inventoryRef.all.hosts.localhost.vars || {}
-          this.inventoryRef.all.hosts.localhost.vars.http_proxy = ''
+          this.inventory.all.hosts.localhost.vars = this.inventory.all.hosts.localhost.vars || {}
+          this.inventory.all.hosts.localhost.vars.http_proxy = ''
         } else {
-          delete this.inventoryRef.all.hosts.localhost.vars.http_proxy
+          delete this.inventory.all.hosts.localhost.vars.http_proxy
         }
       }
     },
     bastionEnabled: {
       get () {
-        return this.inventoryRef.all.children.bastion !== undefined
+        return this.inventory.all.children.bastion !== undefined
       },
       set (v) {
         if (v) {
-          this.inventoryRef.all.hosts.bastion = this.inventoryRef.all.hosts.bastion || {ansible_host: '', ansible_user: ''}
-          this.inventoryRef.all.children.bastion = {hosts: {bastion: {}}}
+          this.inventory.all.hosts.bastion = this.inventory.all.hosts.bastion || {ansible_host: '', ansible_user: ''}
+          this.inventory.all.children.bastion = {hosts: {bastion: {}}}
         } else {
-          delete this.inventoryRef.all.children.bastion
+          delete this.inventory.all.children.bastion
         }
       }
     }

@@ -4,11 +4,8 @@ import (
 	"bufio"
 	"errors"
 	"io"
-	"os"
 	"os/exec"
-	"syscall"
 
-	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/sirupsen/logrus"
 )
 
@@ -34,23 +31,12 @@ func (run *Run) ToString() string {
 
 func (run *Run) Run() ([]byte, []byte, error) {
 	if run.Sync {
-		// create lockfile
-		lockFilePath := constants.GET_DATA_INVENTORY_DIR() + "/" + run.Cluster + "/inventory.lastrun"
-		logrus.Trace("lockFilePath: ", lockFilePath)
-		lockFile, err := os.OpenFile(lockFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0777)
+		lockFile, err := LockCluster(run.Cluster)
 		if err != nil {
-			return nil, nil, errors.New("Cannot open file " + lockFilePath + " : " + err.Error())
+			return nil, nil, err
 		}
 
-		// get lock
-		err = syscall.Flock(int(lockFile.Fd()), syscall.LOCK_EX|syscall.LOCK_NB)
-
-		if err != nil {
-			return nil, nil, errors.New("Cannot lock file " + lockFilePath + " : " + err.Error())
-		}
-
-		defer lockFile.Close()
-		defer syscall.Flock(int(lockFile.Fd()), syscall.LOCK_UN)
+		defer UnlockCluster(lockFile)
 	}
 
 	logrus.Trace("run command: ", run.ToString())

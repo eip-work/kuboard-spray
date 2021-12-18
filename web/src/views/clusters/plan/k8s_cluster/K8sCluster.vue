@@ -11,17 +11,17 @@ zh:
 
 <template>
   <ConfigSection v-model:enabled="enabled" :label="$t('label')" :description="$t('description')" disabled>
-    <template v-if="resourcePackage !== undefined">
+    <template v-if="cluster.resourcePackage !== undefined">
       <el-form-item label="kube_version">
-        <span class="app_text_mono">{{resourcePackage.kubernetes.kube_version}}</span>
+        <span class="app_text_mono">{{cluster.resourcePackage.kubernetes.kube_version}}</span>
       </el-form-item>
       <el-form-item :label="$t('container_manager')">
-        <span class="app_text_mono">{{resourcePackage.docker_engine.container_manager}}_{{resourcePackage.docker_engine.version}}</span>
+        <span class="app_text_mono">{{cluster.resourcePackage.docker_engine.container_manager}}_{{cluster.resourcePackage.docker_engine.version}}</span>
       </el-form-item>
     </template>
-    <FieldString :holder="inventory.all.children.k8s_cluster.vars" fieldName="cluster_name"></FieldString>
-    <FieldString :holder="inventory.all.children.k8s_cluster.vars" fieldName="event_ttl_duration"></FieldString>
-    <!-- <FieldBool :holder="inventory.all.children.k8s_cluster.vars" fieldName="auto_renew_certificates"></FieldBool> -->
+    <FieldString :holder="cluster.inventory.all.children.k8s_cluster.vars" fieldName="cluster_name"></FieldString>
+    <FieldString :holder="cluster.inventory.all.children.k8s_cluster.vars" fieldName="event_ttl_duration"></FieldString>
+    <!-- <FieldBool :holder="cluster.inventory.all.children.k8s_cluster.vars" fieldName="auto_renew_certificates"></FieldBool> -->
   </ConfigSection>
 </template>
 
@@ -30,8 +30,7 @@ import ConfigSection from '../ConfigSection.vue'
 
 export default {
   props: {
-    inventory: { type: Object, required: true },
-    resourcePackage: { type: Object, required: false, default: undefined },
+    cluster: { type: Object, required: true },
   },
   data() {
     return {

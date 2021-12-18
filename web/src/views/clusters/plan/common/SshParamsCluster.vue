@@ -23,7 +23,7 @@ zh:
       <FieldString :holder="holder" fieldName="ansible_become_password"></FieldString>
     </template>
     <slot></slot>
-    <SshAddPrivateKey ref="addPrivateKey" :clusterName="clusterName"></SshAddPrivateKey>
+    <SshAddPrivateKey ref="addPrivateKey" :clusterName="cluster.name"></SshAddPrivateKey>
   </ConfigSection>
 </template>
 
@@ -33,8 +33,7 @@ import SshAddPrivateKey from './SshAddPrivateKey.vue'
 
 export default {
   props: {
-    inventory: { type: Object, required: true },
-    clusterName: { type: String, required: true },
+    cluster: { type: Object, required: true },
     nodeName: { type: String, required: false },
     holder: { type: Object, required: true },
     prop: { type: String, required: true },
@@ -62,7 +61,7 @@ export default {
   methods: {
     async loadSshKeyList () {
       let result = []
-      await this.kuboardSprayApi.get(`/clusters/${this.clusterName}/private-keys`).then(resp => {
+      await this.kuboardSprayApi.get(`/clusters/${this.cluster.name}/private-keys`).then(resp => {
         for (let item of resp.data.data) {
           result.push({ label: item, value: '{{ kuboardspray_cluster_dir }}/private-key/' + item })
         }

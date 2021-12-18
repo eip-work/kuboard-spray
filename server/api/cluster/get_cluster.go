@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
@@ -32,12 +33,34 @@ func GetCluster(c *gin.Context) {
 		return
 	}
 
+	successTasks, err := command.ReadSuccessTasks(req.Cluster)
+	if err != nil {
+		common.HandleError(c, http.StatusInternalServerError, "cannot read cluster status", err)
+		return
+	}
+
+	processing := false
+	lockFile, err := command.LockCluster(req.Cluster)
+	if err != nil {
+		processing = true
+	}
+	lockFilePath := constants.GET_DATA_INVENTORY_DIR() + "/" + req.Cluster + "/inventory.lastrun"
+	pid, err := ioutil.ReadFile(lockFilePath)
+	if err != nil {
+		common.HandleError(c, http.StatusInternalServerError, "cannot read current pid", err)
+		return
+	}
+	command.UnlockCluster(lockFile)
+
 	c.JSON(http.StatusOK, gin.H{
 		"code":    http.StatusOK,
 		"message": "success",
 		"data": gin.H{
-			"inventory": inventory,
-			"name":      req.Cluster,
+			"inventory":     inventory,
+			"name":          req.Cluster,
+			"success_tasks": successTasks,
+			"processing":    processing,
+			"current_pid":   string(pid),
 		},
 	})
 }

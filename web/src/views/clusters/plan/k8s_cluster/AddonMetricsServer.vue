@@ -16,8 +16,7 @@ import ConfigSection from '../ConfigSection.vue'
 
 export default {
   props: {
-    inventory: { type: Object, required: true },
-    resourcePackage: { type: Object, required: false, default: undefined },
+    cluster: { type: Object, required: true },
   },
   data() {
     return {

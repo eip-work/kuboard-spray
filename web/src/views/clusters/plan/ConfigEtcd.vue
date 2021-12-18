@@ -8,7 +8,7 @@ zh:
 <template>
   <div>
     <ConfigSection v-model:enabled="enabledEtcd" :description="$t('ETCD')" label="ETCD" disabled>
-      <FieldSelect :holder="inventory.all.children.etcd.vars" prop="all.children.etcd.vars" required
+      <FieldSelect :holder="cluster.inventory.all.children.etcd.vars" prop="all.children.etcd.vars" required
         fieldName="etcd_deployment_type" :loadOptions="loadEtcdType"></FieldSelect>
     </ConfigSection>
   </div>
@@ -19,8 +19,7 @@ import ConfigSection from './ConfigSection.vue'
 
 export default {
   props: {
-    inventory: { type: Object, required: true },
-    resourcePackage: { type: Object, required: false, default: undefined },
+    cluster: { type: Object, required: true },
   },
   data() {
     return {

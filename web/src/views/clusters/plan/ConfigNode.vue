@@ -37,7 +37,7 @@ zh:
 
 <template>
   <el-form ref="form" :model="inventory" label-width="120px" label-position="left" @submit.enter.prevent>
-    <SshParamsNode :inventory="inventory" :holder="inventory.all.hosts[nodeName]" :prop="`all.hosts.${nodeName}`" :clusterName="clusterName" :nodeName="nodeName" :description="$t('sshcommon', {nodeName: nodeName})" isNode>
+    <SshParamsNode :cluster="cluster" :holder="inventory.all.hosts[nodeName]" :prop="`all.hosts.${nodeName}`" :clusterName="cluster.name" :nodeName="nodeName" :description="$t('sshcommon', {nodeName: nodeName})" isNode>
       <el-form-item>
         <div style="text-align: right;">
           <el-button type="primary" :loading="loadingFact" icon="el-icon-refresh-left" @click="loadFacts(false)">{{$t('validate')}}</el-button>
@@ -129,10 +129,8 @@ import PackageContentField from './common/PackageContentField.vue'
 
 export default {
   props: {
-    inventory: { type: Object, required: true },
-    clusterName: { type: String, required: true },
+    cluster: { type: Object, required: true },
     nodeName: { type: String, required: true },
-    resourcePackage: { type: Object, required: false, default: undefined },
   },
   data() {
     return {
@@ -156,9 +154,9 @@ export default {
     }
   },
   computed: {
-    inventoryRef: {
+    inventory: {
       get () {
-        return this.inventory
+        return this.cluster.inventory
       },
       set (v) {
         console.log(v)
@@ -189,12 +187,12 @@ export default {
       set (v) {
         console.log('setKubeControlPlane', v)
         if (v) {
-          this.inventoryRef.all.children.k8s_cluster.children.kube_control_plane.hosts[this.nodeName] = {}
+          this.inventory.all.children.k8s_cluster.children.kube_control_plane.hosts[this.nodeName] = {}
         } else {
           if (!this.isEtcd && !this.isKubeNode) {
             this.$message.error(this.$t('requiresAtLeastOneRole'))
           } else {
-            delete this.inventoryRef.all.children.k8s_cluster.children.kube_control_plane.hosts[this.nodeName]
+            delete this.inventory.all.children.k8s_cluster.children.kube_control_plane.hosts[this.nodeName]
           }
         }
       }
@@ -211,12 +209,12 @@ export default {
       set (v) {
         console.log('setKubeNode', v)
         if (v) {
-          this.inventoryRef.all.children.k8s_cluster.children.kube_node.hosts[this.nodeName] = {}
+          this.inventory.all.children.k8s_cluster.children.kube_node.hosts[this.nodeName] = {}
         } else {
           if (!this.isEtcd && !this.isKubeControlPlane) {
             this.$message.error(this.$t('requiresAtLeastOneRole'))
           } else {
-            delete this.inventoryRef.all.children.k8s_cluster.children.kube_node.hosts[this.nodeName]
+            delete this.inventory.all.children.k8s_cluster.children.kube_node.hosts[this.nodeName]
           }
         }
       }
@@ -228,12 +226,12 @@ export default {
       set (v) {
         console.log('setEtcd', v)
         if (v) {
-          this.inventoryRef.all.children.etcd.hosts[this.nodeName] = {}
+          this.inventory.all.children.etcd.hosts[this.nodeName] = {}
         } else {
           if (!this.isKubeControlPlane && !this.isKubeNode) {
             this.$message.error(this.$t('requiresAtLeastOneRole'))
           } else {
-            delete this.inventoryRef.all.children.etcd.hosts[this.nodeName]
+            delete this.inventory.all.children.etcd.hosts[this.nodeName]
           }
         }
       }
@@ -255,7 +253,7 @@ export default {
     async loadFacts(fromCache) {
       this.fact = undefined
       this.$refs.form.validate(async flag => {
-        if (this.inventoryRef.all.children.etcd.hosts[this.nodeName] && !this.inventoryRef.all.children.etcd.hosts[this.nodeName].etcd_member_name && !fromCache) {
+        if (this.inventory.all.children.etcd.hosts[this.nodeName] && !this.inventory.all.children.etcd.hosts[this.nodeName].etcd_member_name && !fromCache) {
           this.$message.warning(this.$t('etcd_member_name_required'))
         }
         if (flag) {
@@ -271,7 +269,7 @@ export default {
             ansible_become_user: this.inventory.all.hosts[this.nodeName].ansible_become_user || this.inventory.all.children.k8s_cluster.vars.ansible_become_user,
             ansible_become_password: this.inventory.all.hosts[this.nodeName].ansible_become_password || this.inventory.all.children.k8s_cluster.vars.ansible_host,
           }
-          await this.kuboardSprayApi.post(`/clusters/${this.clusterName}/facts/${this.nodeName}`, req).then(resp => {
+          await this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/facts/${this.nodeName}`, req).then(resp => {
             if (fromCache) {
               if (resp.data.ansible_facts !== undefined) {
                 this.fact = resp.data

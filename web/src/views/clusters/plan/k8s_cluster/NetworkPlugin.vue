@@ -10,8 +10,8 @@ zh:
 
 <template>
   <ConfigSection v-model:enabled="enabled" :label="$t('label')" disabled>
-    <FieldSelect ref="kube_network_plugin" :disabled="!inventory.all.hosts.localhost.kuboardspray_resource_package"
-      :holder="inventory.all.children.k8s_cluster.vars" fieldName="kube_network_plugin"
+    <FieldSelect ref="kube_network_plugin" :disabled="!cluster.inventory.all.hosts.localhost.kuboardspray_resource_package"
+      :holder="cluster.inventory.all.children.k8s_cluster.vars" fieldName="kube_network_plugin"
       :loadOptions="loadNetworkCandidates"></FieldSelect>
   </ConfigSection>
 </template>
@@ -21,7 +21,7 @@ import ConfigSection from '../ConfigSection.vue'
 
 export default {
   props: {
-    inventory: { type: Object, required: true },
+    cluster: { type: Object, required: true },
     resourcePackage: { type: Object, required: false, default: undefined },
   },
   data() {

@@ -76,7 +76,7 @@ zh:
             </template>
             <el-scrollbar max-height="calc(100vh - 276px)" ref="configKuboardSprayScroll">
               <div class="tab_content">
-                <ConfigKuboardSpray :resourcePackage="cluster.resourcePackage" :inventory="inventory" :cluster="cluster"></ConfigKuboardSpray>
+                <ConfigKuboardSpray :cluster="cluster"></ConfigKuboardSpray>
               </div>
             </el-scrollbar>
           </el-tab-pane>
@@ -96,7 +96,7 @@ zh:
             </template>
             <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
-                <ConfigK8sCluster :resourcePackage="cluster.resourcePackage" :inventory="inventory" :clusterName="cluster.name"></ConfigK8sCluster>
+                <ConfigK8sCluster :cluster="cluster"></ConfigK8sCluster>
               </div>
             </el-scrollbar>
           </el-tab-pane>
@@ -116,7 +116,7 @@ zh:
             </template>
             <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
-                <ConfigEtcd :resourcePackage="cluster.resourcePackage" :inventory="inventory" :clusterName="cluster.name"></ConfigEtcd>
+                <ConfigEtcd :cluster="cluster"></ConfigEtcd>
               </div>
             </el-scrollbar>
           </el-tab-pane>
@@ -130,13 +130,13 @@ zh:
               </div>
             </el-scrollbar>
           </el-tab-pane> -->
-          <el-tab-pane :name="currentPropertiesTab" v-if="currentPropertiesTab.indexOf('NODE_') === 0 && inventory.all.hosts[currentPropertiesTab.slice(5)]">
+          <el-tab-pane :name="currentPropertiesTab" v-if="currentPropertiesTab.indexOf('NODE_') === 0 && cluster.inventory.all.hosts[currentPropertiesTab.slice(5)]">
             <template #label>
               <div style="width: 100px; text-align: center;">{{ currentPropertiesTab.slice(5) }}</div>
             </template>
             <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
-                <ConfigNode :resourcePackage="cluster.resourcePackage" :inventory="inventory" :clusterName="cluster.name" :nodeName="currentPropertiesTab.slice(5)"></ConfigNode>
+                <ConfigNode :cluster="cluster" :nodeName="currentPropertiesTab.slice(5)"></ConfigNode>
               </div>
             </el-scrollbar>
           </el-tab-pane>

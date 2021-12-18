@@ -4,46 +4,39 @@ en:
   clusterList: Clusters List
   plan: Cluster Plan
   node: Nodes Maintainance
-  apply: Apply
-  confirmToApply: Do the installation of Kubernetes Cluster, are you sure?
+  confirmToCancel: Modifications will be lost to proceed, do you confirm ?
 zh:
   clusterList: 集群列表
   cluster: 集群
   plan: 集群规划
   nodes: 节点维护
-  apply: 执 行
-  confirmToApply: 将执行集群安装动作，请确认已完成集群规划！
   confirmToCancel: 将丢失已修改内容，确认取消编辑？
 </i18n>
 
 <template>
   <div>
     <ControlBar :title="name">
+      <div v-show="cluster && !cluster.processing">
       <!-- <el-select style="margin-right: 10px;"></el-select> -->
-      <template v-if="currentTab === 'plan'">
-        <template v-if="mode === 'view'">
-          <el-button type="primary" icon="el-icon-edit" @click="$router.replace(`/clusters/${name}?mode=edit`)">{{$t('msg.edit')}}</el-button>
-          <el-popconfirm :confirm-button-text="$t('msg.ok')" :cancel-button-text="$t('msg.cancel')" placement="bottom-start"
-            icon="el-icon-lightning" icon-color="red" :title="$t('confirmToApply')" @confirm="applyPlan">
-            <template #reference>
-              <el-button type="danger" icon="el-icon-lightning">{{$t('apply')}}</el-button>
-            </template>
-          </el-popconfirm>
-          <el-button type="warning" icon="el-icon-lightning" @click="applyPlan">{{$t('apply')}}</el-button>
+        <template v-if="currentTab === 'plan'">
+          <template v-if="mode === 'view'">
+            <el-button type="primary" icon="el-icon-edit" @click="$router.replace(`/clusters/${name}?mode=edit`)">{{$t('msg.edit')}}</el-button>
+            <ClusterProcessing v-if="cluster" :cluster="cluster" :name="name" @refresh="refresh" :loading="loading"></ClusterProcessing>
+          </template>
+          <template v-if="mode === 'edit'">
+            <el-popconfirm :confirm-button-text="$t('msg.ok')" :cancel-button-text="$t('msg.cancel')" placement="bottom-start"
+              icon="el-icon-warning" icon-color="red" :title="$t('confirmToCancel')" @confirm="cancelEdit">
+              <template #reference>
+                <el-button type="default" icon="el-icon-close">{{$t('msg.cancel')}}</el-button>
+              </template>
+            </el-popconfirm>
+            <el-button type="primary" icon="el-icon-check" :disabled="noSaveRequired" @click="save">{{$t('msg.save')}}</el-button>
+          </template>
+          <template v-if="mode === 'create'">
+            <el-button type="primary" icon="el-icon-check">{{$t('msg.save')}}</el-button>
+          </template>
         </template>
-        <template v-if="mode === 'edit'">
-          <el-popconfirm :confirm-button-text="$t('msg.ok')" :cancel-button-text="$t('msg.cancel')" placement="bottom-start"
-            icon="el-icon-warning" icon-color="red" :title="$t('confirmToCancel')" @confirm="cancelEdit">
-            <template #reference>
-              <el-button type="default" icon="el-icon-close">{{$t('msg.cancel')}}</el-button>
-            </template>
-          </el-popconfirm>
-          <el-button type="primary" icon="el-icon-check" :disabled="noSaveRequired" @click="save">{{$t('msg.save')}}</el-button>
-        </template>
-        <template v-if="mode === 'create'">
-          <el-button type="primary" icon="el-icon-check">{{$t('msg.save')}}</el-button>
-        </template>
-      </template>
+      </div>
     </ControlBar>
     <el-card shadow="none" v-if="loading">
       <el-skeleton animated :rows="10"></el-skeleton>
@@ -66,6 +59,8 @@ zh:
 import mixin from '../../mixins/mixin.js'
 import Plan from './plan/Plan.vue'
 import yaml from 'js-yaml'
+import ClusterProcessing from './ClusterProcessing.vue'
+import { computed } from 'vue'
 
 export default {
   mixins: [mixin],
@@ -99,9 +94,22 @@ export default {
         return true
       } 
       return this.originalInventoryYaml == yaml.dump(this.cluster.inventory)
+    },
+  },
+  provide () {
+    return {
+      isInstalled: computed(() => {
+        if (this.cluster === undefined) {
+          return false
+        }
+        if (this.cluster.success_tasks.length > 0) {
+          return true
+        }
+        return false
+      })
     }
   },
-  components: { Plan },
+  components: { Plan, ClusterProcessing },
   watch: {
     'cluster.inventory.all.hosts.localhost.kuboardspray_resource_package': function() {
       this.loadResourcePackage()
@@ -119,12 +127,15 @@ export default {
       this.loading = true
       await this.kuboardSprayApi.get(`/clusters/${this.name}`).then(resp => {
         this.cluster = resp.data.data
+        // this.cluster.processing = true
         this.originalInventoryYaml = yaml.dump(this.cluster.inventory)
         this.loadResourcePackage()
       }).catch(e => {
         console.log(e.response)
       })
-      this.loading = false
+      setTimeout(() => {
+        this.loading = false
+      }, 200)
     },
     async loadResourcePackage () {
       this.cluster.resourcePackage = undefined
@@ -150,14 +161,6 @@ export default {
         }
       })
     },
-    applyPlan () {
-      this.kuboardSprayApi.post(`/clusters/${this.name}/install`).then(resp => {
-        console.log(resp.data)
-        this.openUrlInBlank(`/#/clusters/${this.name}/history/lastrun/tail/command.log`)
-      }).catch(e => {
-        this.$message.error('' + e.response.data.message)
-      })
-    }
   }
 }
 </script>

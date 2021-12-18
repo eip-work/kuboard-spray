@@ -142,6 +142,7 @@ export default {
           this.uploading = true
           this.$refs.upload.submit()
           setTimeout(() => {
+            this.$message.success(this.$t('msg.save_succeeded'))
             this.load()
             this.uploading = false
             this.$refs.upload.clearFiles()

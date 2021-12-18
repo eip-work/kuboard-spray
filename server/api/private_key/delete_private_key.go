@@ -13,15 +13,15 @@ func DeletePrivateKey(c *gin.Context) {
 	var req GetPrivateKeyRequest
 	c.ShouldBindUri(&req)
 
-	_, err := ioutil.ReadFile(PrivateKeyPatch(req.Cluster, req.Name))
+	_, err := ioutil.ReadFile(PrivateKeyPath(req.Cluster, req.Name))
 	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "cannot open file: "+PrivateKeyPatch(req.Cluster, req.Name), err)
+		common.HandleError(c, http.StatusInternalServerError, "cannot open file: "+PrivateKeyPath(req.Cluster, req.Name), err)
 		return
 	}
 
-	e := os.Remove(PrivateKeyPatch(req.Cluster, req.Name))
+	e := os.Remove(PrivateKeyPath(req.Cluster, req.Name))
 	if e != nil {
-		common.HandleError(c, http.StatusInternalServerError, "cannot delete file: "+PrivateKeyPatch(req.Cluster, req.Name), err)
+		common.HandleError(c, http.StatusInternalServerError, "cannot delete file: "+PrivateKeyPath(req.Cluster, req.Name), err)
 		return
 	}
 

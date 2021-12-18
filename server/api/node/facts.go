@@ -68,6 +68,7 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 					"ansible_become_user":          req.BecomeUser,
 					"ansible_become_password":      req.BecomePassword,
 					"host_key_checking":            false,
+					"kuboardspray_cluster_dir":     constants.GET_DATA_INVENTORY_DIR() + "/" + req.Cluster,
 				},
 			},
 		},

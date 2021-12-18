@@ -40,13 +40,16 @@ func GetNodeFacts(c *gin.Context) {
 
 	if req.FromCache {
 		result, err = nodefact_cached(req)
+		if err != nil {
+			common.HandleError(c, http.StatusExpectationFailed, "no cached facts.", err)
+			return
+		}
 	} else {
 		result, err = nodefacts(req)
-	}
-
-	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "Failed to get node facts: ", err)
-		return
+		if err != nil {
+			common.HandleError(c, http.StatusInternalServerError, "Failed to get node facts: ", err)
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, result)
@@ -67,7 +70,7 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 					"ansible_become":               req.Become,
 					"ansible_become_user":          req.BecomeUser,
 					"ansible_become_password":      req.BecomePassword,
-					"host_key_checking":            false,
+					"ansible_ssh_common_args":      "-o StrictHostKeyChecking=no",
 					"kuboardspray_cluster_dir":     constants.GET_DATA_INVENTORY_DIR() + "/" + req.Cluster,
 				},
 			},

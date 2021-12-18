@@ -84,7 +84,7 @@ export default {
   methods: {
     placeholder(fieldName) {
       let default_value = this.inventory.all.children.k8s_cluster.vars[fieldName]
-      if (fieldName.indexOf('password') > 0) {
+      if (fieldName.indexOf('password') > 0 && default_value) {
         default_value = '******'
       }
       return default_value ? this.$t('default_value', {default_value: default_value}) : this.$t('field.' + fieldName + '_placeholder')

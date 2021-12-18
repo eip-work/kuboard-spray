@@ -15,6 +15,7 @@ en:
   ansible_machine: CPU Arch
   os: Operation System
   cpumem: CPU/Mem
+  no_cached_facts: no cached facts found, please click the Validate Connection button above.
 zh:
   sshcommon: SSH 连接参数（适用范围：节点 {nodeName}）
   etcd: "ETCD 参数（适用范围：节点 {nodeName}）"
@@ -31,6 +32,7 @@ zh:
   ansible_machine: CPU 架构
   os: 操作系统
   cpumem: CPU/内存
+  no_cached_facts: 未找到该节点的缓存信息，请点击上方的 "验证连接" 按钮
 </i18n>
 
 <template>
@@ -51,10 +53,13 @@ zh:
                 <span class="package_title">{{$t('baseInfo')}}</span>
               </template>
               <div class="package_info">
-                <PackageContentField :holder="fact.ansible_facts.ansible_lsb" fieldName="description" :label="$t('os')"></PackageContentField>
+                <PackageContentField v-if="fact.ansible_facts.ansible_lsb && fact.ansible_facts.ansible_lsb.description" :holder="fact.ansible_facts.ansible_lsb" fieldName="description" :label="$t('os')"></PackageContentField>
+                <el-form-item v-else :label="$t('os')">
+                  <span class="field_value app_text_mono">{{fact.ansible_facts.ansible_distribution}} {{fact.ansible_facts.ansible_distribution_version}}</span>
+                </el-form-item>
                 <PackageContentField :holder="fact.ansible_facts" fieldName="ansible_machine" :label="$t('ansible_machine')"></PackageContentField>
                 <el-form-item :label="$t('cpumem')">
-                  {{fact.ansible_facts.ansible_processor_vcpus}}core / {{Math.round(fact.ansible_facts.ansible_memtotal_mb * 10 / 1024)/10}}Gi
+                  <span class="field_value app_text_mono">{{fact.ansible_facts.ansible_processor_vcpus}}core / {{Math.round(fact.ansible_facts.ansible_memtotal_mb * 10 / 1024)/10}}Gi</span>
                 </el-form-item>
               </div>
             </el-collapse-item>
@@ -93,7 +98,9 @@ zh:
         </el-form>
         <div v-else>
           <el-alert :closable="false" type="error">
-            {{fact.msg}}
+            <div class="app_text_mono">
+              {{fact.msg}}
+            </div>
           </el-alert>
         </div>
       </div>
@@ -273,9 +280,16 @@ export default {
               this.fact = resp.data
             }
           }).catch(e => {
-            this.fact = {
-              changed: false,
-              msg: '' + e,
+            if (e.response.status !== 417) {
+              this.fact = {
+                changed: false,
+                msg: '' + e,
+              }
+            } else {
+              this.fact = {
+                changed: false,
+                msg: this.$t('no_cached_facts')
+              }
             }
           })
           this.loadingFact = false
@@ -300,5 +314,8 @@ export default {
 }
 .package_info {
   margin-left: 20px;
+}
+.field_value {
+  font-size: 13px;
 }
 </style>

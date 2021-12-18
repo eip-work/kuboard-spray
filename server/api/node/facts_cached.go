@@ -10,12 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetNodeFactsCached(c *gin.Context) {
-	var req GetNodeFactRequest
-	c.ShouldBindJSON(&req)
-	c.ShouldBindUri(&req)
-}
-
 func nodefact_cached(req GetNodeFactRequest) (*gin.H, error) {
 
 	factDir := constants.GET_DATA_INVENTORY_DIR() + "/" + req.Cluster + "/fact"

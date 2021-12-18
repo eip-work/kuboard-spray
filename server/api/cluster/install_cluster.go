@@ -76,6 +76,8 @@ func InstallCluster(c *gin.Context) {
 	common.MapSet(inventory, "all.vars.download_localhost", true)
 	common.MapSet(inventory, "all.vars.download_always_pull", false)
 	common.MapSet(inventory, "all.vars.download_cache_dir", resourcePackagePath+"/kubespray_cache")
+	common.MapSet(inventory, "all.vars.ansible_ssh_common_args", "-o StrictHostKeyChecking=no")
+	common.MapSet(inventory, "all.vars.kuboardspray_cluster_dir", constants.GET_DATA_INVENTORY_DIR()+"/"+req.Cluster)
 
 	command := command.Execute{
 		Cluster: req.Cluster,

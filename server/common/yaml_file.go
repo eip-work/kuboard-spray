@@ -26,5 +26,5 @@ func SaveYamlFile(filePath string, content interface{}) error {
 		return errors.New("failed to marshal content : " + err.Error())
 	}
 	logrus.Trace("write yaml file: ", filePath)
-	return ioutil.WriteFile(filePath, str, 0777)
+	return ioutil.WriteFile(filePath, str, 0666)
 }

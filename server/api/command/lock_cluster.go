@@ -12,7 +12,7 @@ import (
 func LockCluster(cluster string) (*os.File, error) {
 	lockFilePath := constants.GET_DATA_INVENTORY_DIR() + "/" + cluster + "/inventory.lastrun"
 	logrus.Trace("lockFilePath: ", lockFilePath)
-	lockFile, err := os.OpenFile(lockFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0777)
+	lockFile, err := os.OpenFile(lockFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		return lockFile, errors.New("Cannot open file " + lockFilePath + " : " + err.Error())
 	}

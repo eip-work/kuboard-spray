@@ -87,7 +87,7 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 
 	inventoryPath := tempDir + "/" + req.Cluster + "_" + time.Now().Format("2006-01-02_15-04-05.999") + ".json"
 
-	err = ioutil.WriteFile(inventoryPath, inventoryBytes, 0777)
+	err = ioutil.WriteFile(inventoryPath, inventoryBytes, 0666)
 	if err != nil {
 		return nil, errors.New("failed to create inventory file " + inventoryPath + err.Error())
 	}
@@ -116,7 +116,7 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 	common.CreateDirIfNotExists(factDir)
 	factPath := factDir + "/" + req.Node + "_" + req.Ip + "_" + req.Port
 
-	ioutil.WriteFile(factPath, stdout, 0777)
+	ioutil.WriteFile(factPath, stdout, 0666)
 
 	fact := &gin.H{}
 	if err := json.Unmarshal(stdout, fact); err != nil {

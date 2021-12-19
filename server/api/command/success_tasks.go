@@ -27,7 +27,7 @@ func AddSuccessTask(cluster string, task SuccessTask) error {
 	if err != nil {
 		return errors.New("failed tp marshal tasks: " + err.Error())
 	}
-	return ioutil.WriteFile(successFilePath(cluster), content, 0777)
+	return ioutil.WriteFile(successFilePath(cluster), content, 0666)
 }
 
 func ReadSuccessTasks(cluster string) (SuccessTasks, error) {

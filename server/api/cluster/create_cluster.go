@@ -41,7 +41,7 @@ func CreateCluster(c *gin.Context) {
 	}
 
 	inventoryFilePath := clusterDir + "/inventory.yaml"
-	inventoryFile, err := os.OpenFile(inventoryFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	inventoryFile, err := os.OpenFile(inventoryFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to create inventory file "+inventoryFilePath, err)

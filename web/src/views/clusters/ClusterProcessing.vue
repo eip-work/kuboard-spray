@@ -108,7 +108,7 @@ export default {
       })
     },
     viewTaskLogs (pid) {
-      this.openUrlInBlank(`/#/clusters/${this.name}/history/${pid}/tail/command.log`)
+      this.openUrlInBlank(`/#/clusters/${this.name}/history/${pid}/tail/execute.log`)
     }
   }
 }

@@ -11,6 +11,9 @@ const field = {
     ansible_connection: 'ansible_connection',
     'ansible_connection-local': 'local',
     'ansible_connection-ssh': 'ssh',
+
+    yum_repo: 'yum repository',
+    ubuntu_repo: 'ubuntu repository',
   },
   zh: {
     kuboardspray_resource_package: '资源包',
@@ -54,6 +57,11 @@ const field = {
     cluster_name_placeholder: 'cluster domain name',
     event_ttl_duration: '事件保留时长',
     auto_renew_certificates: '自动更新证书',
+
+    yum_repo: 'yum repo',
+    yum_repo_placeholder: 'yum 镜像源',
+    ubuntu_repo: 'ubuntu repo',
+    ubuntu_repo_placeholder: 'ubuntu 镜像源',
 
   }
 }

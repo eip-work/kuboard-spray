@@ -100,7 +100,7 @@ func (execute *Execute) exec() {
 		}
 	}
 
-	logFilePath := runDirPath + "/command.log"
+	logFilePath := runDirPath + "/execute.log"
 	logFile, err := os.OpenFile(logFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		execute.R_Error = errors.New("cannot create logFile : " + logFilePath + " : " + err.Error())
@@ -126,8 +126,8 @@ func (execute *Execute) exec() {
 	}
 
 	logrus.Trace("started command " + cmd.String())
-	ioutil.WriteFile(runDirPath+"/command.string", []byte(cmd.String()), 0666)
-	ioutil.WriteFile(runDirPath+"/command.yaml", []byte(execute.ToString(runDirPath, pid)), 0666)
+	ioutil.WriteFile(runDirPath+"/execute.command", []byte(cmd.String()), 0666)
+	ioutil.WriteFile(runDirPath+"/execute.yaml", []byte(execute.ToString(runDirPath, pid)), 0666)
 
 	if err := lockFile.Truncate(0); err != nil {
 		execute.R_Error = errors.New("failed to truncate lockFile : " + err.Error())

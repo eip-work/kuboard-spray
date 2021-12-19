@@ -78,8 +78,8 @@ func InstallCluster(c *gin.Context) {
 
 	// end merge resourcePackage info into inventory
 
-	// common.MapSet(inventory, "all.vars.download_keep_remote_cache", true)
 	common.MapSet(inventory, "all.vars.kuboardspray_no_log", !req.Verbose)
+	common.MapSet(inventory, "all.vars.download_keep_remote_cache", false)
 	common.MapSet(inventory, "all.vars.download_run_once", true)
 	common.MapSet(inventory, "all.vars.download_localhost", true)
 	common.MapSet(inventory, "all.vars.download_always_pull", false)
@@ -88,19 +88,20 @@ func InstallCluster(c *gin.Context) {
 	common.MapSet(inventory, "all.vars.kuboardspray_cluster_dir", constants.GET_DATA_INVENTORY_DIR()+"/"+req.Cluster)
 	common.MapSet(inventory, "all.children.k8s_cluster.vars.disable_service_firewall", true)
 	common.MapSet(inventory, "all.children.etcd.vars.disable_service_firewall", true)
+	common.MapSet(inventory, "all.children.k8s_cluster.vars.ansible_python_interpreter", "/usr/bin/python3")
 
 	postExec := func(status command.ExecuteExitStatus) (string, error) {
 
 		success := status.Success
 		var message string
 		if success {
-			message = "\033[32m[ " + "Kubernetes Cluster has already been installed successfully, please go back to the cluster page for information about how to access the cluster." + " ]\033[0m \n"
+			message = "\033[32m[ " + "Kubernetes Cluster has been installed successfully, please go back to the cluster page for information about how to access the cluster." + " ]\033[0m \n"
 			message += "\033[32m[ " + "Kubernetes 集群已成功安装，请回到集群详情页面查看如何访问该集群。" + " ]\033[0m \n"
 		} else {
 			message = "\033[31m\033[01m\033[05m[" + "Failed to install Kubernetes Cluster. Please review the logs and fix the problem." + "]\033[0m \n"
-			message += "\033[31m\033[01m\033[05m[" + "集群安装失败，请回顾日志，找到错误信息，并修订后，再次尝试。" + "]\033[0m \n"
+			message += "\033[31m\033[01m\033[05m[" + "集群安装失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + "]\033[0m \n"
 		}
-		return message, nil
+		return "\n" + message, nil
 	}
 
 	env := []string{}

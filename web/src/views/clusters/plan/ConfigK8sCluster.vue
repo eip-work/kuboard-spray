@@ -9,6 +9,7 @@ zh:
 <template>
   <div>
     <SshParamsCluster :cluster="cluster" :holder="cluster.inventory.all.children.k8s_cluster.vars" prop="all.children.k8s_cluster.vars" :description="$t('sshcommon')"></SshParamsCluster>
+    <OsMirror v-if="false" :cluster="cluster"></OsMirror>
     <K8sCluster :cluster="cluster"></K8sCluster>
     <NetworkPlugin :cluster="cluster"></NetworkPlugin>
     <AddonMetricsServer :cluster="cluster"></AddonMetricsServer>
@@ -20,6 +21,7 @@ import SshParamsCluster from './common/SshParamsCluster.vue'
 import AddonMetricsServer from './k8s_cluster/AddonMetricsServer.vue'
 import NetworkPlugin from './k8s_cluster/NetworkPlugin.vue'
 import K8sCluster from './k8s_cluster/K8sCluster.vue'
+import OsMirror from './k8s_cluster/OsMirror.vue'
 
 export default {
   props: {
@@ -32,7 +34,7 @@ export default {
   },
   computed: {
   },
-  components: { SshParamsCluster, AddonMetricsServer, NetworkPlugin, K8sCluster },
+  components: { SshParamsCluster, AddonMetricsServer, NetworkPlugin, K8sCluster, OsMirror },
   mounted () {
   },
   methods: {

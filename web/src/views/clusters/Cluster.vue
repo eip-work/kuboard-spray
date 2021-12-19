@@ -3,11 +3,13 @@ en:
   cluster: Cluster
   clusterList: Clusters List
   plan: Cluster Plan
+  access: Access Cluster
   node: Nodes Maintainance
   confirmToCancel: Modifications will be lost to proceed, do you confirm ?
 zh:
   clusterList: 集群列表
   cluster: 集群
+  access: 访问集群
   plan: 集群规划
   nodes: 节点维护
   confirmToCancel: 将丢失已修改内容，确认取消编辑？
@@ -45,6 +47,9 @@ zh:
       <el-tab-pane :label="$t('plan')" name="plan">
         <Plan v-if="cluster" ref="plan" :cluster="cluster" :mode="mode"></Plan>
       </el-tab-pane>
+      <el-tab-pane :label="$t('access')" name="access" :disabled="cluster && cluster.success_tasks.length == 0">
+        <Access v-if="cluster && cluster.success_tasks.length > 0" ref="access" :cluster="cluster"></Access>
+      </el-tab-pane>
       <el-tab-pane disabled label="健康检查">检查集群的状态与集群规划内容的匹配情况（正在建设...）</el-tab-pane>
       <el-tab-pane disabled label="备份">备份 etcd 内容（正在建设...）</el-tab-pane>
       <el-tab-pane disabled label="CIS扫描">
@@ -60,6 +65,7 @@ import mixin from '../../mixins/mixin.js'
 import Plan from './plan/Plan.vue'
 import yaml from 'js-yaml'
 import ClusterProcessing from './ClusterProcessing.vue'
+import Access from './access/Access.vue'
 import { computed } from 'vue'
 
 export default {
@@ -109,7 +115,7 @@ export default {
       })
     }
   },
-  components: { Plan, ClusterProcessing },
+  components: { Plan, ClusterProcessing, Access },
   watch: {
     'cluster.inventory.all.hosts.localhost.kuboardspray_resource_package': function() {
       this.loadResourcePackage()
@@ -128,6 +134,11 @@ export default {
       await this.kuboardSprayApi.get(`/clusters/${this.name}`).then(resp => {
         this.cluster = resp.data.data
         // this.cluster.processing = true
+        if (this.cluster.success_tasks.length > 0) {
+          this.currentTab = 'access'
+        } else {
+          this.currentTab = 'plan'
+        }
         this.originalInventoryYaml = yaml.dump(this.cluster.inventory)
         this.loadResourcePackage()
       }).catch(e => {

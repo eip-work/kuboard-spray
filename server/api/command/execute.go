@@ -116,7 +116,7 @@ func (execute *Execute) exec() {
 	cmd.Stdout = logFile
 	cmd.Stderr = logFile
 	cmd.Dir = execute.Dir
-	cmd.Env = execute.Env
+	cmd.Env = append(os.Environ(), execute.Env...)
 
 	if err := cmd.Start(); err != nil {
 		execute.R_Error = errors.New("failed to start command " + cmd.String() + " : " + err.Error())

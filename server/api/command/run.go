@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"io"
+	"os"
 	"os/exec"
 
 	"github.com/sirupsen/logrus"
@@ -41,7 +42,7 @@ func (run *Run) Run() ([]byte, []byte, error) {
 
 	logrus.Trace("run command: ", run.ToString())
 	cmd := exec.Command(run.Cmd, run.Args...)
-	cmd.Env = run.Env
+	cmd.Env = append(os.Environ(), run.Env...)
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {

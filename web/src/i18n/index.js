@@ -35,6 +35,8 @@ const messages = {
       prompt: 'Prompt',
       save_succeeded: 'Succeeded in saving.',
       save_failed: 'Failed in saving. {msg}',
+      delete_succeeded: 'Succeeded in deleting.',
+      delete_failed: 'Failed in deleting. {msg}',
     }
   },
   zh: { 
@@ -65,6 +67,8 @@ const messages = {
       prompt: '提 示',
       save_succeeded: '保存成功',
       save_failed: '保存失败： {msg}',
+      delete_succeeded: '删除成功',
+      delete_failed: '删除失败： {msg}',
     }
   },
 }

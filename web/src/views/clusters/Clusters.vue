@@ -3,10 +3,12 @@ en:
   clusters: Cluster Management
   clusterList: Clusters List
   addCluster: Add Cluster Installation Plan
+  confirmToDelete: Do you confirm to delete the cluster info in KuboardSpray? Cluster itself will not be impacted.
 zh:
   clusters: 集群管理
   clusterList: 集群列表
   addCluster: 添加集群安装计划
+  confirmToDelete: 是否删除此集群在 KuboardSpray 的信息？（该集群本身将继续运行不受影响。）
 </i18n>
 
 <template>
@@ -26,12 +28,22 @@ zh:
     <el-card shadow="none" style="min-height: 234px;">
       <el-skeleton v-if="loading" :rows="5" animated />
       <div v-else style="display: flex; flex-wrap: wrap;">
-        <el-card v-for="(item, index) in clusters" :key="'cluster' + index" shadow="none" class="cluster"
-          @click="$router.push(`/clusters/${item}`)">
-          <div class="noselect">
-            {{item}}
+        <div v-for="(item, index) in clusters" :key="'cluster' + index" class="cluster">
+          <div class="deleteButton">
+            <el-popconfirm :confirm-button-text="$t('msg.ok')" :cancel-button-text="$t('msg.cancel')" icon="el-icon-warning" icon-color="red"
+              placement="right" :title="$t('confirmToDelete')" @confirm="deleteCluster(item)">
+              <template #reference>
+                <el-button icon="el-icon-delete" circle type="danger"></el-button>
+              </template>
+            </el-popconfirm>
           </div>
-        </el-card>
+          <el-card shadow="none"
+            @click="$router.push(`/clusters/${item}`)">
+            <div class="noselect">
+              {{item}}
+            </div>
+          </el-card>
+        </div>
         <el-button type="primary" size="large" icon="el-icon-plus" @click="$refs.create.show()">{{$t('addCluster')}}</el-button>
       </div>
     </el-card>
@@ -79,6 +91,14 @@ export default {
         this.$message.error('Error: ' + e)
       })
       this.loading = false
+    },
+    deleteCluster(cluster) {
+      this.kuboardSprayApi.delete('/clusters/' + cluster).then(() => {
+        this.refresh()
+        this.$message.success(this.$t('msg.delete_succeeded'))
+      }).catch(e => {
+        this.$message.error(this.$t('msg.delete_failed', {msg: e.response.data.message }))
+      })
     }
   }
 }
@@ -90,8 +110,19 @@ export default {
   width: 200px;
   border-radius: 6px;
   cursor: pointer;
+  .deleteButton {
+    height: 0px;
+    overflow: hidden;
+    position: relative;
+    top: -5px;
+    left: 5px;
+    text-align: right;
+  }
 }
 .cluster:hover {
   border-color: $--color-primary;
+}
+.cluster:hover .deleteButton {
+  overflow: visible;
 }
 </style>

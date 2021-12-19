@@ -22,7 +22,7 @@ zh:
       <div class="app_text_mono" v-if="inventory.all.hosts[name]">
         {{ inventory.all.hosts[name].ansible_host }}
       </div>
-      <div :class="role + ' role app_text_mono'" v-for="(_, role) in roles" :key="'r' + role">{{$t('node.' + role)}}</div>
+      <div :class="role + ' role app_text_mono'" v-for="(_, role) in roles" :key="'r' + role">{{ roleName(role) }}</div>
       <slot></slot>
     </div>
   </div>
@@ -59,7 +59,13 @@ export default {
   mounted () {
   },
   methods: {
-
+    roleName(role) {
+      if (role === 'etcd') {
+        return this.inventory.all.children.etcd.hosts[this.name].etcd_member_name || this.$t('node.' + role)
+      } else {
+        return this.$t('node.' + role)
+      }
+    }
   }
 }
 </script>

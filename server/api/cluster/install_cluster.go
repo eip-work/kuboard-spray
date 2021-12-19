@@ -7,12 +7,19 @@ import (
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
+
+type InstallClusterRequest struct {
+	Cluster string `uri:"cluster" binding:"required"`
+	Verbose bool   `json:"verbose"`
+}
 
 func InstallCluster(c *gin.Context) {
 
-	var req GetClusterRequest
+	var req InstallClusterRequest
 	c.ShouldBindUri(&req)
+	c.ShouldBindJSON(&req)
 
 	inventoryPath := ClusterInventoryPath(req.Cluster)
 	inventory, err := common.ParseYamlFile(inventoryPath)
@@ -71,7 +78,7 @@ func InstallCluster(c *gin.Context) {
 
 	// end merge resourcePackage info into inventory
 
-	// common.MapSet(inventory, "all.vars.download_keep_remote_cache", true)
+	common.MapSet(inventory, "all.vars.download_keep_remote_cache", true)
 	common.MapSet(inventory, "all.vars.download_run_once", true)
 	common.MapSet(inventory, "all.vars.download_localhost", true)
 	common.MapSet(inventory, "all.vars.download_always_pull", false)
@@ -86,14 +93,20 @@ func InstallCluster(c *gin.Context) {
 		success := status.Success
 		var message string
 		if success {
-			message = "Kubernetes Cluster has already been installed successfully, please go back to the cluster page for information about how to access the cluster.\n"
-			message += "Kubernetes 集群已成功安装，请回到集群详情页面查看如何访问该集群。\n"
+			message = "\033[32m[ " + "Kubernetes Cluster has already been installed successfully, please go back to the cluster page for information about how to access the cluster." + " ]\033[0m \n"
+			message += "\033[32m[ " + "Kubernetes 集群已成功安装，请回到集群详情页面查看如何访问该集群。" + " ]\033[0m \n"
 		} else {
-			message = "Failed to install Kubernetes Cluster. Please review the logs and fix the problem.\n"
-			message += "集群安装失败，请回顾日志，找到错误信息，并修订后，再次尝试。\n"
+			message = "\033[31m\033[01m\033[05m[" + "Failed to install Kubernetes Cluster. Please review the logs and fix the problem." + "]\033[0m \n"
+			message += "\033[31m\033[01m\033[05m[" + "集群安装失败，请回顾日志，找到错误信息，并修订后，再次尝试。" + "]\033[0m \n"
 		}
 		return message, nil
 	}
+
+	env := []string{}
+	if req.Verbose {
+		env = append(env, "ANSIBLE_DISPLAY_ARGS_TO_STDOUT=True")
+	}
+	logrus.Trace(req.Verbose, env)
 
 	command := command.Execute{
 		Cluster: req.Cluster,
@@ -105,6 +118,7 @@ func InstallCluster(c *gin.Context) {
 		Type:     "install",
 		PreExec:  func(run_dir string) error { return common.SaveYamlFile(run_dir+"/inventory.yaml", inventory) },
 		PostExec: postExec,
+		Env:      env,
 	}
 
 	if err := command.Exec(); err != nil {

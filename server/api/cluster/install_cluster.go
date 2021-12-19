@@ -78,7 +78,8 @@ func InstallCluster(c *gin.Context) {
 
 	// end merge resourcePackage info into inventory
 
-	common.MapSet(inventory, "all.vars.download_keep_remote_cache", true)
+	// common.MapSet(inventory, "all.vars.download_keep_remote_cache", true)
+	common.MapSet(inventory, "all.vars.kuboardspray_no_log", !req.Verbose)
 	common.MapSet(inventory, "all.vars.download_run_once", true)
 	common.MapSet(inventory, "all.vars.download_localhost", true)
 	common.MapSet(inventory, "all.vars.download_always_pull", false)

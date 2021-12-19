@@ -84,9 +84,9 @@ export default {
           this.inventoryRef.all.hosts[this.addNodeForm.name] = {}
           for (let role of this.addNodeForm.roles) {
             if (role === 'etcd') {
-              this.inventoryRef.all.children.etcd.hosts[this.addNodeForm.name] = {}
+              this.inventoryRef.all.children.managed.children.etcd.hosts[this.addNodeForm.name] = {}
             } else {
-              this.inventoryRef.all.children.k8s_cluster.children[role].hosts[this.addNodeForm.name] = {}
+              this.inventoryRef.all.children.managed.children.k8s_cluster.children[role].hosts[this.addNodeForm.name] = {}
             }
           }
           this.$emit('update:currentPropertiesTab', 'NODE_' + this.addNodeForm.name)

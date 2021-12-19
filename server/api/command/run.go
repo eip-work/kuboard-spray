@@ -16,6 +16,7 @@ type Run struct {
 	Cluster string
 	Env     []string
 	Sync    bool
+	Dir     string
 }
 
 func (run *Run) ToString() string {
@@ -43,6 +44,7 @@ func (run *Run) Run() ([]byte, []byte, error) {
 	logrus.Trace("run command: ", run.ToString())
 	cmd := exec.Command(run.Cmd, run.Args...)
 	cmd.Env = append(os.Environ(), run.Env...)
+	cmd.Dir = run.Dir
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {

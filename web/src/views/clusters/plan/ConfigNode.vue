@@ -115,8 +115,8 @@ zh:
       </el-form-item>
     </ConfigSection>
     <ConfigSection v-if="enabledEtcd" v-model:enabled="enabledEtcd" label="ETCD" :description="$t('etcd', {nodeName: nodeName})" disabled>
-      <FieldString :holder="inventory.all.children.etcd.hosts[nodeName]" fieldName="etcd_member_name" :rules="etcd_member_name_rules"
-        :prop="`all.children.etcd.hosts.${nodeName}`" required></FieldString>
+      <FieldString :holder="inventory.all.children.managed.children.etcd.hosts[nodeName]" fieldName="etcd_member_name" :rules="etcd_member_name_rules"
+        :prop="`all.children.managed.children.etcd.hosts.${nodeName}`" required></FieldString>
     </ConfigSection>
   </el-form>
 </template>
@@ -141,8 +141,8 @@ export default {
       etcd_member_name_rules: [
         {
           validator: (rule, value, callback) => {
-            for (let key in this.inventory.all.children.etcd.hosts) {
-              if (key !== this.nodeName && this.inventory.all.children.etcd.hosts[key].etcd_member_name === value) {
+            for (let key in this.inventory.all.children.managed.children.etcd.hosts) {
+              if (key !== this.nodeName && this.inventory.all.children.managed.children.etcd.hosts[key].etcd_member_name === value) {
                 return callback(this.$t('etcd_member_name_conflict', {nodeName: key}))
               }
             }
@@ -164,7 +164,7 @@ export default {
     },
     enabledEtcd: {
       get () {
-        for (let key in this.inventory.all.children.etcd.hosts) {
+        for (let key in this.inventory.all.children.managed.children.etcd.hosts) {
           if (key === this.nodeName) {
             return true
           }
@@ -177,7 +177,7 @@ export default {
     },
     isKubeControlPlane: {
       get () {
-        for (let key in this.inventory.all.children.k8s_cluster.children.kube_control_plane.hosts) {
+        for (let key in this.inventory.all.children.managed.children.k8s_cluster.children.kube_control_plane.hosts) {
           if (key === this.nodeName) {
             return true
           }
@@ -187,19 +187,19 @@ export default {
       set (v) {
         console.log('setKubeControlPlane', v)
         if (v) {
-          this.inventory.all.children.k8s_cluster.children.kube_control_plane.hosts[this.nodeName] = {}
+          this.inventory.all.children.managed.children.k8s_cluster.children.kube_control_plane.hosts[this.nodeName] = {}
         } else {
           if (!this.isEtcd && !this.isKubeNode) {
             this.$message.error(this.$t('requiresAtLeastOneRole'))
           } else {
-            delete this.inventory.all.children.k8s_cluster.children.kube_control_plane.hosts[this.nodeName]
+            delete this.inventory.all.children.managed.children.k8s_cluster.children.kube_control_plane.hosts[this.nodeName]
           }
         }
       }
     },
     isKubeNode: {
       get () {
-        for (let key in this.inventory.all.children.k8s_cluster.children.kube_node.hosts) {
+        for (let key in this.inventory.all.children.managed.children.k8s_cluster.children.kube_node.hosts) {
           if (key === this.nodeName) {
             return true
           }
@@ -209,12 +209,12 @@ export default {
       set (v) {
         console.log('setKubeNode', v)
         if (v) {
-          this.inventory.all.children.k8s_cluster.children.kube_node.hosts[this.nodeName] = {}
+          this.inventory.all.children.managed.children.k8s_cluster.children.kube_node.hosts[this.nodeName] = {}
         } else {
           if (!this.isEtcd && !this.isKubeControlPlane) {
             this.$message.error(this.$t('requiresAtLeastOneRole'))
           } else {
-            delete this.inventory.all.children.k8s_cluster.children.kube_node.hosts[this.nodeName]
+            delete this.inventory.all.children.managed.children.k8s_cluster.children.kube_node.hosts[this.nodeName]
           }
         }
       }
@@ -226,12 +226,12 @@ export default {
       set (v) {
         console.log('setEtcd', v)
         if (v) {
-          this.inventory.all.children.etcd.hosts[this.nodeName] = {}
+          this.inventory.all.children.managed.children.etcd.hosts[this.nodeName] = {}
         } else {
           if (!this.isKubeControlPlane && !this.isKubeNode) {
             this.$message.error(this.$t('requiresAtLeastOneRole'))
           } else {
-            delete this.inventory.all.children.etcd.hosts[this.nodeName]
+            delete this.inventory.all.children.managed.children.etcd.hosts[this.nodeName]
           }
         }
       }
@@ -253,21 +253,21 @@ export default {
     async loadFacts(fromCache) {
       this.fact = undefined
       this.$refs.form.validate(async flag => {
-        if (this.inventory.all.children.etcd.hosts[this.nodeName] && !this.inventory.all.children.etcd.hosts[this.nodeName].etcd_member_name && !fromCache) {
+        if (this.inventory.all.children.managed.children.etcd.hosts[this.nodeName] && !this.inventory.all.children.managed.children.etcd.hosts[this.nodeName].etcd_member_name && !fromCache) {
           this.$message.warning(this.$t('etcd_member_name_required'))
         }
         if (flag) {
           this.loadingFact = true
           let req = {
             from_cache: fromCache,
-            ansible_host: this.inventory.all.hosts[this.nodeName].ansible_host || this.inventory.all.children.k8s_cluster.vars.ansible_host,
-            ansible_port: this.inventory.all.hosts[this.nodeName].ansible_port || this.inventory.all.children.k8s_cluster.vars.ansible_port,
-            ansible_user: this.inventory.all.hosts[this.nodeName].ansible_user || this.inventory.all.children.k8s_cluster.vars.ansible_user,
-            ansible_password: this.inventory.all.hosts[this.nodeName].ansible_password || this.inventory.all.children.k8s_cluster.vars.ansible_password,
-            ansible_ssh_private_key_file: this.inventory.all.hosts[this.nodeName].ansible_ssh_private_key_file || this.inventory.all.children.k8s_cluster.vars.ansible_ssh_private_key_file,
-            ansible_become: this.inventory.all.hosts[this.nodeName].ansible_become || this.inventory.all.children.k8s_cluster.vars.ansible_become,
-            ansible_become_user: this.inventory.all.hosts[this.nodeName].ansible_become_user || this.inventory.all.children.k8s_cluster.vars.ansible_become_user,
-            ansible_become_password: this.inventory.all.hosts[this.nodeName].ansible_become_password || this.inventory.all.children.k8s_cluster.vars.ansible_host,
+            ansible_host: this.inventory.all.hosts[this.nodeName].ansible_host || this.inventory.all.children.managed.children.k8s_cluster.vars.ansible_host,
+            ansible_port: this.inventory.all.hosts[this.nodeName].ansible_port || this.inventory.all.children.managed.children.k8s_cluster.vars.ansible_port,
+            ansible_user: this.inventory.all.hosts[this.nodeName].ansible_user || this.inventory.all.children.managed.children.k8s_cluster.vars.ansible_user,
+            ansible_password: this.inventory.all.hosts[this.nodeName].ansible_password || this.inventory.all.children.managed.children.k8s_cluster.vars.ansible_password,
+            ansible_ssh_private_key_file: this.inventory.all.hosts[this.nodeName].ansible_ssh_private_key_file || this.inventory.all.children.managed.children.k8s_cluster.vars.ansible_ssh_private_key_file,
+            ansible_become: this.inventory.all.hosts[this.nodeName].ansible_become || this.inventory.all.children.managed.children.k8s_cluster.vars.ansible_become,
+            ansible_become_user: this.inventory.all.hosts[this.nodeName].ansible_become_user || this.inventory.all.children.managed.children.k8s_cluster.vars.ansible_become_user,
+            ansible_become_password: this.inventory.all.hosts[this.nodeName].ansible_become_password || this.inventory.all.children.managed.children.k8s_cluster.vars.ansible_host,
           }
           await this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/facts/${this.nodeName}`, req).then(resp => {
             if (fromCache) {

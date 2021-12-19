@@ -205,14 +205,14 @@ export default {
     },
     bastionEnabled: {
       get () {
-        return this.inventory.all.children.bastion !== undefined
+        return this.inventory.all.children.managed.children.bastion !== undefined
       },
       set (v) {
         if (v) {
           this.inventory.all.hosts.bastion = this.inventory.all.hosts.bastion || {ansible_host: '', ansible_user: ''}
-          this.inventory.all.children.bastion = {hosts: {bastion: {}}}
+          this.inventory.all.children.managed.children.bastion = {hosts: {bastion: {}}}
         } else {
-          delete this.inventory.all.children.bastion
+          delete this.inventory.all.children.managed.children.bastion
         }
       }
     }

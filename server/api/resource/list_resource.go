@@ -28,9 +28,9 @@ func ListResources(c *gin.Context) {
 
 	result := []string{}
 	for _, dir := range fileInfoList {
-		if dir.IsDir() {
-			result = append(result, dir.Name())
-		}
+		// if dir.IsDir() {
+		result = append(result, dir.Name())
+		// }
 	}
 
 	c.JSON(http.StatusOK, gin.H{

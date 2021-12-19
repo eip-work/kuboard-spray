@@ -19,9 +19,9 @@ zh:
         <span class="app_text_mono">{{cluster.resourcePackage.docker_engine.container_manager}}_{{cluster.resourcePackage.docker_engine.version}}</span>
       </el-form-item>
     </template>
-    <FieldString :holder="cluster.inventory.all.children.k8s_cluster.vars" fieldName="cluster_name"></FieldString>
-    <FieldString :holder="cluster.inventory.all.children.k8s_cluster.vars" fieldName="event_ttl_duration"></FieldString>
-    <!-- <FieldBool :holder="cluster.inventory.all.children.k8s_cluster.vars" fieldName="auto_renew_certificates"></FieldBool> -->
+    <FieldString :holder="cluster.inventory.all.children.managed.children.k8s_cluster.vars" fieldName="cluster_name"></FieldString>
+    <FieldString :holder="cluster.inventory.all.children.managed.children.k8s_cluster.vars" fieldName="event_ttl_duration"></FieldString>
+    <!-- <FieldBool :holder="cluster.inventory.all.children.managed.children.k8s_cluster.vars" fieldName="auto_renew_certificates"></FieldBool> -->
   </ConfigSection>
 </template>
 

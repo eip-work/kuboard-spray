@@ -2,8 +2,10 @@ package command
 
 import (
 	"errors"
+	"io/ioutil"
 	"os"
 	"os/exec"
+	"strings"
 	"sync"
 	"time"
 
@@ -19,23 +21,37 @@ type Execute struct {
 	mutex    *sync.Mutex
 	Type     string
 	PreExec  func(string) error
-	PostExec func(string, string, *os.File) error
+	PostExec func(ExecuteExitStatus) (string, error)
 	Dir      string
 	Env      []string
 	R_Error  error
 	R_Pid    string
 }
 
-func (execute *Execute) ToString(runDirPath string) string {
-	result := "--" + execute.Cluster + "-- [" + execute.Cmd + ", "
+func (execute *Execute) ToString(runDirPath string, pid string) string {
+	result := "---"
+	result += "\ncluster: " + execute.Cluster
+	result += "\nhistory: " + runDirPath
+	result += "\npid: " + pid
+	result += "\ndir: " + execute.Dir
+	result += "\ncmd: " + execute.Cmd
+	result += "\nargs:"
 	args := execute.Args(runDirPath)
-	for index, arg := range args {
-		result += arg
-		if index < len(args)-1 {
-			result += ", "
-		}
+	for _, arg := range args {
+		result += "\n  - " + arg
 	}
-	result += "]"
+	result += "\nenv:"
+	for _, env := range execute.Env {
+		result += "\n - " + env
+	}
+	result += "\nshell: cd " + execute.Dir
+	for _, env := range execute.Env {
+		result += " && export \"" + env + "\""
+	}
+	result += " && " + execute.Cmd
+	for _, arg := range args {
+		result += " " + arg
+	}
 	return result
 }
 
@@ -85,7 +101,7 @@ func (execute *Execute) exec() {
 	}
 
 	logFilePath := runDirPath + "/command.log"
-	logFile, err := os.OpenFile(logFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	logFile, err := os.OpenFile(logFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		execute.R_Error = errors.New("cannot create logFile : " + logFilePath + " : " + err.Error())
 		execute.mutex.Unlock()
@@ -103,13 +119,15 @@ func (execute *Execute) exec() {
 	cmd.Env = execute.Env
 
 	if err := cmd.Start(); err != nil {
-		execute.R_Error = errors.New("failed to start command " + execute.ToString(runDirPath) + " : " + err.Error())
+		execute.R_Error = errors.New("failed to start command " + cmd.String() + " : " + err.Error())
 		os.Remove(runDirPath)
 		execute.mutex.Unlock()
 		return
 	}
 
-	logrus.Trace("started command "+execute.ToString(runDirPath), pid)
+	logrus.Trace("started command " + cmd.String())
+	ioutil.WriteFile(runDirPath+"/command.string", []byte(cmd.String()), 0666)
+	ioutil.WriteFile(runDirPath+"/command.yaml", []byte(execute.ToString(runDirPath, pid)), 0666)
 
 	if err := lockFile.Truncate(0); err != nil {
 		execute.R_Error = errors.New("failed to truncate lockFile : " + err.Error())
@@ -124,10 +142,97 @@ func (execute *Execute) exec() {
 	execute.mutex.Unlock()
 	cmd.Wait()
 
-	logFile.WriteString("\n\n\nKUBOARD SPRAY *****************************************************************\n")
 	if execute.PostExec != nil {
-		if err := execute.PostExec(pid, runDirPath, logFile); err != nil {
+		logFile.WriteString("\n\n\nKUBOARD SPRAY *****************************************************************\n")
+		logs, err := ioutil.ReadFile(logFilePath)
+		if err != nil {
+			return
+		}
+		logStr := string(logs)
+		recap := logStr[strings.LastIndex(logStr, "PLAY RECAP *********************************************************************")+81:]
+		recap = recap[:strings.Index(recap, "\n\n")]
+
+		lines := strings.Split(recap, "\n")
+		status := []ExecuteExitNodeStatus{}
+		for _, line := range lines {
+			status = append(status, parseAnsibleRecapLine(line))
+		}
+		success := true
+		for _, nodestatus := range status {
+			if nodestatus.Unreachable != "0" || nodestatus.Failed != "0" {
+				success = false
+			}
+		}
+
+		exitStatus := ExecuteExitStatus{
+			Success:    success,
+			NodeStatus: status,
+			Pid:        pid,
+			RunDir:     runDirPath,
+		}
+
+		message, err := execute.PostExec(exitStatus)
+		if err != nil {
 			logFile.WriteString("Error in PostExec: " + err.Error() + "\n")
 		}
+
+		if success {
+			task := SuccessTask{
+				Type:      execute.Type,
+				Timestamp: time.Now(),
+				Pid:       pid,
+			}
+			if err := AddSuccessTask(execute.Cluster, task); err != nil {
+				logrus.Warn("failed to add success task: ", err)
+			}
+		}
+
+		logFile.WriteString(message)
 	}
+}
+
+type ExecuteExitStatus struct {
+	Success    bool
+	NodeStatus []ExecuteExitNodeStatus
+	Pid        string
+	RunDir     string
+}
+
+type ExecuteExitNodeStatus struct {
+	NodeName    string
+	OK          string
+	Changed     string
+	Unreachable string
+	Failed      string
+	Skipped     string
+	Rescued     string
+	Ignored     string
+}
+
+func parseAnsibleRecapLine(line string) ExecuteExitNodeStatus {
+	result := make(map[string]string)
+	s1 := strings.Split(line, ":")
+
+	result["node"] = strings.Trim(s1[0], " ")
+	s2 := strings.Split(s1[1], " ")
+	for _, kv := range s2 {
+		s3 := strings.Split(kv, "=")
+		if len(s3) == 1 {
+			continue
+		}
+		k := strings.Trim(s3[0], " ")
+		v := strings.Trim(s3[1], " ")
+		result[k] = v
+	}
+	nodeStatus := ExecuteExitNodeStatus{
+		NodeName:    result["node"],
+		OK:          result["ok"],
+		Changed:     result["changed"],
+		Unreachable: result["unreachable"],
+		Failed:      result["failed"],
+		Skipped:     result["skipped"],
+		Rescued:     result["rescured"],
+		Ignored:     result["ignored"],
+	}
+	return nodeStatus
 }

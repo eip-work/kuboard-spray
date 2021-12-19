@@ -1,18 +1,12 @@
 package cluster
 
 import (
-	"errors"
-	"io/ioutil"
 	"net/http"
-	"os"
-	"strings"
-	"time"
 
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 )
 
 func InstallCluster(c *gin.Context) {
@@ -87,38 +81,9 @@ func InstallCluster(c *gin.Context) {
 	common.MapSet(inventory, "all.children.k8s_cluster.vars.disable_service_firewall", true)
 	common.MapSet(inventory, "all.children.etcd.vars.disable_service_firewall", true)
 
-	postExec := func(pid string, run_dir string, logFile *os.File) error {
-		logs, err := ioutil.ReadFile(run_dir + "/command.log")
-		if err != nil {
-			return errors.New("cannot read logfile " + run_dir + "/command.log" + err.Error())
-		}
-		logStr := string(logs)
-		recap := logStr[strings.LastIndex(logStr, "PLAY RECAP *********************************************************************")+81:]
-		recap = recap[:strings.Index(recap, "\n\n")]
+	postExec := func(status command.ExecuteExitStatus) (string, error) {
 
-		lines := strings.Split(recap, "\n")
-		status := []map[string]string{}
-		for _, line := range lines {
-			status = append(status, parseAnsibleRecapLine(line))
-		}
-		success := true
-		for _, line := range status {
-			if line["unreachable"] != "0" || line["failed"] != "0" {
-				success = false
-			}
-		}
-
-		if success {
-			task := command.SuccessTask{
-				Type:      "install",
-				Timestamp: time.Now(),
-				Pid:       pid,
-			}
-			if err := command.AddSuccessTask(req.Cluster, task); err != nil {
-				logrus.Warn("failed to add success task: ", err)
-			}
-		}
-
+		success := status.Success
 		var message string
 		if success {
 			message = "Kubernetes Cluster has already been installed successfully, please go back to the cluster page for information about how to access the cluster.\n"
@@ -127,8 +92,7 @@ func InstallCluster(c *gin.Context) {
 			message = "Failed to install Kubernetes Cluster. Please review the logs and fix the problem.\n"
 			message += "集群安装失败，请回顾日志，找到错误信息，并修订后，再次尝试。\n"
 		}
-		logFile.WriteString(message)
-		return nil
+		return message, nil
 	}
 
 	command := command.Execute{
@@ -156,22 +120,4 @@ func InstallCluster(c *gin.Context) {
 		},
 	})
 
-}
-
-func parseAnsibleRecapLine(line string) map[string]string {
-	result := make(map[string]string)
-	s1 := strings.Split(line, ":")
-
-	result["node"] = strings.Trim(s1[0], " ")
-	s2 := strings.Split(s1[1], " ")
-	for _, kv := range s2 {
-		s3 := strings.Split(kv, "=")
-		if len(s3) == 1 {
-			continue
-		}
-		k := strings.Trim(s3[0], " ")
-		v := strings.Trim(s3[1], " ")
-		result[k] = v
-	}
-	return result
 }

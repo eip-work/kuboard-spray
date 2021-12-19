@@ -5,14 +5,17 @@
     </template>
     <div style="display: flex;" v-if="editMode !== 'view'">
       <el-select v-model.trim="obj[fieldName]" style="flex-grow: 1;" clearable :disabled="disabled"
-        :placeholder="$t('field.' + fieldName + '_placeholder')" @visible-change="load($event)">
+        :placeholder="placeholder || $t('field.' + fieldName + '_placeholder')" @visible-change="load($event)">
         <el-option v-for="(item, index) in options" :key="'i' + index" :value="item.value" :label="item.label">
           {{item.label}}
         </el-option>
       </el-select>
       <slot></slot>
     </div>
-    <div v-else class="app_text_mono">{{ obj[fieldName] }}</div>
+    <div v-else class="app_text_mono">
+      <span v-if="value">{{ value }}</span>
+      <span v-else class="field_placeholder">{{ placeholder || $t('field.' + fieldName + '_placeholder') }}</span>
+    </div>
   </el-form-item>
 </template>
 
@@ -27,6 +30,7 @@ export default {
     rules: { type: Array, required: false, default: () => ([])},
     loadOptions: { type: Function, required: true },
     disabled: { type: Boolean, required: false, default: false },
+    placeholder: { type: String, required: false, default: undefined },
   },
   data () {
     return {
@@ -61,6 +65,18 @@ export default {
       }
       result.push(... this.rules)
       return result
+    },
+    value: {
+      get () {
+        return this.holder[this.fieldName]
+      },
+      set (v) {
+        if (v) {
+          this.obj[this.fieldName] = v
+        } else {
+          delete this.obj[this.fieldName]
+        }
+      }
     }
   },
   components: { },
@@ -82,5 +98,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+.field_placeholder {
+  color: $--color-text-placeholder;
+  font-size: 12px;
+}
 </style>

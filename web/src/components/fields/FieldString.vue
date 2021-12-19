@@ -7,7 +7,7 @@
       :placeholder="placeholder || $t('field.' + fieldName + '_placeholder')"></el-input>
     <div v-else class="app_text_mono">
       <span v-if="value">{{ value }}</span>
-      <span v-else class="field_placeholder">{{ placeholder }}</span>
+      <span v-else class="field_placeholder">{{ placeholder || $t('field.' + fieldName + '_placeholder') }}</span>
     </div>
   </el-form-item>
 </template>

@@ -93,7 +93,7 @@ func InstallCluster(c *gin.Context) {
 			return errors.New("cannot read logfile " + run_dir + "/command.log" + err.Error())
 		}
 		logStr := string(logs)
-		recap := logStr[strings.Index(logStr, "PLAY RECAP *********************************************************************")+81:]
+		recap := logStr[strings.LastIndex(logStr, "PLAY RECAP *********************************************************************")+81:]
 		recap = recap[:strings.Index(recap, "\n\n")]
 
 		lines := strings.Split(recap, "\n")
@@ -132,9 +132,11 @@ func InstallCluster(c *gin.Context) {
 	}
 
 	command := command.Execute{
-		Cluster:  req.Cluster,
-		Cmd:      "ansible-playbook",
-		Args:     func(run_dir string) []string { return []string{"-i", run_dir + "/inventory.yaml", "cluster.yml"} },
+		Cluster: req.Cluster,
+		Cmd:     "ansible-playbook",
+		Args: func(run_dir string) []string {
+			return []string{"-i", run_dir + "/inventory.yaml", "contrib/os-services/os-services.yml", "cluster.yml"}
+		},
 		Dir:      resourcePackagePath + "/kubespray",
 		Type:     "install",
 		PreExec:  func(run_dir string) error { return common.SaveYamlFile(run_dir+"/inventory.yaml", inventory) },

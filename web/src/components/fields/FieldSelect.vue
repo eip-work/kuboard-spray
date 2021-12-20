@@ -1,3 +1,10 @@
+<i18n>
+en:
+  please: 'Please select '
+zh:
+  please: 请选择
+</i18n>
+
 <template>
   <el-form-item :rules="computedRules" :prop="prop ? prop + '.' + fieldName : undefined">
     <template #label>
@@ -5,7 +12,7 @@
     </template>
     <div style="display: flex;" v-if="editMode !== 'view'">
       <el-select v-model.trim="obj[fieldName]" style="flex-grow: 1;" clearable :disabled="disabled"
-        :placeholder="placeholder || $t('field.' + fieldName + '_placeholder')" @visible-change="load($event)">
+        :placeholder="compute_placeholder" @visible-change="load($event)">
         <el-option v-for="(item, index) in options" :key="'i' + index" :value="item.value" :label="item.label">
           {{item.label}}
         </el-option>
@@ -14,7 +21,7 @@
     </div>
     <div v-else class="app_text_mono">
       <span v-if="value">{{ value }}</span>
-      <span v-else class="field_placeholder">{{ placeholder || $t('field.' + fieldName + '_placeholder') }}</span>
+      <span v-else class="field_placeholder">{{ compute_placeholder }}</span>
     </div>
   </el-form-item>
 </template>
@@ -45,6 +52,18 @@ export default {
       },
       set (v) {
         console.log(v)
+      }
+    },
+    compute_placeholder () {
+      if (this.placeholder) {
+        return this.placeholder
+      }
+      let temp = this.$t('field.' + this.fieldName + '_placeholder')
+      console.log(temp, temp == ('field.' + this.fieldName + '_placeholder'))
+      if (temp == ('field.' + this.fieldName + '_placeholder')) {
+        return this.$t('please') + this.$t('field.' + this.fieldName)
+      } else {
+        return temp
       }
     },
     computedRules () {

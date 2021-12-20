@@ -1,13 +1,20 @@
+<i18n>
+en:
+  please: 'Please input '
+zh:
+  please: 请输入
+</i18n>
+
 <template>
   <el-form-item :rules="computedRules" :prop="prop ? prop + '.' + fieldName : undefined">
     <template #label>
       {{ $t('field.' + fieldName) }}
     </template>
     <el-input v-if="editMode !== 'view'" v-model.trim="value" :show-password="showPassword" :disabled="disabled"
-      :placeholder="placeholder || $t('field.' + fieldName + '_placeholder')"></el-input>
+      :placeholder="compute_placeholder"></el-input>
     <div v-else class="app_text_mono">
       <span v-if="value">{{ value }}</span>
-      <span v-else class="field_placeholder">{{ placeholder || $t('field.' + fieldName + '_placeholder') }}</span>
+      <span v-else class="field_placeholder">{{ compute_placeholder }}</span>
     </div>
   </el-form-item>
 </template>
@@ -38,6 +45,18 @@ export default {
       },
       set (v) {
         console.log(v)
+      }
+    },
+    compute_placeholder () {
+      if (this.placeholder) {
+        return this.placeholder
+      }
+      let temp = this.$t('field.' + this.fieldName + '_placeholder')
+      console.log(temp, temp == ('field.' + this.fieldName + '_placeholder'))
+      if (temp == ('field.' + this.fieldName + '_placeholder')) {
+        return this.$t('please') + this.$t('field.' + this.fieldName)
+      } else {
+        return temp
       }
     },
     computedRules () {

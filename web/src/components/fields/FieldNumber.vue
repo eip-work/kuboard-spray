@@ -3,8 +3,11 @@
     <template #label>
       {{ $t('field.' + fieldName) }}
     </template>
-    <el-input v-if="editMode !== 'view'" v-model.number="obj[fieldName]" :placeholder="$t('field.' + fieldName + '_placeholder')"></el-input>
-    <div v-else class="app_text_mono">{{ obj[fieldName] }}</div>
+    <el-input v-if="editMode !== 'view'" v-model.number="obj[fieldName]" :placeholder="compute_placeholder"></el-input>
+    <div v-else class="app_text_mono">
+      <span v-if="obj[fieldName]">{{ obj[fieldName] }}</span>
+      <span v-else>{{ compute_placeholder }}</span>
+    </div>
   </el-form-item>
 </template>
 
@@ -31,6 +34,18 @@ export default {
       },
       set (v) {
         console.log(v)
+      }
+    },
+    compute_placeholder () {
+      if (this.placeholder) {
+        return this.placeholder
+      }
+      let temp = this.$t('field.' + this.fieldName + '_placeholder')
+      console.log(temp, temp == ('field.' + this.fieldName + '_placeholder'))
+      if (temp == ('field.' + this.fieldName + '_placeholder')) {
+        return this.$t('please') + this.$t('field.' + this.fieldName)
+      } else {
+        return temp
       }
     },
     computedRules () {

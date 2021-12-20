@@ -41,14 +41,14 @@ export default {
   computed: {
     roles () {
       let result = {}
-      for (let role in this.inventory.all.children.managed.children.k8s_cluster.children) {
-        for (let n in this.inventory.all.children.managed.children.k8s_cluster.children[role].hosts) {
+      for (let role in this.inventory.all.children.target.children.k8s_cluster.children) {
+        for (let n in this.inventory.all.children.target.children.k8s_cluster.children[role].hosts) {
           if (n === this.name) {
             result[role] = true
           }
         }
       }
-      for (let n in this.inventory.all.children.managed.children.etcd.hosts) {
+      for (let n in this.inventory.all.children.target.children.etcd.hosts) {
         if (n === this.name) {
           result['etcd'] = true
         }
@@ -61,7 +61,7 @@ export default {
   methods: {
     roleName(role) {
       if (role === 'etcd') {
-        return this.inventory.all.children.managed.children.etcd.hosts[this.name].etcd_member_name || this.$t('node.' + role)
+        return this.inventory.all.children.target.children.etcd.hosts[this.name].etcd_member_name || this.$t('node.' + role)
       } else {
         return this.$t('node.' + role)
       }

@@ -47,18 +47,18 @@ zh:
         </div>
         <el-scrollbar height="calc(100vh - 283px)">
           <div class="masters">
-            <Node v-for="(item, index) in inventory.all.children.managed.children.k8s_cluster.children.kube_control_plane.hosts" :key="'control_plane' + index"
+            <Node v-for="(item, index) in inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts" :key="'control_plane' + index"
               @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)"
               :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"
               :name="index" :inventory="inventory"></Node>
-            <template v-for="(item, index) in inventory.all.children.managed.children.etcd.hosts" :key="'etcd' + index">
+            <template v-for="(item, index) in inventory.all.children.target.children.etcd.hosts" :key="'etcd' + index">
               <Node v-if="isEtcdAndNotControlPlane(index)" :name="index" :inventory="inventory"
                 @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)"
                 :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"></Node>
             </template>
           </div>
           <div class="workers">
-            <template v-for="(item, index) in inventory.all.children.managed.children.k8s_cluster.children.kube_node.hosts" :key="'node' + index">
+            <template v-for="(item, index) in inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts" :key="'node' + index">
               <Node v-if="isNode(index)" :name="index" :inventory="inventory"
                 @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)"
                 :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"></Node>
@@ -192,7 +192,7 @@ export default {
       }
     },
     bastionEnabled() {
-      return this.cluster.inventory.all.children.managed.children.bastion !== undefined
+      return this.cluster.inventory.all.children.target.children.bastion !== undefined
     },
   },
   components: { Node, ConfigKuboardSpray, ConfigK8sCluster, ConfigNode, ConfigEtcd, AddNode },
@@ -214,14 +214,14 @@ export default {
     },
     nodeRoles (name) {
       let roles = {}
-      for (let role in this.inventory.all.children.managed.children.k8s_cluster.children) {
-        for (let n in this.inventory.all.children.managed.children.k8s_cluster.children[role].hosts) {
+      for (let role in this.inventory.all.children.target.children.k8s_cluster.children) {
+        for (let n in this.inventory.all.children.target.children.k8s_cluster.children[role].hosts) {
           if (n === name) {
             roles[role] = true
           }
         }
       }
-      for (let n in this.inventory.all.children.managed.children.etcd.hosts) {
+      for (let n in this.inventory.all.children.target.children.etcd.hosts) {
         if (n === name) {
           roles.etcd = true
         }
@@ -256,9 +256,9 @@ export default {
     },
     deleteNode(nodeName) {
       delete this.inventory.all.hosts[nodeName]
-      delete this.inventory.all.children.managed.children.k8s_cluster.children.kube_control_plane.hosts[nodeName]
-      delete this.inventory.all.children.managed.children.k8s_cluster.children.kube_node.hosts[nodeName]
-      delete this.inventory.all.children.managed.children.etcd.hosts[nodeName]
+      delete this.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[nodeName]
+      delete this.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts[nodeName]
+      delete this.inventory.all.children.target.children.etcd.hosts[nodeName]
     }
   }
 }

@@ -11,7 +11,7 @@ zh:
 <template>
   <ConfigSection v-model:enabled="enabled" :label="$t('label')" disabled>
     <FieldSelect ref="kube_network_plugin" :disabled="!cluster.inventory.all.hosts.localhost.kuboardspray_resource_package"
-      :holder="cluster.inventory.all.children.managed.children.k8s_cluster.vars" fieldName="kube_network_plugin"
+      :holder="cluster.inventory.all.children.target.children.k8s_cluster.vars" fieldName="kube_network_plugin"
       :loadOptions="loadNetworkCandidates"></FieldSelect>
   </ConfigSection>
 </template>

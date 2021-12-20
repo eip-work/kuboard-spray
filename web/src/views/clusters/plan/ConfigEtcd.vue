@@ -8,7 +8,7 @@ zh:
 <template>
   <div>
     <ConfigSection v-model:enabled="enabledEtcd" :description="$t('ETCD')" label="ETCD" disabled>
-      <FieldSelect :holder="cluster.inventory.all.children.managed.children.etcd.vars" prop="all.children.managed.children.etcd.vars" required
+      <FieldSelect :holder="cluster.inventory.all.children.target.children.etcd.vars" prop="all.children.target.children.etcd.vars" required
         fieldName="etcd_deployment_type" :loadOptions="loadEtcdType"></FieldSelect>
     </ConfigSection>
   </div>

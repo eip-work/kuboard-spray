@@ -1,8 +1,10 @@
 <i18n>
 en:
   please: 'Please select '
+  isRequiredField: ' is required.'
 zh:
   please: 请选择
+  isRequiredField: 为必填字段
 </i18n>
 
 <template>

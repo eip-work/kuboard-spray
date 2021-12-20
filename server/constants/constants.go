@@ -18,6 +18,10 @@ func GET_DATA_RESOURCE_DIR() string {
 	return GET_DATA_DIR() + "/resource"
 }
 
+func GET_DATA_MIRROR_DIR() string {
+	return GET_DATA_DIR() + "/mirror"
+}
+
 func GET_DATA_DIR() string {
 	val, ex := os.LookupEnv("KUBOARD_SPRAY_DATA_DIR")
 	if !ex {

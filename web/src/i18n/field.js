@@ -1,7 +1,12 @@
 const field = {
   en: {
     kuboardspray_resource_package: 'Resource Package',
-    kuboardspray_resource_package_placeholder: 'Please select Resource Package.',
+    kuboardspray_os_mirror_type: 'OS type',
+    kuboardspray_os_mirror_name: 'OS Mirror Name',
+    kuboardspray_os_mirror_kind: 'Create Method',
+    'kuboardspray_os_mirror_kind-existing': 'Use existing OS mirror',
+    'kuboardspray_os_mirror_kind-provision': 'Create with KuboardSpray',
+    kuboardspray_os_mirror_url: 'Mirror URL',
     
     http_proxy: 'HTTP_PROXY',
     https_proxy: 'HTTPS_PROXY',
@@ -18,7 +23,14 @@ const field = {
   zh: {
     kuboardspray_resource_package: '资源包',
     kuboardspray_resource_package_placeholder: '请选择资源包',
-    
+
+    kuboardspray_os_mirror_type: '操作系统类型',
+    kuboardspray_os_mirror_name: '镜像源名称',
+    kuboardspray_os_mirror_kind: '创建方式',
+    'kuboardspray_os_mirror_kind-existing': '使用已有 OS 镜像',
+    'kuboardspray_os_mirror_kind-provision': '通过 KuboardSpray 创建',
+    kuboardspray_os_mirror_url: '镜像访问地址',
+
     http_proxy: 'HTTP_PROXY',
     http_proxy_placeholder: 'HTTP Proxy',
     https_proxy: 'HTTPS_PROXY',

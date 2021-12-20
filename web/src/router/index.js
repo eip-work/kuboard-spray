@@ -50,6 +50,17 @@ const constantRouterMap = [
         component: () => import('../views/resources/Resources.vue')
       },
       {
+        path: 'mirrors',
+        name: 'Mirrors',
+        component: () => import('../views/os_mirror/Mirrors.vue')
+      },
+      {
+        path: 'mirrors/:name',
+        name: 'Mirror',
+        component: () => import('../views/os_mirror/Mirror.vue'),
+        props: route => ({ name: route.params.name })
+      },
+      {
         path: 'kuboard',
         name: 'Kuboard',
         component: () => import('../views/kuboard/Kuboard.vue')

@@ -7,6 +7,7 @@ import (
 	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/api/node"
+	"github.com/eip-work/kuboard-spray/api/os_mirror"
 	"github.com/eip-work/kuboard-spray/api/private_key"
 	"github.com/eip-work/kuboard-spray/api/resource"
 	"github.com/eip-work/kuboard-spray/log"
@@ -43,6 +44,11 @@ func setupRouter() *gin.Engine {
 
 	api.GET("/resources", resource.ListResources)
 	api.GET("/resources/:name", resource.GetResource)
+
+	api.GET("/mirrors", os_mirror.ListOsMirrors)
+	api.POST("/mirrors", os_mirror.CreateOsMirror)
+	api.GET("/mirrors/:name", os_mirror.GetMirror)
+	api.DELETE("/mirrors/:name", os_mirror.DeleteMirror)
 
 	vue.ServeVue(router, root)
 

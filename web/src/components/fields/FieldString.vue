@@ -1,8 +1,10 @@
 <i18n>
 en:
   please: 'Please input '
+  isRequiredField: ' is required.'
 zh:
   please: 请输入
+  isRequiredField: 为必填字段
 </i18n>
 
 <template>
@@ -52,7 +54,6 @@ export default {
         return this.placeholder
       }
       let temp = this.$t('field.' + this.fieldName + '_placeholder')
-      console.log(temp, temp == ('field.' + this.fieldName + '_placeholder'))
       if (temp == ('field.' + this.fieldName + '_placeholder')) {
         return this.$t('please') + this.$t('field.' + this.fieldName)
       } else {

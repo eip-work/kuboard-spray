@@ -27,7 +27,7 @@ zh:
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="dialogVisible = false" icon="el-icon-close" type="info" plain>{{$t('msg.cancel')}}</el-button>
-          <el-button @click="save" icon="el-icon-check" type="primary">{{$t('msg.ok')}}</el-button>
+          <el-button @click="save" icon="el-icon-check" type="primary" :loading="saving">{{$t('msg.ok')}}</el-button>
         </span>
       </template>
     </el-dialog>
@@ -52,6 +52,7 @@ export default {
   },
   data() {
     return {
+      saving: false,
       form: {
         create: {
           cluster_name: '',
@@ -105,19 +106,21 @@ export default {
       return result
     },
     save () {
-      this.$refs.form.validate(flag => {
+      this.$refs.form.validate(async flag => {
         if (flag) {
+          this.saving = true
           let req = {
             name: this.form.create.cluster_name,
             resourcePackage: this.form.create.kuboardspray_resource_package,
           }
-          this.kuboardSprayApi.post('/clusters', req).then(resp => {
+          await this.kuboardSprayApi.post('/clusters', req).then(resp => {
             console.log(resp.data.data)
             this.$message.success(this.$t('msg.save_succeeded'))
             this.$router.push(`/clusters/${this.form.create.cluster_name}?mode=edit`)
           }).catch(e => {
             this.$message.error(this.$t('msg.save_failed', {msg: e.response.data.message}))
           })
+          this.saving = false
         }
       })
     }

@@ -6,10 +6,11 @@
     <el-radio-group v-model="obj[fieldName]">
       <template v-for="(option, index) in options" :key="index">
         <el-radio-button v-if="editMode !== 'view' || obj[fieldName] === option" :label="option">
-          {{ $t('field.' + fieldName + '-' + option) }}
+          {{ optionDesc(option) }}
         </el-radio-button>
       </template>
     </el-radio-group>
+    <slot></slot>
   </el-form-item>
 </template>
 
@@ -63,7 +64,14 @@ export default {
   mounted () {
   },
   methods: {
-
+    optionDesc (option) {
+      let temp = this.$t('field.' + this.fieldName + '-' + option)
+      if (temp === 'field.' + this.fieldName + '-' + option) {
+        return option
+      } else {
+        return temp
+      }
+    },
   }
 }
 </script>

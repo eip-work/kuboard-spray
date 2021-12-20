@@ -5,6 +5,7 @@ en:
   clusters: Kubernetes Cluster
   settings: Settings
   resources: Resources Package
+  mirrors: OS Mirrors
   kuboard: Kuboard Integration
 zh:
   expand: 展开
@@ -12,6 +13,7 @@ zh:
   clusters: 集群管理
   settings: 系统设置
   resources: 资源包管理
+  mirrors: OS 镜像源
   kuboard: Kuboard 集成
 </i18n>
 
@@ -24,10 +26,10 @@ zh:
       :collapse="isCollapse" background-color="white"
       ref="menu" router @open="handleOpen" @close="handleClose">
       <el-menu-item index="1" :route="`/clusters`" class="toplevel">
-          <i class="el-icon-s-home"></i>
-          <template #title>
-            <span>{{$t('clusters')}}</span>
-          </template>
+        <i class="el-icon-s-home"></i>
+        <template #title>
+          <span>{{$t('clusters')}}</span>
+        </template>
       </el-menu-item>
       <el-submenu index="2">
         <template #title>
@@ -37,7 +39,10 @@ zh:
         <el-menu-item index="2-1" :route="`/settings/resources`">
           {{$t('resources')}}
         </el-menu-item>
-        <el-menu-item index="2-2" :route="`/settings/kuboard`">
+        <el-menu-item index="2-2" :route="`/settings/mirrors`">
+          {{$t('mirrors')}}
+        </el-menu-item>
+        <el-menu-item index="2-3" :route="`/settings/kuboard`">
           {{$t('kuboard')}}
         </el-menu-item>
       </el-submenu>
@@ -101,7 +106,9 @@ export default {
         'Clusters': '1',
         'Cluster': '1',
         'Resources': '2-1',
-        'Kuboard': '2-2'
+        'Mirrors': '2-2',
+        'Mirror': '2-2',
+        'Kuboard': '2-3'
       }
       if (map[this.$route.name]) {
         return map[this.$route.name]

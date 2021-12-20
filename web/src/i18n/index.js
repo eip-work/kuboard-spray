@@ -14,7 +14,8 @@ const messages = {
     field: field.en,
     pkg: pkg.en,
     obj: {
-      resources: 'Resource Package',
+      cluster: 'Kubernetes Cluster',
+      resource: 'Resource Package',
       bastion: 'Bastion',
       localhost: 'KuboardSpray',
       addon: 'Addon: {name}',
@@ -46,7 +47,8 @@ const messages = {
     field: field.zh,
     pkg: pkg.zh,
     obj: {
-      resources: '资源包',
+      cluster: 'Kubernetes 集群',
+      resource: '资源包',
       bastion: '堡垒机',
       localhost: 'KuboardSpray',
       addon: '可选组件：{name}',

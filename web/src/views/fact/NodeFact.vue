@@ -139,7 +139,7 @@ export default {
         ansible_ssh_private_key_file: this.ansible_ssh_private_key_file,
         ansible_become: this.ansible_become,
         ansible_become_user: this.ansible_become_user,
-        ansible_become_password: this.ansible_host,
+        ansible_become_password: this.ansible_become_password,
       }
       await this.kuboardSprayApi.post(`/facts/${this.node_owner_type}/${this.node_owner}/${this.node_name}`, req).then(resp => {
         if (fromCache) {

@@ -19,16 +19,16 @@ zh:
     <el-dialog v-model="dialogVisible" :close-on-click-modal="false" :modal="true" top="20vh"
       :title="$t('addMirror')" width="45%">
       <el-form :model="form" label-position="left" label-width="120px" v-if="dialogVisible" ref="form">
-        <FieldSelect :holder="form.create" fieldName="kuboardspray_os_mirror_type" :loadOptions="loadMirrorTypeList" prop="create" required>
+        <FieldSelect :holder="form" fieldName="kuboardspray_os_mirror_type" :loadOptions="loadMirrorTypeList" required>
         </FieldSelect>
-        <FieldString :holder="form.create" fieldName="kuboardspray_os_mirror_name" prop="create" required :rules="nameRules" :disabled="!form.create.kuboardspray_os_mirror_type"></FieldString>
-        <FieldRadio :holder="form.create" fieldName="kuboardspray_os_mirror_kind" required :options="['existing', 'provision']">
+        <FieldString :holder="form" fieldName="kuboardspray_os_mirror_name" required :rules="nameRules" :disabled="!form.kuboardspray_os_mirror_type"></FieldString>
+        <FieldRadio :holder="form" fieldName="kuboardspray_os_mirror_kind" required :options="['existing', 'provision']">
           <div class="create_kind">
-            <div v-if="form.create.kuboardspray_os_mirror_kind === 'provision'">
+            <div v-if="form.kuboardspray_os_mirror_kind === 'provision'">
               <el-alert :closable="false" type="warning" effect="dark" :title="$t('msg.prompt')">{{$t('provision_msg')}}</el-alert>
             </div>
             <div v-else>
-              <FieldString :holder="form.create" fieldName="kuboardspray_os_mirror_url" prop="create" required></FieldString>
+              <FieldString :holder="form" fieldName="kuboardspray_os_mirror_url" required></FieldString>
               <el-alert :closable="false" type="warning" :title="$t('msg.prompt')">{{$t('existing_msg')}}</el-alert>
             </div>
           </div>
@@ -62,12 +62,10 @@ export default {
     return {
       saving: false,
       form: {
-        create: {
-          kuboardspray_os_mirror_name: '',
-          kuboardspray_os_mirror_type: '',
-          kuboardspray_os_mirror_kind: 'existing',
-          kuboardspray_os_mirror_url: '',
-        }
+        kuboardspray_os_mirror_name: '',
+        kuboardspray_os_mirror_type: '',
+        kuboardspray_os_mirror_kind: 'existing',
+        kuboardspray_os_mirror_url: '',
       },
       nameRules: [
         {
@@ -81,7 +79,7 @@ export default {
             if (!/^[a-zA-Z][a-zA-Z0-9_]{3,21}$/.test(value)) {
               return callback('必须以字母开头，可以包含数字，字母，下划线')
             }
-            let v = this.form.create.kuboardspray_os_mirror_type + '-' + this.form.create.kuboardspray_os_mirror_name
+            let v = this.form.kuboardspray_os_mirror_type + '-' + this.form.kuboardspray_os_mirror_name
             this.kuboardSprayApi.get(`/mirrors/${v}`).then(() => {
               callback(this.$t('conflict', {name: v}))
             }).catch(e => {
@@ -119,9 +117,9 @@ export default {
       this.$refs.form.validate(async flag => {
         if (flag) {
           this.saving = true
-          await this.kuboardSprayApi.post('/mirrors', this.form.create).then(() => {
+          await this.kuboardSprayApi.post('/mirrors', this.form).then(() => {
             this.$message.success(this.$t('msg.save_succeeded'))
-            this.$router.push(`/settings/mirrors/${this.form.create.kuboardspray_os_mirror_type}-${this.form.create.kuboardspray_os_mirror_name}?mode=edit`)
+            this.$router.push(`/settings/mirrors/${this.form.kuboardspray_os_mirror_type}-${this.form.kuboardspray_os_mirror_name}?mode=edit`)
           }).catch(e => {
             this.$message.error(this.$t('msg.save_failed', {msg: e.response.data.message}))
           })

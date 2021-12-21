@@ -100,10 +100,13 @@ func getInventoryTemplate() gin.H {
 				"localhost": gin.H{
 					"ansible_connection": "local",
 				},
+				"mirror_node": gin.H{},
 			},
 			"children": gin.H{
 				"target": gin.H{
-					"hosts": gin.H{},
+					"hosts": gin.H{
+						"mirror_node": gin.H{},
+					},
 					"vars": gin.H{
 						"apt_mirror_client":          false,
 						"apt_mirror_apache_root_dir": "/var/www/html",

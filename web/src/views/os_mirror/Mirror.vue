@@ -32,7 +32,10 @@ zh:
         <el-card class="app_margin_bottom" shadow="none">
           <div style="margin-bottom: -20px;">
             <el-form-item :label="$t('url')" prop="status.url" :rules="urlRules">
-              <el-input v-model.trim="mirror_url" :placeholder="$t('url_placeholder')"></el-input>
+              <span v-if="mode === 'view'">
+                <el-link :href="os_mirror.status.url">{{os_mirror.status.url}}</el-link>
+              </span>
+              <el-input v-else v-model.trim="mirror_url" :placeholder="$t('url_placeholder')"></el-input>
             </el-form-item>
             <el-form-item :label="$t('msg.status')">
               <el-tag v-if="os_mirror.status.status === 'created'" type="primary">{{$t('created')}}</el-tag>

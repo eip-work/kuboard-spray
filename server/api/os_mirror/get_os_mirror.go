@@ -34,6 +34,7 @@ func GetMirror(c *gin.Context) {
 		"data": gin.H{
 			"inventory": inventory,
 			"status":    status,
+			"name":      req.Name,
 		},
 	})
 }

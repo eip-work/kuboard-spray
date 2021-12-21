@@ -8,33 +8,29 @@ zh:
 
 
 <template>
-  <ConfigSection v-model:enabled="enableSsh" label="SSH" :description="description" disabled>
-    <FieldString disabled :holder="holder" fieldName="ansible_host" :prop="isNode ? `all.hosts.${nodeName}` : ''"
+  <div>
+    <FieldString :holder="holder" fieldName="ansible_host" :prop="prop"
       :placeholder="$t('ansible_host_placeholder')"></FieldString>
-    <FieldString :holder="holder" fieldName="ansible_port"></FieldString>
-    <FieldString :holder="holder" fieldName="ansible_user"></FieldString>
+    <FieldString :holder="holder" fieldName="ansible_port" :prop="prop"></FieldString>
+    <FieldString :holder="holder" fieldName="ansible_user" :prop="prop"></FieldString>
     <!-- <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList">
       <el-button type="primary" plain style="margin-left: 10px;" icon="el-icon-plus" @click="$refs.addPrivateKey.show()">{{$t('addSshKey')}}</el-button>
     </FieldSelect> -->
-    <FieldString :holder="holder" fieldName="ansible_password" show-password></FieldString>
-    <FieldBool :holder="holder" fieldName="ansible_become"></FieldBool>
+    <FieldString :holder="holder" fieldName="ansible_password" show-password :prop="prop"></FieldString>
+    <FieldBool :holder="holder" fieldName="ansible_become" :prop="prop"></FieldBool>
     <template v-if="holder.ansible_become">
-      <FieldString :holder="holder" fieldName="ansible_become_user"></FieldString>
-      <FieldString :holder="holder" fieldName="ansible_become_password"></FieldString>
+      <FieldString :holder="holder" fieldName="ansible_become_user" :prop="prop"></FieldString>
+      <FieldString :holder="holder" fieldName="ansible_become_password" :prop="prop"></FieldString>
     </template>
     <slot></slot>
-  </ConfigSection>
+  </div>
 </template>
 
 <script>
 export default {
   props: {
-    cluster: { type: Object, required: true },
-    nodeName: { type: String, required: false },
     holder: { type: Object, required: true },
     prop: { type: String, required: true },
-    description: { type: String, required: true },
-    isNode: { type: Boolean, required: false, default: false }
   },
   data() {
     return {
@@ -42,28 +38,20 @@ export default {
     }
   },
   computed: {
-    enableSsh: {
-      get () {
-        return true
-      },
-      set (v) {
-        console.log(v)
-      }
-    }
   },
-  components: { SshAddPrivateKey },
+  components: { },
   mounted () {
   },
   methods: {
-    async loadSshKeyList () {
-      let result = []
-      await this.kuboardSprayApi.get(`/clusters/${this.cluster.name}/private-keys`).then(resp => {
-        for (let item of resp.data.data) {
-          result.push({ label: item, value: '{{ kuboardspray_cluster_dir }}/private-key/' + item })
-        }
-      })
-      return result
-    },
+    // async loadSshKeyList () {
+    //   let result = []
+    //   await this.kuboardSprayApi.get(`/clusters/${this.cluster.name}/private-keys`).then(resp => {
+    //     for (let item of resp.data.data) {
+    //       result.push({ label: item, value: '{{ kuboardspray_cluster_dir }}/private-key/' + item })
+    //     }
+    //   })
+    //   return result
+    // },
   }
 }
 </script>

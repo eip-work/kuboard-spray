@@ -35,7 +35,7 @@ func setupRouter() *gin.Engine {
 	api.GET("/clusters/:cluster/history/:pid/tail/:file", command.TailFile)
 	// router.GET("/kuboardspray/:kuboardsprayID/api/clusters/:cluster/history/:pid/tail/:file", command.TailFile)
 
-	api.POST("/facts/:node_type/:node_owner/:node", fact.GetNodeFacts)
+	api.POST("/facts/:node_owner_type/:node_owner/:node", fact.GetNodeFacts)
 
 	api.GET("/clusters/:cluster/private-keys", private_key.ListPrivateKey)
 	api.GET("/clusters/:cluster/private-keys/:name", private_key.GetPrivateKey)

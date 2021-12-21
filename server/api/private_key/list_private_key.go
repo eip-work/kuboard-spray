@@ -50,5 +50,5 @@ func ListPrivateKey(c *gin.Context) {
 }
 
 func ClusterPrivateKeyPath(clusterName string) string {
-	return constants.GET_DATA_INVENTORY_DIR() + "/" + clusterName + "/private-key"
+	return constants.GET_DATA_CLUSTER_DIR() + "/" + clusterName + "/private-key"
 }

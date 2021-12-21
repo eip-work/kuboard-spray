@@ -12,7 +12,7 @@ import (
 
 func ListClusters(c *gin.Context) {
 
-	files, err := ioutil.ReadDir(constants.GET_DATA_INVENTORY_DIR())
+	files, err := ioutil.ReadDir(constants.GET_DATA_CLUSTER_DIR())
 	if err != nil {
 
 		err1 := common.CreateDirIfNotExists(constants.GET_DATA_DIR())
@@ -20,12 +20,12 @@ func ListClusters(c *gin.Context) {
 			common.HandleError(c, http.StatusInternalServerError, "cannot create folder: "+constants.GET_DATA_DIR(), err1)
 			return
 		}
-		err2 := common.CreateDirIfNotExists(constants.GET_DATA_INVENTORY_DIR())
+		err2 := common.CreateDirIfNotExists(constants.GET_DATA_CLUSTER_DIR())
 		if err2 != nil {
-			common.HandleError(c, http.StatusInternalServerError, "cannot create folder: "+constants.GET_DATA_INVENTORY_DIR(), err2)
+			common.HandleError(c, http.StatusInternalServerError, "cannot create folder: "+constants.GET_DATA_CLUSTER_DIR(), err2)
 			return
 		}
-		logrus.Warning("已成功创建该文件夹: " + constants.GET_DATA_INVENTORY_DIR())
+		logrus.Warning("已成功创建该文件夹: " + constants.GET_DATA_CLUSTER_DIR())
 		c.JSON(http.StatusOK, gin.H{
 			"code":    http.StatusOK,
 			"message": "success",

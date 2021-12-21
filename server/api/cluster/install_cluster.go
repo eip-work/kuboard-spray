@@ -85,7 +85,7 @@ func InstallCluster(c *gin.Context) {
 	common.MapSet(inventory, "all.vars.download_always_pull", false)
 	common.MapSet(inventory, "all.vars.download_cache_dir", resourcePackagePath+"/kubespray_cache")
 	common.MapSet(inventory, "all.vars.ansible_ssh_common_args", "-o StrictHostKeyChecking=no")
-	common.MapSet(inventory, "all.vars.kuboardspray_cluster_dir", constants.GET_DATA_INVENTORY_DIR()+"/"+req.Cluster)
+	common.MapSet(inventory, "all.vars.kuboardspray_cluster_dir", constants.GET_DATA_CLUSTER_DIR()+"/"+req.Cluster)
 	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.disable_service_firewall", true)
 	common.MapSet(inventory, "all.children.target.children.etcd.vars.disable_service_firewall", true)
 	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.ansible_python_interpreter", "/usr/bin/python3")

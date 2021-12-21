@@ -100,7 +100,7 @@ func TailFile(c *gin.Context) {
 
 	pid := reqParams.Pid
 	if reqParams.Pid == "lastrun" {
-		lockFilePath := constants.GET_DATA_INVENTORY_DIR() + "/" + reqParams.Cluster + "/inventory.lastrun"
+		lockFilePath := constants.GET_DATA_CLUSTER_DIR() + "/" + reqParams.Cluster + "/inventory.lastrun"
 		logrus.Trace("read pid from : ", lockFilePath)
 		b, err := ioutil.ReadFile(lockFilePath)
 		if err != nil {
@@ -125,7 +125,7 @@ func TailFile(c *gin.Context) {
 	}
 	defer ws.Close()
 
-	filePath := constants.GET_DATA_INVENTORY_DIR() + "/" + reqParams.Cluster + "/history/" + pid + "/" + reqParams.File
+	filePath := constants.GET_DATA_CLUSTER_DIR() + "/" + reqParams.Cluster + "/history/" + pid + "/" + reqParams.File
 	logrus.Trace("[", filePath, "]")
 	go writer(ws, filePath)
 	reader(ws)

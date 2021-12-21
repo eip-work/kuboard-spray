@@ -14,7 +14,7 @@ func DeleteCluster(c *gin.Context) {
 	var req GetClusterRequest
 	c.ShouldBindUri(&req)
 
-	if err := os.RemoveAll(constants.GET_DATA_INVENTORY_DIR() + "/" + req.Cluster); err != nil {
+	if err := os.RemoveAll(constants.GET_DATA_CLUSTER_DIR() + "/" + req.Cluster); err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to remove cluster", err)
 		return
 	}

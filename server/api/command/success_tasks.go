@@ -44,5 +44,5 @@ func ReadSuccessTasks(cluster string) (SuccessTasks, error) {
 }
 
 func successFilePath(cluster string) string {
-	return constants.GET_DATA_INVENTORY_DIR() + "/" + cluster + "/success.json"
+	return constants.GET_DATA_CLUSTER_DIR() + "/" + cluster + "/success.json"
 }

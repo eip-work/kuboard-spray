@@ -17,7 +17,7 @@ import (
 
 type GetNodeFactRequest struct {
 	Node           string `uri:"node"`
-	NodeType       string `uri:"node_type"`
+	NodeOwnerType  string `uri:"node_owner_type"`
 	NodeOwner      string `uri:"node_owner"`
 	FromCache      bool   `json:"from_cache"`
 	Ip             string `json:"ansible_host" binding:"required"`
@@ -82,14 +82,14 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 		return nil, errors.New("failed to marshal inventory file: " + err.Error())
 	}
 
-	factDir := constants.GET_DATA_DIR() + "/fact"
-	common.CreateDirIfNotExists(factDir)
-
-	typeDir := factDir + "/" + req.NodeType
+	typeDir := constants.GET_DATA_DIR() + "/" + req.NodeOwnerType
 	common.CreateDirIfNotExists(typeDir)
 
 	ownerDir := typeDir + "/" + req.NodeOwner
 	common.CreateDirIfNotExists(ownerDir)
+
+	factDir := ownerDir + "/fact"
+	common.CreateDirIfNotExists(factDir)
 
 	inventoryPath := ownerDir + "/" + req.Node + "_" + time.Now().Format("2006-01-02_15-04-05.999") + ".json"
 
@@ -116,7 +116,7 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 		return nil, errors.New("failed to get node facts " + err.Error())
 	}
 
-	factPath := ownerDir + "/" + req.Node + "_" + req.Ip + "_" + req.Port
+	factPath := factDir + "/" + req.Node + "_" + req.Ip + "_" + req.Port
 
 	ioutil.WriteFile(factPath, stdout, 0666)
 

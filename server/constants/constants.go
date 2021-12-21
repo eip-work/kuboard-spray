@@ -10,8 +10,8 @@ import (
 	"strings"
 )
 
-func GET_DATA_INVENTORY_DIR() string {
-	return GET_DATA_DIR() + "/inventory"
+func GET_DATA_CLUSTER_DIR() string {
+	return GET_DATA_DIR() + "/cluster"
 }
 
 func GET_DATA_RESOURCE_DIR() string {

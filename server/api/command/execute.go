@@ -78,14 +78,14 @@ func (execute *Execute) exec() {
 	defer UnlockCluster(lockFile)
 
 	pid := time.Now().Format("2006-01-02_15-04-05.999") + "_" + execute.Type
-	historyPath := constants.GET_DATA_INVENTORY_DIR() + "/" + execute.Cluster + "/history"
+	historyPath := constants.GET_DATA_CLUSTER_DIR() + "/" + execute.Cluster + "/history"
 	if err := common.CreateDirIfNotExists(historyPath); err != nil {
 		execute.R_Error = errors.New("cannot create historyDir : " + historyPath + " : " + err.Error())
 		execute.mutex.Unlock()
 		return
 	}
 
-	runDirPath := constants.GET_DATA_INVENTORY_DIR() + "/" + execute.Cluster + "/history/" + pid
+	runDirPath := constants.GET_DATA_CLUSTER_DIR() + "/" + execute.Cluster + "/history/" + pid
 	if err := common.CreateDirIfNotExists(runDirPath); err != nil {
 		execute.R_Error = errors.New("cannot create runDir : " + runDirPath + " : " + err.Error())
 		execute.mutex.Unlock()

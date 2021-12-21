@@ -11,7 +11,7 @@ import (
 
 func nodefact_cached(req GetNodeFactRequest) (*gin.H, error) {
 
-	factDir := constants.GET_DATA_DIR() + "/fact/" + req.NodeType + "/" + req.NodeOwner
+	factDir := constants.GET_DATA_DIR() + "/" + req.NodeOwnerType + "/" + req.NodeOwner + "/fact"
 	factPath := factDir + "/" + req.Node + "_" + req.Ip + "_" + req.Port
 
 	fact_bytes, err := ioutil.ReadFile(factPath)

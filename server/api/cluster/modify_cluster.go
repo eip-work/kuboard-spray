@@ -41,7 +41,7 @@ func ModifyCluster(c *gin.Context) {
 		return
 	}
 
-	inventoryFilePath := constants.GET_DATA_INVENTORY_DIR() + "/" + req.Cluster + "/inventory.yaml"
+	inventoryFilePath := constants.GET_DATA_CLUSTER_DIR() + "/" + req.Cluster + "/inventory.yaml"
 	inventoryFile, err := os.OpenFile(inventoryFilePath, os.O_RDWR|os.O_TRUNC, 0666)
 
 	if err != nil {

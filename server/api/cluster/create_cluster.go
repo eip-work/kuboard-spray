@@ -26,7 +26,7 @@ func CreateCluster(c *gin.Context) {
 		return
 	}
 
-	clusterDir := constants.GET_DATA_INVENTORY_DIR() + "/" + req.Name
+	clusterDir := constants.GET_DATA_CLUSTER_DIR() + "/" + req.Name
 
 	_, err := ioutil.ReadDir(clusterDir)
 	if err == nil {

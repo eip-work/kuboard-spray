@@ -35,7 +35,7 @@ func GetCluster(c *gin.Context) {
 	if err != nil {
 		processing = true
 	}
-	lockFilePath := constants.GET_DATA_INVENTORY_DIR() + "/" + req.Cluster + "/inventory.lastrun"
+	lockFilePath := constants.GET_DATA_CLUSTER_DIR() + "/" + req.Cluster + "/inventory.lastrun"
 	pid, err := ioutil.ReadFile(lockFilePath)
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "cannot read current pid", err)
@@ -57,5 +57,5 @@ func GetCluster(c *gin.Context) {
 }
 
 func ClusterInventoryPath(cluster string) string {
-	return constants.GET_DATA_INVENTORY_DIR() + "/" + cluster + "/inventory.yaml"
+	return constants.GET_DATA_CLUSTER_DIR() + "/" + cluster + "/inventory.yaml"
 }

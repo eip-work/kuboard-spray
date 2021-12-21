@@ -78,7 +78,7 @@ zh:
 </template>
 
 <script>
-import {baseURL} from '../../../../utils/axios.js'
+import {baseURL} from '../../utils/axios.js'
 import Cookie from 'js-cookie'
 
 export default {

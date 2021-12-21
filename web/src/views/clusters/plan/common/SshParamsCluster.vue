@@ -28,7 +28,7 @@ zh:
 </template>
 
 <script>
-import SshAddPrivateKey from './SshAddPrivateKey.vue'
+import SshAddPrivateKey from '../../../private_key/SshAddPrivateKey.vue'
 
 export default {
   props: {

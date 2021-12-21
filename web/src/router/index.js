@@ -58,7 +58,7 @@ const constantRouterMap = [
         path: 'mirrors/:name',
         name: 'Mirror',
         component: () => import('../views/os_mirror/Mirror.vue'),
-        props: route => ({ name: route.params.name })
+        props: route => ({ name: route.params.name, mode: route.query.mode })
       },
       {
         path: 'kuboard',

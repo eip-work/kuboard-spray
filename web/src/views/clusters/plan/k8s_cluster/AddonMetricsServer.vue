@@ -12,8 +12,6 @@ zh:
 </template>
 
 <script>
-import ConfigSection from '../ConfigSection.vue'
-
 export default {
   props: {
     cluster: { type: Object, required: true },
@@ -33,7 +31,7 @@ export default {
       }
     }
   },
-  components: { ConfigSection },
+  components: { },
   mounted () {
   },
   methods: {

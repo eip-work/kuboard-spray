@@ -35,7 +35,6 @@ zh:
 </template>
 
 <script>
-import ConfigSection from '../ConfigSection.vue'
 import SshAddPrivateKey from './SshAddPrivateKey.vue'
 
 export default {
@@ -77,7 +76,7 @@ export default {
       }
     }
   },
-  components: { ConfigSection, SshAddPrivateKey },
+  components: { SshAddPrivateKey },
   mounted () {
   },
   methods: {

@@ -123,7 +123,6 @@ zh:
 
 <script>
 import SshParamsNode from './common/SshParamsNode.vue'
-import ConfigSection from './ConfigSection.vue'
 import NodeRoleTag from './common/NodeRoleTag.vue'
 import PackageContentField from './common/PackageContentField.vue'
 
@@ -237,7 +236,7 @@ export default {
       }
     },
   },
-  components: { SshParamsNode, ConfigSection, NodeRoleTag, PackageContentField },
+  components: { SshParamsNode, NodeRoleTag, PackageContentField },
   mounted () {
     this.loadFacts(true)
   },
@@ -269,7 +268,7 @@ export default {
             ansible_become_user: this.inventory.all.hosts[this.nodeName].ansible_become_user || this.inventory.all.children.target.children.k8s_cluster.vars.ansible_become_user,
             ansible_become_password: this.inventory.all.hosts[this.nodeName].ansible_become_password || this.inventory.all.children.target.children.k8s_cluster.vars.ansible_host,
           }
-          await this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/facts/${this.nodeName}`, req).then(resp => {
+          await this.kuboardSprayApi.post(`/facts/cluster/${this.cluster.name}/${this.nodeName}`, req).then(resp => {
             if (fromCache) {
               if (resp.data.ansible_facts !== undefined) {
                 this.fact = resp.data

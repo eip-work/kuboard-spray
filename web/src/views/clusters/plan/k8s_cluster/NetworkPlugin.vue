@@ -17,8 +17,6 @@ zh:
 </template>
 
 <script>
-import ConfigSection from '../ConfigSection.vue'
-
 export default {
   props: {
     cluster: { type: Object, required: true },
@@ -37,7 +35,7 @@ export default {
       set () {}
     }
   },
-  components: { ConfigSection },
+  components: { },
   mounted () {
   },
   watch: {

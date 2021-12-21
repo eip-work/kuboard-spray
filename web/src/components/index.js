@@ -4,6 +4,7 @@ import FieldNumber from './fields/FieldNumber.vue'
 import FieldRadio from './fields/FieldRadio.vue'
 import FieldSelect from './fields/FieldSelect.vue'
 import ControlBar from './page/ControlBar.vue'
+import ConfigSection from './ConfigSection.vue'
 
 export default {
   install(app) {
@@ -13,5 +14,6 @@ export default {
     app.component('FieldRadio', FieldRadio)
     app.component('FieldSelect', FieldSelect)
     app.component('ControlBar', ControlBar)
+    app.component('ConfigSection', ConfigSection)
   } 
 }

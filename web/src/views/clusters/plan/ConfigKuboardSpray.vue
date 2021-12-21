@@ -154,7 +154,6 @@ zh:
 </template>
 
 <script>
-import ConfigSection from './ConfigSection.vue'
 import PackageContentField from './common/PackageContentField.vue'
 
 export default {
@@ -217,7 +216,7 @@ export default {
       }
     }
   },
-  components: { ConfigSection, PackageContentField },
+  components: { PackageContentField },
   mounted () {
   },
   methods: {

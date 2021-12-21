@@ -75,6 +75,8 @@ const field = {
     ubuntu_repo: 'ubuntu repo',
     ubuntu_repo_placeholder: 'ubuntu 镜像源',
 
+
+    apt_mirror_apache_root_dir: 'Apache 根路径',
   }
 }
 

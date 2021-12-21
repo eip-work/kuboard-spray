@@ -38,6 +38,7 @@ const messages = {
       save_failed: 'Failed in saving. {msg}',
       delete_succeeded: 'Succeeded in deleting.',
       delete_failed: 'Failed in deleting. {msg}',
+      status: 'Status',
     }
   },
   zh: { 
@@ -71,6 +72,7 @@ const messages = {
       save_failed: '保存失败： {msg}',
       delete_succeeded: '删除成功',
       delete_failed: '删除失败： {msg}',
+      status: '状 态',
     }
   },
 }

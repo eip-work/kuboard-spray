@@ -9,7 +9,7 @@ import (
 )
 
 type GetMirrorRequest struct {
-	Name string `uri:"cluster"`
+	Name string `uri:"name"`
 }
 
 func GetMirror(c *gin.Context) {

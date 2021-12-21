@@ -10,7 +10,7 @@ zh:
 <template>
   <el-form-item :rules="computedRules" :prop="prop ? prop + '.' + fieldName : undefined">
     <template #label>
-      {{ $t('field.' + fieldName) }}
+      {{ label || $t('field.' + fieldName) }}
     </template>
     <div style="display: flex;" v-if="editMode !== 'view'">
       <el-select v-model.trim="obj[fieldName]" style="flex-grow: 1;" clearable :disabled="disabled"
@@ -40,6 +40,7 @@ export default {
     loadOptions: { type: Function, required: true },
     disabled: { type: Boolean, required: false, default: false },
     placeholder: { type: String, required: false, default: undefined },
+    label: { type: String, required: false, default: undefined },
   },
   data () {
     return {

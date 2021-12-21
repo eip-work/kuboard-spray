@@ -10,7 +10,7 @@ zh:
 <template>
   <el-form-item :rules="computedRules" :prop="prop ? prop + '.' + fieldName : undefined">
     <template #label>
-      {{ $t('field.' + fieldName) }}
+      {{ label || $t('field.' + fieldName) }}
     </template>
     <el-input v-if="editMode !== 'view'" v-model.trim="value" :show-password="showPassword" :disabled="disabled"
       :placeholder="compute_placeholder"></el-input>
@@ -32,6 +32,7 @@ export default {
     rules: { type: Array, required: false, default: () => ([])},
     showPassword: { type: Boolean, required: false, default: false },
     placeholder: { type: String, required: false, default: undefined },
+    label: { type: String, required: false, default: undefined },
     disabled: { type: Boolean, required: false, default: false },
   },
   data () {

@@ -1,4 +1,4 @@
-package node
+package fact
 
 import (
 	"encoding/json"
@@ -16,8 +16,9 @@ import (
 )
 
 type GetNodeFactRequest struct {
-	Cluster        string `uri:"cluster"`
 	Node           string `uri:"node"`
+	NodeType       string `uri:"node_type"`
+	NodeOwner      string `uri:"node_owner"`
 	FromCache      bool   `json:"from_cache"`
 	Ip             string `json:"ansible_host" binding:"required"`
 	Port           string `json:"ansible_port" binding:"required"`
@@ -71,7 +72,6 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 					"ansible_become_user":          req.BecomeUser,
 					"ansible_become_password":      req.BecomePassword,
 					"ansible_ssh_common_args":      "-o StrictHostKeyChecking=no",
-					"kuboardspray_cluster_dir":     constants.GET_DATA_INVENTORY_DIR() + "/" + req.Cluster,
 				},
 			},
 		},
@@ -82,10 +82,16 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 		return nil, errors.New("failed to marshal inventory file: " + err.Error())
 	}
 
-	tempDir := constants.GET_DATA_DIR() + "/temp"
-	common.CreateDirIfNotExists(tempDir)
+	factDir := constants.GET_DATA_DIR() + "/fact"
+	common.CreateDirIfNotExists(factDir)
 
-	inventoryPath := tempDir + "/" + req.Cluster + "_" + time.Now().Format("2006-01-02_15-04-05.999") + ".json"
+	typeDir := factDir + "/" + req.NodeType
+	common.CreateDirIfNotExists(typeDir)
+
+	ownerDir := typeDir + "/" + req.NodeOwner
+	common.CreateDirIfNotExists(ownerDir)
+
+	inventoryPath := ownerDir + "/" + req.Node + "_" + time.Now().Format("2006-01-02_15-04-05.999") + ".json"
 
 	err = ioutil.WriteFile(inventoryPath, inventoryBytes, 0666)
 	if err != nil {
@@ -95,10 +101,8 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 	defer os.Remove(inventoryPath)
 
 	run := command.Run{
-		Cmd:     "ansible",
-		Args:    []string{req.Node, "-m", "setup", "-i", inventoryPath},
-		Cluster: req.Cluster,
-		Sync:    false,
+		Cmd:  "ansible",
+		Args: []string{req.Node, "-m", "setup", "-i", inventoryPath},
 	}
 
 	stdout, _, err := run.Run()
@@ -112,9 +116,7 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 		return nil, errors.New("failed to get node facts " + err.Error())
 	}
 
-	factDir := constants.GET_DATA_INVENTORY_DIR() + "/" + req.Cluster + "/fact"
-	common.CreateDirIfNotExists(factDir)
-	factPath := factDir + "/" + req.Node + "_" + req.Ip + "_" + req.Port
+	factPath := ownerDir + "/" + req.Node + "_" + req.Ip + "_" + req.Port
 
 	ioutil.WriteFile(factPath, stdout, 0666)
 

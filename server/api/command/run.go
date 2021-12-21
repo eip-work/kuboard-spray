@@ -11,16 +11,14 @@ import (
 )
 
 type Run struct {
-	Cmd     string
-	Args    []string
-	Cluster string
-	Env     []string
-	Sync    bool
-	Dir     string
+	Cmd  string
+	Args []string
+	Env  []string
+	Dir  string
 }
 
 func (run *Run) ToString() string {
-	result := "--" + run.Cluster + "-- [" + run.Cmd + ", "
+	result := "[" + run.Cmd + ", "
 	for index, arg := range run.Args {
 		result += arg
 		if index < len(run.Args)-1 {
@@ -32,14 +30,6 @@ func (run *Run) ToString() string {
 }
 
 func (run *Run) Run() ([]byte, []byte, error) {
-	if run.Sync {
-		lockFile, err := LockCluster(run.Cluster)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		defer UnlockCluster(lockFile)
-	}
 
 	logrus.Trace("run command: ", run.ToString())
 	cmd := exec.Command(run.Cmd, run.Args...)

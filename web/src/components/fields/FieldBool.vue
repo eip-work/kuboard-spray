@@ -1,5 +1,5 @@
 <template>
-  <el-form-item :rules="computedRules" :prop="prop ? prop + '.' + fieldName : undefined">
+  <el-form-item :rules="computedRules" :prop="prop ? prop + '.' + fieldName : fieldName">
     <template #label>
       {{ $t('field.' + fieldName) }}
     </template>

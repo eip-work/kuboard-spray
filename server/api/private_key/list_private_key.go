@@ -11,23 +11,24 @@ import (
 )
 
 type ClusterPrivateKeyListRequest struct {
-	Cluster string `uri:"cluster" binding:"required"`
+	OwnerType string `uri:"owner_type" binding:"required"`
+	OwnerName string `uri:"owner_name" binding:"required"`
 }
 
 func ListPrivateKey(c *gin.Context) {
 	var req ClusterPrivateKeyListRequest
 	c.ShouldBindUri(&req)
 
-	files, err := ioutil.ReadDir(ClusterPrivateKeyPath(req.Cluster))
-	logrus.Info("["+req.Cluster+"]", ClusterPrivateKeyPath(req.Cluster))
+	files, err := ioutil.ReadDir(PrivateKeyDir(req.OwnerType, req.OwnerName))
+	logrus.Info("["+req.OwnerType+"/"+req.OwnerName+"]", PrivateKeyDir(req.OwnerType, req.OwnerName))
 	if err != nil {
 
-		err2 := common.CreateDirIfNotExists(ClusterPrivateKeyPath(req.Cluster))
+		err2 := common.CreateDirIfNotExists(PrivateKeyDir(req.OwnerType, req.OwnerName))
 		if err2 != nil {
-			common.HandleError(c, http.StatusInternalServerError, "cannot create folder: "+ClusterPrivateKeyPath(req.Cluster), err)
+			common.HandleError(c, http.StatusInternalServerError, "cannot create folder: "+PrivateKeyDir(req.OwnerType, req.OwnerName), err)
 			return
 		}
-		logrus.Warning("已成功创建该文件夹: " + ClusterPrivateKeyPath(req.Cluster))
+		logrus.Warning("已成功创建该文件夹: " + PrivateKeyDir(req.OwnerType, req.OwnerName))
 		c.JSON(http.StatusOK, gin.H{
 			"code":    http.StatusOK,
 			"message": "success",
@@ -49,6 +50,6 @@ func ListPrivateKey(c *gin.Context) {
 
 }
 
-func ClusterPrivateKeyPath(clusterName string) string {
-	return constants.GET_DATA_CLUSTER_DIR() + "/" + clusterName + "/private-key"
+func PrivateKeyDir(ownerType string, ownerName string) string {
+	return constants.GET_DATA_DIR() + "/" + ownerType + "/" + ownerName + "/private-key"
 }

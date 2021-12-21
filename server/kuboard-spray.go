@@ -37,10 +37,10 @@ func setupRouter() *gin.Engine {
 
 	api.POST("/facts/:node_owner_type/:node_owner/:node", fact.GetNodeFacts)
 
-	api.GET("/clusters/:cluster/private-keys", private_key.ListPrivateKey)
-	api.GET("/clusters/:cluster/private-keys/:name", private_key.GetPrivateKey)
-	api.POST("/clusters/:cluster/private-keys/:name", private_key.UploadPrivateKeyFile)
-	api.DELETE("/clusters/:cluster/private-keys/:name", private_key.DeletePrivateKey)
+	api.GET("/private-keys/:owner_type/:owner_name", private_key.ListPrivateKey)
+	api.GET("/private-keys/:owner_type/:owner_name/:name", private_key.GetPrivateKey)
+	api.POST("/private-keys/:owner_type/:owner_name/:name", private_key.UploadPrivateKeyFile)
+	api.DELETE("/private-keys/:owner_type/:owner_name/:name", private_key.DeletePrivateKey)
 
 	api.GET("/resources", resource.ListResources)
 	api.GET("/resources/:name", resource.GetResource)

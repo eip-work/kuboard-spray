@@ -16,8 +16,8 @@ func UploadPrivateKeyFile(c *gin.Context) {
 
 	file, _ := c.FormFile("file")
 	logrus.Info(file.Filename)
-	c.SaveUploadedFile(file, PrivateKeyPath(req.Cluster, req.Name))
-	err := os.Chmod(PrivateKeyPath(req.Cluster, req.Name), 0600)
+	c.SaveUploadedFile(file, PrivateKeyPath(req))
+	err := os.Chmod(PrivateKeyPath(req), 0600)
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "chmod faild: ", err)
 		return

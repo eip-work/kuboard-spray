@@ -9,17 +9,18 @@ import (
 )
 
 type GetPrivateKeyRequest struct {
-	Cluster string `uri:"cluster"`
-	Name    string `uri:"name"`
+	OwnerType string `uri:"owner_type"`
+	OwnerName string `uri:"owner_name"`
+	Name      string `uri:"name"`
 }
 
 func GetPrivateKey(c *gin.Context) {
 	var req GetPrivateKeyRequest
 	c.ShouldBindUri(&req)
 
-	_, err := ioutil.ReadFile(PrivateKeyPath(req.Cluster, req.Name))
+	_, err := ioutil.ReadFile(PrivateKeyPath(req))
 	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "cannot open file: "+PrivateKeyPath(req.Cluster, req.Name), err)
+		common.HandleError(c, http.StatusInternalServerError, "cannot open file: "+PrivateKeyPath(req), err)
 		return
 	}
 
@@ -30,6 +31,6 @@ func GetPrivateKey(c *gin.Context) {
 	})
 }
 
-func PrivateKeyPath(cluster string, name string) string {
-	return ClusterPrivateKeyPath(cluster) + "/" + name
+func PrivateKeyPath(req GetPrivateKeyRequest) string {
+	return PrivateKeyDir(req.OwnerType, req.OwnerName) + "/" + req.Name
 }

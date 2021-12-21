@@ -30,7 +30,7 @@ zh:
       <FieldString :holder="holder" fieldName="ansible_become_password" :placeholder="placeholder('ansible_become_password')"></FieldString>
     </template>
     <slot></slot>
-    <SshAddPrivateKey ref="addPrivateKey" :clusterName="cluster.name"></SshAddPrivateKey>
+    <SshAddPrivateKey ref="addPrivateKey" ownerType="cluster" :ownerName="cluster.name"></SshAddPrivateKey>
   </ConfigSection>
 </template>
 
@@ -89,7 +89,7 @@ export default {
     },
     async loadSshKeyList () {
       let result = []
-      await this.kuboardSprayApi.get(`/clusters/${this.cluster.name}/private-keys`).then(resp => {
+      await this.kuboardSprayApi.get(`/private-keys/cluster/${this.cluster.name}`).then(resp => {
         for (let item of resp.data.data) {
           result.push({ label: item, value: '{{ kuboardspray_cluster_dir }}/private-key/' + item })
         }

@@ -2,7 +2,7 @@
 en:
   manageSshKey: Manage Private Keys
   addSshKey: Add Private Key
-  existingSshKeyFiles: Existing SSH private key files to cluster {clusterName}
+  existingSshKeyFiles: Existing SSH private key files to {ownerType}/{ownerName}
   noKeyFiles: No existing SSH private keyfiles
   copyFile: If private key file is on another machine, suggest you use scp or other tool to transfer it to the current client machine, then upload it here. If you copy content into a editor and save it as a file, it may causes format error.
   nameRequired: Please input private key name
@@ -12,7 +12,7 @@ en:
 zh:
   manageSshKey: 管理私钥
   addSshKey: 添加私钥
-  existingSshKeyFiles: 已有的私钥文件（集群 {clusterName}）
+  existingSshKeyFiles: 已有的私钥文件（{ownerType}/{ownerName}）
   noKeyFiles: 暂时没有可用的私钥文件
   copyFile: 如果私钥文件在另外一台机器，建议用 scp 或其他工具将文件传送到当前浏览器所在机器再上传，直接拷贝内容再通过编辑器另存为一个文件，可能导致格式错误。
   nameRequired: 请输入 private key 的名称
@@ -26,7 +26,7 @@ zh:
     <el-dialog v-model="dialogVisible" :close-on-click-modal="false" :modal="true"
       :title="$t('manageSshKey')" width="60%">
       <div class="app_block_title_small">
-        {{$t('existingSshKeyFiles', {clusterName: clusterName})}}
+        {{$t('existingSshKeyFiles', {ownerType, ownerName})}}
         <el-button circle type="primary" icon="el-icon-refresh" @click="load"></el-button>
       </div>
       <el-skeleton :rows="1" animated :loading="loading">
@@ -44,7 +44,7 @@ zh:
         <div class="app_block_title_small">
           {{$t('addSshKey')}}
         </div>
-        <el-upload ref="upload" :action="`${baseURL}/clusters/${clusterName}/private-keys/${form.name}`"
+        <el-upload ref="upload" :action="`${baseURL}/private-keys/${ownerType}/${ownerName}/${form.name}`"
           :headers="headers"
           :auto-upload="false">
           <template #trigger>
@@ -83,7 +83,9 @@ import Cookie from 'js-cookie'
 
 export default {
   props: {
-    clusterName: { type: String, required: true }
+    ownerType: { type: String, required: true },
+    ownerName: { type: String, required: true },
+    name: { type: String, required: true },
   },
   data() {
     return {
@@ -98,7 +100,7 @@ export default {
         { required: true, message: this.$t('nameRequired'), trigger: 'blur' },
         {
           validator: async (rule, value, callback) => {
-            await this.kuboardSprayApi.get(`/clusters/${this.clusterName}/private-keys/${value}`).then(() => {
+            await this.kuboardSprayApi.get(`/private-keys/${this.ownerType}/${this.ownerName}/${value}`).then(() => {
               callback(this.$t('duplicatedPrivateKeyFile'))
             }).catch(e => {
               if (e.response.status === 500) {
@@ -127,7 +129,7 @@ export default {
     },
     async load () {
       this.loading = true
-      await this.kuboardSprayApi.get(`/clusters/${this.clusterName}/private-keys`).then(resp => {
+      await this.kuboardSprayApi.get(`/private-keys/${this.ownerType}/${this.ownerName}`).then(resp => {
         this.keyFiles = resp.data.data
       }).catch(e => {
         console.log(e)
@@ -161,7 +163,7 @@ export default {
           type: 'warning',
         }
       ).then(() => {
-        this.kuboardSprayApi.delete(`/clusters/${this.clusterName}/private-keys/${name}`).then(resp => {
+        this.kuboardSprayApi.delete(`/private-keys/${this.ownerType}/${this.ownerName}/${name}`).then(resp => {
           this.$message.success("Delete " + resp.data.message)
           this.load()
         }).catch(e => {

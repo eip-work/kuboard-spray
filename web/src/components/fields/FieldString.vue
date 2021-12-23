@@ -15,7 +15,10 @@ zh:
     <el-input v-if="editMode !== 'view'" v-model.trim="value" :show-password="showPassword" :disabled="disabled"
       :placeholder="compute_placeholder"></el-input>
     <div v-else class="app_text_mono">
-      <span v-if="value">{{ value }}</span>
+      <span v-if="value">
+        {{ showPassword && hidePassword ? value.replace(/.?/g, '*') : value }}
+        <el-button v-if="showPassword" type="text" icon="el-icon-view" @click="hidePassword = !hidePassword"></el-button>
+      </span>
       <span v-else class="field_placeholder">{{ compute_placeholder }}</span>
     </div>
   </el-form-item>
@@ -37,7 +40,7 @@ export default {
   },
   data () {
     return {
-
+      hidePassword: true,
     }
   },
   inject: ['editMode'],

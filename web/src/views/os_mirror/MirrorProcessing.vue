@@ -2,6 +2,8 @@
 en:
   apply: Apply
   confirmToApply: Do the installation of OS Mirror, are you sure?
+  succeeded: Successfully installed OS Mirror service before.
+  reset: Continue to set new parameters to the OS Mirror service.
   processingTitle: Executing
   processingHints: There is a background task executing, just wait a moment.
   viewLogs: View Task Logs
@@ -16,6 +18,8 @@ en:
 zh:
   apply: 执 行
   confirmToApply: 将执行镜像服务的安装，请确认已完成参数配置！
+  succeeded: 已经成功安装过镜像服务。
+  reset: 此操作将重新设置镜像服务的参数！
   processingTitle: 任务执行中
   processingHints: 当前有后台任务正在执行，请耐心等待。
   viewLogs: 查看任务日志
@@ -42,15 +46,19 @@ zh:
       </template>
     </el-dialog>
   </div>
-  <el-popover v-else-if="!isInstalled" v-model:visible="showConfirm" placement="right-start" width="270" trigger="manual">
+  <el-popover v-else v-model:visible="showConfirm" placement="right-start" width="270" trigger="manual">
     <template #reference>
       <el-button type="danger" icon="el-icon-lightning" @click="showConfirm = !showConfirm">{{$t('apply')}}</el-button>
     </template>
     <el-form @submit.prevent.stop label-position="left" label-width="150px">
       <div style="height: 10px;"></div>
+      <el-alert v-if="isInstalled" type="success" effect="dark" style="margin-bottom: 10px;" :closable="false">
+        <i class="el-icon-lightning" style="font-size: 16px; color: white; margin-right: 10px;"></i>
+        <span class="confirmText" style="color: white;">{{$t('succeeded')}}</span>
+      </el-alert>
       <el-alert type="error" style="margin-bottom: 10px;" :closable="false">
         <i class="el-icon-lightning" style="font-size: 16px; color: red; margin-right: 10px;"></i>
-        <span class="confirmText">{{$t('confirmToApply')}}</span>
+        <span class="confirmText">{{isInstalled ? $t('reset') : $t('confirmToApply')}}</span>
       </el-alert>
       <el-form-item :label="$t('verbose')">
         <el-switch v-model="form.verbose"></el-switch>
@@ -74,7 +82,6 @@ export default {
     os_mirror: { type: Object, required: true },
     name: { type: String, required: true },
     loading: { type: Boolean, required: false },
-    isInstalled: { type: Boolean, required: true }
   },
   data() {
     return {
@@ -86,6 +93,7 @@ export default {
       }
     }
   },
+  inject: ['isInstalled'],
   computed: {
     dialogVisible: {
       get () {

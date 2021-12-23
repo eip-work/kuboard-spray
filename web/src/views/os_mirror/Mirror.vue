@@ -25,7 +25,7 @@ zh:
     <ControlBar :title="name">
       <template v-if="mode === 'view'">
         <el-button type="primary" icon="el-icon-edit" @click="$router.push(`${name}?mode=edit`)">{{ $t('msg.edit') }}</el-button>
-        <MirrorProcessing v-if="os_mirror" :os_mirror="os_mirror" :loading="loading" :name="name" :isInstalled="false"></MirrorProcessing>
+        <MirrorProcessing v-if="os_mirror" :os_mirror="os_mirror" :loading="loading" :name="name"></MirrorProcessing>
       </template>
       <template v-else>
         <el-popconfirm :confirm-button-text="$t('msg.ok')" :cancel-button-text="$t('msg.cancel')" placement="bottom-start"
@@ -59,7 +59,7 @@ zh:
         </el-card>
         <el-tabs type="border-card" v-model="currentTab">
           <el-tab-pane :label="$t('provision')" name="provision">
-            <el-scrollbar height="calc(100vh - 220px)">
+            <el-scrollbar height="calc(100vh - 345px)">
               <Provision v-if="os_mirror.inventory" :os_mirror="os_mirror"></Provision>
             </el-scrollbar>
           </el-tab-pane>
@@ -97,6 +97,15 @@ export default {
     return {
       'editMode': computed(() => {
         return this.mode
+      }),
+      isInstalled: computed(() => {
+        if (this.os_mirror === undefined) {
+          return false
+        }
+        if (this.os_mirror.success_tasks.length > 0) {
+          return true
+        }
+        return false
       })
     }
   },

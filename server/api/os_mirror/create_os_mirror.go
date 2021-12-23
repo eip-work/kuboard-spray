@@ -108,8 +108,8 @@ func getInventoryTemplate() gin.H {
 						"mirror_node": gin.H{},
 					},
 					"vars": gin.H{
-						"apt_mirror_client":          false,
-						"apt_mirror_apache_root_dir": "/var/www/html",
+						"apt_mirror_client": false,
+						"apt_mirror_dir":    "/var/spool/apt-mirror",
 					},
 				},
 			},

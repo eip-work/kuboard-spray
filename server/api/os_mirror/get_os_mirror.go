@@ -3,6 +3,7 @@ package os_mirror
 import (
 	"net/http"
 
+	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
@@ -28,13 +29,20 @@ func GetMirror(c *gin.Context) {
 		common.HandleError(c, http.StatusInternalServerError, "cannot pase file: "+statusFilePath, err)
 	}
 
+	successTasks, err := command.ReadSuccessTasks("mirror", req.Name)
+	if err != nil {
+		common.HandleError(c, http.StatusInternalServerError, "cannot read cluster status", err)
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"code":    http.StatusOK,
 		"message": "success",
 		"data": gin.H{
-			"inventory": inventory,
-			"status":    status,
-			"name":      req.Name,
+			"inventory":     inventory,
+			"status":        status,
+			"success_tasks": successTasks,
+			"name":          req.Name,
 		},
 	})
 }

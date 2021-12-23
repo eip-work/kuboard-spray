@@ -17,8 +17,8 @@ type SuccessTask struct {
 
 type SuccessTasks []SuccessTask
 
-func AddSuccessTask(cluster string, task SuccessTask) error {
-	tasks, err := ReadSuccessTasks(cluster)
+func AddSuccessTask(ownerType string, ownerName string, task SuccessTask) error {
+	tasks, err := ReadSuccessTasks(ownerType, ownerName)
 	if err != nil {
 		return err
 	}
@@ -27,22 +27,22 @@ func AddSuccessTask(cluster string, task SuccessTask) error {
 	if err != nil {
 		return errors.New("failed tp marshal tasks: " + err.Error())
 	}
-	return ioutil.WriteFile(successFilePath(cluster), content, 0666)
+	return ioutil.WriteFile(successFilePath(ownerType, ownerName), content, 0666)
 }
 
-func ReadSuccessTasks(cluster string) (SuccessTasks, error) {
+func ReadSuccessTasks(ownerType string, ownerName string) (SuccessTasks, error) {
 	var tasks SuccessTasks
-	content, err := ioutil.ReadFile(successFilePath(cluster))
+	content, err := ioutil.ReadFile(successFilePath(ownerType, ownerName))
 	if err != nil {
 		content = []byte("[]")
 	}
 	if err := json.Unmarshal(content, &tasks); err != nil {
-		return nil, errors.New("failed to unmarshal file " + successFilePath(cluster) + " : " + err.Error())
+		return nil, errors.New("failed to unmarshal file " + successFilePath(ownerType, ownerName) + " : " + err.Error())
 	}
 
 	return tasks, nil
 }
 
-func successFilePath(cluster string) string {
-	return constants.GET_DATA_CLUSTER_DIR() + "/" + cluster + "/success.json"
+func successFilePath(ownerType string, ownerName string) string {
+	return constants.GET_DATA_DIR() + "/" + ownerType + "/" + ownerName + "/success.json"
 }

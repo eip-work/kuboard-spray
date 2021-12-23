@@ -193,7 +193,7 @@ func (execute *Execute) exec() {
 				Timestamp: time.Now(),
 				Pid:       pid,
 			}
-			if err := AddSuccessTask(execute.OwnerName, task); err != nil {
+			if err := AddSuccessTask(execute.OwnerType, execute.OwnerName, task); err != nil {
 				logrus.Warn("failed to add success task: ", err)
 			}
 		}

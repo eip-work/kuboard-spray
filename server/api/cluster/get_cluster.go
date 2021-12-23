@@ -24,7 +24,7 @@ func GetCluster(c *gin.Context) {
 		return
 	}
 
-	successTasks, err := command.ReadSuccessTasks(req.Cluster)
+	successTasks, err := command.ReadSuccessTasks("cluster", req.Cluster)
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "cannot read cluster status", err)
 		return

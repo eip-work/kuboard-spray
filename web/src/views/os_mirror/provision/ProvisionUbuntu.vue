@@ -28,7 +28,7 @@ zh:
         </el-checkbox>
       </el-checkbox-group>
     </el-form-item>
-    <FieldBool :holder="inventory.all.children.target.vars" prop="inventory.all.children.target.vars" fieldName="apt_mirror_schedule_updates" required></FieldBool>
+    <FieldBool :holder="inventory.all.children.target.vars" prop="inventory.all.children.target.vars" fieldName="apt_mirror_schedule_updates"></FieldBool>
     <FieldRadio v-if="inventory.all.children.target.vars.apt_mirror_schedule"
       :disabled="!inventory.all.children.target.vars.apt_mirror_schedule_updates"
       :holder="inventory.all.children.target.vars.apt_mirror_schedule[0]"
@@ -115,7 +115,7 @@ export default {
   watch: {
     'os_mirror': function() {
       this.initDefaults()
-    }
+    },
   },
   components: { },
   mounted () {

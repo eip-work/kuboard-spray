@@ -45,9 +45,11 @@ export default {
   },
   components: { SshParams, NodeFact, ProvisionUbuntu },
   watch: {
-    'inventory.all.hosts.mirror_node.ansible_host': function(newValue) {
-      console.log(newValue)
-      this.status.url = 'http://' + newValue + '/ubuntu/'
+    'inventory.all.hosts.mirror_node.ansible_host': function() {
+      this.updateUrl()
+    },
+    'inventory.all.children.target.vars.apt_mirror_server_port': function () {
+      this.updateUrl()
     }
   },
   mounted () {
@@ -56,7 +58,14 @@ export default {
     }
   },
   methods: {
-
+    updateUrl () {
+      let temp =  'http://' + this.inventory.all.hosts.mirror_node.ansible_host
+      if (this.inventory.all.children.target.vars.apt_mirror_server_port && this.inventory.all.children.target.vars.apt_mirror_server_port !== 80) {
+        temp += ':' + this.inventory.all.children.target.vars.apt_mirror_server_port
+      }
+      temp += '/ubuntu'
+      this.status.url = temp
+    }
   }
 }
 </script>

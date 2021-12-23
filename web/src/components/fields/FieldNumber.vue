@@ -3,11 +3,14 @@
     <template #label>
       {{ $t('field.' + fieldName) }}
     </template>
-    <el-input v-if="editMode !== 'view'" v-model.number="obj[fieldName]" :placeholder="compute_placeholder"></el-input>
+    <el-input v-if="editMode !== 'view'" v-model.number="obj[fieldName]" :placeholder="compute_placeholder">
+      <template #append><slot name="append"></slot></template>
+    </el-input>
     <div v-else class="app_text_mono">
       <span v-if="obj[fieldName]">{{ obj[fieldName] }}</span>
       <span v-else>{{ compute_placeholder }}</span>
     </div>
+    <slot></slot>
   </el-form-item>
 </template>
 

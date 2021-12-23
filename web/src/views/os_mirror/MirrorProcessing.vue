@@ -1,12 +1,12 @@
 <i18n>
 en:
   apply: Apply
-  confirmToApply: Do the installation of Kubernetes Cluster, are you sure?
+  confirmToApply: Do the installation of OS Mirror, are you sure?
   processingTitle: Executing
   processingHints: There is a background task executing, just wait a moment.
   viewLogs: View Task Logs
   taskFinished: Task is already completed
-  viewPlan: I just want to view the Cluster Parameters.
+  viewPlan: I just want to view the Parameters.
   verbose: Trace in details
   verbose_true: May include sensitive data in the trace, e.g. path to files, user name, password.
   verbose_false: Some information is hidden when there is a exception, which makes it more difficult to fix the issue.
@@ -15,12 +15,12 @@ en:
   vvv_false: usually false
 zh:
   apply: 执 行
-  confirmToApply: 将执行集群安装动作，请确认已完成集群规划！
+  confirmToApply: 将执行镜像服务的安装，请确认已完成参数配置！
   processingTitle: 任务执行中
-  processingHints: 该集群有后台任务正在执行，请耐心等待。
+  processingHints: 当前有后台任务正在执行，请耐心等待。
   viewLogs: 查看任务日志
   taskFinished: 任务已结束
-  viewPlan: 我想看看集群规划
+  viewPlan: 我想看看参数
   verbose: 显示详尽的日志信息
   verbose_true: 日志中会包含部分敏感信息，例如：文件路径、用户名密码等
   verbose_false: 部分错误信息不能完整展示，使得出错时排查问题更困难
@@ -38,7 +38,7 @@ zh:
       <template #footer>
         <el-button @click="forceHide = true" icon="el-icon-files">{{$t('viewPlan')}}</el-button>
         <el-button @click="$emit('refresh')" type="danger" icon="el-icon-finished">{{$t('taskFinished')}}</el-button>
-        <el-button type="primary" icon="el-icon-check" @click="viewTaskLogs(cluster.current_pid)">{{$t('viewLogs')}}</el-button>
+        <el-button type="primary" icon="el-icon-check" @click="viewTaskLogs(os_mirror.current_pid)">{{$t('viewLogs')}}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -46,7 +46,7 @@ zh:
     <template #reference>
       <el-button type="danger" icon="el-icon-lightning" @click="showConfirm = !showConfirm">{{$t('apply')}}</el-button>
     </template>
-    <el-form @submit.prevent.stop>
+    <el-form @submit.prevent.stop label-position="left" label-width="150px">
       <div style="height: 10px;"></div>
       <el-alert type="error" style="margin-bottom: 10px;" :closable="false">
         <i class="el-icon-lightning" style="font-size: 16px; color: red; margin-right: 10px;"></i>
@@ -71,9 +71,10 @@ zh:
 <script>
 export default {
   props: {
-    cluster: { type: Object, required: true },
+    os_mirror: { type: Object, required: true },
     name: { type: String, required: true },
     loading: { type: Boolean, required: false },
+    isInstalled: { type: Boolean, required: true }
   },
   data() {
     return {
@@ -81,6 +82,7 @@ export default {
       showConfirm: false,
       form: {
         verbose: false,
+        vvv: false,
       }
     }
   },
@@ -90,12 +92,11 @@ export default {
         if (this.loading) {
           return false
         }
-        return this.cluster.processing && !this.forceHide
+        return this.os_mirror.processing && !this.forceHide
       },
       set () {}
     }
   },
-  inject: ['isInstalled'],
   watch: {
     'loading': function() {
       this.forceHide = false
@@ -110,7 +111,7 @@ export default {
     applyPlan () {
       this.forceHide = false
       this.showConfirm = false
-      this.kuboardSprayApi.post(`/clusters/${this.name}/install`, this.form).then(resp => {
+      this.kuboardSprayApi.post(`/mirrors/${this.name}/install`, this.form).then(resp => {
         this.$emit('refresh')
         this.viewTaskLogs(resp.data.data.pid)
       }).catch(e => {
@@ -118,7 +119,7 @@ export default {
       })
     },
     viewTaskLogs (pid) {
-      this.openUrlInBlank(`/#/tail/cluster/${this.name}/history/${pid}/execute.log`)
+      this.openUrlInBlank(`/#/tail/mirror/${this.name}/history/${pid}/execute.log`)
     }
   }
 }

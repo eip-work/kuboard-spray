@@ -21,7 +21,7 @@ zh:
   <el-form ref="form" :model="inventory" label-width="120px" label-position="left" @submit.enter.prevent>
     <SshParamsNode :cluster="cluster" :holder="inventory.all.hosts[nodeName]" :prop="`all.hosts.${nodeName}`" :clusterName="cluster.name" :nodeName="nodeName" :description="$t('sshcommon', {nodeName: nodeName})" isNode>
       <NodeFact ref="nodeFact"
-        :form="form"
+        :form="$refs.form"
         node_owner_type="cluster"
         :node_owner="cluster.name"
         :node_name="nodeName"

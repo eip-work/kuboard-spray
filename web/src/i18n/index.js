@@ -39,6 +39,7 @@ const messages = {
       delete_succeeded: 'Succeeded in deleting.',
       delete_failed: 'Failed in deleting. {msg}',
       status: 'Status',
+      confirmToCancel: "Modifications will be lost to proceed, do you confirm ?",
     }
   },
   zh: { 
@@ -73,6 +74,7 @@ const messages = {
       delete_succeeded: '删除成功',
       delete_failed: '删除失败： {msg}',
       status: '状 态',
+      confirmToCancel: '将丢失已修改内容，确认取消编辑？',
     }
   },
 }

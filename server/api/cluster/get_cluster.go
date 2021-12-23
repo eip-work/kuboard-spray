@@ -31,7 +31,7 @@ func GetCluster(c *gin.Context) {
 	}
 
 	processing := false
-	lockFile, err := command.LockCluster(req.Cluster)
+	lockFile, err := command.LockOwner("cluster", req.Cluster)
 	if err != nil {
 		processing = true
 	}
@@ -41,7 +41,7 @@ func GetCluster(c *gin.Context) {
 		common.HandleError(c, http.StatusInternalServerError, "cannot read current pid", err)
 		return
 	}
-	command.UnlockCluster(lockFile)
+	command.UnlockOwner(lockFile)
 
 	c.JSON(http.StatusOK, gin.H{
 		"code":    http.StatusOK,

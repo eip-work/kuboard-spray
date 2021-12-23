@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -15,22 +16,24 @@ import (
 )
 
 type Execute struct {
-	Cmd      string
-	Args     func(string) []string
-	Cluster  string
-	mutex    *sync.Mutex
-	Type     string
-	PreExec  func(string) error
-	PostExec func(ExecuteExitStatus) (string, error)
-	Dir      string
-	Env      []string
-	R_Error  error
-	R_Pid    string
+	Cmd       string
+	Args      func(string) []string
+	OwnerType string
+	OwnerName string
+	mutex     *sync.Mutex
+	Type      string
+	PreExec   func(string) error
+	PostExec  func(ExecuteExitStatus) (string, error)
+	Dir       string
+	Env       []string
+	R_Error   error
+	R_Pid     string
 }
 
 func (execute *Execute) ToString(runDirPath string, pid string) string {
 	result := "---"
-	result += "\ncluster: " + execute.Cluster
+	result += "\nowner_type: " + execute.OwnerType
+	result += "\nowner_name: " + execute.OwnerName
 	result += "\nhistory: " + runDirPath
 	result += "\npid: " + pid
 	result += "\ndir: " + execute.Dir
@@ -68,24 +71,30 @@ func (execute *Execute) Exec() error {
 
 func (execute *Execute) exec() {
 
-	lockFile, err := LockCluster(execute.Cluster)
+	lockFile, err := LockOwner(execute.OwnerType, execute.OwnerName)
 	if err != nil {
 		execute.R_Error = err
 		execute.mutex.Unlock()
 		return
 	}
 
-	defer UnlockCluster(lockFile)
+	defer UnlockOwner(lockFile)
+	defer func() {
+		if r := recover(); r != nil {
+			logrus.Errorf("%+v", r)
+			debug.PrintStack()
+		}
+	}()
 
 	pid := time.Now().Format("2006-01-02_15-04-05.999") + "_" + execute.Type
-	historyPath := constants.GET_DATA_CLUSTER_DIR() + "/" + execute.Cluster + "/history"
+	historyPath := constants.GET_DATA_DIR() + "/" + execute.OwnerType + "/" + execute.OwnerName + "/history"
 	if err := common.CreateDirIfNotExists(historyPath); err != nil {
 		execute.R_Error = errors.New("cannot create historyDir : " + historyPath + " : " + err.Error())
 		execute.mutex.Unlock()
 		return
 	}
 
-	runDirPath := constants.GET_DATA_CLUSTER_DIR() + "/" + execute.Cluster + "/history/" + pid
+	runDirPath := historyPath + "/" + pid
 	if err := common.CreateDirIfNotExists(runDirPath); err != nil {
 		execute.R_Error = errors.New("cannot create runDir : " + runDirPath + " : " + err.Error())
 		execute.mutex.Unlock()
@@ -155,9 +164,11 @@ func (execute *Execute) exec() {
 		lines := strings.Split(recap, "\n")
 		status := []ExecuteExitNodeStatus{}
 		for _, line := range lines {
-			status = append(status, parseAnsibleRecapLine(line))
+			if strings.Index(line, "failed=") > 0 && strings.Index(line, "unreachable=") > 0 && strings.Index(line, "ok=") > 0 {
+				status = append(status, parseAnsibleRecapLine(line))
+			}
 		}
-		success := true
+		success := len(status) > 0
 		for _, nodestatus := range status {
 			if nodestatus.Unreachable != "0" || nodestatus.Failed != "0" {
 				success = false
@@ -182,7 +193,7 @@ func (execute *Execute) exec() {
 				Timestamp: time.Now(),
 				Pid:       pid,
 			}
-			if err := AddSuccessTask(execute.Cluster, task); err != nil {
+			if err := AddSuccessTask(execute.OwnerName, task); err != nil {
 				logrus.Warn("failed to add success task: ", err)
 			}
 		}

@@ -23,8 +23,21 @@ zh:
 <template>
   <div>
     <ControlBar :title="name">
+      <template v-if="mode === 'view'">
+        <el-button type="primary" icon="el-icon-edit" @click="$router.push(`${name}?mode=edit`)">{{ $t('msg.edit') }}</el-button>
+        <MirrorProcessing v-if="os_mirror" :os_mirror="os_mirror" :loading="loading" :name="name" :isInstalled="false"></MirrorProcessing>
+      </template>
+      <template v-else>
+        <el-popconfirm :confirm-button-text="$t('msg.ok')" :cancel-button-text="$t('msg.cancel')" placement="bottom-start"
+          icon="el-icon-warning" icon-color="red" :title="$t('msg.confirmToCancel')" @confirm="cancelEdit">
+          <template #reference>
+            <el-button type="default" icon="el-icon-close">{{$t('msg.cancel')}}</el-button>
+          </template>
+        </el-popconfirm>
+        <el-button type="primary" icon="el-icon-check" :disabled="noSaveRequired" @click="save">{{$t('msg.save')}}</el-button>
+      </template>
     </ControlBar>
-    <el-form v-if="os_mirror" :model="os_mirror" label-position="left" label-width="150px" @click.prevent.stop>
+    <el-form v-if="os_mirror" ref="form" :model="os_mirror" label-position="left" label-width="150px" @submit.prevent.stop>
       <el-card shadow="none" v-if="loading">
         <el-skeleton animated :rows="10"></el-skeleton>
       </el-card>
@@ -47,7 +60,7 @@ zh:
         <el-tabs type="border-card" v-model="currentTab">
           <el-tab-pane :label="$t('provision')" name="provision">
             <el-scrollbar height="calc(100vh - 220px)">
-              <Provision :os_mirror="os_mirror"></Provision>
+              <Provision v-if="os_mirror.inventory" :os_mirror="os_mirror"></Provision>
             </el-scrollbar>
           </el-tab-pane>
         </el-tabs>
@@ -60,6 +73,7 @@ zh:
 import mixin from '../../mixins/mixin.js'
 import {computed} from 'vue'
 import Provision from './provision/Provision.vue'
+import MirrorProcessing from './MirrorProcessing.vue'
 
 export default {
   mixins: [mixin],
@@ -71,6 +85,7 @@ export default {
     return {
       percentage: 0,
       os_mirror: undefined,
+      original_data: '',
       loading: false,
       currentTab: 'provision',
       urlRules: [
@@ -106,8 +121,11 @@ export default {
         this.os_mirror.status.url = v
       }
     },
+    noSaveRequired () {
+      return this.original_data === JSON.stringify(this.os_mirror)
+    }
   },
-  components: { Provision },
+  components: { Provision, MirrorProcessing },
   mounted () {
     this.refresh()
   },
@@ -116,10 +134,28 @@ export default {
       this.loading = true
       await this.kuboardSprayApi.get(`/mirrors/${this.name}`).then(resp => {
         this.os_mirror = resp.data.data
+        this.original_data = JSON.stringify(this.os_mirror)
       }).catch(e => {
         console.log(e)
       })
       this.loading = false
+    },
+    cancelEdit () {
+      this.$router.replace(this.name)
+      this.refresh()
+    },
+    save () {
+      this.$refs.form.validate(flag => {
+        if (flag) {
+          this.kuboardSprayApi.put(`/mirrors/${this.name}`, this.os_mirror).then(() => {
+            this.$message.success(this.$t('msg.save_succeeded'))
+            this.refresh()
+            this.$router.replace(`${this.name}`)
+          }).catch(e => {
+            this.$message.error(this.$t('msg.save_failed', e.response.data.message))
+          })
+        }
+      })
     }
   }
 }

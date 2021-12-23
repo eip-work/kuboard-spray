@@ -10,7 +10,7 @@ zh:
     <div class="delete_button" v-if="!hideDeleteButton && editMode !== 'view'">
         <el-popconfirm icon="el-icon-info" icon-color="red" :title="$t('confirmDelete')" @confirm="$emit('delete_button')" placement="right-start">
           <template #reference>
-            <el-button icon="el-icon-delete" type="danger" circle @click.prevent.stop></el-button>
+            <el-button icon="el-icon-delete" type="danger" circle @submit.prevent.stop></el-button>
           </template>
         </el-popconfirm>
     </div>

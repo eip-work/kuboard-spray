@@ -76,7 +76,17 @@ const field = {
     ubuntu_repo_placeholder: 'ubuntu 镜像源',
 
 
-    apt_mirror_apache_root_dir: 'Apache 根路径',
+    apt_mirror_apache_root_dir: '数据目录',
+    apt_mirror_ubuntu_mirror: '上游镜像源地址',
+    apt_mirror_ubuntu_mirror_placeholder: '将从此地址获取镜像下载到本地镜像库',
+    apt_mirror_schedule_updates: '是否定期从上游同步',
+    'special_time-monthly': '每月',
+    'special_time-weekly': '每周',
+    'special_time-daily': '每天',
+    apt_mirror_populate_repos: '完成后立刻同步',
+    apt_mirror_enable_limit_rate: '限制同步速度',
+    apt_mirror_limit_rate: '下载速度',
+    apt_mirror_nthreads: '下载线程数',
   }
 }
 

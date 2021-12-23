@@ -5,14 +5,12 @@ en:
   plan: Cluster Plan
   access: Access Cluster
   node: Nodes Maintainance
-  confirmToCancel: Modifications will be lost to proceed, do you confirm ?
 zh:
   clusterList: 集群列表
   cluster: 集群
   access: 访问集群
   plan: 集群规划
   nodes: 节点维护
-  confirmToCancel: 将丢失已修改内容，确认取消编辑？
 </i18n>
 
 <template>
@@ -27,15 +25,12 @@ zh:
           </template>
           <template v-if="mode === 'edit'">
             <el-popconfirm :confirm-button-text="$t('msg.ok')" :cancel-button-text="$t('msg.cancel')" placement="bottom-start"
-              icon="el-icon-warning" icon-color="red" :title="$t('confirmToCancel')" @confirm="cancelEdit">
+              icon="el-icon-warning" icon-color="red" :title="$t('msg.confirmToCancel')" @confirm="cancelEdit">
               <template #reference>
                 <el-button type="default" icon="el-icon-close">{{$t('msg.cancel')}}</el-button>
               </template>
             </el-popconfirm>
             <el-button type="primary" icon="el-icon-check" :disabled="noSaveRequired" @click="save">{{$t('msg.save')}}</el-button>
-          </template>
-          <template v-if="mode === 'create'">
-            <el-button type="primary" icon="el-icon-check">{{$t('msg.save')}}</el-button>
           </template>
         </template>
       </div>

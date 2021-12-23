@@ -13,6 +13,7 @@ import (
 type InstallClusterRequest struct {
 	Cluster string `uri:"cluster" binding:"required"`
 	Verbose bool   `json:"verbose"`
+	VVV     bool   `json:"vvv"`
 }
 
 func InstallCluster(c *gin.Context) {
@@ -111,9 +112,13 @@ func InstallCluster(c *gin.Context) {
 	logrus.Trace(req.Verbose, env)
 
 	command := command.Execute{
-		Cluster: req.Cluster,
-		Cmd:     "ansible-playbook",
+		OwnerType: "cluster",
+		OwnerName: req.Cluster,
+		Cmd:       "ansible-playbook",
 		Args: func(run_dir string) []string {
+			if req.VVV {
+				return []string{"-i", run_dir + "/inventory.yaml", "contrib/os-services/os-services.yml", "cluster.yml", "-vvv"}
+			}
 			return []string{"-i", run_dir + "/inventory.yaml", "contrib/os-services/os-services.yml", "cluster.yml"}
 		},
 		Dir:      resourcePackagePath + "/kubespray",

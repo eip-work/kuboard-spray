@@ -1,0 +1,26 @@
+---
+- name: Test ansible_connection
+  hosts: target
+  tasks:
+    - name: Test ansible_connection
+      ansible.builtin.setup:
+        gather_subset:
+          - '!all'
+          - '!any'
+          - facter
+      vars:
+        ansible_connection: ssh
+        ansible_timeout: 5
+
+- name: Install apt-mirror for ubuntu
+
+  hosts: target
+  roles:
+    - role: ansible-apache2
+    - role: ansible-apt-mirror
+
+# - hosts: clients
+#   vars:
+#     apt_mirror_client: true
+#   roles:
+#     - role: ansible-apt-mirror

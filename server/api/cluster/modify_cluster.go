@@ -42,26 +42,27 @@ func ModifyCluster(c *gin.Context) {
 	}
 
 	inventoryFilePath := constants.GET_DATA_CLUSTER_DIR() + "/" + req.Cluster + "/inventory.yaml"
-	inventoryFile, err := os.OpenFile(inventoryFilePath, os.O_RDWR|os.O_TRUNC, 0666)
+	inventoryFile, err := os.OpenFile(inventoryFilePath, os.O_RDWR|os.O_APPEND, 0655)
 
 	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "failed to open inventory file: "+inventoryFilePath, err)
+		common.HandleError(c, http.StatusInternalServerError, "failed to open inventory file.", err)
 		return
 	}
 
 	err = syscall.Flock(int(inventoryFile.Fd()), syscall.LOCK_EX|syscall.LOCK_NB)
 
 	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "failed to lock inventory file: "+inventoryFilePath, err)
+		common.HandleError(c, http.StatusInternalServerError, "failed to lock inventory file.", err)
 		return
 	}
 
 	defer inventoryFile.Close()
 	defer syscall.Flock(int(inventoryFile.Fd()), syscall.LOCK_UN)
 
+	inventoryFile.Truncate(0)
 	_, err = inventoryFile.Write(inventoryYamleBytes)
 	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "failed to save inventory file: "+inventoryFilePath, err)
+		common.HandleError(c, http.StatusInternalServerError, "failed to save inventory file.", err)
 		return
 	}
 

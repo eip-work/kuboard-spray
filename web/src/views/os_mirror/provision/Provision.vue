@@ -12,16 +12,17 @@ zh:
       <div class="ssh_content">
         <SshParams :holder="inventory.all.hosts.mirror_node" prop="inventory.all.hosts.mirror_node" :mirrorName="os_mirror.name"></SshParams>
         <NodeFact v-bind="inventory.all.hosts.mirror_node" class="provision_node_fact"
-          node_name="mirror_node" :node_owner_type="mirror" :node_owner="os_mirror.name"></NodeFact>
+          node_name="mirror_node" node_owner_type="mirror" :node_owner="os_mirror.name"></NodeFact>
       </div>
     </el-form-item>
-    <FieldString :holder="inventory.all.children.target.vars" prop="inventory.all.children.target.vars" fieldName="apt_mirror_apache_root_dir" required></FieldString>
+    <ProvisionUbuntu :os_mirror="os_mirror"></ProvisionUbuntu>
   </div>
 </template>
 
 <script>
 import SshParams from './SshParams.vue'
 import NodeFact from '../../fact/NodeFact.vue'
+import ProvisionUbuntu from './ProvisionUbuntu.vue'
 
 export default {
   props: {
@@ -38,7 +39,7 @@ export default {
       set () {},
     }
   },
-  components: { SshParams, NodeFact },
+  components: { SshParams, NodeFact, ProvisionUbuntu },
   mounted () {
   },
   methods: {

@@ -1,11 +1,11 @@
 <template>
   <el-form-item :rules="computedRules" :prop="prop ? prop + '.' + fieldName : fieldName">
     <template #label>
-      {{ $t('field.' + fieldName) }}
+      {{ label || $t('field.' + fieldName) }}
     </template>
-    <el-radio-group v-model="obj[fieldName]">
+    <el-radio-group v-model="value" :disabled="disabled">
       <template v-for="(option, index) in options" :key="index">
-        <el-radio-button v-if="editMode !== 'view' || obj[fieldName] === option" :label="option">
+        <el-radio-button v-if="editMode !== 'view' || value === option" :label="option">
           {{ optionDesc(option) }}
         </el-radio-button>
       </template>
@@ -24,6 +24,8 @@ export default {
     required: { type: Boolean, required: false, default: false },
     rules: { type: Array, required: false, default: () => ([])},
     options: { type: Array, required: true },
+    label: { type: String, required: false, default: undefined },
+    disabled: { type: Boolean, required: false, default: false },
   },
   data () {
     return {
@@ -38,6 +40,14 @@ export default {
       },
       set (v) {
         console.log(v)
+      }
+    },
+    value: {
+      get () {
+        return this.holder[this.fieldName]
+      },
+      set (v) {
+        this.obj[this.fieldName] = v
       }
     },
     computedRules () {

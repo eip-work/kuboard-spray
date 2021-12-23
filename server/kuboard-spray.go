@@ -32,8 +32,8 @@ func setupRouter() *gin.Engine {
 	api.DELETE("/clusters/:cluster", cluster.DeleteCluster)
 
 	api.POST("/clusters/:cluster/install", cluster.InstallCluster)
-	api.GET("/clusters/:cluster/history/:pid/tail/:file", command.TailFile)
-	// router.GET("/kuboardspray/:kuboardsprayID/api/clusters/:cluster/history/:pid/tail/:file", command.TailFile)
+
+	api.GET("/tail/:owner_type/:owner_name/history/:pid/:file", command.TailFile)
 
 	api.POST("/facts/:node_owner_type/:node_owner/:node", fact.GetNodeFacts)
 
@@ -47,7 +47,9 @@ func setupRouter() *gin.Engine {
 
 	api.GET("/mirrors", os_mirror.ListOsMirrors)
 	api.POST("/mirrors", os_mirror.CreateOsMirror)
+	api.POST("/mirrors/:name/install", os_mirror.InstallOsMirror)
 	api.GET("/mirrors/:name", os_mirror.GetMirror)
+	api.PUT("/mirrors/:name", os_mirror.ModifyOsMirro)
 	api.DELETE("/mirrors/:name", os_mirror.DeleteMirror)
 
 	vue.ServeVue(router, root)

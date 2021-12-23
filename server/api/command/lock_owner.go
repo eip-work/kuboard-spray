@@ -9,8 +9,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func LockCluster(cluster string) (*os.File, error) {
-	lockFilePath := constants.GET_DATA_CLUSTER_DIR() + "/" + cluster + "/inventory.lastrun"
+func LockOwner(owner_type string, owner_name string) (*os.File, error) {
+	lockFilePath := constants.GET_DATA_DIR() + "/" + owner_type + "/" + owner_name + "/inventory.lastrun"
 	logrus.Trace("lockFilePath: ", lockFilePath)
 	lockFile, err := os.OpenFile(lockFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
@@ -26,7 +26,7 @@ func LockCluster(cluster string) (*os.File, error) {
 	return lockFile, nil
 }
 
-func UnlockCluster(lockFile *os.File) {
+func UnlockOwner(lockFile *os.File) {
 	syscall.Flock(int(lockFile.Fd()), syscall.LOCK_UN)
 	lockFile.Close()
 }

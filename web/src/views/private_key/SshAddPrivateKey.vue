@@ -85,7 +85,6 @@ export default {
   props: {
     ownerType: { type: String, required: true },
     ownerName: { type: String, required: true },
-    name: { type: String, required: true },
   },
   data() {
     return {

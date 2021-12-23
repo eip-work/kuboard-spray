@@ -46,7 +46,7 @@ zh:
 <template>
   <div>
     <div style="background-color: #3a3333; color: #fffeff; font-weight: 500; padding: 8px 20px 8px 20px; line-height: 22px; text-align: center;">
-      {{this.$t('logs')}} - <span class="app_text_mono">{{cluster}}/{{pid}}</span>
+      {{this.$t('logs')}} - <span class="app_text_mono">{{ownerType}}/{{ownerName}}/{{pid}}</span>
       <span style="float:left;">
         <ChangeFontSize class="button" :terminal="xterm" :fitAddon="fitAddon"></ChangeFontSize>
         <ChangeColor class="button"></ChangeColor>
@@ -76,7 +76,8 @@ import ChangeColor from './ChangeColor'
 
 export default {
   props: {
-    cluster: { type: String, required: true },
+    ownerType: { type: String, required: true },
+    ownerName: { type: String, required: true },
     pid: { type: String, required: true },
     file: { type: String, required: true },
     tailLines: { type: Number, required: false, default: 500 },
@@ -95,7 +96,7 @@ export default {
     wsUrl() {
       let wsHost = location.host
       let protocol = location.protocol === 'http:' ? 'ws:' : 'wss:'
-      let str = `${protocol}//${wsHost}/kuboardspray/default/api/clusters/${this.cluster}/history/${this.pid}/tail/${this.file}`
+      let str = `${protocol}//${wsHost}/kuboardspray/default/api/tail/${this.ownerType}/${this.ownerName}/history/${this.pid}/${this.file}`
       return str
     },
     stateStr() {
@@ -196,7 +197,7 @@ export default {
         this.socketReadyState = this.socket.readyState
       }, 2000)
 
-      document.title = `${this.$t('logs')} - ${this.cluster} / ${this.pid}`
+      document.title = `${this.$t('logs')} - ${this.ownerType} / ${this.ownerName} / ${this.pid}`
     }
   }
 }

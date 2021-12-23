@@ -88,9 +88,10 @@ func writer(ws *websocket.Conn, filePath string) {
 }
 
 type TailFileRequest struct {
-	Cluster string `uri:"cluster" binding:"required"`
-	Pid     string `uri:"pid" binding:"required"`
-	File    string `uri:"file" binding:"required"`
+	OwnerType string `uri:"owner_type" binding:"required"`
+	OwnerName string `uri:"owner_name" binding:"required"`
+	Pid       string `uri:"pid" binding:"required"`
+	File      string `uri:"file" binding:"required"`
 }
 
 func TailFile(c *gin.Context) {
@@ -100,7 +101,7 @@ func TailFile(c *gin.Context) {
 
 	pid := reqParams.Pid
 	if reqParams.Pid == "lastrun" {
-		lockFilePath := constants.GET_DATA_CLUSTER_DIR() + "/" + reqParams.Cluster + "/inventory.lastrun"
+		lockFilePath := constants.GET_DATA_DIR() + "/" + reqParams.OwnerType + "/" + reqParams.OwnerName + "/inventory.lastrun"
 		logrus.Trace("read pid from : ", lockFilePath)
 		b, err := ioutil.ReadFile(lockFilePath)
 		if err != nil {
@@ -125,7 +126,7 @@ func TailFile(c *gin.Context) {
 	}
 	defer ws.Close()
 
-	filePath := constants.GET_DATA_CLUSTER_DIR() + "/" + reqParams.Cluster + "/history/" + pid + "/" + reqParams.File
+	filePath := constants.GET_DATA_DIR() + "/" + reqParams.OwnerType + "/" + reqParams.OwnerName + "/history/" + pid + "/" + reqParams.File
 	logrus.Trace("[", filePath, "]")
 	go writer(ws, filePath)
 	reader(ws)

@@ -115,15 +115,15 @@ func InstallCluster(c *gin.Context) {
 		OwnerType: "cluster",
 		OwnerName: req.Cluster,
 		Cmd:       "ansible-playbook",
-		Args: func(run_dir string) []string {
+		Args: func(execute_dir string) []string {
 			if req.VVV {
-				return []string{"-i", run_dir + "/inventory.yaml", "contrib/os-services/os-services.yml", "cluster.yml", "-vvv"}
+				return []string{"-i", execute_dir + "/inventory.yaml", "pb_cluster.yml", "-vvv"}
 			}
-			return []string{"-i", run_dir + "/inventory.yaml", "contrib/os-services/os-services.yml", "cluster.yml"}
+			return []string{"-i", execute_dir + "/inventory.yaml", "pb_cluster.yml"}
 		},
-		Dir:      resourcePackagePath + "/kubespray",
+		Dir:      resourcePackagePath,
 		Type:     "install",
-		PreExec:  func(run_dir string) error { return common.SaveYamlFile(run_dir+"/inventory.yaml", inventory) },
+		PreExec:  func(execute_dir string) error { return common.SaveYamlFile(execute_dir+"/inventory.yaml", inventory) },
 		PostExec: postExec,
 		Env:      env,
 	}

@@ -32,16 +32,16 @@ type Execute struct {
 	R_Pid     string
 }
 
-func (execute *Execute) ToString(runDirPath string, pid string) string {
+func (execute *Execute) ToString(execute_dir_path string, pid string) string {
 	result := "---"
 	result += "\nowner_type: " + execute.OwnerType
 	result += "\nowner_name: " + execute.OwnerName
-	result += "\nhistory: " + runDirPath
+	result += "\nhistory: " + execute_dir_path
 	result += "\npid: " + pid
 	result += "\ndir: " + execute.Dir
 	result += "\ncmd: " + execute.Cmd
 	result += "\nargs:"
-	args := execute.Args(runDirPath)
+	args := execute.Args(execute_dir_path)
 	for _, arg := range args {
 		result += "\n  - " + arg
 	}
@@ -96,22 +96,22 @@ func (execute *Execute) exec() {
 		return
 	}
 
-	runDirPath := historyPath + "/" + pid
-	if err := common.CreateDirIfNotExists(runDirPath); err != nil {
-		execute.R_Error = errors.New("cannot create runDir : " + runDirPath + " : " + err.Error())
+	execute_dir_path := historyPath + "/" + pid
+	if err := common.CreateDirIfNotExists(execute_dir_path); err != nil {
+		execute.R_Error = errors.New("cannot create runDir : " + execute_dir_path + " : " + err.Error())
 		execute.mutex.Unlock()
 		return
 	}
 
 	if execute.PreExec != nil {
-		if err := execute.PreExec(runDirPath); err != nil {
+		if err := execute.PreExec(execute_dir_path); err != nil {
 			execute.R_Error = errors.New("failed to prepare for the task : " + err.Error())
 			execute.mutex.Unlock()
 			return
 		}
 	}
 
-	logFilePath := runDirPath + "/execute.log"
+	logFilePath := execute_dir_path + "/execute.log"
 	logFile, err := os.OpenFile(logFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		execute.R_Error = errors.New("cannot create logFile : " + logFilePath + " : " + err.Error())
@@ -122,7 +122,7 @@ func (execute *Execute) exec() {
 	defer logFile.Sync()
 	defer logFile.Close()
 
-	cmd := exec.Command(execute.Cmd, execute.Args(runDirPath)...)
+	cmd := exec.Command(execute.Cmd, execute.Args(execute_dir_path)...)
 
 	cmd.Stdout = logFile
 	cmd.Stderr = logFile
@@ -131,7 +131,7 @@ func (execute *Execute) exec() {
 
 	if err := cmd.Start(); err != nil {
 		execute.R_Error = errors.New("failed to start command " + cmd.String() + " : " + err.Error())
-		os.Remove(runDirPath)
+		os.Remove(execute_dir_path)
 		execute.mutex.Unlock()
 		return
 	}
@@ -139,8 +139,8 @@ func (execute *Execute) exec() {
 	runningProcesses[pid] = cmd.Process
 
 	logrus.Trace("started command " + cmd.String())
-	ioutil.WriteFile(runDirPath+"/execute.command", []byte(cmd.String()), 0666)
-	ioutil.WriteFile(runDirPath+"/execute.yaml", []byte(execute.ToString(runDirPath, pid)), 0666)
+	ioutil.WriteFile(execute_dir_path+"/execute.command", []byte(cmd.String()), 0666)
+	ioutil.WriteFile(execute_dir_path+"/execute.yaml", []byte(execute.ToString(execute_dir_path, pid)), 0666)
 
 	if err := lockFile.Truncate(0); err != nil {
 		execute.R_Error = errors.New("failed to truncate lockFile : " + err.Error())
@@ -164,6 +164,12 @@ func (execute *Execute) exec() {
 			return
 		}
 		logStr := string(logs)
+		if strings.LastIndex(logStr, "PLAY RECAP *********************************************************************") < 0 {
+			logFile.WriteString("\033[31m\033[01m\033[05m  No Ansible PLAY RECAP found.\033[0m\n")
+			logFile.WriteString("\033[31m\033[01m\033[05m  ansible-playbook 执行出错。\033[0m\n")
+			logrus.Warn("No ansbile-playbook recap.")
+			return
+		}
 		recap := logStr[strings.LastIndex(logStr, "PLAY RECAP *********************************************************************")+81:]
 		recap = recap[:strings.Index(recap, "\n\n")]
 
@@ -185,7 +191,7 @@ func (execute *Execute) exec() {
 			Success:    success,
 			NodeStatus: status,
 			Pid:        pid,
-			RunDir:     runDirPath,
+			ExecuteDir: execute_dir_path,
 		}
 
 		message, err := execute.PostExec(exitStatus)
@@ -212,7 +218,7 @@ type ExecuteExitStatus struct {
 	Success    bool
 	NodeStatus []ExecuteExitNodeStatus
 	Pid        string
-	RunDir     string
+	ExecuteDir string
 }
 
 type ExecuteExitNodeStatus struct {

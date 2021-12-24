@@ -37,6 +37,15 @@ zh:
         </el-checkbox>
       </el-checkbox-group>
     </el-form-item>
+    <el-form-item :label="$t('architecture')" required message="Required" prop="inventory.all.children.target.vars.apt_mirror_repos">
+      <el-checkbox-group v-model="apt_mirror_architecture" :disabled="editMode === 'view'">
+        <el-checkbox v-for="(value, key) in architecture" :key="key + 'release'" :label="key">
+          <span class="app_text_mono">
+            {{key}}
+          </span>
+        </el-checkbox>
+      </el-checkbox-group>
+    </el-form-item>
     <FieldBool :holder="inventory.all.children.target.vars" prop="inventory.all.children.target.vars" fieldName="apt_mirror_schedule_updates"></FieldBool>
     <FieldRadio v-if="inventory.all.children.target.vars.apt_mirror_schedule"
       :disabled="!inventory.all.children.target.vars.apt_mirror_schedule_updates"
@@ -73,6 +82,11 @@ export default {
         xenial: '16.04',
         trusty: '14.04',
       },
+      architecture: {
+        amd64: 'amd64',
+        i386: 'i386',
+        src: 'src',
+      },
       mirrorOptions: [
         'https://repo.huaweicloud.com/ubuntu/',
         'https://mirrors.aliyun.com/ubuntu/',
@@ -107,6 +121,31 @@ export default {
         }
       }
     },
+    apt_mirror_architecture: {
+      get () {
+        let temp = {}
+        for (let i in this.inventory.all.children.target.vars.apt_mirror_repos) {
+          let repo = this.inventory.all.children.target.vars.apt_mirror_repos[i]
+          for (let key in this.architecture) {
+            if (repo.indexOf('deb-' + key) === 0) {
+              temp[key] = true
+            }
+          }
+        }
+        let result = []
+        for (let key in temp) {
+          result.push(key)
+        }
+        return result
+      },
+      set (v) {
+        if (v.length === 0) {
+          this.$message.error('必须至少选一项')
+          return
+        }
+        this.update_apt_mirror_repos(this.apt_mirror_repos, v)
+      }
+    },
     apt_mirror_repos: {
       get () {
         let temp = {}
@@ -125,26 +164,31 @@ export default {
         return result
       },
       set (v) {
-        let temp = []
-        for (let release of v) {
-          temp.push(`deb-amd {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release} main restricted universe multiverse`)
-          temp.push(`deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-backports main restricted universe multiverse`)
-          temp.push(`deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-security main restricted universe multiverse`)
-          temp.push(`deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-updates main restricted universe multiverse`)
-          temp.push(`deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-proposed main restricted universe multiverse`)
-          temp.push(`deb-i386 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release} main restricted universe multiverse`)
-          temp.push(`deb-i386 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-backports main restricted universe multiverse`)
-          temp.push(`deb-i386 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-security main restricted universe multiverse`)
-          temp.push(`deb-i386 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-updates main restricted universe multiverse`)
-          temp.push(`deb-i386 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-proposed main restricted universe multiverse`)
-          temp.push(`deb-src {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release} main restricted universe multiverse`)
-          temp.push(`deb-src {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-backports main restricted universe multiverse`)
-          temp.push(`deb-src {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-security main restricted universe multiverse`)
-          temp.push(`deb-src {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-updates main restricted universe multiverse`)
-          temp.push(`deb-src {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-proposed main restricted universe multiverse`)
-          temp.push(`deb {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release} main/debian-installer multiverse/debian-installer restricted/debian-installer universe/debian-installer`)
+        if (v.length === 0) {
+          this.$message.error('必须至少选一项')
+          return
         }
-        this.inventory.all.children.target.vars.apt_mirror_repos = temp
+        this.update_apt_mirror_repos(v, this.apt_mirror_architecture)
+        // let temp = []
+        // for (let release of v) {
+        //   temp.push(`deb-amd {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release} main restricted universe multiverse`)
+        //   temp.push(`deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-backports main restricted universe multiverse`)
+        //   temp.push(`deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-security main restricted universe multiverse`)
+        //   temp.push(`deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-updates main restricted universe multiverse`)
+        //   temp.push(`deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-proposed main restricted universe multiverse`)
+        //   temp.push(`deb-i386 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release} main restricted universe multiverse`)
+        //   temp.push(`deb-i386 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-backports main restricted universe multiverse`)
+        //   temp.push(`deb-i386 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-security main restricted universe multiverse`)
+        //   temp.push(`deb-i386 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-updates main restricted universe multiverse`)
+        //   temp.push(`deb-i386 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-proposed main restricted universe multiverse`)
+        //   temp.push(`deb-src {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release} main restricted universe multiverse`)
+        //   temp.push(`deb-src {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-backports main restricted universe multiverse`)
+        //   temp.push(`deb-src {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-security main restricted universe multiverse`)
+        //   temp.push(`deb-src {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-updates main restricted universe multiverse`)
+        //   temp.push(`deb-src {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-proposed main restricted universe multiverse`)
+        //   // temp.push(`deb {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release} main/debian-installer multiverse/debian-installer restricted/debian-installer universe/debian-installer`)
+        // }
+        // this.inventory.all.children.target.vars.apt_mirror_repos = temp
       }
     }
   },
@@ -158,6 +202,18 @@ export default {
     this.initDefaults()
   },
   methods: {
+    update_apt_mirror_repos(releases, architecture) {
+      let temp = []
+      for (let r of releases) {
+        for (let a of architecture) {
+          temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r}-backports main restricted universe multiverse`)
+          temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r}-security main restricted universe multiverse`)
+          temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r}-updates main restricted universe multiverse`)
+          temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r}-proposed main restricted universe multiverse`)
+        }
+      }
+      this.inventory.all.children.target.vars.apt_mirror_repos = temp
+    },
     initDefaults () {
       let vars = this.inventory.all.children.target.vars
       vars.apt_mirror_schedule = vars.apt_mirror_schedule || [ 
@@ -187,6 +243,12 @@ export default {
         }
       ],
       vars.apt_mirror_server_port = vars.apt_mirror_server_port || 80
+      vars.apt_mirror_repos = vars.apt_mirror_repos || [
+        "deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} focal-backports main restricted universe multiverse",
+        "deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} focal-security main restricted universe multiverse",
+        "deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} focal-updates main restricted universe multiverse",
+        "deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} focal-proposed main restricted universe multiverse",
+      ]
     },
     async loadOptions() {
       return [

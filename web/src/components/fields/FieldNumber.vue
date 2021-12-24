@@ -23,6 +23,7 @@ export default {
     prop: { type: String, required: false },
     required: { type: Boolean, required: false, default: false },
     rules: { type: Array, required: false, default: () => ([])},
+    placeholder: { type: String, required: false, default: undefined },
   },
   data () {
     return {

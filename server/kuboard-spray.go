@@ -33,7 +33,8 @@ func setupRouter() *gin.Engine {
 
 	api.POST("/clusters/:cluster/install", cluster.InstallCluster)
 
-	api.GET("/tail/:owner_type/:owner_name/history/:pid/:file", command.TailFile)
+	api.GET("/execute/:owner_type/:owner_name/tail/:pid/:file", command.TailFile)
+	api.DELETE("/execute/:owner_type/:owner_name/kill/:pid", command.ExecuteKill)
 
 	api.POST("/facts/:node_owner_type/:node_owner/:node", fact.GetNodeFacts)
 

@@ -20,6 +20,10 @@ en:
   "unknown": "Unknown"
   "confirmToClearLogs": "You are about to clear the lines displayed, do you confirm ?"
   "succeedInClear": "Succeed in clear logs."
+  failedToKill: Failed to kill process.
+  killed: Succeeded in kill process.
+  confirmToKill: This is going to kill the ansible task running in the background, may introduce unexpected effect, do you confirm to continue?
+  confirm: I do confirm to kill the task.
 zh:
   "logs": "日志"
   "find": "查 找"
@@ -41,6 +45,10 @@ zh:
   "unknown": "未知状态"
   "confirmToClearLogs": "此操作将清空当前显示的日志, 是否继续？"
   "succeedInClear": "清除日志成功"
+  failedToKill: 结束进程失败
+  killed: 已成功结束进程
+  confirmToKill: 将要强制结束此 ansible 进程，有可能会导致不能预测的问题，是否继续？
+  confirm: 我确定要强制结束此任务
 </i18n>
 
 <template>
@@ -56,11 +64,20 @@ zh:
       <span :style="`float: right; font-size: 14px; font-weight: 600; color: ${socketReadyState === 1 ? '#33FF33' : '#FF6600'};`">
         {{ stateStr }}
       </span>
+      <el-button style="float: right; margin-right: 20px;" type="danger" @click="dialogVisible = true">{{isRunning}}</el-button>
     </div>
     <div id="terminal" :style="`width: 100%; height: calc(100vh - 39px); background-color: black;`"></div>
-    <!-- <div style="height: 42px; text-align: left; line-height: 42px; vertical-align: top; overflow: hidden;">
-      <el-button style="margin-left: 20px;" type="danger" plain @click="clear">Clear</el-button>
-    </div> -->
+    <el-dialog :title="$t('msg.prompt')" v-model="dialogVisible" width="60%" top="calc(50vh - 180px)" :close-on-click-modal="false">
+      <el-alert type="error" :closable="false" effect="dark" show-icon>
+        <div class="confirmText">{{$t('confirmToKill')}}</div>
+      </el-alert>
+      <template #footer>
+        <div>
+          <el-button type="default" icon="el-icon-close" @click="dialogVisible = false">{{ $t('msg.close') }}</el-button>
+          <el-button type="primary" icon="el-icon-check" @click="killProcess">{{ $t('confirm') }}</el-button>
+        </div>
+      </template>
+    </el-dialog>
     <K8sTerminalErrorHint ref="errorHint"/>
   </div>
 </template>
@@ -90,13 +107,15 @@ export default {
       xterm: undefined,
       fitAddon: undefined,
       fontSize: parseInt(localStorage.getItem('terminal-font-size')) || 14,
+      isRunning: true,
+      dialogVisible: false,
     }
   },
   computed: {
     wsUrl() {
       let wsHost = location.host
       let protocol = location.protocol === 'http:' ? 'ws:' : 'wss:'
-      let str = `${protocol}//${wsHost}/kuboardspray/default/api/tail/${this.ownerType}/${this.ownerName}/history/${this.pid}/${this.file}`
+      let str = `${protocol}//${wsHost}/kuboardspray/default/api/execute/${this.ownerType}/${this.ownerName}/tail/${this.pid}/${this.file}`
       return str
     },
     stateStr() {
@@ -143,6 +162,16 @@ export default {
         this.fitAddon.fit()
       })
     },
+    killProcess () {
+      this.kuboardSprayApi.delete(`/execute/${this.ownerType}/${this.ownerName}/kill/${this.pid}`).then(resp=> {
+        if (resp.data.code === 200) {
+          this.$message.success(this.$t('killed'))
+          this.dialogVisible = false
+        }
+      }).catch(e => {
+        this.$message.error(this.$t('failedToKill' + e.response.data.msg))
+      })
+    },
     refresh() {
       let _this = this
       this.xterm = new Terminal({
@@ -168,6 +197,9 @@ export default {
 
       this.socket.onmessage = function (event) {
         _this.xterm.writeln(event.data)
+        if (event.data.indexOf('KUBOARD SPRAY *****************************************************************') >= 0) {
+          _this.isRunning = false
+        }
       }
       this.socket.onerror = function (event) {
         console.log(event)
@@ -210,5 +242,10 @@ export default {
   margin-right: 10px;
   vertical-align: top;
   background-color: gray;
+}
+.confirmText {
+  font-size: 15px;
+  font-weight: bolder;
+  margin-bottom: 5px;
 }
 </style>

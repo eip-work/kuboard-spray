@@ -7,7 +7,7 @@ en:
   viewLogs: View Task Logs
   taskFinished: Task is already completed
   viewPlan: I just want to view the Cluster Parameters.
-  verbose: Trace in details
+  verbose: Include task params
   verbose_true: May include sensitive data in the trace, e.g. path to files, user name, password.
   verbose_false: Some information is hidden when there is a exception, which makes it more difficult to fix the issue.
   vvv: vvv
@@ -21,11 +21,11 @@ zh:
   viewLogs: 查看任务日志
   taskFinished: 任务已结束
   viewPlan: 我想看看集群规划
-  verbose: 显示详尽的日志信息
+  verbose: 显示任务参数
   verbose_true: 日志中会包含部分敏感信息，例如：文件路径、用户名密码等
   verbose_false: 部分错误信息不能完整展示，使得出错时排查问题更困难
   vvv: 显示调试信息
-  vvv_true: 日志中汇包含更多信息
+  vvv_true: 日志中会包含最详细的信息
   vvv_false: 通常设置为 false
 </i18n>
 
@@ -46,7 +46,7 @@ zh:
     <template #reference>
       <el-button type="danger" icon="el-icon-lightning" @click="showConfirm = !showConfirm">{{$t('apply')}}</el-button>
     </template>
-    <el-form @submit.prevent.stop>
+    <el-form @submit.prevent.stop label-position="left" label-width="120px">
       <div style="height: 10px;"></div>
       <el-alert type="error" style="margin-bottom: 10px;" :closable="false">
         <i class="el-icon-lightning" style="font-size: 16px; color: red; margin-right: 10px;"></i>
@@ -81,6 +81,7 @@ export default {
       showConfirm: false,
       form: {
         verbose: false,
+        vvv: false,
       }
     }
   },

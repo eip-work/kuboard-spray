@@ -15,6 +15,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+var runningProcesses = map[string]*os.Process{}
+
 type Execute struct {
 	Cmd       string
 	Args      func(string) []string
@@ -134,6 +136,8 @@ func (execute *Execute) exec() {
 		return
 	}
 
+	runningProcesses[pid] = cmd.Process
+
 	logrus.Trace("started command " + cmd.String())
 	ioutil.WriteFile(runDirPath+"/execute.command", []byte(cmd.String()), 0666)
 	ioutil.WriteFile(runDirPath+"/execute.yaml", []byte(execute.ToString(runDirPath, pid)), 0666)
@@ -150,6 +154,8 @@ func (execute *Execute) exec() {
 
 	execute.mutex.Unlock()
 	cmd.Wait()
+
+	delete(runningProcesses, pid)
 
 	if execute.PostExec != nil {
 		logFile.WriteString("\n\n\nKUBOARD SPRAY *****************************************************************\n")

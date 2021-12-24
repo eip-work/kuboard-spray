@@ -38,7 +38,7 @@ zh:
         <el-icon style="vertical-align: middle;" v-if="expandedRef"><arrow-down-bold /></el-icon>
         <el-icon style="vertical-align: middle;" v-else><arrow-up-bold /></el-icon>
         <span style="margin-left: 5px">
-          {{ description || label }} {{editMode}}
+          {{ description || label }}
         </span>
       </div>
       <el-collapse-transition>

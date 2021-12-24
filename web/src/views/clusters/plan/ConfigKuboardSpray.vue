@@ -32,8 +32,8 @@ zh:
 <template>
   <div>
     <ConfigSection v-model:enabled="useResourcePackage" disabled
-      :label="$t('obj.resources')"
-      :description="$t('obj.resources') + ' ' + (inventory.all.hosts.localhost.kuboardspray_resource_package ? inventory.all.hosts.localhost.kuboardspray_resource_package : '')">
+      :label="$t('obj.resource')"
+      :description="$t('obj.resource') + ' ' + (inventory.all.hosts.localhost.kuboardspray_resource_package ? inventory.all.hosts.localhost.kuboardspray_resource_package : '')">
       <FieldSelect :holder="inventory.all.hosts.localhost" fieldName="kuboardspray_resource_package" :loadOptions="loadResourceList" prop="all.hosts.localhost" required :disabled="isInstalled">
         <el-button style="margin-left: 10px;" type="primary" icon="el-icon-plus">{{$t('createResource')}}</el-button>
       </FieldSelect>

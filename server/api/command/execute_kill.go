@@ -40,7 +40,7 @@ func ExecuteKill(c *gin.Context) {
 
 		logFilePath := constants.GET_DATA_DIR() + "/" + req.OwnerType + "/" + req.OwnerName + "/history/" + req.Pid + "/execute.log"
 		logrus.Trace("logFilePath: ", logFilePath)
-		logFile, err := os.OpenFile(logFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		logFile, err := os.OpenFile(logFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 		if err != nil {
 			logrus.Warn("cannot write logFile ", logFilePath, err)
 			debug.PrintStack()

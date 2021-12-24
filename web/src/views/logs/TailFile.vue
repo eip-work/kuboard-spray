@@ -24,6 +24,8 @@ en:
   killed: Succeeded in kill process.
   confirmToKill: This is going to kill the ansible task running in the background, may introduce unexpected effect, do you confirm to continue?
   confirm: I do confirm to kill the task.
+  forceKill: Force to kill the task
+  finished: Task Completed
 zh:
   "logs": "日志"
   "find": "查 找"
@@ -39,7 +41,7 @@ zh:
   "overFlow": "缓存内容已经超过 10000 条，已断开与服务器的连接，您可以继续查看缓存中的内容"
   "overFlowTitle": "缓存过大"
   "connecting": "正在连接"
-  "connected": "已连接"
+  "connected": "日志追踪进行中"
   "closing": "正在关闭"
   "closed": "已断开"
   "unknown": "未知状态"
@@ -49,6 +51,8 @@ zh:
   killed: 已成功结束进程
   confirmToKill: 将要强制结束此 ansible 进程，有可能会导致不能预测的问题，是否继续？
   confirm: 我确定要强制结束此任务
+  forceKill: 强制结束任务
+  finished: 任务已结束
 </i18n>
 
 <template>
@@ -64,7 +68,8 @@ zh:
       <span :style="`float: right; font-size: 14px; font-weight: 600; color: ${socketReadyState === 1 ? '#33FF33' : '#FF6600'};`">
         {{ stateStr }}
       </span>
-      <el-button style="float: right; margin-right: 20px;" type="danger" @click="dialogVisible = true">{{isRunning}}</el-button>
+      <el-button v-if="isRunning" style="float: right; margin-right: 20px;" type="danger" @click="dialogVisible = true">{{ $t('forceKill') }}</el-button>
+      <el-tag v-else size="medium" style="float: right; margin-right: 20px;" type="primary">{{ $t('finished') }}</el-tag>
     </div>
     <div id="terminal" :style="`width: 100%; height: calc(100vh - 39px); background-color: black;`"></div>
     <el-dialog :title="$t('msg.prompt')" v-model="dialogVisible" width="60%" top="calc(50vh - 180px)" :close-on-click-modal="false">

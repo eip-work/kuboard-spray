@@ -17,7 +17,7 @@ zh:
 
 <template>
   <div>
-    <FieldNumber :holder="inventory.all.children.target.vars" prop="inventory.all.children.target.vars" fieldName="apt_mirror_server_port" required></FieldNumber>
+    <!-- <FieldNumber :holder="inventory.all.children.target.vars" prop="inventory.all.children.target.vars" fieldName="apache2_default_port" required></FieldNumber> -->
     <FieldString :holder="inventory.all.children.target.vars" prop="inventory.all.children.target.vars" fieldName="apt_mirror_dir" required></FieldString>
     <!-- <FieldSelect :holder="inventory.all.children.target.vars" prop="inventory.all.children.target.vars" fieldName="apt_mirror_ubuntu_mirror" required :loadOptions="loadOptions"></FieldSelect> -->
     <el-form-item :label="$t('field.apt_mirror_ubuntu_mirror')" prop="inventory.all.children.target.vars.apt_mirror_ubuntu_mirror" required>
@@ -206,6 +206,7 @@ export default {
       let temp = []
       for (let r of releases) {
         for (let a of architecture) {
+          temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r} main restricted universe multiverse`)
           temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r}-backports main restricted universe multiverse`)
           temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r}-security main restricted universe multiverse`)
           temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r}-updates main restricted universe multiverse`)
@@ -233,16 +234,7 @@ export default {
       }
       vars.apt_mirror_limit_rate = vars.apt_mirror_limit_rate || 125
       vars.apt_mirror_nthreads = vars.apt_mirror_nthreads || 10
-      vars.apache2_virtual_hosts = vars.apache2_virtual_hosts || [
-        {
-          documentroot: 'var/www/html',
-          default_site: true,
-          port: '{{ apt_mirror_server_port }}',
-          serveradmin: 'webmaster@localhost',
-          servername: '',
-        }
-      ],
-      vars.apt_mirror_server_port = vars.apt_mirror_server_port || 80
+      // vars.apache2_default_port = vars.apache2_default_port || 80
       vars.apt_mirror_repos = vars.apt_mirror_repos || [
         "deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} focal-backports main restricted universe multiverse",
         "deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} focal-security main restricted universe multiverse",

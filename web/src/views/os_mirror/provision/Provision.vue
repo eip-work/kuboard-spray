@@ -48,9 +48,9 @@ export default {
     'inventory.all.hosts.mirror_node.ansible_host': function() {
       this.updateUrl()
     },
-    'inventory.all.children.target.vars.apt_mirror_server_port': function () {
-      this.updateUrl()
-    }
+    // 'inventory.all.children.target.vars.apache2_default_port': function () {
+    //   this.updateUrl()
+    // }
   },
   mounted () {
     if (this.inventory.all.hosts.mirror_node.ansible_host) {
@@ -60,9 +60,9 @@ export default {
   methods: {
     updateUrl () {
       let temp =  'http://' + this.inventory.all.hosts.mirror_node.ansible_host
-      if (this.inventory.all.children.target.vars.apt_mirror_server_port && this.inventory.all.children.target.vars.apt_mirror_server_port !== 80) {
-        temp += ':' + this.inventory.all.children.target.vars.apt_mirror_server_port
-      }
+      // if (this.inventory.all.children.target.vars.apache2_default_port && this.inventory.all.children.target.vars.apache2_default_port !== 80) {
+      //   temp += ':' + this.inventory.all.children.target.vars.apache2_default_port
+      // }
       temp += '/ubuntu'
       this.status.url = temp
     }

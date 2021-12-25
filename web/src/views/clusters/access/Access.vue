@@ -23,10 +23,10 @@ zh:
       <div class="details">
         <template v-for="(item, key) in cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts" :key="key">
           <div class="app_margin_top">
-            <el-tag style="margin-right: 10px;">
+            <el-tag style="margin-right: 10px;" size="medium">
               <span class="app_text_mono">{{key}}</span>
             </el-tag>
-            <el-tag effect="dark">
+            <el-tag effect="dark" size="medium">
               <span class="app_text_mono">{{cluster.inventory.all.hosts[key].ansible_host}}</span>
             </el-tag>
           </div>

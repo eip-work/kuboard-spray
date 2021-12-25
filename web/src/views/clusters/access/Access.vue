@@ -3,10 +3,14 @@ en:
   getKubeconfig: Fetch kubeconfig
   accessFromControlPlane: Use kubectl on control_plane
   accessMethods: You can use differenct ways to access the cluster
+  controlPlanes: SSH connect to any of the following nodes, and use kubectl command to administrate the cluster.
+  proposeKuboard: Kuboard is a popular K8S cluster management UI, you can refer to its website to learn how to install and use it.
 zh:
   getKubeconfig: 获取 kubeconfig 文件
   accessFromControlPlane: 在主节点上使用 kubectl
   accessMethods: 您可以使用多种方式对集群进行管理控制
+  controlPlanes: 您可以 ssh 到如下节点中的任意一个，直接执行 kubectl 命令可以管理集群。
+  proposeKuboard: Kuboard 是一款非常值得推荐的 K8S 集群管理界面，请参考 Kuboard 网站，安装改管理界面。
 </i18n>
 
 
@@ -14,8 +18,20 @@ zh:
   <el-scrollbar height="calc(100vh - 220px)">
     <el-alert type="info" :title="$t('accessMethods')" :closable="false"></el-alert>
     <div class="app_block_title">{{ $t('accessFromControlPlane') }}</div>
-    <div class="access_details">
-
+    <div class="access_details" v-if="cluster">
+      <el-alert :title="$t('controlPlanes')" :closable="false" type="success"></el-alert>
+      <div class="details">
+        <template v-for="(item, key) in cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts" :key="key">
+          <div class="app_margin_top">
+            <el-tag style="margin-right: 10px;">
+              <span class="app_text_mono">{{key}}</span>
+            </el-tag>
+            <el-tag effect="dark">
+              <span class="app_text_mono">{{cluster.inventory.all.hosts[key].ansible_host}}</span>
+            </el-tag>
+          </div>
+        </template>
+      </div>
     </div>
     <div class="app_block_title">kubeconfig</div>
     <div class="access_details">
@@ -28,7 +44,10 @@ zh:
     </div>
     <div class="app_block_title">kuboard</div>
     <div class="access_details">
-      
+      <el-alert :closable="false" type="success" effect="dark" :title="$t('proposeKuboard')"></el-alert>
+      <div class="details">
+        <el-link class="app_margin_top" href="https://www.kuboard.cn/" target="_blank">https://www.kuboard.cn</el-link>
+      </div>
     </div>
   </el-scrollbar>
 </template>
@@ -87,5 +106,9 @@ export default {
 .access_details {
   padding-left: 40px;
   margin-bottom: 20px;
+}
+.details {
+  background-color: $--color-info-lighter;
+  padding: 10px 20px 20px 20px;
 }
 </style>

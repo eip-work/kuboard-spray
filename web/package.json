@@ -10,6 +10,7 @@
   "dependencies": {
     "@element-plus/icons": "^0.0.11",
     "@intlify/vue-i18n-loader": "^4.0.1",
+    "@soerenmartius/vue3-clipboard": "^0.1.2",
     "axios": "^0.24.0",
     "base64-url": "^2.3.3",
     "clone": "^2.1.2",

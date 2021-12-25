@@ -1,19 +1,36 @@
 <i18n>
 en:
   getKubeconfig: Fetch kubeconfig
+  accessFromControlPlane: Use kubectl on control_plane
+  accessMethods: You can use differenct ways to access the cluster
 zh:
   getKubeconfig: 获取 kubeconfig 文件
+  accessFromControlPlane: 在主节点上使用 kubectl
+  accessMethods: 您可以使用多种方式对集群进行管理控制
 </i18n>
 
 
 <template>
-  <div class="access">
-    <div class="app_block_title">kubeconfig</div>
-    <el-button type="primary" icon="el-icon-files" @click="fetchKubeconfig">{{ $t('getKubeconfig') }}</el-button>
-    <div class="app_margin_top">
-      <Codemirror v-model:value="kubeconfig" :options="cmOptions"></Codemirror>
+  <el-scrollbar height="calc(100vh - 220px)">
+    <el-alert type="info" :title="$t('accessMethods')" :closable="false"></el-alert>
+    <div class="app_block_title">{{ $t('accessFromControlPlane') }}</div>
+    <div class="access_details">
+
     </div>
-  </div>
+    <div class="app_block_title">kubeconfig</div>
+    <div class="access_details">
+      <el-button type="primary" icon="el-icon-files" @click="fetchKubeconfig" :loading="kubeconfigLoading">{{ $t('getKubeconfig') }}</el-button>
+      <CopyToClipBoard v-if="kubeconfig" :value="kubeconfig"></CopyToClipBoard>
+      <el-skeleton class="app_margin_top" v-if="kubeconfigLoading" animated></el-skeleton>
+      <div v-if="kubeconfig && !kubeconfigLoading" class="app_margin_top app_codemirror_auto_height">
+        <Codemirror v-model:value="kubeconfig" :options="cmOptions"></Codemirror>
+      </div>
+    </div>
+    <div class="app_block_title">kuboard</div>
+    <div class="access_details">
+      
+    </div>
+  </el-scrollbar>
 </template>
 
 <script>
@@ -30,6 +47,7 @@ export default {
   data() {
     return {
       kubeconfig: undefined,
+      kubeconfigLoading: false,
       cmOptions: {
         mode: "text/yaml", // Language mode
         theme: "darcula", // Theme
@@ -49,12 +67,16 @@ export default {
   },
   methods: {
     fetchKubeconfig () {
+      this.kubeconfigLoading = true
+      this.kubeconfig = undefined
       this.kuboardSprayApi.get(`/clusters/${this.cluster.name}/access/kubeconfig`).then(resp => {
         let kubeconfig = resp.data.data
         this.kubeconfig = kubeconfig.substring(kubeconfig.indexOf("\n") + 1)
+        this.kubeconfigLoading = false
       }).catch(e => {
         console.log(e)
         this.$message.error('failed to get kubeconfig: ' + e.response.data.msg)
+        this.kubeconfigLoading = false
       })
     }
   }
@@ -62,7 +84,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.access {
-  min-height: calc(100vh - 220px);
+.access_details {
+  padding-left: 40px;
+  margin-bottom: 20px;
 }
 </style>

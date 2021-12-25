@@ -17,6 +17,8 @@ import openUrlInBlank from './utils/open-in-blank.js'
 import version from './version.json'
 import components from './components/index.js'
 
+import { VueClipboard } from '@soerenmartius/vue3-clipboard'
+
 import App from './App.vue'
 
 window.KuboardSpray = {version}
@@ -30,6 +32,7 @@ icons(app)
 app.use(components)
 app.use(initAxios)
 app.use(openUrlInBlank)
+app.use(VueClipboard)
 app.config.unwrapInjectedRef = true
 initKuboardMfe(app)
 app.mount('#app')

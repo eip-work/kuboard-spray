@@ -225,5 +225,7 @@ a {
 
 .CodeMirror {
   font-family: Consolas, Menlo, Monaco, 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New', "微软雅黑", monospace, serif !important;
+  font-size: 13px;
+  line-height: 18px;
 }
 

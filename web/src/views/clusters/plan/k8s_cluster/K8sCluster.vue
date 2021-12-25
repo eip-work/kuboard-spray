@@ -16,7 +16,7 @@ zh:
         <span class="app_text_mono">{{cluster.resourcePackage.kubernetes.kube_version}}</span>
       </el-form-item>
       <el-form-item :label="$t('container_manager')">
-        <span class="app_text_mono">{{cluster.resourcePackage.docker_engine.container_manager}}_{{cluster.resourcePackage.docker_engine.version}}</span>
+        <span class="app_text_mono">{{cluster.resourcePackage.container_engine.container_manager}}_{{cluster.resourcePackage.container_engine.version}}</span>
       </el-form-item>
     </template>
     <FieldString :holder="cluster.inventory.all.children.target.children.k8s_cluster.vars" fieldName="cluster_name"></FieldString>

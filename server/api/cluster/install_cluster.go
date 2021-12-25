@@ -22,7 +22,7 @@ func InstallCluster(c *gin.Context) {
 	c.ShouldBindUri(&req)
 	c.ShouldBindJSON(&req)
 
-	inventoryPath := ClusterInventoryPath(req.Cluster)
+	inventoryPath := ClusterInventoryYamlPath(req.Cluster)
 	inventory, err := common.ParseYamlFile(inventoryPath)
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to read inventory.", err)
@@ -41,10 +41,10 @@ func InstallCluster(c *gin.Context) {
 	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.image_arch", common.MapGet(resourcePackage, "kubernetes.image_arch"))
 	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.gcr_image_repo", common.MapGet(resourcePackage, "kubernetes.gcr_image_repo"))
 	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.kube_image_repo", common.MapGet(resourcePackage, "kubernetes.kube_image_repo"))
-	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.container_manager", common.MapGet(resourcePackage, "docker_engine.container_manager"))
-	dockerVersion := common.MapGet(resourcePackage, "docker_engine.target").(string)
-	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+dockerVersion, common.MapGet(resourcePackage, "docker_engine.version"))
-	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.container_manager", common.MapGet(resourcePackage, "docker_engine.container_manager"))
+	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.container_manager", common.MapGet(resourcePackage, "container_engine.container_manager"))
+	dockerVersion := common.MapGet(resourcePackage, "container_engine.target").(string)
+	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+dockerVersion, common.MapGet(resourcePackage, "container_engine.version"))
+	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.container_manager", common.MapGet(resourcePackage, "container_engine.container_manager"))
 	common.MapSet(inventory, "all.children.target.children.etcd.vars.etcd_version", common.MapGet(resourcePackage, "etcd.etcd_version"))
 	common.MapSet(inventory, "all.children.target.children.etcd.vars.etcd_deployment_type", common.MapGet(resourcePackage, "etcd.etcd_deployment_type"))
 

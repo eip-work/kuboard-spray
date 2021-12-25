@@ -230,7 +230,7 @@ func getInventoryTemplate() string {
             # Can be docker_dns, host_resolvconf or none
             resolvconf_mode: docker_dns
             # Deploy netchecker app to verify DNS resolve as an HTTP service
-            deploy_netchecker: false
+            deploy_netchecker: true
             # Ip address of the kubernetes skydns service
             skydns_server: "{{ kube_service_addresses|ipaddr('net')|ipaddr(3)|ipaddr('address') }}"
             skydns_server_secondary: "{{ kube_service_addresses|ipaddr('net')|ipaddr(4)|ipaddr('address') }}"

@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/eip-work/kuboard-spray/api/cluster"
+	"github.com/eip-work/kuboard-spray/api/cluster/cluster_access"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/api/fact"
 	"github.com/eip-work/kuboard-spray/api/os_mirror"
@@ -32,6 +33,8 @@ func setupRouter() *gin.Engine {
 	api.DELETE("/clusters/:cluster", cluster.DeleteCluster)
 
 	api.POST("/clusters/:cluster/install", cluster.InstallCluster)
+
+	api.GET("/clusters/:cluster/access/kubeconfig", cluster_access.GetKubeConfig)
 
 	api.GET("/execute/:owner_type/:owner_name/tail/:pid/:file", command.TailFile)
 	api.DELETE("/execute/:owner_type/:owner_name/kill/:pid", command.ExecuteKill)

@@ -58,7 +58,7 @@ zh:
               <PackageContentField :holder="resourcePackage.kubernetes" fieldName="kube_image_repo"></PackageContentField>
               <PackageContentField :holder="resourcePackage.kubernetes" fieldName="kube_version"></PackageContentField>
               <el-form-item label="container_manager" label-width="160px">
-                <span class="app_text_mono">{{resourcePackage.docker_engine.container_manager}}_{{resourcePackage.docker_engine.version}}</span>
+                <span class="app_text_mono">{{resourcePackage.container_engine.container_manager}}_{{resourcePackage.container_engine.version}}</span>
               </el-form-item>
             </div>
           </el-collapse-item>

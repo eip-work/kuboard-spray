@@ -4,6 +4,8 @@ en:
   confirmToApply: Do the installation of Kubernetes Cluster, are you sure?
   processingTitle: Executing
   processingHints: There is a background task executing, just wait a moment.
+  succeeded: Installed cluster successfully before.
+  reset: This is going to makesure the config apply with preset.
   viewLogs: View Task Logs
   taskFinished: Task is already completed
   viewPlan: I just want to view the Cluster Parameters.
@@ -18,6 +20,8 @@ zh:
   confirmToApply: 将执行集群安装动作，请确认已完成集群规划！
   processingTitle: 任务执行中
   processingHints: 该集群有后台任务正在执行，请耐心等待。
+  succeeded: 已经成功安装过 K8S 集群。
+  reset: 此操作将重新设置 K8S 集群的参数！
   viewLogs: 查看任务日志
   taskFinished: 任务已结束
   viewPlan: 我想看看集群规划
@@ -42,15 +46,19 @@ zh:
       </template>
     </el-dialog>
   </div>
-  <el-popover v-else-if="!isInstalled" v-model:visible="showConfirm" placement="right-start" width="270" trigger="manual">
+  <el-popover v-else v-model:visible="showConfirm" placement="right-start" width="270" trigger="manual">
     <template #reference>
       <el-button type="danger" icon="el-icon-lightning" @click="showConfirm = !showConfirm">{{$t('apply')}}</el-button>
     </template>
     <el-form @submit.prevent.stop label-position="left" label-width="120px">
       <div style="height: 10px;"></div>
+      <el-alert v-if="isInstalled" type="success" effect="dark" style="margin-bottom: 10px;" :closable="false">
+        <i class="el-icon-lightning" style="font-size: 16px; color: white; margin-right: 10px;"></i>
+        <span class="confirmText" style="color: white;">{{$t('succeeded')}}</span>
+      </el-alert>
       <el-alert type="error" style="margin-bottom: 10px;" :closable="false">
         <i class="el-icon-lightning" style="font-size: 16px; color: red; margin-right: 10px;"></i>
-        <span class="confirmText">{{$t('confirmToApply')}}</span>
+        <span class="confirmText">{{isInstalled ? $t('reset') : $t('confirmToApply')}}</span>
       </el-alert>
       <el-form-item :label="$t('verbose')">
         <el-switch v-model="form.verbose"></el-switch>

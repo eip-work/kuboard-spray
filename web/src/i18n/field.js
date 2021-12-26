@@ -60,6 +60,9 @@ const field = {
 
     container_manager: '容器引擎',
 
+    docker_ubuntu_repo_base_url: 'docker-ce 软件源（ubuntu）',
+    docker_ubuntu_repo_base_url_placeholder: '从这里获取 docker 引擎的安装包',
+
     
     etcd_deployment_type: 'ETCD 部署方式',
     'etcd_deployment_type-docker': '容器化部署',

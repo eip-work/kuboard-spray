@@ -6,11 +6,11 @@ en:
   addMirror: Add OS Mirror
   confirmToDelete: This is going to delete OS Mirror info, but OS Mirror server is not affected here.
 zh:
-  titleRepo: OS 镜像源
-  repoDescription1: 您必须定义您集群机器可以访问的操作系统镜像地址（例如 CentOS 的 yum 源、Ubuntu 的 apt 源等）以供使用
-  repoDescription2: 通常企业都有自己的常用操作系统的本地镜像仓库，Kuboard 提供向导，帮助您快速设置一个操作系统镜像源
-  addMirror: 添加 OS 镜像源
-  confirmToDelete: 此操作将删除镜像仓库信息，镜像仓库本身并不受此影响
+  titleRepo: OS 软件源
+  repoDescription1: 您必须定义您集群机器可以访问的操作系统软件地址（例如 CentOS 的 yum 源、Ubuntu 的 apt 源等）以供使用
+  repoDescription2: 通常企业都有自己的常用操作系统的本地软件仓库，Kuboard 提供向导，帮助您快速设置一个操作系统软件源
+  addMirror: 添加 OS 软件源
+  confirmToDelete: 此操作将删除软件仓库信息，软件仓库本身并不受此影响
 </i18n>
 
 <template>

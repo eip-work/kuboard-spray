@@ -298,8 +298,6 @@ func getInventoryTemplate() string {
     ## local_release_dir: /spray/releases
     ## download_cache_dir: /spray/kubespray_cache
 
-    ubuntu_repo: "https://mirrors.aliyun.com/ubuntu"
-    yum_repo: "https://mirrors.aliyun.com/repo"
 
 `
 	return template

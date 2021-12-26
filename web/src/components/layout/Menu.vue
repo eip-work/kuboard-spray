@@ -13,7 +13,7 @@ zh:
   clusters: 集群管理
   settings: 系统设置
   resources: 资源包管理
-  mirrors: OS 镜像源
+  mirrors: OS 软件源
   kuboard: Kuboard 集成
 </i18n>
 

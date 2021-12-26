@@ -17,9 +17,9 @@ en:
   vvv_false: usually false
 zh:
   apply: 执 行
-  confirmToApply: 将执行镜像服务的安装，请确认已完成参数配置！
-  succeeded: 已经成功安装过镜像服务。
-  reset: 此操作将重新设置镜像服务的参数！
+  confirmToApply: 将执行OS 软件源服务的安装，请确认已完成参数配置！
+  succeeded: 已经成功安装过OS 软件源服务。
+  reset: 此操作将重新设置OS 软件源服务的参数！
   processingTitle: 任务执行中
   processingHints: 当前有后台任务正在执行，请耐心等待。
   viewLogs: 查看任务日志

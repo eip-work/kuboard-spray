@@ -41,12 +41,21 @@ func InstallCluster(c *gin.Context) {
 	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.image_arch", common.MapGet(resourcePackage, "kubernetes.image_arch"))
 	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.gcr_image_repo", common.MapGet(resourcePackage, "kubernetes.gcr_image_repo"))
 	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.kube_image_repo", common.MapGet(resourcePackage, "kubernetes.kube_image_repo"))
-	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.container_manager", common.MapGet(resourcePackage, "container_engine.container_manager"))
-	dockerVersion := common.MapGet(resourcePackage, "container_engine.target").(string)
-	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+dockerVersion, common.MapGet(resourcePackage, "container_engine.version"))
-	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.container_manager", common.MapGet(resourcePackage, "container_engine.container_manager"))
+
+	container_manager := common.MapGet(inventory, "all.children.target.children.k8s_cluster.vars.container_manager")
+	containerMangerObjArray := common.MapGet(resourcePackage, "container_engine").([]interface{})
+	var containerManagerObj map[string]interface{}
+	for _, cmo := range containerMangerObjArray {
+		cmObj := cmo.(map[string]interface{})
+		if cmObj["container_manager"] == container_manager {
+			containerManagerObj = cmObj
+		}
+	}
+	if containerManagerObj["target"] != nil {
+		common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+containerManagerObj["target"].(string), containerManagerObj["version"])
+	}
+
 	common.MapSet(inventory, "all.children.target.children.etcd.vars.etcd_version", common.MapGet(resourcePackage, "etcd.etcd_version"))
-	common.MapSet(inventory, "all.children.target.children.etcd.vars.etcd_deployment_type", common.MapGet(resourcePackage, "etcd.etcd_deployment_type"))
 
 	dependencies := resourcePackage["dependency"].([]interface{})
 	for _, d := range dependencies {

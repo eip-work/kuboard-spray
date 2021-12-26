@@ -9,7 +9,7 @@ zh:
 <template>
   <div>
     <SshParamsCluster :cluster="cluster" :holder="cluster.inventory.all.children.target.children.k8s_cluster.vars" prop="all.children.target.children.k8s_cluster.vars" :description="$t('sshcommon')"></SshParamsCluster>
-    <OsMirror v-if="false" :cluster="cluster"></OsMirror>
+    <OsMirror :cluster="cluster"></OsMirror>
     <K8sCluster :cluster="cluster"></K8sCluster>
     <NetworkPlugin :cluster="cluster"></NetworkPlugin>
     <AddonMetricsServer :cluster="cluster"></AddonMetricsServer>

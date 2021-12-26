@@ -6,11 +6,11 @@ en:
   provision_msg: Requires one server, and at least 200G disk space.
   existing_msg: If you already have a existing OS mirror source that is available to all the machines used to install K8S.
 zh:
-  addMirror: 添加 OS 镜像源
+  addMirror: 添加 OS 软件源
   name: 名称
   conflict: 与已有的重复 {name}
   provision_msg: 需要您提供一台机器，包含至少 200G 磁盘空间
-  existing_msg: 如果您已经有一个安装集群所用机器都可以访问到的 OS 镜像源
+  existing_msg: 如果您已经有一个安装集群所用机器都可以访问到的 OS 软件源
 </i18n>
 
 

@@ -9,12 +9,12 @@ en:
   success: Ready
   failed: Not Ready
 zh:
-  titleRepo: OS 镜像源
-  repoDescription1: 您必须定义您集群机器可以访问的操作系统镜像地址（例如 CentOS 的 yum 源、Ubuntu 的 apt 源等）以供使用
-  repoDescription2: 通常企业都有自己的常用操作系统的本地镜像仓库，Kuboard 提供向导，帮助您快速设置一个操作系统镜像源
-  provision: 部署镜像仓库
-  url: 仓库地址
-  url_placeholder: 各 K8S 节点访问此镜像仓库时所使用的 URL 地址
+  titleRepo: OS 软件源
+  repoDescription1: 您必须定义您集群机器可以访问的操作系统软件源地址（例如 CentOS 的 yum 源、Ubuntu 的 apt 源等）以供使用
+  repoDescription2: 通常企业都有自己的常用操作系统的本地软件源，Kuboard 提供向导，帮助您快速设置一个操作系统软件源
+  provision: 部署软件源
+  url: 软件源地址
+  url_placeholder: 各 K8S 节点访问此软件源时所使用的 URL 地址
   created: 已创建
   success: 可用
   failed: 不可用

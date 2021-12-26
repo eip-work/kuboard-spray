@@ -28,7 +28,7 @@ zh:
         <el-button type="primary" :loading="loadingFact" icon="el-icon-refresh-left" @click="loadFacts(false)">{{$t('validate')}}</el-button>
       </div>
       <el-skeleton v-if="loadingFact" animated></el-skeleton>
-      <div v-if="fact" class="app_form_mini app_margin_bottom">
+      <div v-if="fact" class="app_form_mini app_margin_top">
         <el-form v-if="fact.ansible_facts" label-width="160px" label-position="left">
           <div style="text-align: center; margin-bottom: 10px; margin-top: -10px; font-weight: bold;">[ {{$t('facts')}} ]</div>
           <el-collapse v-model="activeNames">

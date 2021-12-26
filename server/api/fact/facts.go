@@ -71,7 +71,7 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 					"ansible_become":               req.Become,
 					"ansible_become_user":          req.BecomeUser,
 					"ansible_become_password":      req.BecomePassword,
-					"ansible_ssh_common_args":      "-o StrictHostKeyChecking=no",
+					"ansible_ssh_common_args":      "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5 -o ConnectionAttempts=1",
 				},
 			},
 		},
@@ -100,9 +100,15 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 
 	defer os.Remove(inventoryPath)
 
+	// dir, err := os.Getwd()
+	// if err != nil {
+	// 	return nil, err
+	// }
+
 	run := command.Run{
 		Cmd:  "ansible",
 		Args: []string{req.Node, "-m", "setup", "-i", inventoryPath},
+		// Dir:  dir + "/ansible-script",
 	}
 
 	stdout, _, err := run.Run()

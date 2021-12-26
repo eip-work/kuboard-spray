@@ -8,8 +8,13 @@ zh:
 <template>
   <div>
     <ConfigSection v-model:enabled="enabledEtcd" :description="$t('ETCD')" label="ETCD" disabled>
-      <FieldSelect :holder="cluster.inventory.all.children.target.children.etcd.vars" prop="all.children.target.children.etcd.vars" required
-        fieldName="etcd_deployment_type" :loadOptions="loadEtcdType"></FieldSelect>
+      <!-- <FieldSelect :holder="cluster.inventory.all.children.target.children.etcd.vars" prop="all.children.target.children.etcd.vars" required
+        fieldName="etcd_deployment_type" :loadOptions="loadEtcdType"></FieldSelect> -->
+      <el-form-item :label="$t('field.etcd_deployment_type')">
+        <span class="app_text_mono">{{etcd_deployment_type}}</span>
+      </el-form-item>
+      <FieldString :holder="cluster.inventory.all.children.target.children.etcd.vars" prop="all.children.target.children.etcd.vars"
+        fieldName="etcd_data_dir"></FieldString>
     </ConfigSection>
   </div>
 </template>
@@ -31,6 +36,13 @@ export default {
       },
       set (v) {
         console.log(v)
+      }
+    },
+    etcd_deployment_type () {
+      if (this.cluster) {
+        return this.$t('field.etcd_deployment_type-' + this.cluster.inventory.all.children.target.children.etcd.vars.etcd_deployment_type)
+      } else {
+        return ''
       }
     }
   },

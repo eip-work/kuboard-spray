@@ -15,8 +15,6 @@ func GetKubeConfig(c *gin.Context) {
 	c.ShouldBindUri(&req)
 
 	inventoryYamlPath := cluster.ClusterInventoryYamlPath(req.Cluster)
-	// resourcePackageDir := cluster.ClusterResourcePackageDir(req.Cluster)
-	// clusterDir := constants.GET_DATA_CLUSTER_DIR() + "/" + req.Cluster
 
 	cmd := command.Run{
 		Cmd: "ansible",

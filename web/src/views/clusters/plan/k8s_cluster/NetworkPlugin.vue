@@ -10,9 +10,9 @@ zh:
 
 <template>
   <ConfigSection v-model:enabled="enabled" :label="$t('label')" disabled>
-    <FieldSelect ref="kube_network_plugin" :disabled="!cluster.inventory.all.hosts.localhost.kuboardspray_resource_package"
-      :holder="cluster.inventory.all.children.target.children.k8s_cluster.vars" fieldName="kube_network_plugin"
-      :loadOptions="loadNetworkCandidates"></FieldSelect>
+    <el-form-item :label="$t('field.kube_network_plugin')">
+      <span class="app_text_mono">{{ kube_network_plugin }}</span>
+    </el-form-item>
   </ConfigSection>
 </template>
 
@@ -20,7 +20,6 @@ zh:
 export default {
   props: {
     cluster: { type: Object, required: true },
-    resourcePackage: { type: Object, required: false, default: undefined },
   },
   data() {
     return {
@@ -33,30 +32,24 @@ export default {
         return true
       },
       set () {}
+    },
+    kube_network_plugin () {
+      if (this.cluster.resourcePackage) {
+        let cnies = this.cluster.resourcePackage.cni
+        for (let i in cnies) {
+          let cni = cnies[i]
+          if (cni.name === this.cluster.inventory.all.children.target.children.k8s_cluster.vars.kube_network_plugin) {
+            return cni.name + (cni.version ? '_' + cni.version : '')
+          }
+        }
+      }
+      return this.cluster.inventory.all.children.target.children.k8s_cluster.vars.kube_network_plugin
     }
   },
   components: { },
   mounted () {
   },
-  watch: {
-    resourcePackage(newValue) {
-      if (newValue !== undefined) {
-        this.$refs.kube_network_plugin.load(true)
-      }
-    }
-  },
   methods: {
-    async loadNetworkCandidates () {
-      let result = []
-      if (this.resourcePackage !== undefined) {
-        for (let item of this.resourcePackage.cni) {
-          result.push({ value: item.name, label: `${item.name}_${item.version}`})
-        }
-      } else {
-        // this.$message.error(this.$t('selectResourcePackageFirst'))
-      }
-      return result
-    }
   }
 }
 </script>

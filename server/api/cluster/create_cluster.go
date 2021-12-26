@@ -13,8 +13,11 @@ import (
 )
 
 type CreateClusterReq struct {
-	Name            string `json:"name" binding:"required"`
-	ResourcePackage string `json:"resourcePackage" binding:"required"`
+	Name               string `json:"name" binding:"required"`
+	ResourcePackage    string `json:"resource_package" binding:"required"`
+	ContainerManager   string `json:"container_manager" bingding:"required"`
+	KubeNetworkPlugin  string `json:"kube_network_plugin" binding:"required"`
+	EtcdDeploymentType string `json:"etcd_deployment_type" binding:"required"`
 }
 
 func CreateCluster(c *gin.Context) {
@@ -52,6 +55,9 @@ func CreateCluster(c *gin.Context) {
 
 	template := getInventoryTemplate()
 	template = strings.ReplaceAll(template, "KUBOARDSPRAY_RESOURCE_PACKAGE", req.ResourcePackage)
+	template = strings.ReplaceAll(template, "CONTAINER_MANAGER", req.ContainerManager)
+	template = strings.ReplaceAll(template, "KUBE_NETWORK_PLUGIN", req.KubeNetworkPlugin)
+	template = strings.ReplaceAll(template, "ETCD_DEPLOYMENT_TYPE", req.EtcdDeploymentType)
 
 	_, err = inventoryFile.WriteString(template)
 
@@ -86,7 +92,7 @@ func getInventoryTemplate() string {
         etcd:
           hosts: {}
           vars:
-            etcd_deployment_type: host
+            etcd_deployment_type: ETCD_DEPLOYMENT_TYPE
             etcd_data_dir: /var/lib/etcd
             etcd_kubeadm_enabled: false
         k8s_cluster:
@@ -142,7 +148,7 @@ func getInventoryTemplate() string {
 
             # Choose network plugin (cilium, calico, weave or flannel. Use cni for generic cni plugin)
             # Can also be set to 'cloud', which lets the cloud provider setup appropriate routing
-            kube_network_plugin: calico
+            kube_network_plugin: KUBE_NETWORK_PLUGIN
 
             # Setting multi_networking to true will install Multus: https://github.com/intel/multus-cni
             kube_network_plugin_multus: false
@@ -239,7 +245,7 @@ func getInventoryTemplate() string {
             ## Container runtime
             ## docker for docker, crio for cri-o and containerd for containerd.
             ## Default: containerd
-            ## container_manager: containerd
+            container_manager: CONTAINER_MANAGER
 
             # Additional container runtimes
             kata_containers_enabled: false
@@ -283,10 +289,6 @@ func getInventoryTemplate() string {
             # auto_renew_certificates_systemd_calendar: "Mon *-*-1,2,3,4,5,6,7 03:{{ groups['kube_control_plane'].index(inventory_hostname) }}0:00"
 
   vars:
-    download_run_once: true
-    download_localhost: true
-    download_keep_remote_cache: true
-    download_force_cache: true
 
     bin_dir: /usr/local/bin
     loadbalancer_apiserver_port: 6443

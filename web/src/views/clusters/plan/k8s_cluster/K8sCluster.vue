@@ -16,7 +16,7 @@ zh:
         <span class="app_text_mono">{{cluster.resourcePackage.kubernetes.kube_version}}</span>
       </el-form-item>
       <el-form-item :label="$t('container_manager')">
-        <span class="app_text_mono">{{cluster.resourcePackage.container_engine.container_manager}}_{{cluster.resourcePackage.container_engine.version}}</span>
+        <span class="app_text_mono">{{ container_manager }}</span>
       </el-form-item>
     </template>
     <FieldString :holder="cluster.inventory.all.children.target.children.k8s_cluster.vars" fieldName="cluster_name"></FieldString>
@@ -40,12 +40,23 @@ export default {
       get () {return true},
       set () {},
     },
+    container_manager () {
+      if (this.cluster.resourcePackage) {
+        let engines = this.cluster.resourcePackage.container_engine
+        for (let i in engines) {
+          let engine = engines[i]
+          if (engine.container_manager === this.cluster.inventory.all.children.target.children.k8s_cluster.vars.container_manager) {
+            return engine.container_manager + (engine.version ? '_' + engine.version : '')
+          }
+        }
+      }
+      return this.cluster.inventory.all.children.target.children.k8s_cluster.vars.container_manager
+    }
   },
   components: { },
   mounted () {
   },
   methods: {
-
   }
 }
 </script>

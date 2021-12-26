@@ -58,11 +58,15 @@ const field = {
     ansible_become_password: '切换密码',
     ansible_become_password_placeholder: '切换密码',
 
+    container_manager: '容器引擎',
+
     
     etcd_deployment_type: 'ETCD 部署方式',
-    etcd_deployment_type_placeholder: 'ETCD deployment type',
+    'etcd_deployment_type-docker': '容器化部署',
+    'etcd_deployment_type-host': '二进制部署',
     etcd_member_name: 'ETCD 成员名称',
     etcd_member_name_placeholder: 'etcd_member_name',
+    etcd_data_dir: 'ETCD 数据目录',
 
     kube_network_plugin: '网络插件',
     cluster_name: '集群名称',

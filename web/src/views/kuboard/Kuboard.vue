@@ -7,7 +7,7 @@ zh:
 
 <template>
   <div>
-    kuboard
+    <div class="app_block_title">正在建设 ...</div>
   </div>
 </template>
 

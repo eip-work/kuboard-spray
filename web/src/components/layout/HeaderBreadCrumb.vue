@@ -3,7 +3,8 @@
     <!-- <div class="kind">{{kind}}</div> -->
     <div class="wrapper noselect" :style="hasNext ? '' : 'cursor: auto'">
       <router-link v-if="to" class="label" :to="to" style="cursor: pointer;">{{label}}</router-link>
-      <span v-else :class="hasNext ? 'label' : 'label isLeaf'" style="cursor: pointer;" @click="$emit('click')">{{label}}</span>
+      <span v-else :class="hasNext ? 'label' : 'label isLeaf'"
+        class="app_text_mono" @click="$emit('click')">{{label}}</span>
       <slot></slot>
       <i v-if="hasNext" class="el-icon-arrow-right icon"></i>
     </div>

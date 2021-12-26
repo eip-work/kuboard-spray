@@ -33,6 +33,7 @@ const messages = {
       cancel: 'Cancel',
       upload: 'Upload',
       edit: 'Edit',
+      view: 'View',
       prompt: 'Prompt',
       save_succeeded: 'Succeeded in saving.',
       save_failed: 'Failed in saving. {msg}',
@@ -40,6 +41,7 @@ const messages = {
       delete_failed: 'Failed in deleting. {msg}',
       status: 'Status',
       confirmToCancel: "Modifications will be lost to proceed, do you confirm ?",
+      operations: 'Operations',
     }
   },
   zh: { 
@@ -64,10 +66,12 @@ const messages = {
     msg: {
       ok: '确 定',
       save: '保 存',
+      delete: '删 除',
       close: '关 闭',
       cancel: '取 消',
       upload: '上 传',
       edit: '编 辑',
+      view: '查 看',
       prompt: '提 示',
       save_succeeded: '保存成功',
       save_failed: '保存失败： {msg}',
@@ -75,6 +79,7 @@ const messages = {
       delete_failed: '删除失败： {msg}',
       status: '状 态',
       confirmToCancel: '将丢失已修改内容，确认取消编辑？',
+      operations: '操 作',
     }
   },
 }

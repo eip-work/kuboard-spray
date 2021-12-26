@@ -106,6 +106,8 @@ export default {
         'Clusters': '1',
         'Cluster': '1',
         'Resources': '2-1',
+        'Resource': '2-1',
+        'ResourceOnAir': '2-1',
         'Mirrors': '2-2',
         'Mirror': '2-2',
         'Kuboard': '2-3'

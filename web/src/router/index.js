@@ -50,6 +50,18 @@ const constantRouterMap = [
         component: () => import('../views/resources/Resources.vue')
       },
       {
+        path: 'resources/:name',
+        name: 'Resource',
+        component: () => import('../views/resources/Resource.vue'),
+        props: route => ({ name: route.params.name, mode: route.query.mode })
+      },
+      {
+        path: 'resources/:name/on_air',
+        name: 'ResourceOnAir',
+        component: () => import('../views/resources/ResourceOnAir.vue'),
+        props: route => ({ name: route.params.name, mode: route.query.mode })
+      },
+      {
         path: 'mirrors',
         name: 'Mirrors',
         component: () => import('../views/os_mirror/Mirrors.vue')

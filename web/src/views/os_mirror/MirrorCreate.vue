@@ -108,8 +108,9 @@ export default {
     async loadMirrorTypeList () {
       let result = [
         { label: 'ubuntu', value: 'ubuntu' },
-        { label: 'centos', value: 'centos' },
-        { label: 'docker-ce', value: 'docker-ce' },
+        { label: 'centos', value: 'centos', disabled: true },
+        { label: 'docker-ce_ubuntu', value: 'docker-ce_ubuntu' },
+        { label: 'docker-ce_centos', value: 'docker-ce_centos', disabled: true },
       ]
       return result
     },

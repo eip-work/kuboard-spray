@@ -15,7 +15,7 @@ zh:
     <div style="display: flex;" v-if="editMode !== 'view'">
       <el-select v-model.trim="obj[fieldName]" style="flex-grow: 1;" clearable :disabled="disabled"
         :placeholder="compute_placeholder" @visible-change="load($event)">
-        <el-option v-for="(item, index) in options" :key="'i' + index" :value="item.value" :label="item.label">
+        <el-option v-for="(item, index) in options" :key="'i' + index" :value="item.value" :label="item.label" :disabled="item.disabled">
           {{item.label}}
         </el-option>
       </el-select>

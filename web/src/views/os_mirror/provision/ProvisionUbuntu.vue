@@ -19,10 +19,9 @@ zh:
   <div>
     <!-- <FieldNumber :holder="inventory.all.children.target.vars" prop="inventory.all.children.target.vars" fieldName="apache2_default_port" required></FieldNumber> -->
     <FieldString :holder="inventory.all.children.target.vars" prop="inventory.all.children.target.vars" fieldName="apt_mirror_dir" required></FieldString>
-    <!-- <FieldSelect :holder="inventory.all.children.target.vars" prop="inventory.all.children.target.vars" fieldName="apt_mirror_ubuntu_mirror" required :loadOptions="loadOptions"></FieldSelect> -->
     <el-form-item :label="$t('field.apt_mirror_ubuntu_mirror')" prop="inventory.all.children.target.vars.apt_mirror_ubuntu_mirror" required>
       <el-select v-model="apt_mirror_ubuntu_mirror" style="width: 100%;" v-if="editMode !== 'view'" :placeholder="$t('field.apt_mirror_ubuntu_mirror')">
-        <el-option v-for="(url, index) in mirrorOptions" :key="'url' + index" :value="url">
+        <el-option v-for="(url, index) in mirrorOptions[os_mirror.status.type]" :key="'url' + index" :value="url">
           {{ url }}
         </el-option>
       </el-select>
@@ -39,7 +38,7 @@ zh:
     </el-form-item>
     <el-form-item :label="$t('architecture')" required message="Required" prop="inventory.all.children.target.vars.apt_mirror_repos">
       <el-checkbox-group v-model="apt_mirror_architecture" :disabled="editMode === 'view'">
-        <el-checkbox v-for="(value, key) in architecture" :key="key + 'release'" :label="key">
+        <el-checkbox v-for="(value, key) in architecture[os_mirror.status.type]" :key="key + 'release'" :label="key">
           <span class="app_text_mono">
             {{key}}
           </span>
@@ -83,18 +82,35 @@ export default {
         trusty: '14.04',
       },
       architecture: {
-        amd64: 'amd64',
-        i386: 'i386',
-        src: 'src',
+        ubuntu: {
+          amd64: 'amd64',
+          i386: 'i386',
+          src: 'src',
+        },
+        'docker-ce_ubuntu': {
+          amd64: 'amd64',
+          arm64: 'arm64',
+          armhf: 'armhf',
+          ppc64el: 'ppc64el',
+          s390x: 's390x',
+        }
       },
-      mirrorOptions: [
-        'https://repo.huaweicloud.com/ubuntu/',
-        'https://mirrors.aliyun.com/ubuntu/',
-        'https://mirrors.tuna.tsinghua.edu.cn/ubuntu/',
-        'http://cn.archive.ubuntu.com/ubuntu/',
-        'https://mirrors.cloud.tencent.com/ubuntu/',
-        'http://mirror.aliyun.com/ubuntu/'
-      ]
+      mirrorOptions: {
+        ubuntu: [
+          'https://repo.huaweicloud.com/ubuntu/',
+          'https://mirrors.aliyun.com/ubuntu/',
+          'https://mirrors.tuna.tsinghua.edu.cn/ubuntu/',
+          'http://cn.archive.ubuntu.com/ubuntu/',
+          'https://mirrors.cloud.tencent.com/ubuntu/',
+          'http://mirror.aliyun.com/ubuntu/'
+        ],
+        'docker-ce_ubuntu': [
+          'https://repo.huaweicloud.com/docker-ce/linux/ubuntu/',
+          'https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/',
+          // 'https://mirrors.aliyun.com/docker-ce/linux/ubuntu/',
+          'https://mirrors.cloud.tencent.com/docker-ce/linux/ubuntu/',
+        ]
+      }
     }
   },
   inject: ['editMode'],
@@ -126,7 +142,7 @@ export default {
         let temp = {}
         for (let i in this.inventory.all.children.target.vars.apt_mirror_repos) {
           let repo = this.inventory.all.children.target.vars.apt_mirror_repos[i]
-          for (let key in this.architecture) {
+          for (let key in this.architecture[this.os_mirror.status.type]) {
             if (repo.indexOf('deb-' + key) === 0) {
               temp[key] = true
             }
@@ -169,26 +185,6 @@ export default {
           return
         }
         this.update_apt_mirror_repos(v, this.apt_mirror_architecture)
-        // let temp = []
-        // for (let release of v) {
-        //   temp.push(`deb-amd {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release} main restricted universe multiverse`)
-        //   temp.push(`deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-backports main restricted universe multiverse`)
-        //   temp.push(`deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-security main restricted universe multiverse`)
-        //   temp.push(`deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-updates main restricted universe multiverse`)
-        //   temp.push(`deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-proposed main restricted universe multiverse`)
-        //   temp.push(`deb-i386 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release} main restricted universe multiverse`)
-        //   temp.push(`deb-i386 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-backports main restricted universe multiverse`)
-        //   temp.push(`deb-i386 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-security main restricted universe multiverse`)
-        //   temp.push(`deb-i386 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-updates main restricted universe multiverse`)
-        //   temp.push(`deb-i386 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-proposed main restricted universe multiverse`)
-        //   temp.push(`deb-src {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release} main restricted universe multiverse`)
-        //   temp.push(`deb-src {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-backports main restricted universe multiverse`)
-        //   temp.push(`deb-src {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-security main restricted universe multiverse`)
-        //   temp.push(`deb-src {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-updates main restricted universe multiverse`)
-        //   temp.push(`deb-src {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release}-proposed main restricted universe multiverse`)
-        //   // temp.push(`deb {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${release} main/debian-installer multiverse/debian-installer restricted/debian-installer universe/debian-installer`)
-        // }
-        // this.inventory.all.children.target.vars.apt_mirror_repos = temp
       }
     }
   },
@@ -204,13 +200,26 @@ export default {
   methods: {
     update_apt_mirror_repos(releases, architecture) {
       let temp = []
-      for (let r of releases) {
-        for (let a of architecture) {
-          temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r} main restricted universe multiverse`)
-          temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r}-backports main restricted universe multiverse`)
-          temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r}-security main restricted universe multiverse`)
-          temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r}-updates main restricted universe multiverse`)
-          temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r}-proposed main restricted universe multiverse`)
+      let releases_not_empty = releases
+      if (releases_not_empty.length === 0) {
+        releases_not_empty = ['focal']
+      }
+      let architecture_not_empty = architecture
+      if (architecture_not_empty.length === 0) {
+        architecture_not_empty = ['amd64']
+      }
+      console.log(this.os_mirror.status.type)
+      for (let r of releases_not_empty) {
+        for (let a of architecture_not_empty) {
+          if (this.os_mirror.status.type === 'ubuntu') {
+            temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r} main restricted universe multiverse`)
+            temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r}-backports main restricted universe multiverse`)
+            temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r}-security main restricted universe multiverse`)
+            temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r}-updates main restricted universe multiverse`)
+            temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r}-proposed main restricted universe multiverse`)
+          } else if (this.os_mirror.status.type === 'docker-ce_ubuntu') {
+            temp.push(`deb-${a} {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} ${r} stable`)
+          }
         }
       }
       this.inventory.all.children.target.vars.apt_mirror_repos = temp
@@ -240,15 +249,6 @@ export default {
         "deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} focal-security main restricted universe multiverse",
         "deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} focal-updates main restricted universe multiverse",
         "deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} focal-proposed main restricted universe multiverse",
-      ]
-    },
-    async loadOptions() {
-      return [
-        { label: 'https://repo.huaweicloud.com/ubuntu/', value: 'https://repo.huaweicloud.com/ubuntu/' },
-        { label: 'https://mirrors.aliyun.com/ubuntu/', value: 'https://mirrors.aliyun.com/ubuntu/' },
-        { label: 'https://mirrors.tuna.tsinghua.edu.cn/ubuntu/', value: 'https://mirrors.tuna.tsinghua.edu.cn/ubuntu/' },
-        { label: 'http://cn.archive.ubuntu.com/ubuntu/ ', value: 'http://cn.archive.ubuntu.com/ubuntu/' },
-        { label: 'https://mirrors.cloud.tencent.com/ubuntu/', value: 'https://mirrors.cloud.tencent.com/ubuntu/' },
       ]
     },
     async loadSpecialTimeOptions () {

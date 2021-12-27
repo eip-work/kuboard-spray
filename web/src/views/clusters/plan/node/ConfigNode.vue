@@ -36,13 +36,22 @@ zh:
       ></NodeFact>
     </SshParamsNode>
     <ConfigSection v-model:enabled="enabledRoles" :label="$t('roles')" :description="$t('roleDescription', {nodeName: nodeName})" disabled>
-      <el-form-item :label="$t('roles')">
-        <div class="roles">
-          <NodeRoleTag :enabled="isKubeControlPlane" role="kube_control_plane" @clickTag="isKubeControlPlane = !isKubeControlPlane"></NodeRoleTag>
-          <NodeRoleTag :enabled="isKubeNode" role="kube_node" @clickTag="isKubeNode = !isKubeNode"></NodeRoleTag>
-          <NodeRoleTag :enabled="isEtcd" role="etcd" @clickTag="isEtcd = !isEtcd"></NodeRoleTag>
-        </div>
-      </el-form-item>
+      <FieldCommon :label="$t('roles')">
+        <template #edit>
+          <div class="roles">
+            <NodeRoleTag :enabled="isKubeControlPlane" role="kube_control_plane" @clickTag="isKubeControlPlane = !isKubeControlPlane"></NodeRoleTag>
+            <NodeRoleTag :enabled="isKubeNode" role="kube_node" @clickTag="isKubeNode = !isKubeNode"></NodeRoleTag>
+            <NodeRoleTag :enabled="isEtcd" role="etcd" @clickTag="isEtcd = !isEtcd"></NodeRoleTag>
+          </div>
+        </template>
+        <template #view>
+          <div class="roles">
+            <NodeRoleTag :enabled="isKubeControlPlane" role="kube_control_plane"></NodeRoleTag>
+            <NodeRoleTag :enabled="isKubeNode" role="kube_node"></NodeRoleTag>
+            <NodeRoleTag :enabled="isEtcd" role="etcd"></NodeRoleTag>
+          </div>
+        </template>
+      </FieldCommon>
     </ConfigSection>
     <ConfigSection v-if="enabledEtcd" v-model:enabled="enabledEtcd" label="ETCD" :description="$t('etcd', {nodeName: nodeName})" disabled>
       <FieldString :holder="inventory.all.children.target.children.etcd.hosts[nodeName]" fieldName="etcd_member_name" :rules="etcd_member_name_rules"

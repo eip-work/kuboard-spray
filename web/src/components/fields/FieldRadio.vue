@@ -1,20 +1,28 @@
 <template>
-  <el-form-item :rules="computedRules" :prop="prop ? prop + '.' + fieldName : fieldName">
-    <template #label>
-      {{ label || $t('field.' + fieldName) }}
+  <FieldCommon :fieldName="fieldName" :holder="holder" :prop="prop" :rules="rules" :required="required" :label="label" :placeholder="placeholder">
+    <template #edit>
+      <el-radio-group v-model="value" :disabled="disabled">
+        <template v-for="(option, index) in options" :key="index">
+          <el-radio-button :label="option">
+            {{ optionDesc(option) }}
+          </el-radio-button>
+        </template>
+      </el-radio-group>
     </template>
-    <el-radio-group v-model="value" :disabled="disabled">
-      <template v-for="(option, index) in options" :key="index">
-        <el-radio-button v-if="editMode !== 'view' || value === option" :label="option">
-          {{ optionDesc(option) }}
-        </el-radio-button>
-      </template>
-    </el-radio-group>
-    <slot></slot>
-  </el-form-item>
+    <template #view>
+      <el-radio-group v-model="value" :disabled="disabled">
+        <template v-for="(option, index) in options" :key="index">
+          <el-radio-button v-if="value === option" :label="option">
+            {{ optionDesc(option) }}
+          </el-radio-button>
+        </template>
+      </el-radio-group>
+    </template>
+  </FieldCommon>
 </template>
 
 <script>
+import compute_placeholder_mixin from './compute_placeholder_mixin.js'
 
 export default {
   props: {
@@ -26,13 +34,14 @@ export default {
     options: { type: Array, required: true },
     label: { type: String, required: false, default: undefined },
     disabled: { type: Boolean, required: false, default: false },
+    placeholder: { type: String, required: false, default: undefined },
   },
   data () {
     return {
 
     }
   },
-  inject: ['editMode'],
+  mixins: [ compute_placeholder_mixin ],
   computed: {
     obj: {
       get () {
@@ -50,25 +59,6 @@ export default {
         this.obj[this.fieldName] = v
       }
     },
-    computedRules () {
-      let result = []
-      if (this.required) {
-        let message = this.$t('field.' + this.fieldName) + ' ' + this.$t('isRequiredField')
-        result.push({
-          required: true,
-          message: message,
-          validator: (rule, value, callback) => {
-            if (value !== undefined && value !== '') {
-              return callback()
-            }
-            return callback(message)
-          },
-          trigger: 'blur'
-        })
-      }
-      result.push(... this.rules)
-      return result
-    }
   },
   components: { },
   mounted () {

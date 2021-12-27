@@ -1,20 +1,18 @@
 <template>
-  <el-form-item :rules="computedRules" :prop="prop ? prop + '.' + fieldName : fieldName">
-    <template #label>
-      {{ $t('field.' + fieldName) }}
+  <FieldCommon :fieldName="fieldName" :holder="holder" :prop="prop" :rules="rules" :required="required" :label="label" :placeholder="placeholder">
+    <template #edit>
+      <el-input v-if="editMode !== 'view'" v-model.number="obj[fieldName]" :placeholder="compute_placeholder">
+        <template #append v-if="$slots.append"><slot name="append"></slot></template>
+      </el-input>
     </template>
-    <el-input v-if="editMode !== 'view'" v-model.number="obj[fieldName]" :placeholder="compute_placeholder">
-      <template #append v-if="$slots.append"><slot name="append"></slot></template>
-    </el-input>
-    <div v-else class="app_text_mono">
-      <span v-if="obj[fieldName]">{{ obj[fieldName] }}</span>
-      <span v-else class="field_placeholder">{{ compute_placeholder }}</span>
-    </div>
-    <slot></slot>
-  </el-form-item>
+    <template #view>
+      {{ obj[fieldName] }} <span class="app_text_mono" style="font-size: 13px;"><slot name="append"></slot></span>
+    </template>
+  </FieldCommon>
 </template>
 
 <script>
+import compute_placeholder_mixin from './compute_placeholder_mixin.js'
 
 export default {
   props: {
@@ -24,13 +22,14 @@ export default {
     required: { type: Boolean, required: false, default: false },
     rules: { type: Array, required: false, default: () => ([])},
     placeholder: { type: String, required: false, default: undefined },
+    label: { type: String, required: false, default: undefined },
   },
   data () {
     return {
 
     }
   },
-  inject: ['editMode'],
+  mixins: [ compute_placeholder_mixin ],
   computed: {
     obj: {
       get () {
@@ -40,36 +39,6 @@ export default {
         console.log(v)
       }
     },
-    compute_placeholder () {
-      if (this.placeholder) {
-        return this.placeholder
-      }
-      let temp = this.$t('field.' + this.fieldName + '_placeholder')
-      if (temp == ('field.' + this.fieldName + '_placeholder')) {
-        return this.$t('please') + this.$t('field.' + this.fieldName)
-      } else {
-        return temp
-      }
-    },
-    computedRules () {
-      let result = []
-      if (this.required) {
-        let message = this.$t('field.' + this.fieldName) + ' ' + this.$t('isRequiredField')
-        result.push({
-          required: true,
-          message: message,
-          validator: (rule, value, callback) => {
-            if (value !== undefined && value !== '') {
-              return callback()
-            }
-            return callback(message)
-          },
-          trigger: 'blur'
-        })
-      }
-      result.push(... this.rules)
-      return result
-    }
   },
   components: { },
   mounted () {

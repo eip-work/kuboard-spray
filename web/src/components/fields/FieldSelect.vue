@@ -1,34 +1,21 @@
-<i18n>
-en:
-  please: 'Please select '
-  isRequiredField: ' is required.'
-zh:
-  please: 请选择
-  isRequiredField: 为必填字段
-</i18n>
-
 <template>
-  <el-form-item :rules="computedRules" :prop="prop ? prop + '.' + fieldName : fieldName">
-    <template #label>
-      {{ label || $t('field.' + fieldName) }}
+  <FieldCommon :fieldName="fieldName" :holder="holder" :prop="prop" :rules="rules" :required="required" :label="label" :placeholder="placeholder">
+    <template #edit>
+      <div style="display: flex;">
+        <el-select v-model.trim="obj[fieldName]" style="flex-grow: 1;" :clearable="clearable" :disabled="disabled"
+          :placeholder="compute_placeholder" @visible-change="load($event)">
+          <el-option v-for="(item, index) in options" :key="'i' + index" :value="item.value" :label="item.label" :disabled="item.disabled">
+            {{item.label}}
+          </el-option>
+        </el-select>
+        <slot></slot>
+      </div>
     </template>
-    <div style="display: flex;" v-if="editMode !== 'view'">
-      <el-select v-model.trim="obj[fieldName]" style="flex-grow: 1;" :clearable="clearable" :disabled="disabled"
-        :placeholder="compute_placeholder" @visible-change="load($event)">
-        <el-option v-for="(item, index) in options" :key="'i' + index" :value="item.value" :label="item.label" :disabled="item.disabled">
-          {{item.label}}
-        </el-option>
-      </el-select>
-      <slot></slot>
-    </div>
-    <div v-else class="app_text_mono">
-      <slot name="display_value" v-if="value">{{ compute_display_value }}</slot>
-      <span v-else class="field_placeholder">{{ compute_placeholder }}</span>
-    </div>
-  </el-form-item>
+  </FieldCommon>
 </template>
 
 <script>
+import compute_placeholder_mixin from './compute_placeholder_mixin.js'
 
 export default {
   props: {
@@ -48,7 +35,7 @@ export default {
       options: []
     }
   },
-  inject: ['editMode'],
+  mixins: [ compute_placeholder_mixin ],
   computed: {
     obj: {
       get () {
@@ -58,56 +45,6 @@ export default {
         console.log(v)
       }
     },
-    compute_display_value () {
-      let temp = this.$t('field.' + this.fieldName + '-' + this.value)
-      if (temp === 'field.' + this.fieldName + '-' + this.value) {
-        return this.value
-      } else {
-        return temp
-      }
-    },
-    compute_placeholder () {
-      if (this.placeholder) {
-        return this.placeholder
-      }
-      let temp = this.$t('field.' + this.fieldName + '_placeholder')
-      if (temp == ('field.' + this.fieldName + '_placeholder')) {
-        return this.$t('please') + this.$t('field.' + this.fieldName)
-      } else {
-        return temp
-      }
-    },
-    computedRules () {
-      let result = []
-      if (this.required) {
-        let message = this.$t('field.' + this.fieldName) + ' ' + this.$t('isRequiredField')
-        result.push({
-          required: true,
-          message: message,
-          validator: (rule, value, callback) => {
-            if (value !== undefined && value !== '') {
-              return callback()
-            }
-            return callback(message)
-          },
-          trigger: 'change'
-        })
-      }
-      result.push(... this.rules)
-      return result
-    },
-    value: {
-      get () {
-        return this.holder[this.fieldName]
-      },
-      set (v) {
-        if (v) {
-          this.obj[this.fieldName] = v
-        } else {
-          delete this.obj[this.fieldName]
-        }
-      }
-    }
   },
   components: { },
   mounted () {

@@ -17,51 +17,77 @@ zh:
 
 <template>
   <div>
-    <!-- <FieldNumber :holder="inventory.all.children.target.vars" prop="inventory.all.children.target.vars" fieldName="apache2_default_port" required></FieldNumber> -->
-    <FieldString :holder="inventory.all.children.target.vars" prop="inventory.all.children.target.vars" fieldName="apt_mirror_dir" required></FieldString>
-    <el-form-item :label="$t('field.apt_mirror_ubuntu_mirror')" prop="inventory.all.children.target.vars.apt_mirror_ubuntu_mirror" required>
-      <el-select v-model="apt_mirror_ubuntu_mirror" style="width: 100%;" v-if="editMode !== 'view'" :placeholder="$t('field.apt_mirror_ubuntu_mirror')">
-        <el-option v-for="(url, index) in mirrorOptions[os_mirror.status.type]" :key="'url' + index" :value="url">
-          {{ url }}
-        </el-option>
-      </el-select>
-      <span v-else class="app_text_mono">{{apt_mirror_ubuntu_mirror}}</span>
-    </el-form-item>
-    <el-form-item :label="$t('release')" required message="Required" prop="inventory.all.children.target.vars.apt_mirror_repos">
-      <el-checkbox-group v-model="apt_mirror_repos" :disabled="editMode === 'view'">
-        <el-checkbox v-for="(value, key) in releases" :key="key + 'release'" :label="key">
-          <span class="app_text_mono">
-            Ubuntu {{value}} - {{key}}
-          </span>
-        </el-checkbox>
-      </el-checkbox-group>
-    </el-form-item>
-    <el-form-item :label="$t('architecture')" required message="Required" prop="inventory.all.children.target.vars.apt_mirror_repos">
-      <el-checkbox-group v-model="apt_mirror_architecture" :disabled="editMode === 'view'">
-        <el-checkbox v-for="(value, key) in architecture[os_mirror.status.type]" :key="key + 'release'" :label="key">
-          <span class="app_text_mono">
-            {{key}}
-          </span>
-        </el-checkbox>
-      </el-checkbox-group>
-    </el-form-item>
-    <FieldBool :holder="inventory.all.children.target.vars" prop="inventory.all.children.target.vars" fieldName="apt_mirror_schedule_updates"></FieldBool>
-    <FieldRadio v-if="inventory.all.children.target.vars.apt_mirror_schedule"
-      :disabled="!inventory.all.children.target.vars.apt_mirror_schedule_updates"
-      :holder="inventory.all.children.target.vars.apt_mirror_schedule[0]"
+    <!-- <FieldNumber :holder="vars" :prop="prop" fieldName="apache2_default_port" required></FieldNumber> -->
+    <FieldString :holder="vars" :prop="prop" fieldName="apt_mirror_dir" required disabled></FieldString>
+    <FieldCommon required anti-freeze :holder="vars" fieldName="apt_mirror_ubuntu_mirror" :prop="prop">
+      <template #edit>
+        <el-select v-model="apt_mirror_ubuntu_mirror" style="width: 100%;" v-if="editMode !== 'view'" :placeholder="$t('field.apt_mirror_ubuntu_mirror')">
+          <el-option v-for="(url, index) in mirrorOptions[os_mirror.status.type]" :key="'url' + index" :value="url">
+            {{ url }}
+          </el-option>
+        </el-select>
+      </template>
+      <template #view>
+        <span class="app_text_mono">{{apt_mirror_ubuntu_mirror}}</span>
+      </template>
+    </FieldCommon>
+    <FieldCommon :label="$t('release')" required anti-freeze :holder="vars" fieldName="apt_mirror_repos" :prop="prop">
+      <template #edit>
+        <el-checkbox-group v-model="apt_mirror_repos">
+          <el-checkbox v-for="(value, key) in releases" :key="key + 'release'" :label="key">
+            <span class="app_text_mono">
+              Ubuntu {{value}} - {{key}}
+            </span>
+          </el-checkbox>
+        </el-checkbox-group>
+      </template>
+      <template #view>
+        <el-checkbox-group v-model="apt_mirror_repos" disabled>
+          <el-checkbox v-for="(value, key) in releases" :key="key + 'release'" :label="key">
+            <span class="app_text_mono">
+              Ubuntu {{value}} - {{key}}
+            </span>
+          </el-checkbox>
+        </el-checkbox-group>
+      </template>
+    </FieldCommon>
+    <FieldCommon :label="$t('architecture')" required anti-freeze>
+      <template #edit>
+        <el-checkbox-group  v-model="apt_mirror_architecture">
+          <el-checkbox v-for="(value, key) in architecture[os_mirror.status.type]" :key="key + 'release'" :label="key">
+            <span class="app_text_mono">
+              {{key}}
+            </span>
+          </el-checkbox>
+        </el-checkbox-group>
+      </template>
+      <template #view>
+        <el-checkbox-group v-model="apt_mirror_architecture" disabled>
+          <el-checkbox v-for="(value, key) in architecture[os_mirror.status.type]" :key="key + 'release'" :label="key">
+            <span class="app_text_mono">
+              {{key}}
+            </span>
+          </el-checkbox>
+        </el-checkbox-group>
+      </template>
+    </FieldCommon>
+    <FieldBool :holder="vars" :prop="prop" fieldName="apt_mirror_schedule_updates" anti-freeze></FieldBool>
+    <FieldRadio v-if="vars.apt_mirror_schedule"
+      :disabled="!vars.apt_mirror_schedule_updates"
+      :holder="vars.apt_mirror_schedule[0]"
       fieldName="special_time" :label="$t('special_time')"
       :options="['daily', 'weekly', 'monthly']"></FieldRadio>
-    <FieldBool :holder="inventory.all.children.target.vars" prop="inventory.all.children.target.vars" fieldName="apt_mirror_populate_repos"></FieldBool>
-    <FieldBool :holder="inventory.all.children.target.vars" prop="inventory.all.children.target.vars" fieldName="apt_mirror_enable_limit_rate"></FieldBool>
-    <FieldNumber :holder="inventory.all.children.target.vars" prop="inventory.all.children.target.vars" fieldName="apt_mirror_limit_rate" 
-      v-if="inventory.all.children.target.vars.apt_mirror_enable_limit_rate">
+    <FieldBool :holder="vars" :prop="prop" fieldName="apt_mirror_populate_repos" anti-freeze></FieldBool>
+    <FieldBool :holder="vars" :prop="prop" fieldName="apt_mirror_enable_limit_rate" anti-freeze></FieldBool>
+    <FieldNumber :holder="vars" :prop="prop" fieldName="apt_mirror_limit_rate" anti-freeze
+      v-if="vars.apt_mirror_enable_limit_rate">
       <template #append>{{ $t('KB') }}</template>
-      <div class="placeholder">{{ $t('kb', { kb: inventory.all.children.target.vars.apt_mirror_limit_rate * 8 / 1000 }) }}</div>
+      <div class="placeholder">{{ $t('kb', { kb: vars.apt_mirror_limit_rate * 8 / 1000 }) }}</div>
     </FieldNumber>
-    <FieldNumber :holder="inventory.all.children.target.vars" prop="inventory.all.children.target.vars" fieldName="apt_mirror_nthreads"
-      v-if="inventory.all.children.target.vars.apt_mirror_enable_limit_rate">
+    <FieldNumber :holder="vars" :prop="prop" fieldName="apt_mirror_nthreads" anti-freeze
+      v-if="vars.apt_mirror_enable_limit_rate">
       <template #append>{{ $t('threadCount') }}</template>
-      <div class="placeholder">{{ $t('totalkb', { kb: inventory.all.children.target.vars.apt_mirror_limit_rate * 8 * inventory.all.children.target.vars.apt_mirror_nthreads / 1000 }) }}</div>
+      <div class="placeholder">{{ $t('totalkb', { kb: vars.apt_mirror_limit_rate * 8 * vars.apt_mirror_nthreads / 1000 }) }}</div>
     </FieldNumber>
   </div>
 </template>
@@ -115,33 +141,36 @@ export default {
   },
   inject: ['editMode'],
   computed: {
-    inventory: {
-      get () { return this.os_mirror.inventory },
+    vars: {
+      get () { return this.os_mirror.inventory.all.children.target.vars },
       set () {},
+    },
+    prop () {
+      return 'inventory.all.children.target.vars'
     },
     apt_mirror_ubuntu_mirror: {
       get () {
-        if (this.inventory.all.children.target.vars.apt_mirror_ubuntu_mirror_protocol) {
-          return this.inventory.all.children.target.vars.apt_mirror_ubuntu_mirror_protocol + this.inventory.all.children.target.vars.apt_mirror_ubuntu_mirror
+        if (this.vars.apt_mirror_ubuntu_mirror_protocol) {
+          return this.vars.apt_mirror_ubuntu_mirror_protocol + this.vars.apt_mirror_ubuntu_mirror
         }
         return ''
       },
       set (v) {
         if (v) {
           let splited = v.split("://")
-          this.inventory.all.children.target.vars.apt_mirror_ubuntu_mirror_protocol = splited[0] + "://"
-          this.inventory.all.children.target.vars.apt_mirror_ubuntu_mirror = splited[1]
+          this.vars.apt_mirror_ubuntu_mirror_protocol = splited[0] + "://"
+          this.vars.apt_mirror_ubuntu_mirror = splited[1]
         } else {
-          this.inventory.all.children.target.vars.apt_mirror_ubuntu_mirror_protocol = undefined
-          this.inventory.all.children.target.vars.apt_mirror_ubuntu_mirror = undefined
+          this.vars.apt_mirror_ubuntu_mirror_protocol = undefined
+          this.vars.apt_mirror_ubuntu_mirror = undefined
         }
       }
     },
     apt_mirror_architecture: {
       get () {
         let temp = {}
-        for (let i in this.inventory.all.children.target.vars.apt_mirror_repos) {
-          let repo = this.inventory.all.children.target.vars.apt_mirror_repos[i]
+        for (let i in this.vars.apt_mirror_repos) {
+          let repo = this.vars.apt_mirror_repos[i]
           for (let key in this.architecture[this.os_mirror.status.type]) {
             if (repo.indexOf('deb-' + key) === 0) {
               temp[key] = true
@@ -165,8 +194,8 @@ export default {
     apt_mirror_repos: {
       get () {
         let temp = {}
-        for (let i in this.inventory.all.children.target.vars.apt_mirror_repos) {
-          let repo = this.inventory.all.children.target.vars.apt_mirror_repos[i]
+        for (let i in this.vars.apt_mirror_repos) {
+          let repo = this.vars.apt_mirror_repos[i]
           for (let key in this.releases) {
             if (repo.indexOf(key) > 0) {
               temp[key] = true
@@ -223,10 +252,10 @@ export default {
           }
         }
       }
-      this.inventory.all.children.target.vars.apt_mirror_repos = temp
+      this.vars.apt_mirror_repos = temp
     },
     initDefaults () {
-      let vars = this.inventory.all.children.target.vars
+      let vars = this.vars
       vars.apt_mirror_schedule = vars.apt_mirror_schedule || [ 
         {
           name: 'apt-mirror updates',

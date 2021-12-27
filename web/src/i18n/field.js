@@ -1,5 +1,8 @@
 const field = {
   en: {
+    please_input: 'Please input ',
+    is_required_field: ' is required.',
+
     kuboardspray_resource_package: 'Resource Package',
     kuboardspray_os_mirror_type: 'OS type',
     kuboardspray_os_mirror_name: 'OS Mirror Name',
@@ -21,6 +24,9 @@ const field = {
     ubuntu_repo: 'ubuntu repository',
   },
   zh: {
+    please_input: '请输入',
+    is_required_field: '为必填字段',
+
     kuboardspray_resource_package: '资源包',
     kuboardspray_resource_package_placeholder: '请选择资源包',
 
@@ -53,6 +59,7 @@ const field = {
     ansible_ssh_private_key_file: '私钥文件',
     ansible_ssh_private_key_file_placeholder: 'KuboardSpray 连接该主机时所使用的私钥文件',
     ansible_become: '切换身份',
+    ansible_become_placeholder: 'KuboardSpray 登录到该主机后，是否使用 su 命令切换身份',
     ansible_become_user: '切换到用户',
     ansible_become_user_placeholder: 'KuboardSpray 登录该主机后，使用 su 命令切换到用户名',
     ansible_become_password: '切换密码',

@@ -13,21 +13,26 @@ zh:
     <FieldString :holder="holder" fieldName="ansible_host" :prop="`all.hosts.${nodeName}`"
       :placeholder="$t('ansible_host_placeholder')" :required="isNode"></FieldString>
     <FieldString :holder="holder" fieldName="ansible_port" :prop="`all.hosts.${nodeName}`"
-      :placeholder="placeholder('ansible_port')" 
+      :placeholder="placeholder('ansible_port')" anti-freeze
       :required="!cluster.inventory.all.children.target.vars.ansible_port"></FieldString>
-    <FieldString :holder="holder" fieldName="ansible_user" :placeholder="placeholder('ansible_user')"></FieldString>
-    <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList"
+    <FieldString :holder="holder" fieldName="ansible_user" :placeholder="placeholder('ansible_user')" anti-freeze></FieldString>
+    <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList" anti-freeze
       :placeholder="placeholder('ansible_ssh_private_key_file')">
       <el-button type="primary" plain style="margin-left: 10px;" icon="el-icon-plus" @click="$refs.addPrivateKey.show()">{{$t('addSshKey')}}</el-button>
     </FieldSelect>
-    <FieldString :holder="holder" fieldName="ansible_password" show-password
+    <FieldString :holder="holder" fieldName="ansible_password" show-password anti-freeze
       :placeholder="placeholder('ansible_password')"></FieldString>
-    <el-form-item :label="$t('field.ansible_become')">
-      <el-switch v-model="ansible_become"></el-switch>
-    </el-form-item>
+    <FieldCommon :holder="holder" fieldName="ansible_become" anti-freeze>
+      <template #view>
+        <el-switch v-model="ansible_become" disabled></el-switch>
+      </template>
+      <template #edit>
+        <el-switch v-model="ansible_become"></el-switch>
+      </template>
+    </FieldCommon>
     <template v-if="ansible_become">
-      <FieldString :holder="holder" fieldName="ansible_become_user" :placeholder="placeholder('ansible_become_user')"></FieldString>
-      <FieldString :holder="holder" fieldName="ansible_become_password" :placeholder="placeholder('ansible_become_password')"></FieldString>
+      <FieldString :holder="holder" fieldName="ansible_become_user" :placeholder="placeholder('ansible_become_user')" anti-freeze></FieldString>
+      <FieldString :holder="holder" fieldName="ansible_become_password" :placeholder="placeholder('ansible_become_password')" anti-freeze></FieldString>
     </template>
     <slot></slot>
     <SshAddPrivateKey ref="addPrivateKey" ownerType="cluster" :ownerName="cluster.name"></SshAddPrivateKey>

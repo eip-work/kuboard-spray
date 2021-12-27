@@ -168,12 +168,19 @@ export default {
   data () {
     return {
       currentPropertiesTab: 'k8s_cluster',
-      
     }
   },
   provide () {
     return {
-      editMode: computed(() => this.mode)
+      editMode: computed(() => {
+        if (this.mode === 'view') {
+          return 'view'
+        }
+        if (this.cluster && this.cluster.success_tasks.length > 0) {
+          return 'frozen'
+        }
+        return this.mode
+      })
     }
   },
   computed: {

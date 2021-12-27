@@ -1,10 +1,12 @@
 <template>
-  <el-form-item :rules="computedRules" :prop="prop ? prop + '.' + fieldName : fieldName">
-    <template #label>
-      {{ $t('field.' + fieldName) }}
+  <FieldCommon :fieldName="fieldName" :holder="holder" :prop="prop" :rules="rules" :required="required" :label="label" :placeholder="placeholder">
+    <template #edit>
+      <el-switch v-model.number="obj[fieldName]"></el-switch>
     </template>
-    <el-switch v-model.number="obj[fieldName]" :disabled="editMode === 'view'"></el-switch>
-  </el-form-item>
+    <template #view>
+      <el-switch v-model.number="obj[fieldName]" disabled></el-switch>
+    </template>
+  </FieldCommon>
 </template>
 
 <script>
@@ -16,6 +18,8 @@ export default {
     prop: { type: String, required: false },
     required: { type: Boolean, required: false, default: false },
     rules: { type: Array, required: false, default: () => ([])},
+    placeholder: { type: String, required: false, default: undefined },
+    label: { type: String, required: false, default: undefined },
   },
   data () {
     return {

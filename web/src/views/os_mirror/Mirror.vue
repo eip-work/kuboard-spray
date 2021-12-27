@@ -95,7 +95,13 @@ export default {
   },
   provide () {
     return {
-      'editMode': computed(() => {
+      editMode: computed(() => {
+        if (this.mode === 'view') {
+          return 'view'
+        }
+        if (this.os_mirror && this.os_mirror.success_tasks.length > 0) {
+          return 'frozen'
+        }
         return this.mode
       }),
       isInstalled: computed(() => {

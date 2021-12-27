@@ -11,16 +11,16 @@ zh:
   <div>
     <FieldString :holder="holder" fieldName="ansible_host" :prop="prop"
       :placeholder="$t('ansible_host_placeholder')"></FieldString>
-    <FieldString :holder="holder" fieldName="ansible_port" :prop="prop"></FieldString>
-    <FieldString :holder="holder" fieldName="ansible_user" :prop="prop"></FieldString>
-    <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList">
+    <FieldString :holder="holder" fieldName="ansible_port" :prop="prop" anti-freeze></FieldString>
+    <FieldString :holder="holder" fieldName="ansible_user" :prop="prop" anti-freeze></FieldString>
+    <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList" anti-freeze>
       <el-button type="primary" plain style="margin-left: 10px;" icon="el-icon-plus" @click="$refs.addPrivateKey.show()">{{$t('addSshKey')}}</el-button>
     </FieldSelect>
-    <FieldString :holder="holder" fieldName="ansible_password" show-password :prop="prop"></FieldString>
-    <FieldBool :holder="holder" fieldName="ansible_become" :prop="prop"></FieldBool>
+    <FieldString :holder="holder" fieldName="ansible_password" show-password :prop="prop" anti-freeze></FieldString>
+    <FieldBool :holder="holder" fieldName="ansible_become" :prop="prop" anti-freeze></FieldBool>
     <template v-if="holder.ansible_become">
-      <FieldString :holder="holder" fieldName="ansible_become_user" :prop="prop"></FieldString>
-      <FieldString :holder="holder" fieldName="ansible_become_password" :prop="prop"></FieldString>
+      <FieldString :holder="holder" fieldName="ansible_become_user" :prop="prop" anti-freeze></FieldString>
+      <FieldString :holder="holder" fieldName="ansible_become_password" :prop="prop" anti-freeze></FieldString>
     </template>
     <slot></slot>
     <SshAddPrivateKey ref="addPrivateKey" ownerType="mirror" :ownerName="mirrorName"></SshAddPrivateKey>

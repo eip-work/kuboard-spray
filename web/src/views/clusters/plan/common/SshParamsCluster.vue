@@ -11,16 +11,16 @@ zh:
   <ConfigSection v-model:enabled="enableSsh" label="SSH" :description="description" disabled>
     <FieldString disabled :holder="holder" fieldName="ansible_host" :prop="isNode ? `all.hosts.${nodeName}` : ''"
       :placeholder="$t('ansible_host_placeholder')"></FieldString>
-    <FieldString :holder="holder" fieldName="ansible_port"></FieldString>
-    <FieldString :holder="holder" fieldName="ansible_user"></FieldString>
-    <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList">
+    <FieldString :holder="holder" fieldName="ansible_port" anti-freeze></FieldString>
+    <FieldString :holder="holder" fieldName="ansible_user" anti-freeze></FieldString>
+    <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList" anti-freeze>
       <el-button type="primary" plain style="margin-left: 10px;" icon="el-icon-plus" @click="$refs.addPrivateKey.show()">{{$t('addSshKey')}}</el-button>
     </FieldSelect>
-    <FieldString :holder="holder" fieldName="ansible_password" show-password></FieldString>
-    <FieldBool :holder="holder" fieldName="ansible_become"></FieldBool>
+    <FieldString :holder="holder" fieldName="ansible_password" anti-freeze show-password></FieldString>
+    <FieldBool :holder="holder" fieldName="ansible_become" anti-freeze></FieldBool>
     <template v-if="holder.ansible_become">
-      <FieldString :holder="holder" fieldName="ansible_become_user"></FieldString>
-      <FieldString :holder="holder" fieldName="ansible_become_password"></FieldString>
+      <FieldString :holder="holder" fieldName="ansible_become_user" anti-freeze></FieldString>
+      <FieldString :holder="holder" fieldName="ansible_become_password" anti-freeze></FieldString>
     </template>
     <slot></slot>
     <SshAddPrivateKey ref="addPrivateKey" ownerType="cluster" :ownerName="cluster.name"></SshAddPrivateKey>

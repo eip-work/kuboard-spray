@@ -8,11 +8,11 @@ zh:
 <template>
   <div>
     <ConfigSection v-model:enabled="enabledEtcd" :description="$t('ETCD')" label="ETCD" disabled>
-      <!-- <FieldSelect :holder="cluster.inventory.all.children.target.children.etcd.vars" prop="all.children.target.children.etcd.vars" required
-        fieldName="etcd_deployment_type" :loadOptions="loadEtcdType"></FieldSelect> -->
-      <el-form-item :label="$t('field.etcd_deployment_type')">
+      <FieldSelect :holder="cluster.inventory.all.children.target.children.etcd.vars" prop="all.children.target.children.etcd.vars" required
+        fieldName="etcd_deployment_type" :loadOptions="loadEtcdDeploymentOptions"></FieldSelect>
+      <!-- <el-form-item :label="$t('field.etcd_deployment_type')">
         <span class="app_text_mono">{{etcd_deployment_type}}</span>
-      </el-form-item>
+      </el-form-item> -->
       <FieldString :holder="cluster.inventory.all.children.target.children.etcd.vars" prop="all.children.target.children.etcd.vars"
         fieldName="etcd_data_dir"></FieldString>
     </ConfigSection>
@@ -50,12 +50,6 @@ export default {
   mounted () {
   },
   methods: {
-    async loadEtcdType () {
-      return [
-        { label: '以二进制形式部署', value: 'host' }, 
-        { label: '以 Docker 形式部署', value: 'docker' }
-      ]
-    },
     async loadEtcdDeploymentOptions () {
       return [
         {
@@ -65,7 +59,7 @@ export default {
         {
           label: this.$t('field.etcd_deployment_type-docker'),
           value: 'docker',
-          disabled: this.form.container_manager !== 'docker',
+          disabled: this.cluster.inventory.all.children.target.children.k8s_cluster.vars.container_manager !== 'docker',
         }
       ]
     },

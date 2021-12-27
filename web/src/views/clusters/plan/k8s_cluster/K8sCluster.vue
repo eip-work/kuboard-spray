@@ -15,9 +15,12 @@ zh:
       <el-form-item label="kube_version">
         <span class="app_text_mono">{{cluster.resourcePackage.kubernetes.kube_version}}</span>
       </el-form-item>
-      <el-form-item :label="$t('container_manager')">
-        <span class="app_text_mono">{{ container_manager }}</span>
-      </el-form-item>
+      <FieldSelect :holder="cluster.inventory.all.children.target.children.k8s_cluster.vars" fieldName="container_manager"
+        prop="all.children.target.children.k8s_cluster.vars" required :loadOptions="loadContainerEngines">
+        <template #display_value>
+          {{ container_manager }}
+        </template>
+      </FieldSelect>
     </template>
     <FieldString :holder="cluster.inventory.all.children.target.children.k8s_cluster.vars" fieldName="cluster_name"></FieldString>
     <FieldString :holder="cluster.inventory.all.children.target.children.k8s_cluster.vars" fieldName="event_ttl_duration"></FieldString>
@@ -59,18 +62,14 @@ export default {
   methods: {
     async loadContainerEngines () {
       let result = []
-      await this.kuboardSprayApi.get(`/resources/${this.form.kuboardspray_resource_package}`).then(resp => {
-        let engines = resp.data.data.package.container_engine
-        for (let i in engines) {
-          let engine = engines[i]
-          result.push({
-            label: engine.container_manager + (engine.version ? '_' + engine.version : ''),
-            value: engine.container_manager,
-          })
-        }
-      }).catch(e => {
-        console.log(e)
-      })
+      let engines = this.cluster.resourcePackage.container_engine
+      for (let i in engines) {
+        let engine = engines[i]
+        result.push({
+          label: engine.container_manager + (engine.version ? '_' + engine.version : ''),
+          value: engine.container_manager,
+        })
+      }
       return result
     },
   }

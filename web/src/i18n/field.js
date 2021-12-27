@@ -94,6 +94,17 @@ const field = {
     apt_mirror_enable_limit_rate: '限制同步速度',
     apt_mirror_limit_rate: '下载速度',
     apt_mirror_nthreads: '下载线程数',
+
+    // Addons
+    netchecker_port: '节点端口',
+    netchecker_port_placeholder: '默认值 31081，网络检查应用所使用的节点端口',
+    agent_report_interval: '检查间隔',
+    agent_report_interval_placeholder: '默认值 15s，Agent 发起网络连通性测试的间隔时间',
+    netcheck_namespace: '目标名称空间',
+    netcheck_namespace_placeholder: '默认值 default，将网络检查组件部署到该名称空间',
+
+    metrics_server_metric_resolution: '采样间隔',
+    metrics_server_metric_resolution_placeholder: '默认值 15s，metrics_server 的采样间隔时间',
   }
 }
 

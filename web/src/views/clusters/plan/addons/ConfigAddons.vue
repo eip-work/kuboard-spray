@@ -1,12 +1,14 @@
 
 <template>
   <div>
-    <AddonMetricsServer :cluster="cluster"></AddonMetricsServer>
+    <NetChecker :cluster="cluster"></NetChecker>
+    <MetricsServer :cluster="cluster"></MetricsServer>
   </div>
 </template>
 
 <script>
-import AddonMetricsServer from './AddonMetricsServer.vue'
+import MetricsServer from './MetricsServer.vue'
+import NetChecker from './NetChecker.vue'
 
 export default {
   props: {
@@ -19,7 +21,7 @@ export default {
   },
   computed: {
   },
-  components: { AddonMetricsServer },
+  components: { MetricsServer, NetChecker },
   mounted () {
   },
   methods: {

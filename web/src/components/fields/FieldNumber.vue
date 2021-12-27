@@ -4,11 +4,11 @@
       {{ $t('field.' + fieldName) }}
     </template>
     <el-input v-if="editMode !== 'view'" v-model.number="obj[fieldName]" :placeholder="compute_placeholder">
-      <template #append><slot name="append"></slot></template>
+      <template #append v-if="$slots.append"><slot name="append"></slot></template>
     </el-input>
     <div v-else class="app_text_mono">
       <span v-if="obj[fieldName]">{{ obj[fieldName] }}</span>
-      <span v-else>{{ compute_placeholder }}</span>
+      <span v-else class="field_placeholder">{{ compute_placeholder }}</span>
     </div>
     <slot></slot>
   </el-form-item>
@@ -82,5 +82,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+.field_placeholder {
+  color: $--color-text-placeholder;
+  font-size: 12px;
+}
 </style>

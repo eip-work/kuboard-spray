@@ -13,6 +13,9 @@ const messages = {
     isRequiredField: 'is required.',
     field: field.en,
     pkg: pkg.en,
+    unit: {
+      second: '秒',
+    },
     obj: {
       cluster: 'Kubernetes Cluster',
       resource: 'Resource Package',
@@ -50,6 +53,9 @@ const messages = {
     isRequiredField: '为必填字段',
     field: field.zh,
     pkg: pkg.zh,
+    unit: {
+      second: '秒',
+    },
     obj: {
       cluster: 'Kubernetes 集群',
       resource: '资源包',

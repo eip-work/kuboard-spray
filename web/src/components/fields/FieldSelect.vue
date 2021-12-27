@@ -13,7 +13,7 @@ zh:
       {{ label || $t('field.' + fieldName) }}
     </template>
     <div style="display: flex;" v-if="editMode !== 'view'">
-      <el-select v-model.trim="obj[fieldName]" style="flex-grow: 1;" clearable :disabled="disabled"
+      <el-select v-model.trim="obj[fieldName]" style="flex-grow: 1;" :clearable="clearable" :disabled="disabled"
         :placeholder="compute_placeholder" @visible-change="load($event)">
         <el-option v-for="(item, index) in options" :key="'i' + index" :value="item.value" :label="item.label" :disabled="item.disabled">
           {{item.label}}
@@ -22,7 +22,7 @@ zh:
       <slot></slot>
     </div>
     <div v-else class="app_text_mono">
-      <span v-if="value">{{ value }}</span>
+      <slot name="display_value" v-if="value">{{ compute_display_value }}</slot>
       <span v-else class="field_placeholder">{{ compute_placeholder }}</span>
     </div>
   </el-form-item>
@@ -41,6 +41,7 @@ export default {
     disabled: { type: Boolean, required: false, default: false },
     placeholder: { type: String, required: false, default: undefined },
     label: { type: String, required: false, default: undefined },
+    clearable: { type: Boolean, required: false, default: false },
   },
   data () {
     return {
@@ -55,6 +56,14 @@ export default {
       },
       set (v) {
         console.log(v)
+      }
+    },
+    compute_display_value () {
+      let temp = this.$t('field.' + this.fieldName + '-' + this.value)
+      if (temp === 'field.' + this.fieldName + '-' + this.value) {
+        return this.value
+      } else {
+        return temp
       }
     },
     compute_placeholder () {

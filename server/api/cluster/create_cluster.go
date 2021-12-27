@@ -101,7 +101,7 @@ func getInventoryTemplate() string {
             # addons.yaml
             helm_enabled: false
             registry_enabled: false
-            metrics_server_enabled: false
+            metrics_server_enabled: true
             local_path_provisioner_enabled: false
             local_volume_provisioner_enabled: false
             cephfs_provisioner_enabled: false
@@ -281,17 +281,11 @@ func getInventoryTemplate() string {
             auto_renew_certificates: false
             # First Monday of each month
             # auto_renew_certificates_systemd_calendar: "Mon *-*-1,2,3,4,5,6,7 03:{{ groups['kube_control_plane'].index(inventory_hostname) }}0:00"
-      vars: {}
-  vars:
-
-    bin_dir: /usr/local/bin
-    loadbalancer_apiserver_port: 6443
-    loadbalancer_apiserver_healthcheck_port: 8081
-
-    # FIXME
-    ## local_release_dir: /spray/releases
-    ## download_cache_dir: /spray/kubespray_cache
-
+      vars:
+        bin_dir: /usr/local/bin
+        loadbalancer_apiserver_port: 6443
+        loadbalancer_apiserver_healthcheck_port: 8081
+  vars: {}
 
 `
 	return template

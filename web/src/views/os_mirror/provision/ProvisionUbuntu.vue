@@ -208,7 +208,6 @@ export default {
       if (architecture_not_empty.length === 0) {
         architecture_not_empty = ['amd64']
       }
-      console.log(this.os_mirror.status.type)
 
       // FIXME 需要确保 gpg 文件被正确下载
       for (let r of releases_not_empty) {

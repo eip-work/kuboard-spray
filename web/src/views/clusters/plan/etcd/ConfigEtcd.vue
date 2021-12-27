@@ -55,7 +55,20 @@ export default {
         { label: '以二进制形式部署', value: 'host' }, 
         { label: '以 Docker 形式部署', value: 'docker' }
       ]
-    }
+    },
+    async loadEtcdDeploymentOptions () {
+      return [
+        {
+          label: this.$t('field.etcd_deployment_type-host'),
+          value: 'host'
+        },
+        {
+          label: this.$t('field.etcd_deployment_type-docker'),
+          value: 'docker',
+          disabled: this.form.container_manager !== 'docker',
+        }
+      ]
+    },
   }
 }
 </script>

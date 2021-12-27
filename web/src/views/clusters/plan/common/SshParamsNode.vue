@@ -14,7 +14,7 @@ zh:
       :placeholder="$t('ansible_host_placeholder')" :required="isNode"></FieldString>
     <FieldString :holder="holder" fieldName="ansible_port" :prop="`all.hosts.${nodeName}`"
       :placeholder="placeholder('ansible_port')" 
-      :required="!cluster.inventory.all.children.target.children.k8s_cluster.vars.ansible_port"></FieldString>
+      :required="!cluster.inventory.all.children.target.vars.ansible_port"></FieldString>
     <FieldString :holder="holder" fieldName="ansible_user" :placeholder="placeholder('ansible_user')"></FieldString>
     <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList"
       :placeholder="placeholder('ansible_ssh_private_key_file')">
@@ -69,7 +69,7 @@ export default {
         if (this.holder.ansible_become !== undefined) {
           return this.holder.ansible_become
         }
-        return this.cluster.inventory.all.children.target.children.k8s_cluster.vars.ansible_become 
+        return this.cluster.inventory.all.children.target.vars.ansible_become 
       },
       set (v) {
         this.holderRef.ansible_become = v
@@ -81,7 +81,7 @@ export default {
   },
   methods: {
     placeholder(fieldName) {
-      let default_value = this.cluster.inventory.all.children.target.children.k8s_cluster.vars[fieldName]
+      let default_value = this.cluster.inventory.all.children.target.vars[fieldName]
       if (fieldName.indexOf('password') > 0 && default_value) {
         default_value = '******'
       }

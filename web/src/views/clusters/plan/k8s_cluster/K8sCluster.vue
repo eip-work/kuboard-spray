@@ -57,6 +57,22 @@ export default {
   mounted () {
   },
   methods: {
+    async loadContainerEngines () {
+      let result = []
+      await this.kuboardSprayApi.get(`/resources/${this.form.kuboardspray_resource_package}`).then(resp => {
+        let engines = resp.data.data.package.container_engine
+        for (let i in engines) {
+          let engine = engines[i]
+          result.push({
+            label: engine.container_manager + (engine.version ? '_' + engine.version : ''),
+            value: engine.container_manager,
+          })
+        }
+      }).catch(e => {
+        console.log(e)
+      })
+      return result
+    },
   }
 }
 </script>

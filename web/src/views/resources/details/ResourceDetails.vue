@@ -51,7 +51,11 @@ zh:
         </template>
         <div class="package_info">
           <PackageContentField :holder="resourcePackage.etcd" fieldName="etcd_version"></PackageContentField>
-          <PackageContentField :holder="resourcePackage.etcd" fieldName="etcd_deployment_type"></PackageContentField>
+          <el-form-item :label="$t('field.etcd_deployment_type')">
+            <div v-for="(item, key) in resourcePackage.etcd.etcd_deployment_type" :key="'k' + key">
+              <el-tag>{{$t('field.etcd_deployment_type-' +item)}}</el-tag>
+            </div>
+          </el-form-item>
         </div>
       </el-collapse-item>
       <el-collapse-item name="4">
@@ -61,7 +65,7 @@ zh:
         <div class="package_info">
           <template v-for="(item, index) in resourcePackage.cni" :key="index + 'cni'">
             <el-form-item :label="item.target">
-              <div class="app_text_mono">
+              <div class="app_text_mono" style="font-size: 13px">
                 {{item.version}}
               </div>
             </el-form-item>
@@ -75,7 +79,7 @@ zh:
         <div class="package_info">
           <template v-for="(item, index) in resourcePackage.dependency" :key="index + 'dependency'">
             <el-form-item :label="item.target">
-              <div class="app_text_mono">
+              <div class="app_text_mono" style="font-size: 13px">
                 {{item.version}}
               </div>
             </el-form-item>
@@ -99,7 +103,7 @@ zh:
             </el-form-item>
             <div class="package_info">
               <template v-for="(value, key) in item.params" :key="key + 'addons' + index">
-                <el-form-item :label="key" label-width="240px" v-if="value.indexOf('{{') < 0">
+                <el-form-item :label="key" label-width="280px" v-if="value.indexOf('{{') < 0">
                   <template #label>
                     <div style="font-size: 12px">{{key}}</div>
                   </template>

@@ -25,14 +25,14 @@ zh:
         node_owner_type="cluster"
         :node_owner="cluster.name"
         :node_name="nodeName"
-        :ansible_host="inventory.all.hosts[nodeName].ansible_host || inventory.all.children.target.children.k8s_cluster.vars.ansible_host"
-        :ansible_port="inventory.all.hosts[nodeName].ansible_port || inventory.all.children.target.children.k8s_cluster.vars.ansible_port"
-        :ansible_user="inventory.all.hosts[nodeName].ansible_user || inventory.all.children.target.children.k8s_cluster.vars.ansible_user"
-        :ansible_password="inventory.all.hosts[nodeName].ansible_password || inventory.all.children.target.children.k8s_cluster.vars.ansible_password"
-        :ansible_ssh_private_key_file="inventory.all.hosts[nodeName].ansible_ssh_private_key_file || inventory.all.children.target.children.k8s_cluster.vars.ansible_ssh_private_key_file"
-        :ansible_become="inventory.all.hosts[nodeName].ansible_become || inventory.all.children.target.children.k8s_cluster.vars.ansible_become"
-        :ansible_become_user="inventory.all.hosts[nodeName].ansible_become_user || inventory.all.children.target.children.k8s_cluster.vars.ansible_become_user"
-        :ansible_become_password="inventory.all.hosts[nodeName].ansible_become_password || inventory.all.children.target.children.k8s_cluster.vars.ansible_host"
+        :ansible_host="inventory.all.hosts[nodeName].ansible_host || inventory.all.children.target.vars.ansible_host"
+        :ansible_port="inventory.all.hosts[nodeName].ansible_port || inventory.all.children.target.vars.ansible_port"
+        :ansible_user="inventory.all.hosts[nodeName].ansible_user || inventory.all.children.target.vars.ansible_user"
+        :ansible_password="inventory.all.hosts[nodeName].ansible_password || inventory.all.children.target.vars.ansible_password"
+        :ansible_ssh_private_key_file="inventory.all.hosts[nodeName].ansible_ssh_private_key_file || inventory.all.children.target.vars.ansible_ssh_private_key_file"
+        :ansible_become="inventory.all.hosts[nodeName].ansible_become || inventory.all.children.target.vars.ansible_become"
+        :ansible_become_user="inventory.all.hosts[nodeName].ansible_become_user || inventory.all.children.target.vars.ansible_become_user"
+        :ansible_become_password="inventory.all.hosts[nodeName].ansible_become_password || inventory.all.children.target.vars.ansible_host"
       ></NodeFact>
     </SshParamsNode>
     <ConfigSection v-model:enabled="enabledRoles" :label="$t('roles')" :description="$t('roleDescription', {nodeName: nodeName})" disabled>
@@ -52,9 +52,9 @@ zh:
 </template>
 
 <script>
-import SshParamsNode from './common/SshParamsNode.vue'
-import NodeRoleTag from './common/NodeRoleTag.vue'
-import NodeFact from '../../fact/NodeFact.vue'
+import SshParamsNode from '../common/SshParamsNode.vue'
+import NodeRoleTag from '../common/NodeRoleTag.vue'
+import NodeFact from '../../../fact/NodeFact.vue'
 
 export default {
   props: {

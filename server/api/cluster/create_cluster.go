@@ -13,11 +13,8 @@ import (
 )
 
 type CreateClusterReq struct {
-	Name               string `json:"name" binding:"required"`
-	ResourcePackage    string `json:"resource_package" binding:"required"`
-	ContainerManager   string `json:"container_manager" bingding:"required"`
-	KubeNetworkPlugin  string `json:"kube_network_plugin" binding:"required"`
-	EtcdDeploymentType string `json:"etcd_deployment_type" binding:"required"`
+	Name            string `json:"name" binding:"required"`
+	ResourcePackage string `json:"resource_package" binding:"required"`
 }
 
 func CreateCluster(c *gin.Context) {
@@ -55,9 +52,6 @@ func CreateCluster(c *gin.Context) {
 
 	template := getInventoryTemplate()
 	template = strings.ReplaceAll(template, "KUBOARDSPRAY_RESOURCE_PACKAGE", req.ResourcePackage)
-	template = strings.ReplaceAll(template, "CONTAINER_MANAGER", req.ContainerManager)
-	template = strings.ReplaceAll(template, "KUBE_NETWORK_PLUGIN", req.KubeNetworkPlugin)
-	template = strings.ReplaceAll(template, "ETCD_DEPLOYMENT_TYPE", req.EtcdDeploymentType)
 
 	_, err = inventoryFile.WriteString(template)
 
@@ -92,7 +86,7 @@ func getInventoryTemplate() string {
         etcd:
           hosts: {}
           vars:
-            etcd_deployment_type: ETCD_DEPLOYMENT_TYPE
+            etcd_deployment_type: host
             etcd_data_dir: /var/lib/etcd
             etcd_kubeadm_enabled: false
         k8s_cluster:
@@ -117,7 +111,7 @@ func getInventoryTemplate() string {
             ingress_alb_enabled: false
             cert_manager_enabled: false
             metallb_enabled: false
-            metallb_speaker_enabled: true
+            metallb_speaker_enabled: false
             argocd_enabled: false
             krew_enabled: false
             krew_root_dir: "/usr/local/krew"
@@ -148,7 +142,7 @@ func getInventoryTemplate() string {
 
             # Choose network plugin (cilium, calico, weave or flannel. Use cni for generic cni plugin)
             # Can also be set to 'cloud', which lets the cloud provider setup appropriate routing
-            kube_network_plugin: KUBE_NETWORK_PLUGIN
+            kube_network_plugin: calico
 
             # Setting multi_networking to true will install Multus: https://github.com/intel/multus-cni
             kube_network_plugin_multus: false
@@ -245,7 +239,7 @@ func getInventoryTemplate() string {
             ## Container runtime
             ## docker for docker, crio for cri-o and containerd for containerd.
             ## Default: containerd
-            container_manager: CONTAINER_MANAGER
+            container_manager: containerd
 
             # Additional container runtimes
             kata_containers_enabled: false
@@ -287,7 +281,7 @@ func getInventoryTemplate() string {
             auto_renew_certificates: false
             # First Monday of each month
             # auto_renew_certificates_systemd_calendar: "Mon *-*-1,2,3,4,5,6,7 03:{{ groups['kube_control_plane'].index(inventory_hostname) }}0:00"
-
+      vars: {}
   vars:
 
     bin_dir: /usr/local/bin

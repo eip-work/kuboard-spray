@@ -10,9 +10,9 @@ zh:
 
 <template>
   <ConfigSection v-model:enabled="enabled" :label="$t('label')" disabled>
-    <el-form-item :label="$t('field.kube_network_plugin')">
-      <span class="app_text_mono">{{ kube_network_plugin }}</span>
-    </el-form-item>
+    <FieldSelect :holder="cluster.inventory.all.children.target.children.k8s_cluster.vars" fieldName="kube_network_plugin"
+      prop="all.children.target.children.k8s_cluster.vars"
+      required :loadOptions="loadKubeNetworkPlugin"></FieldSelect>
   </ConfigSection>
 </template>
 
@@ -50,6 +50,22 @@ export default {
   mounted () {
   },
   methods: {
+    async loadKubeNetworkPlugin () {
+      let result = []
+      await this.kuboardSprayApi.get(`/resources/${this.cluster.inventory.all.hosts.localhost.kuboardspray_resource_package}`).then(resp => {
+        let cnies = resp.data.data.package.cni
+        for (let i in cnies) {
+          let cni = cnies[i]
+          result.push({
+            label: cni.name + (cni.version ? '_' + cni.version : ''),
+            value: cni.name,
+          })
+        }
+      }).catch(e => {
+        console.log(e)
+      })
+      return result
+    },
   }
 }
 </script>

@@ -2,6 +2,7 @@
 en:
   singleNode: Specific Node
   global_config: Global Config
+  addons: Addons
   enabledBation: Enabled
   disabledBation: Disabled
   selectANode: Please select a node from the diagram to the left.
@@ -9,6 +10,7 @@ en:
 zh:
   singleNode: 单个节点
   global_config: 全局设置
+  addons: 可选组件
   enabledBation: 使用堡垒机
   disabledBation: 不使用堡垒机
   selectANode: 请从左侧图中选择一个节点
@@ -22,7 +24,7 @@ zh:
         <div style="padding: 5px; font-weight: bolder; font-size: 14px;">Kuboard Spray</div>
         <div>
           <Node class="localhost" name="localhost" :inventory="inventory" style="width: 100px;" hideDeleteButton
-            :active="currentPropertiesTab === 'localhost' || currentPropertiesTab === 'global_config'" @click="currentPropertiesTab = 'localhost'">
+            :active="currentPropertiesTab === 'localhost'" @click="currentPropertiesTab = 'localhost'">
           </Node>
         </div>
         <div>
@@ -49,7 +51,7 @@ zh:
           <div class="masters">
             <Node v-for="(item, index) in inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts" :key="'control_plane' + index"
               @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)"
-              :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"
+              :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'addons' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"
               :name="index" :inventory="inventory"></Node>
             <template v-for="(item, index) in inventory.all.children.target.children.etcd.hosts" :key="'etcd' + index">
               <Node v-if="isEtcdAndNotControlPlane(index)" :name="index" :inventory="inventory"
@@ -61,7 +63,7 @@ zh:
             <template v-for="(item, index) in inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts" :key="'node' + index">
               <Node v-if="isNode(index)" :name="index" :inventory="inventory"
                 @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)"
-                :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"></Node>
+                :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'addons' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"></Node>
             </template>
           </div>
         </el-scrollbar>
@@ -80,19 +82,19 @@ zh:
               </div>
             </el-scrollbar>
           </el-tab-pane>
-          <!-- <el-tab-pane name="global_config">
+          <el-tab-pane name="global_config">
             <template #label>
               {{ $t('global_config') }}
             </template>
             <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
-                {{ currentPropertiesTab }}
+                <ConfigGlobal :cluster="cluster"></ConfigGlobal>
               </div>
             </el-scrollbar>
-          </el-tab-pane> -->
+          </el-tab-pane>
           <el-tab-pane name="k8s_cluster">
             <template #label>
-              {{ $t('node.k8s_cluster') }}
+              Kubernetes
             </template>
             <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
@@ -100,19 +102,9 @@ zh:
               </div>
             </el-scrollbar>
           </el-tab-pane>
-          <!-- <el-tab-pane name="kube_control_plane">
-            <template #label>
-              {{ $t('node.kube_control_plane') }}
-            </template>
-            <el-scrollbar max-height="calc(100vh - 276px)">
-              <div class="tab_content">
-                {{ currentPropertiesTab }}
-              </div>
-            </el-scrollbar>
-          </el-tab-pane> -->
           <el-tab-pane name="etcd">
             <template #label>
-              {{ $t('node.etcd') }}
+              ETCD
             </template>
             <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
@@ -120,16 +112,16 @@ zh:
               </div>
             </el-scrollbar>
           </el-tab-pane>
-          <!-- <el-tab-pane name="kube_node">
+          <el-tab-pane name="addons">
             <template #label>
-              {{ $t('node.kube_node') }}
+              {{ $t('addons') }}
             </template>
             <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
-                {{ currentPropertiesTab }}
+                <ConfigAddons :cluster="cluster"></ConfigAddons>
               </div>
             </el-scrollbar>
-          </el-tab-pane> -->
+          </el-tab-pane>
           <el-tab-pane :name="currentPropertiesTab" v-if="currentPropertiesTab.indexOf('NODE_') === 0 && cluster.inventory.all.hosts[currentPropertiesTab.slice(5)]">
             <template #label>
               <div style="width: 100px; text-align: center;">{{ currentPropertiesTab.slice(5) }}</div>
@@ -160,10 +152,12 @@ zh:
 <script>
 import { computed } from 'vue'
 import Node from './Node.vue'
-import ConfigKuboardSpray from './ConfigKuboardSpray.vue'
-import ConfigK8sCluster from './ConfigK8sCluster.vue'
-import ConfigNode from './ConfigNode.vue'
-import ConfigEtcd from './ConfigEtcd.vue'
+import ConfigKuboardSpray from './kuboard_spray/ConfigKuboardSpray.vue'
+import ConfigK8sCluster from './k8s_cluster/ConfigK8sCluster.vue'
+import ConfigGlobal from './global/ConfigGlobal.vue'
+import ConfigAddons from './addons/ConfigAddons.vue'
+import ConfigNode from './node/ConfigNode.vue'
+import ConfigEtcd from './etcd/ConfigEtcd.vue'
 import AddNode from './common/AddNode.vue'
 
 export default {
@@ -195,7 +189,7 @@ export default {
       return this.cluster.inventory.all.children.target.children.bastion !== undefined
     },
   },
-  components: { Node, ConfigKuboardSpray, ConfigK8sCluster, ConfigNode, ConfigEtcd, AddNode },
+  components: { Node, ConfigKuboardSpray, ConfigK8sCluster, ConfigGlobal, ConfigAddons, ConfigNode, ConfigEtcd, AddNode },
   mounted () {
   },
   watch: {

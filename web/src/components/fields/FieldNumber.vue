@@ -45,7 +45,6 @@ export default {
         return this.placeholder
       }
       let temp = this.$t('field.' + this.fieldName + '_placeholder')
-      console.log(temp, temp == ('field.' + this.fieldName + '_placeholder'))
       if (temp == ('field.' + this.fieldName + '_placeholder')) {
         return this.$t('please') + this.$t('field.' + this.fieldName)
       } else {

@@ -39,7 +39,7 @@ zh:
           <el-form-item label="container_manager">
             <div v-for="(engine, index) in resourcePackage.container_engine" :key="'ce' + index">
               <el-tag>
-                <span class="app_text_mono">{{engine.container_manager}}{{engine.version ? '_' : ''}}{{engine.version}}</span>
+                <span class="app_text_mono">{{engine.container_manager}}_{{engine.params.containerd_version || engine.params.docker_version}}</span>
               </el-tag>
             </div>
           </el-form-item>

@@ -10,13 +10,11 @@
       </el-radio-group>
     </template>
     <template #view>
-      <el-radio-group v-model="value" :disabled="disabled">
-        <template v-for="(option, index) in options" :key="index">
-          <el-radio-button v-if="value === option" :label="option">
-            {{ optionDesc(option) }}
-          </el-radio-button>
-        </template>
-      </el-radio-group>
+      <template v-for="(option, index) in options" :key="index">
+        <el-button v-if="value === option" :label="option" type="primary" disabled>
+          {{ optionDesc(option) }}
+        </el-button>
+      </template>
     </template>
   </FieldCommon>
 </template>

@@ -66,6 +66,12 @@ const field = {
     ansible_become_password_placeholder: '切换密码',
 
     container_manager: '容器引擎',
+    containerd_insecure_registries: 'HTTP 镜像仓库 insecure registries',
+    containerd_use_systemd_cgroup: 'systemd_cgroup',
+
+    docker_orphan_clean_up: '清理孤儿容器',
+    docker_insecure_registries: 'HTTP 镜像仓库 insecure registries',
+    docker_registry_mirrors: '镜像仓库 mirror',
 
     docker_ubuntu_repo_base_url: 'docker-ce 软件源（ubuntu）',
     docker_ubuntu_repo_base_url_placeholder: '从这里获取 docker 引擎的安装包',
@@ -112,6 +118,24 @@ const field = {
 
     metrics_server_metric_resolution: '采样间隔',
     metrics_server_metric_resolution_placeholder: '默认值 15s，metrics_server 的采样间隔时间',
+
+    // k8s-cluster.yml
+    kube_api_anonymous_auth: '允许匿名用户',
+    kube_log_level: 'kubelet 日志级别',
+    kube_log_level_placeholder: '默认值 2，kubelet 日志级别',
+    'kube_log_level-0': 'INFO',
+    'kube_log_level-1': 'WARNING',
+    'kube_log_level-2': 'ERROR',
+    'kube_log_level-3': 'FATAL',
+
+    kube_service_addresses: '服务子网',
+    kube_service_addresses_placeholder: '默认值 0.233.0.0/18，服务子网',
+    kube_pods_subnet: '容器组子网',
+    kube_pods_subnet_placeholder: '默认值 10.233.64.0/18，容器组子网',
+    kube_network_node_prefix: '节点子网掩码',
+    kube_network_node_prefix_placeholder: '默认值 24，节点子网掩码位数',
+    kubelet_max_pods: '节点容器组数',
+    kubelet_max_pods_placeholder: '默认值 110，节点最大容器组数',
   }
 }
 

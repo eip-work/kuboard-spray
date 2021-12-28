@@ -34,7 +34,7 @@ zh:
       </template>
     </template>
     <div>
-      <div :class="expandedRef ? 'config_section_header expanded' : 'config_section_header'" @click="expandedRef = !expandedRef">
+      <div :class="expandedRef ? 'config_section_header expanded noselect' : 'config_section_header noselect'" @click="expandedRef = !expandedRef">
         <el-icon style="vertical-align: middle;" v-if="expandedRef"><arrow-down-bold /></el-icon>
         <el-icon style="vertical-align: middle;" v-else><arrow-up-bold /></el-icon>
         <span style="margin-left: 5px">
@@ -42,8 +42,13 @@ zh:
         </span>
       </div>
       <el-collapse-transition>
-        <div v-if="expandedRef" class="config_section_content">
-          <slot></slot>
+        <div v-if="expandedRef">
+          <div v-if="$slots.more" class="config_section_more">
+            <slot name="more"></slot>
+          </div>
+          <div class="config_section_content">
+            <slot></slot>
+          </div>
         </div>
       </el-collapse-transition>
     </div>
@@ -151,5 +156,13 @@ export default {
 }
 .viewLabel {
   font-weight: bold;
+}
+.config_section_more {
+  font-size: 13px;
+  padding: 2px 15px;
+  border-left: solid 1px $--color-primary-light-9;
+  border-right: solid 1px $--color-primary-light-9;
+  background-color: var(--el-background-color-base);
+  color: var(--el-color-info);
 }
 </style>

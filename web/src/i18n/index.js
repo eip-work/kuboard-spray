@@ -31,6 +31,7 @@ const messages = {
     },
     msg: {
       ok: 'OK',
+      add: 'Add',
       save: 'Save',
       close: 'Close',
       cancel: 'Cancel',
@@ -71,6 +72,7 @@ const messages = {
     },
     msg: {
       ok: '确 定',
+      add: '添 加',
       save: '保 存',
       delete: '删 除',
       close: '关 闭',

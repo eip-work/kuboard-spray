@@ -236,11 +236,6 @@ func getInventoryTemplate() string {
             skydns_server_secondary: "{{ kube_service_addresses|ipaddr('net')|ipaddr(4)|ipaddr('address') }}"
             dns_domain: "{{ cluster_name }}"
 
-            ## Container runtime
-            ## docker for docker, crio for cri-o and containerd for containerd.
-            ## Default: containerd
-            container_manager: containerd
-
             # Additional container runtimes
             kata_containers_enabled: false
 
@@ -285,6 +280,14 @@ func getInventoryTemplate() string {
         bin_dir: /usr/local/bin
         loadbalancer_apiserver_port: 6443
         loadbalancer_apiserver_healthcheck_port: 8081
+        containerd_use_systemd_cgroup: true
+        docker_orphan_clean_up: true
+        ## Container runtime
+        ## docker for docker, crio for cri-o and containerd for containerd.
+        ## Default: containerd
+        container_manager: containerd
+        ubuntu_repo: https://mirrors.aliyun.com/ubuntu/
+        yum_repo: https://repo.huaweicloud.com/centos/
   vars: {}
 
 `

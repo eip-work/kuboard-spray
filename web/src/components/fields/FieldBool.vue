@@ -1,7 +1,7 @@
 <template>
   <FieldCommon :fieldName="fieldName" :holder="holder" :prop="prop" :rules="rules" :required="required" :label="label" :placeholder="placeholder">
     <template #edit>
-      <el-switch v-model.number="obj[fieldName]"></el-switch>
+      <el-switch v-model.number="obj[fieldName]" :disabled="disabled"></el-switch>
     </template>
     <template #view>
       <el-switch v-model.number="obj[fieldName]" disabled></el-switch>
@@ -20,6 +20,7 @@ export default {
     rules: { type: Array, required: false, default: () => ([])},
     placeholder: { type: String, required: false, default: undefined },
     label: { type: String, required: false, default: undefined },
+    disabled: { type: Boolean, required: false, default: false },
   },
   data () {
     return {

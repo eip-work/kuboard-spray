@@ -11,7 +11,7 @@ zh:
 
 <template>
   <ConfigSection v-model:enabled="enabled" :label="$t('label')" :description="$t('obj.addon', {name: this.$t('description')})" anti-freeze>
-    <AddonFunction>{{$t('addon_function')}}</AddonFunction>
+    <template #more>{{$t('addon_function')}}</template>
     <FieldString :holder="vars" fieldName="netcheck_namespace" :prop="prop"></FieldString>
     <FieldNumber :holder="vars" fieldName="netchecker_port" :prop="prop">
     </FieldNumber>
@@ -24,8 +24,6 @@ zh:
 </template>
 
 <script>
-import AddonFunction from './AddonFunction.vue'
-
 export default {
   props: {
     cluster: { type: Object, required: true },
@@ -52,7 +50,7 @@ export default {
       }
     }
   },
-  components: { AddonFunction },
+  components: { },
   mounted () {
   },
   methods: {

@@ -34,6 +34,7 @@ export default {
     label: { type: String, required: false, default: undefined },
     placeholder: { type: String, required: false, default: undefined },
     antiFreeze: { type: Boolean, required: false, default: false },
+    readOnly: { type: Boolean, required: false, default: false },
   },
   data () {
     return {
@@ -50,6 +51,9 @@ export default {
       }
     },
     compute_edit_mode () {
+      if (this.readOnly) {
+        return false
+      }
       if (this.editMode === 'view') {
         return false
       }

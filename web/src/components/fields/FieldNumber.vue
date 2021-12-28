@@ -1,7 +1,7 @@
 <template>
   <FieldCommon :fieldName="fieldName" :holder="holder" :prop="prop" :rules="rules" :required="required" :label="label" :placeholder="placeholder">
     <template #edit>
-      <el-input v-if="editMode !== 'view'" v-model.number="obj[fieldName]" :placeholder="compute_placeholder">
+      <el-input v-model.number="obj[fieldName]" :placeholder="compute_placeholder">
         <template #append v-if="$slots.append"><slot name="append"></slot></template>
       </el-input>
     </template>

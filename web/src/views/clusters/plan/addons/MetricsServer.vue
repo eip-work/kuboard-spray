@@ -11,14 +11,14 @@ zh:
 
 <template>
   <ConfigSection v-model:enabled="enabled" :label="$t('label')" :description="$t('obj.addon', {name: this.$t('description')})" anti-freeze>
-    <AddonFunction>{{$t('addon_function')}}</AddonFunction>
+    <template #more>
+      {{$t('addon_function')}}
+    </template>
     <FieldString :holder="vars" :prop="prop" fieldName="metrics_server_metric_resolution" :rules="resolutionRules"></FieldString>
   </ConfigSection>
 </template>
 
 <script>
-import AddonFunction from './AddonFunction.vue'
-
 export default {
   props: {
     cluster: { type: Object, required: true },
@@ -59,7 +59,7 @@ export default {
       }
     }
   },
-  components: { AddonFunction },
+  components: { },
   mounted () {
   },
   methods: {

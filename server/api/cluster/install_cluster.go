@@ -42,7 +42,7 @@ func InstallCluster(c *gin.Context) {
 	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.gcr_image_repo", common.MapGet(resourcePackage, "kubernetes.gcr_image_repo"))
 	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.kube_image_repo", common.MapGet(resourcePackage, "kubernetes.kube_image_repo"))
 
-	container_manager := common.MapGet(inventory, "all.children.target.children.k8s_cluster.vars.container_manager")
+	container_manager := common.MapGet(inventory, "all.children.target.vars.container_manager")
 	containerMangerObjArray := common.MapGet(resourcePackage, "container_engine").([]interface{})
 	var containerManagerObj map[string]interface{}
 	for _, cmo := range containerMangerObjArray {
@@ -51,8 +51,8 @@ func InstallCluster(c *gin.Context) {
 			containerManagerObj = cmObj
 		}
 	}
-	if containerManagerObj["target"] != nil {
-		common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+containerManagerObj["target"].(string), containerManagerObj["version"])
+	for key, value := range containerManagerObj["params"].(map[string]interface{}) {
+		common.MapSet(inventory, "all.children.target.vars."+key, value)
 	}
 
 	common.MapSet(inventory, "all.children.target.children.etcd.vars.etcd_version", common.MapGet(resourcePackage, "etcd.etcd_version"))
@@ -97,9 +97,8 @@ func InstallCluster(c *gin.Context) {
 	common.MapSet(inventory, "all.vars.download_cache_dir", resourcePackagePath+"/kubespray_cache")
 	common.MapSet(inventory, "all.vars.ansible_ssh_common_args", "-o StrictHostKeyChecking=no")
 	common.MapSet(inventory, "all.vars.kuboardspray_cluster_dir", constants.GET_DATA_CLUSTER_DIR()+"/"+req.Cluster)
-	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.disable_service_firewall", true)
-	common.MapSet(inventory, "all.children.target.children.etcd.vars.disable_service_firewall", true)
-	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.ansible_python_interpreter", "auto")
+	common.MapSet(inventory, "all.children.target.vars.disable_service_firewall", true)
+	common.MapSet(inventory, "all.children.target.vars.ansible_python_interpreter", "auto")
 
 	postExec := func(status command.ExecuteExitStatus) (string, error) {
 

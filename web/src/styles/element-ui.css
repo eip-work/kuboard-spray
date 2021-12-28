@@ -24,6 +24,10 @@
   padding: 5px 0; font-weight: 500; font-size: 14px;
 }
 
+.app_alert_mini.el-alert {
+  padding: 0px 8px 3px 8px;
+}
+
 .app_form_mini .el-form-item {
   margin-bottom: 0px !important;
 }

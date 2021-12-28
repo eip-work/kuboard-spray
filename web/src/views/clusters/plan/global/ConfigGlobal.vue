@@ -9,6 +9,7 @@ zh:
 <template>
   <div>
     <SshParamsCluster :cluster="cluster" :holder="cluster.inventory.all.children.target.vars" prop="all.children.target.vars" :description="$t('sshcommon')"></SshParamsCluster>
+    <ContainerManager :cluster="cluster"></ContainerManager>
     <OsMirror :cluster="cluster"></OsMirror>
   </div>
 </template>
@@ -16,6 +17,7 @@ zh:
 <script>
 import SshParamsCluster from '../common/SshParamsCluster.vue'
 import OsMirror from './OsMirror.vue'
+import ContainerManager from './ContainerManager.vue'
 
 export default {
   props: {
@@ -28,7 +30,7 @@ export default {
   },
   computed: {
   },
-  components: { SshParamsCluster, OsMirror },
+  components: { SshParamsCluster, OsMirror, ContainerManager },
   mounted () {
   },
   methods: {

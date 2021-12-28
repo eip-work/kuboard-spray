@@ -2,11 +2,9 @@
 en:
   label: Common
   description: Most frequently referenced params to Kubernetes.
-  container_manager: container_manager
 zh:
-  label: 常用参数
-  description: Kubernetes 集群的常用参数
-  container_manager: 容器引擎
+  label: 通用参数
+  description: Kubernetes 集群的通用参数
 </i18n>
 
 <template>
@@ -15,16 +13,12 @@ zh:
       <el-form-item label="kube_version">
         <span class="app_text_mono">{{cluster.resourcePackage.kubernetes.kube_version}}</span>
       </el-form-item>
-      <FieldSelect :holder="cluster.inventory.all.children.target.children.k8s_cluster.vars" fieldName="container_manager"
-        prop="all.children.target.children.k8s_cluster.vars" required :loadOptions="loadContainerEngines">
-        <template #display_value>
-          {{ container_manager }}
-        </template>
-      </FieldSelect>
     </template>
-    <FieldString :holder="cluster.inventory.all.children.target.children.k8s_cluster.vars" fieldName="cluster_name"></FieldString>
-    <FieldString :holder="cluster.inventory.all.children.target.children.k8s_cluster.vars" fieldName="event_ttl_duration"></FieldString>
-    <!-- <FieldBool :holder="cluster.inventory.all.children.target.children.k8s_cluster.vars" fieldName="auto_renew_certificates"></FieldBool> -->
+    <FieldString :holder="vars" :prop="prop" fieldName="cluster_name" required></FieldString>
+    <FieldString :holder="vars" :prop="prop" fieldName="event_ttl_duration" required></FieldString>
+    <FieldBool :holder="vars" :prop="prop" fieldName="kube_api_anonymous_auth" required></FieldBool>
+    <FieldRadio :holder="vars" :prop="prop" fieldName="kube_log_level" :options="[0, 1, 2, 3]" required></FieldRadio>
+    <!-- <FieldBool :holder="vars" fieldName="auto_renew_certificates"></FieldBool> -->
   </ConfigSection>
 </template>
 
@@ -39,39 +33,22 @@ export default {
     }
   },
   computed: {
+    prop () {
+      return 'all.children.target.children.k8s_cluster.vars'
+    },
+    vars: {
+      get () { return this.cluster.inventory.all.children.target.children.k8s_cluster.vars },
+      set () {}
+    },
     enabled: {
       get () {return true},
       set () {},
     },
-    container_manager () {
-      if (this.cluster.resourcePackage) {
-        let engines = this.cluster.resourcePackage.container_engine
-        for (let i in engines) {
-          let engine = engines[i]
-          if (engine.container_manager === this.cluster.inventory.all.children.target.children.k8s_cluster.vars.container_manager) {
-            return engine.container_manager + (engine.version ? '_' + engine.version : '')
-          }
-        }
-      }
-      return this.cluster.inventory.all.children.target.children.k8s_cluster.vars.container_manager
-    }
   },
   components: { },
   mounted () {
   },
   methods: {
-    async loadContainerEngines () {
-      let result = []
-      let engines = this.cluster.resourcePackage.container_engine
-      for (let i in engines) {
-        let engine = engines[i]
-        result.push({
-          label: engine.container_manager + (engine.version ? '_' + engine.version : ''),
-          value: engine.container_manager,
-        })
-      }
-      return result
-    },
   }
 }
 </script>

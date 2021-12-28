@@ -59,7 +59,7 @@ export default {
         {
           label: this.$t('field.etcd_deployment_type-docker'),
           value: 'docker',
-          disabled: this.cluster.inventory.all.children.target.children.k8s_cluster.vars.container_manager !== 'docker',
+          disabled: this.cluster.inventory.all.children.target.vars.container_manager !== 'docker',
         }
       ]
     },

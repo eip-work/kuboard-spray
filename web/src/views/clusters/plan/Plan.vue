@@ -11,10 +11,10 @@ zh:
   singleNode: 单个节点
   global_config: 全局设置
   addons: 可选组件
-  enabledBation: 使用堡垒机
-  disabledBation: 不使用堡垒机
+  enabledBation: 使用跳板机
+  disabledBation: 不使用跳板机
   selectANode: 请从左侧图中选择一个节点
-  bastionPrompt: 堡垒机参数设置在 KuboardSpray 标签页的最后
+  bastionPrompt: 跳板机参数设置在 KuboardSpray 标签页的最后
 </i18n>
 
 <template>

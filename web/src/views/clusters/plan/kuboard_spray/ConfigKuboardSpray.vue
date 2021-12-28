@@ -15,8 +15,8 @@ zh:
   proxyUsage1: KuboardSpray 可以使用如下代理参数从外网获取资源包中未找到的资源；
   proxyUsage2: 通常资源包中包含所需资源，您无需设置此处的代理参数；
   proxyUsage3: 此处的代理参数只作用于 KuboardSpray 这台机器；
-  bastionUsage: KuboardSpray 可以通过堡垒机访问集群的节点。
-  setSshParam: 未使用堡垒机时，请在 {tabName} 标签页设置 SSH 连接参数。
+  bastionUsage: KuboardSpray 可以通过跳板机或堡垒机访问将要安装 K8S 集群的目标节点。
+  setSshParam: 未使用跳板机或堡垒机时，请在 {tabName} 标签页设置 SSH 连接参数。
 </i18n>
 
 <template>
@@ -41,7 +41,7 @@ zh:
       <FieldString :holder="inventory.all.hosts.localhost" fieldName="https_proxy" prop="all.hosts.localhost" required></FieldString>
       <FieldString :holder="inventory.all.hosts.localhost" fieldName="no_proxy" prop="all.hosts.localhost" required></FieldString>
     </ConfigSection>
-    <ConfigSection v-model:enabled="bastionEnabled" :label="$t('obj.bastion')" anti-freeze>
+    <ConfigSection v-model:enabled="bastionEnabled" :label="$t('obj.bastion')" :description="$t('bastionUsage')" anti-freeze>
       <el-alert class="app_margin_bottom" :closable="false">{{$t('bastionUsage')}}</el-alert>
       <FieldString :holder="inventory.all.hosts.bastion" fieldName="ansible_host" prop="all.hosts.bastion" required></FieldString>
       <FieldString :holder="inventory.all.hosts.bastion" fieldName="ansible_user" prop="all.hosts.bastion" required></FieldString>

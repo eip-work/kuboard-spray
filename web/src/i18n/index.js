@@ -60,7 +60,7 @@ const messages = {
     obj: {
       cluster: 'Kubernetes 集群',
       resource: '资源包',
-      bastion: '堡垒机',
+      bastion: '跳板机',
       localhost: 'KuboardSpray',
       addon: '可选组件：{name}',
     },

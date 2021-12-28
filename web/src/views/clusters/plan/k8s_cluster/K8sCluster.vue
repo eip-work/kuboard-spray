@@ -10,7 +10,7 @@ zh:
 </i18n>
 
 <template>
-  <ConfigSection v-model:enabled="enabled" :label="$t('label')" :description="$t('description')" disabled>
+  <ConfigSection v-model:enabled="enabled" :label="$t('label')" :description="$t('description')" disabled anti-freeze>
     <template v-if="cluster.resourcePackage !== undefined">
       <el-form-item label="kube_version">
         <span class="app_text_mono">{{cluster.resourcePackage.kubernetes.kube_version}}</span>

@@ -35,7 +35,7 @@ zh:
         :ansible_become_password="inventory.all.hosts[nodeName].ansible_become_password || inventory.all.children.target.vars.ansible_host"
       ></NodeFact>
     </SshParamsNode>
-    <ConfigSection v-model:enabled="enabledRoles" :label="$t('roles')" :description="$t('roleDescription', {nodeName: nodeName})" disabled>
+    <ConfigSection v-model:enabled="enabledRoles" :label="$t('roles')" :description="$t('roleDescription', {nodeName: nodeName})" disabled anti-freeze>
       <FieldCommon :label="$t('roles')">
         <template #edit>
           <div class="roles">
@@ -53,7 +53,7 @@ zh:
         </template>
       </FieldCommon>
     </ConfigSection>
-    <ConfigSection v-if="enabledEtcd" v-model:enabled="enabledEtcd" label="ETCD" :description="$t('etcd', {nodeName: nodeName})" disabled>
+    <ConfigSection v-if="enabledEtcd" v-model:enabled="enabledEtcd" label="ETCD" :description="$t('etcd', {nodeName: nodeName})" disabled anti-freeze>
       <FieldString :holder="inventory.all.children.target.children.etcd.hosts[nodeName]" fieldName="etcd_member_name" :rules="etcd_member_name_rules"
         :prop="`all.children.target.children.etcd.hosts.${nodeName}`" required></FieldString>
     </ConfigSection>

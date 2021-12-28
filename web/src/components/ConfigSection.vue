@@ -11,7 +11,7 @@ zh:
 <template>
   <el-form-item label-width="80px" class="config_section_section">
     <template #label>
-      <span v-if="editMode === 'view'" class="viewLabel">{{label}}</span>
+      <span v-if="!compute_edit_mode" class="viewLabel">{{label}}</span>
       <template v-else>
         <el-checkbox v-model="enabledRef" :disabled="disabled"
           ><span class="enableButton">{{label}}</span>
@@ -59,6 +59,7 @@ export default {
     label: { type: String, required: true },
     description: { type: String, required: false, default: undefined },
     disabled: { type: Boolean, required: false, default: false },
+    antiFreeze: { type: Boolean, required: false, default: false },
   },
   data () {
     return {
@@ -68,6 +69,18 @@ export default {
   },
   inject: ['editMode'],
   computed: {
+    compute_edit_mode () {
+      if (this.editMode === 'view') {
+        return false
+      }
+      if (this.antiFreeze) {
+        return true
+      }
+      if (this.editMode === 'frozen') {
+        return false
+      }
+      return true
+    },
     enabledRef: {
       get () {
         return this.enabled

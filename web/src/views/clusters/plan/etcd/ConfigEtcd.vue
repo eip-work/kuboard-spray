@@ -7,7 +7,7 @@ zh:
 
 <template>
   <div>
-    <ConfigSection v-model:enabled="enabledEtcd" :description="$t('ETCD')" label="ETCD" disabled>
+    <ConfigSection v-model:enabled="enabledEtcd" :description="$t('ETCD')" label="ETCD" disabled anti-freeze>
       <FieldSelect :holder="cluster.inventory.all.children.target.children.etcd.vars" prop="all.children.target.children.etcd.vars" required
         fieldName="etcd_deployment_type" :loadOptions="loadEtcdDeploymentOptions"></FieldSelect>
       <!-- <el-form-item :label="$t('field.etcd_deployment_type')">

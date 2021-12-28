@@ -8,7 +8,7 @@ zh:
 
 
 <template>
-  <ConfigSection v-model:enabled="enableSsh" label="SSH" :description="description" disabled>
+  <ConfigSection v-model:enabled="enableSsh" label="SSH" :description="description" disabled anti-freeze>
     <FieldString disabled :holder="holder" fieldName="ansible_host" :prop="isNode ? `all.hosts.${nodeName}` : ''"
       :placeholder="$t('ansible_host_placeholder')"></FieldString>
     <FieldString :holder="holder" fieldName="ansible_port" anti-freeze></FieldString>

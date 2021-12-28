@@ -10,7 +10,7 @@ zh:
 </i18n>
 
 <template>
-  <ConfigSection v-model:enabled="enabled" :label="$t('label')" :description="$t('obj.addon', {name: this.$t('description')})">
+  <ConfigSection v-model:enabled="enabled" :label="$t('label')" :description="$t('obj.addon', {name: this.$t('description')})" anti-freeze>
     <AddonFunction>{{$t('addon_function')}}</AddonFunction>
     <FieldString :holder="vars" :prop="prop" fieldName="metrics_server_metric_resolution" :rules="resolutionRules"></FieldString>
   </ConfigSection>

@@ -21,7 +21,7 @@ zh:
 
 <template>
   <div>
-    <ConfigSection v-model:enabled="useResourcePackage" disabled
+    <ConfigSection v-model:enabled="useResourcePackage" disabled anti-freeze
       :label="$t('obj.resource')"
       :description="$t('obj.resource') + ' ' + (inventory.all.hosts.localhost.kuboardspray_resource_package ? inventory.all.hosts.localhost.kuboardspray_resource_package : '')">
       <FieldSelect :holder="inventory.all.hosts.localhost" fieldName="kuboardspray_resource_package" :loadOptions="loadResourceList" prop="all.hosts.localhost" required :disabled="isInstalled">
@@ -31,7 +31,7 @@ zh:
         <ResourceDetails :resourcePackage="resourcePackage"></ResourceDetails>
       </div>
     </ConfigSection>
-    <ConfigSection v-model:enabled="proxyEnabled" :label="$t('proxy')" :description="$t('proxyDescription')">
+    <ConfigSection v-model:enabled="proxyEnabled" :label="$t('proxy')" :description="$t('proxyDescription')" anti-freeze>
       <el-alert class="app_margin_bottom" :closable="false">
         <li>{{$t('proxyUsage1')}}</li>
         <li>{{$t('proxyUsage2')}}</li>
@@ -41,7 +41,7 @@ zh:
       <FieldString :holder="inventory.all.hosts.localhost" fieldName="https_proxy" prop="all.hosts.localhost" required></FieldString>
       <FieldString :holder="inventory.all.hosts.localhost" fieldName="no_proxy" prop="all.hosts.localhost" required></FieldString>
     </ConfigSection>
-    <ConfigSection v-model:enabled="bastionEnabled" :label="$t('obj.bastion')">
+    <ConfigSection v-model:enabled="bastionEnabled" :label="$t('obj.bastion')" anti-freeze>
       <el-alert class="app_margin_bottom" :closable="false">{{$t('bastionUsage')}}</el-alert>
       <FieldString :holder="inventory.all.hosts.bastion" fieldName="ansible_host" prop="all.hosts.bastion" required></FieldString>
       <FieldString :holder="inventory.all.hosts.bastion" fieldName="ansible_user" prop="all.hosts.bastion" required></FieldString>

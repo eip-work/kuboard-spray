@@ -9,7 +9,7 @@ zh:
 
 
 <template>
-  <ConfigSection v-model:enabled="enabled" :label="$t('label')" disabled>
+  <ConfigSection v-model:enabled="enabled" :label="$t('label')" disabled anti-freeze>
     <FieldSelect :holder="cluster.inventory.all.children.target.children.k8s_cluster.vars" fieldName="kube_network_plugin"
       prop="all.children.target.children.k8s_cluster.vars"
       required :loadOptions="loadKubeNetworkPlugin"></FieldSelect>

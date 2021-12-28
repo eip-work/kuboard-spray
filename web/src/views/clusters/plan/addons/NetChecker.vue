@@ -10,7 +10,7 @@ zh:
 </i18n>
 
 <template>
-  <ConfigSection v-model:enabled="enabled" :label="$t('label')" :description="$t('obj.addon', {name: this.$t('description')})">
+  <ConfigSection v-model:enabled="enabled" :label="$t('label')" :description="$t('obj.addon', {name: this.$t('description')})" anti-freeze>
     <AddonFunction>{{$t('addon_function')}}</AddonFunction>
     <FieldString :holder="vars" fieldName="netcheck_namespace" :prop="prop"></FieldString>
     <FieldNumber :holder="vars" fieldName="netchecker_port" :prop="prop">

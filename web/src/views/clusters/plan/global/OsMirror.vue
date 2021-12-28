@@ -8,7 +8,7 @@ zh:
 </i18n>
 
 <template>
-  <ConfigSection v-model:enabled="enabled" :label="$t('label')" :description="$t('description')" disabled>
+  <ConfigSection v-model:enabled="enabled" :label="$t('label')" :description="$t('description')" disabled anti-freeze>
     <el-alert title="离线安装请注意" type="warning" :closable="false" class="app_margin_bottom">
       <li>安装 Kubernetes 集群时，需要在 K8S 节点上安装一些系统软件，例如：ipset / ethtool / docker-ce 等；</li>
       <li>大部分企业对于自己常用的操作系统都有离线环境下的软件源，在此情况下，为了减小资源包的尺寸，KuboardSpray 并不将这些依赖的系统软件打包到资源包里；</li>

@@ -90,12 +90,6 @@ const field = {
     event_ttl_duration: '事件保留时长',
     auto_renew_certificates: '自动更新证书',
 
-    yum_repo: 'yum repo',
-    yum_repo_placeholder: 'yum 镜像源',
-    ubuntu_repo: 'ubuntu repo',
-    ubuntu_repo_placeholder: 'ubuntu 镜像源',
-
-
     apt_mirror_dir: '数据目录',
     apt_mirror_ubuntu_mirror: '上游镜像源地址',
     apt_mirror_ubuntu_mirror_placeholder: '将从此地址获取镜像下载到本地镜像库',

@@ -58,7 +58,7 @@ zh:
           </div>
         </el-card>
         <el-tabs type="border-card" v-model="currentTab">
-          <el-tab-pane :label="$t('provision')" name="provision">
+          <el-tab-pane v-if="os_mirror.stauts.kind === 'provision'" :label="$t('provision')" name="provision">
             <el-scrollbar height="calc(100vh - 345px)">
               <Provision v-if="os_mirror.inventory" :os_mirror="os_mirror"></Provision>
             </el-scrollbar>

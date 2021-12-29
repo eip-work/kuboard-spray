@@ -10,7 +10,7 @@ zh:
 <template>
   <el-form-item :rules="computedRules" :prop="prop ? prop + '.' + fieldName : fieldName">
     <template #label>
-      {{ label || $t('field.' + fieldName) }}
+      {{ compute_label }}
     </template>
     <slot v-if="compute_edit_mode" name="edit"></slot>
     <div v-else class="app_text_mono">
@@ -49,6 +49,16 @@ export default {
       set (v) {
         console.log(v)
       }
+    },
+    compute_label () {
+      if (this.label) {
+        return this.label
+      }
+      let temp = this.$t('field.' + this.fieldName)
+      if (temp === 'field.' + this.fieldName) {
+        return this.fieldName
+      }
+      return temp
     },
     compute_edit_mode () {
       if (this.readOnly) {

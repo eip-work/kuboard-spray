@@ -30,6 +30,7 @@ const messages = {
       k8s_cluster: 'K8s Cluster',
     },
     msg: {
+      name: 'Name',
       ok: 'OK',
       add: 'Add',
       save: 'Save',
@@ -71,6 +72,7 @@ const messages = {
       k8s_cluster: 'K8s 集群',
     },
     msg: {
+      name: '名 称',
       ok: '确 定',
       add: '添 加',
       save: '保 存',

@@ -1,5 +1,6 @@
 <i18n>
 en:
+  os: Operation System
   included: Included
   not_included: Not included
   addons: Addons
@@ -7,6 +8,7 @@ en:
   dependency: Dependencies
   package_content: Package Content
 zh:
+  os: 操作系统
   included: 已包含
   not_included: 未包含
   addons: 可选组件
@@ -21,10 +23,12 @@ zh:
     <el-collapse v-model="activeNames">
       <el-collapse-item name="1">
         <template #title>
-          <span class="package_title">kubespray</span>
+          <span class="package_title">kuboardspray</span>
         </template>
         <div class="package_info">
-          <PackageContentField :holder="resourcePackage.kuboardspray" fieldName="kubespray_version"></PackageContentField>
+          <PackageContentField :holder="resourcePackage.metadata" fieldName="version" label="资源包版本"></PackageContentField>
+          <PackageContentField :holder="resourcePackage.metadata" fieldName="issue_date" label="发布时间"></PackageContentField>
+          <PackageContentField :holder="resourcePackage.metadata" fieldName="kubespray_version"></PackageContentField>
         </div>
       </el-collapse-item>
       <el-collapse-item name="2">
@@ -32,6 +36,11 @@ zh:
           <span class="package_title">kubernetes</span>
         </template>
         <div class="package_info">
+          <el-form-item :label="$t('os')">
+            <template v-for="(item, key) in resourcePackage.supported_os" :key="'os' + key">
+              <el-tag style="margin-right: 10px;">{{item.distribution}}_{{item.version}}</el-tag>
+            </template>
+          </el-form-item>
           <PackageContentField :holder="resourcePackage.kubernetes" fieldName="image_arch"></PackageContentField>
           <PackageContentField :holder="resourcePackage.kubernetes" fieldName="gcr_image_repo"></PackageContentField>
           <PackageContentField :holder="resourcePackage.kubernetes" fieldName="kube_image_repo"></PackageContentField>

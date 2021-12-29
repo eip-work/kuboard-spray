@@ -128,7 +128,9 @@ export default {
           'https://mirrors.tuna.tsinghua.edu.cn/ubuntu/',
           'http://cn.archive.ubuntu.com/ubuntu/',
           'https://mirrors.cloud.tencent.com/ubuntu/',
-          'http://mirror.aliyun.com/ubuntu/'
+          'http://ftp.sjtu.edu.cn/ubuntu',
+          'http://mirrors.163.com/ubuntu/',
+          'http://mirrors.nju.edu.cn/ubuntu/',
         ],
         'docker-ce_ubuntu': [
           'https://repo.huaweicloud.com/docker-ce/linux/ubuntu/',

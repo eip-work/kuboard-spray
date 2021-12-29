@@ -8,6 +8,7 @@
           </el-radio-button>
         </template>
       </el-radio-group>
+      <slot></slot>
     </template>
     <template #view>
       <template v-for="(option, index) in options" :key="index">
@@ -15,6 +16,7 @@
           {{ optionDesc(option) }}
         </el-button>
       </template>
+      <slot></slot>
     </template>
   </FieldCommon>
 </template>

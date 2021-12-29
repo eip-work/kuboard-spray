@@ -5,12 +5,14 @@ en:
   conflict: conflict with existing one.
   provision_msg: Requires one server, and at least 200G disk space.
   existing_msg: If you already have a existing OS mirror source that is available to all the machines used to install K8S.
+  canCreateItem: You  can input a mirror url that does not exist in the list.
 zh:
   addMirror: 添加 OS 软件源
   name: 名称
   conflict: 与已有的重复 {name}
   provision_msg: 需要您提供一台机器，包含至少 200G 磁盘空间
-  existing_msg: 如果您已经有一个安装集群所用机器都可以访问到的 OS 软件源
+  existing_msg: 如果您已经有一个安装集群所用机器都可以访问到的 OS 软件源，可以直接在此处输入该软件源的访问地址。
+  canCreateItem: 您可以在此直接输入下拉列表中没有的条目
 </i18n>
 
 
@@ -28,7 +30,8 @@ zh:
               <el-alert :closable="false" type="warning" effect="dark" :title="$t('msg.prompt')">{{$t('provision_msg')}}</el-alert>
             </div>
             <div v-else>
-              <FieldString :holder="form" fieldName="kuboardspray_os_mirror_url" required></FieldString>
+              <FieldSelect :holder="form" fieldName="kuboardspray_os_mirror_url" required :disabled="!form.kuboardspray_os_mirror_type"
+                allow-create filterable :loadOptions="loadMirrorList" :placeholder="$t('canCreateItem')"></FieldSelect>
               <el-alert :closable="false" type="warning" :title="$t('msg.prompt')">{{$t('existing_msg')}}</el-alert>
             </div>
           </div>
@@ -109,9 +112,36 @@ export default {
       let result = [
         { label: 'ubuntu', value: 'ubuntu' },
         { label: 'centos', value: 'centos', disabled: true },
-        { label: 'docker-ce_ubuntu', value: 'docker-ce_ubuntu' },
-        { label: 'docker-ce_centos', value: 'docker-ce_centos', disabled: true },
+        { label: 'docker_ubuntu', value: 'docker_ubuntu' },
+        { label: 'docker_centos', value: 'docker_centos', disabled: true },
       ]
+      return result
+    },
+    async loadMirrorList () {
+      let temp = {
+        ubuntu: [
+            'https://repo.huaweicloud.com/ubuntu/',
+            'https://mirrors.aliyun.com/ubuntu/',
+            'https://mirrors.tuna.tsinghua.edu.cn/ubuntu/',
+            'http://cn.archive.ubuntu.com/ubuntu/',
+            'https://mirrors.cloud.tencent.com/ubuntu/',
+            'http://ftp.sjtu.edu.cn/ubuntu',
+            'http://mirrors.163.com/ubuntu/',
+            'http://mirrors.nju.edu.cn/ubuntu/',
+          ],
+        docker_ubuntu: [
+            'https://repo.huaweicloud.com/docker-ce/linux/ubuntu/',
+            'https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/',
+            // 'https://mirrors.aliyun.com/docker-ce/linux/ubuntu/',
+            'https://mirrors.cloud.tencent.com/docker-ce/linux/ubuntu/',
+          ],
+        centos: [],
+        docker_centos: [],
+      }
+      let result = []
+      for (let item of temp[this.form.kuboardspray_os_mirror_type]) {
+        result.push({ label: item, value: item })
+      }
       return result
     },
     save () {

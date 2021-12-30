@@ -45,15 +45,15 @@ zh:
                 </router-link>
               </template>
             </el-table-column>
-            <el-table-column prop="status.type" :label="$t('type')"></el-table-column>
-            <el-table-column prop="status.kind" :label="$t('kind')"></el-table-column>
+            <el-table-column prop="status.type" :label="$t('type')" width="150px"></el-table-column>
+            <el-table-column prop="status.kind" :label="$t('kind')" width="120px"></el-table-column>
             <el-table-column prop="status.url" label="url">
               <template #default="scope">
                 <el-link v-if="scope.row.status" target="_blank" :href="scope.row.status.url" style="font-size: 12px;">{{scope.row.status.url}}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="status.status" :label="$t('status')"></el-table-column>
-            <el-table-column :label="$t('msg.operations')">
+            <el-table-column prop="status.status" :label="$t('status')" width="120px"></el-table-column>
+            <el-table-column :label="$t('msg.operations')" width="200px">
               <template #default="scope">
                 <el-button icon="el-icon-view" type="primary" @click="$router.push(`/settings/mirrors/${scope.row.name}`)">{{ $t('msg.view') }}</el-button>
                 <el-popconfirm :confirm-button-text="$t('msg.ok')" :cancel-button-text="$t('msg.cancel')" icon="el-icon-warning" icon-color="red"

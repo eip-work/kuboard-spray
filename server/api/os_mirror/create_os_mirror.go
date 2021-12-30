@@ -12,10 +12,11 @@ import (
 )
 
 type CreateOsMirrorRequest struct {
-	Name string `json:"kuboardspray_os_mirror_name" binding:"required"`
-	Type string `json:"kuboardspray_os_mirror_type" binding:"required"`
-	Kind string `json:"kuboardspray_os_mirror_kind" binding:"required"`
-	Url  string `json:"kuboardspray_os_mirror_url"`
+	Name   string `json:"kuboardspray_os_mirror_name" binding:"required"`
+	Type   string `json:"kuboardspray_os_mirror_type" binding:"required"`
+	Kind   string `json:"kuboardspray_os_mirror_kind" binding:"required"`
+	Url    string `json:"kuboardspray_os_mirror_url"`
+	Params gin.H  `json:"params"`
 }
 
 func CreateOsMirror(c *gin.Context) {
@@ -43,10 +44,11 @@ func CreateOsMirror(c *gin.Context) {
 	}
 
 	status := gin.H{
-		"type": req.Type,
-		"kind": req.Kind,
-		"url":  req.Url,
-		"name": req.Name,
+		"type":   req.Type,
+		"kind":   req.Kind,
+		"url":    req.Url,
+		"name":   req.Name,
+		"params": req.Params,
 	}
 
 	inventoryObj := map[string]interface{}{}

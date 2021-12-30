@@ -21,7 +21,7 @@ zh:
     </FieldSelect>
     <template v-if="vars.container_manager === 'containerd'">
       <FieldBool :holder="vars" :prop="prop" fieldName="containerd_use_systemd_cgroup" disabled></FieldBool>
-      <FieldArray :holder="vars" :prop="prop" newItemTemplate="" fieldName="containerd_insecure_registries" :itemRules="insecureRegistriesItemRules">
+      <FieldArray :holder="vars" :prop="prop" newItemTemplate="" fieldName="containerd_insecure_registries" :itemRules="insecureRegistriesItemRules" anti-freeze>
         <template v-slot:editItem="scope">
           <el-input v-model.trim="vars.containerd_insecure_registries[scope.index]" :placeholder="$t('insecure_registries_placeholder')"></el-input>
         </template>
@@ -30,12 +30,12 @@ zh:
     <template v-else>
       <el-alert class="app_alert_mini app_margin_bottom" type="warning">KuboardSpray 资源包中并不包含 docker 安装文件，必须在 “OS 软件源” 中设置 docker-ce 软件源</el-alert>
       <FieldBool :holder="vars" :prop="prop" fieldName="docker_orphan_clean_up"></FieldBool>
-      <FieldArray :holder="vars" :prop="prop" newItemTemplate="" fieldName="docker_insecure_registries" :itemRules="insecureRegistriesItemRules">
+      <FieldArray :holder="vars" :prop="prop" newItemTemplate="" fieldName="docker_insecure_registries" :itemRules="insecureRegistriesItemRules" anti-freeze>
         <template v-slot:editItem="scope">
           <el-input v-model.trim="vars.docker_insecure_registries[scope.index]" :placeholder="$t('insecure_registries_placeholder')"></el-input>
         </template>
       </FieldArray>
-      <FieldArray :holder="vars" :prop="prop" newItemTemplate="" fieldName="docker_registry_mirrors" :itemRules="insecureRegistriesItemRules">
+      <FieldArray :holder="vars" :prop="prop" newItemTemplate="" fieldName="docker_registry_mirrors" :itemRules="insecureRegistriesItemRules" anti-freeze>
         <template v-slot:editItem="scope">
           <el-input v-model.trim="vars.docker_registry_mirrors[scope.index]" :placeholder="$t('registry_mirrors_placeholder')"></el-input>
         </template>

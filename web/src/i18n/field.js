@@ -7,7 +7,7 @@ const field = {
     kuboardspray_os_mirror_type: 'OS type',
     kuboardspray_os_mirror_name: 'OS Mirror Name',
     kuboardspray_os_mirror_kind: 'Create Method',
-    'kuboardspray_os_mirror_kind-existing': 'Use existing OS mirror',
+    'kuboardspray_os_mirror_kind-existing': 'Use existing OS Source',
     'kuboardspray_os_mirror_kind-provision': 'Create with KuboardSpray',
     kuboardspray_os_mirror_url: 'Mirror URL',
     
@@ -31,7 +31,7 @@ const field = {
     kuboardspray_os_mirror_type: '操作系统类型',
     kuboardspray_os_mirror_name: '镜像源名称',
     kuboardspray_os_mirror_kind: '创建方式',
-    'kuboardspray_os_mirror_kind-existing': '使用已有 OS 镜像',
+    'kuboardspray_os_mirror_kind-existing': '使用已有的软件源',
     'kuboardspray_os_mirror_kind-provision': '通过 KuboardSpray 创建',
     kuboardspray_os_mirror_url: '镜像访问地址',
 

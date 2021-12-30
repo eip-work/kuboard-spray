@@ -6,6 +6,10 @@ en:
   provision_msg: Requires one server, and at least 200G disk space.
   existing_msg: If you already have a existing OS mirror source that is available to all the machines used to install K8S.
   canCreateItem: You  can input a mirror url that does not exist in the list.
+  ubuntu: Ubuntu apt mirror
+  centos: Centos yum repo
+  docker_ubuntu: Ubuntu apt mirror for docker
+  docker_centos: Centos yum repo for docker
 zh:
   addMirror: 添加 OS 软件源
   name: 名称
@@ -13,6 +17,10 @@ zh:
   provision_msg: 需要您提供一台机器，包含至少 200G 磁盘空间
   existing_msg: 如果您已经有一个安装集群所用机器都可以访问到的 OS 软件源，可以直接在此处输入该软件源的访问地址。
   canCreateItem: 您可以在此直接输入下拉列表中没有的条目
+  ubuntu: Ubuntu apt mirror
+  centos: Centos yum repo
+  docker_ubuntu: Docker 的 Ubuntu apt mirror
+  docker_centos: Docker 的 Centos yum repo
 </i18n>
 
 
@@ -47,6 +55,8 @@ zh:
 
 <script>
 import {ref} from 'vue'
+import clone from 'clone'
+import {syncParams} from './params/sync_params.js'
 
 export default {
   setup () {
@@ -86,7 +96,6 @@ export default {
             this.kuboardSprayApi.get(`/mirrors/${v}`).then(() => {
               callback(this.$t('conflict', {name: v}))
             }).catch(e => {
-              console.log(e.response)
               if (e.response && e.response.data.code === 500) {
                 callback()
                 return
@@ -110,10 +119,10 @@ export default {
     },
     async loadMirrorTypeList () {
       let result = [
-        { label: 'ubuntu', value: 'ubuntu' },
-        { label: 'centos', value: 'centos', disabled: true },
-        { label: 'docker_ubuntu', value: 'docker_ubuntu' },
-        { label: 'docker_centos', value: 'docker_centos', disabled: true },
+        { label: this.$t('ubuntu'), value: 'ubuntu' },
+        { label: this.$t('centos'), value: 'centos' },
+        { label: this.$t('docker_ubuntu'), value: 'docker_ubuntu' },
+        { label: this.$t('docker_centos'), value: 'docker_centos' },
       ]
       return result
     },
@@ -136,7 +145,9 @@ export default {
             'https://mirrors.cloud.tencent.com/docker-ce/linux/ubuntu/',
           ],
         centos: [],
-        docker_centos: [],
+        docker_centos: [
+          'https://download.docker.com/linux/centos/',
+        ],
       }
       let result = []
       for (let item of temp[this.form.kuboardspray_os_mirror_type]) {
@@ -148,16 +159,28 @@ export default {
       this.$refs.form.validate(async flag => {
         if (flag) {
           this.saving = true
-          await this.kuboardSprayApi.post('/mirrors', this.form).then(() => {
+          
+          let temp = clone(this.form)
+          temp.params = {}
+          
+          if (this.form.kuboardspray_os_mirror_kind === 'existing') {
+            syncParams(temp.params, this.form.kuboardspray_os_mirror_type, this.kuboardspray_os_mirror_url)
+          }
+          await this.kuboardSprayApi.post('/mirrors', temp).then(() => {
             this.$message.success(this.$t('msg.save_succeeded'))
-            this.$router.push(`/settings/mirrors/${this.form.kuboardspray_os_mirror_type}-${this.form.kuboardspray_os_mirror_name}?mode=edit`)
+            if (this.form.kuboardspray_os_mirror_kind === 'existing') {
+              this.$router.push(`/settings/mirrors/${this.form.kuboardspray_os_mirror_type}-${this.form.kuboardspray_os_mirror_name}`)
+            } else {
+              this.$router.push(`/settings/mirrors/${this.form.kuboardspray_os_mirror_type}-${this.form.kuboardspray_os_mirror_name}?mode=edit`)
+            }
           }).catch(e => {
             this.$message.error(this.$t('msg.save_failed', {msg: e.response.data.message}))
           })
           this.saving = false
         }
       })
-    }
+    },
+
   }
 }
 </script>

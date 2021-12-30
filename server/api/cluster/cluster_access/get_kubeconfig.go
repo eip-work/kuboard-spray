@@ -6,6 +6,7 @@ import (
 	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
+	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -26,6 +27,7 @@ func GetKubeConfig(c *gin.Context) {
 			"-a", "cat /root/.kube/config",
 			"-i", inventoryYamlPath,
 		},
+		Env: []string{"ANSIBLE_CONFIG=" + constants.GET_ADHOC_CFG_PATH()},
 		// Dir: resourcePackageDir,
 	}
 	stdout, stderr, err := cmd.Run()

@@ -108,6 +108,7 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 	run := command.Run{
 		Cmd:  "ansible",
 		Args: []string{req.Node, "-m", "setup", "-i", inventoryPath},
+		Env:  []string{"ANSIBLE_CONFIG=" + constants.GET_ADHOC_CFG_PATH()},
 		// Dir:  dir + "/ansible-script",
 	}
 

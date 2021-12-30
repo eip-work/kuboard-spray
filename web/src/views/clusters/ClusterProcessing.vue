@@ -127,8 +127,8 @@ export default {
             count ++
           }
         }
-        if (count > 10) {
-          count = 10
+        if (count > 50) {
+          count = 50
         }
         this.form.fork = count
       }

@@ -68,6 +68,13 @@ func main() {
 	router := setupRouter()
 
 	router.Run(":8006")
+	// s := &http.Server{
+	// 	Addr:         ":8006",
+	// 	Handler:      router,
+	// 	ReadTimeout:  120 * time.Second,
+	// 	WriteTimeout: 120 * time.Second,
+	// }
+	// s.ListenAndServe()
 }
 
 func initLogrus() {

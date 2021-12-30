@@ -94,8 +94,8 @@ export default {
         this.kubeconfigLoading = false
       }).catch(e => {
         console.log(e)
-        this.$message.error('failed to get kubeconfig: ' + e.response.data.msg)
         this.kubeconfigLoading = false
+        this.$message.error('failed to get kubeconfig: ' + e.response.data.msg)
       })
     }
   }

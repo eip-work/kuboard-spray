@@ -3,10 +3,14 @@ en:
   label: OS Mirror
   description: Operation System source repo.
   selectOs: Select OS
+  source: Source
+  addSource: Add Source
 zh:
   label: 软件源
   description: OS 软件源（为操作系统指定软件源，例如 yum 源、apt 源等）
   selectOs: 请选择操作系统
+  source: 源
+  addSource: 添加软件源
 </i18n>
 
 <template>
@@ -17,30 +21,30 @@ zh:
         <li>大部分企业都有自己的系统软件源，为了减小尺寸，KuboardSpray 资源包中不包含这些软件；</li>
       </div>
     </el-alert>
-    <FieldCommon :holder="temp" fieldName="os" :label="$t('selectOs')" required>
+    <FieldCommon :holder="temp" fieldName="os" :label="$t('selectOs')" label-width="150px">
       <template #edit>
         <el-checkbox-group v-model="os">
-          <el-checkbox v-for="(item, index) in supportedOs" :key="'os_e' + index" :label="index"></el-checkbox>
+          <el-checkbox v-for="(item, index) in supportedOs" :key="'os_e' + index" :label="index.toLowerCase()">{{index}}</el-checkbox>
         </el-checkbox-group>
       </template>
       <template #view>
         <el-checkbox-group v-model="temp.os" disabled>
-          <el-checkbox v-for="(item, index) in supportedOs" :key="'os_v' + index" :label="index"></el-checkbox>
+          <el-checkbox v-for="(item, index) in supportedOs" :key="'os_v' + index" :label="index.toLowerCase()">{{index}}</el-checkbox>
         </el-checkbox-group>
       </template>
     </FieldCommon>
     <template v-for="(item, index) in os" :key="'repo' + index">
-      <FieldString :holder="vars" :fieldName="repoMap[item].repo"></FieldString>
+      <FieldSelect :holder="vars" :fieldName="'kuboardspray_repo_' + item" :loadOptions="loadRepoOptions" label-width="150px"
+        :label="item + ' ' + $t('source')" required :prop="prop">
+        <el-button style="margin-left: 10px;" type="primary" plain icon="el-icon-plus">{{ $t('addSource') }}</el-button>
+      </FieldSelect>
       <template v-if="vars.container_manager === 'docker'">
-        <FieldString :holder="vars" :fieldName="repoMap[item].dockerRepo"></FieldString>
-        <FieldString :holder="vars" :fieldName="repoMap[item].dockerRepoGpgkey"></FieldString>
-        <FieldString v-if="repoMap[item].dockerRepoRepokey" :holder="vars" :fieldName="repoMap[item].dockerRepoRepokey"></FieldString>
+        <FieldSelect :holder="vars" :fieldName="'kuboardspray_repo_docker_' + item" :loadOptions="loadRepoOptions" label-width="150px"
+          :label="'docker_' + item + ' ' + $t('source')" required :prop="prop">
+          <el-button style="margin-left: 10px;" type="primary" plain icon="el-icon-plus">{{ $t('addSource') }}</el-button>
+        </FieldSelect>
       </template>
     </template>
-    <!-- <FieldString :holder="cluster.inventory.all.children.target.vars" fieldName="yum_repo"></FieldString>
-    <FieldString :holder="cluster.inventory.all.children.target.vars" fieldName="docker_ubuntu_repo_base_url"></FieldString>
-    <FieldString :holder="cluster.inventory.all.children.target.vars" fieldName="docker_ubuntu_repo_gpgkey"></FieldString>
-    <FieldString :holder="cluster.inventory.all.children.target.vars" fieldName="docker_ubuntu_repo_repokey"></FieldString> -->
   </ConfigSection>
 </template>
 
@@ -51,19 +55,6 @@ export default {
   },
   data() {
     return {
-      repoMap: {
-        Ubuntu: {
-          repo: 'ubuntu_repo',
-          dockerRepo: 'docker_ubuntu_repo_base_url',
-          dockerRepoGpgkey: 'docker_ubuntu_repo_gpgkey',
-          dockerRepoRepokey: 'docker_ubuntu_repo_repokey',
-        },
-        CentOS: {
-          repo: 'centos_repo',
-          dockerRepo: 'docker_rh_repo_base_url',
-          dockerRepoGpgkey: 'docker_rh_repo_gpgkey',
-        }
-      }
     }
   },
   computed: {
@@ -84,6 +75,7 @@ export default {
       }
       return result
     },
+    prop () { return 'all.children.target.vars' },
     vars() {
       return this.cluster.inventory.all.children.target.vars
     },
@@ -91,10 +83,8 @@ export default {
       get () {
         let result = []
         for (let fieldName in this.vars) {
-          for (let os in this.repoMap) {
-            if (fieldName === this.repoMap[os].repo) {
-              result.push(os)
-            }
+          if (fieldName.indexOf('kuboardspray_repo_') === 0 && fieldName.indexOf('kuboardspray_repo_docker_') !== 0) {
+            result.push(fieldName.slice(18))
           }
         }
         return result
@@ -108,11 +98,12 @@ export default {
         for (let item of v) {
           t[item] = true
         }
-        for (let key in this.repoMap) {
+        for (let os in this.supportedOs) {
+          let key = os.toLowerCase()
           if (t[key]) {
-            this.vars[this.repoMap[key].repo] = this.vars[this.repoMap[key].repo] || undefined
+            this.vars['kuboardspray_repo_' + key] = this.vars['kuboardspray_repo_' + key] || ''
           } else {
-            delete this.vars[this.repoMap[key].repo]
+            delete this.vars['kuboardspray_repo_' + key]
           }
         }
       }
@@ -126,7 +117,17 @@ export default {
   mounted () {
   },
   methods: {
-
+    async loadRepoOptions (type) {
+      let result = []
+      await this.kuboardSprayApi.get(`/mirrors`, { params: { type: type.slice(18) } }).then(resp => {
+        for (let item of resp.data.data) {
+          result.push({ label: item, value: item })
+        }
+      }).catch(e => {
+        console.log(e)
+      })
+      return result
+    }
   }
 }
 </script>

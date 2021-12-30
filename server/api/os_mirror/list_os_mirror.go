@@ -3,6 +3,7 @@ package os_mirror
 import (
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
@@ -10,7 +11,15 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type ListOsMirrorsRequest struct {
+	Type string `form:"type"`
+}
+
 func ListOsMirrors(c *gin.Context) {
+
+	var req ListOsMirrorsRequest
+
+	c.ShouldBind(&req)
 
 	files, err := ioutil.ReadDir(constants.GET_DATA_MIRROR_DIR())
 	if err != nil {
@@ -31,7 +40,7 @@ func ListOsMirrors(c *gin.Context) {
 
 	data := []string{}
 	for _, file := range files {
-		if file.IsDir() {
+		if file.IsDir() && strings.Index(file.Name(), req.Type) == 0 {
 			data = append(data, file.Name())
 		}
 	}

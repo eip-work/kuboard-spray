@@ -20,8 +20,6 @@ const field = {
     'ansible_connection-local': 'local',
     'ansible_connection-ssh': 'ssh',
 
-    yum_repo: 'yum repository',
-    ubuntu_repo: 'ubuntu repository',
   },
   zh: {
     please_input: '请输入',
@@ -72,9 +70,6 @@ const field = {
     docker_orphan_clean_up: '清理孤儿容器',
     docker_insecure_registries: 'HTTP 镜像仓库 insecure registries',
     docker_registry_mirrors: '镜像仓库 mirror',
-
-    docker_ubuntu_repo_base_url: 'docker-ce 软件源（ubuntu）',
-    docker_ubuntu_repo_base_url_placeholder: '从这里获取 docker 引擎的安装包',
 
     
     etcd_deployment_type: 'ETCD 部署方式',

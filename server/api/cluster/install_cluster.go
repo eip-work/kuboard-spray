@@ -2,17 +2,18 @@ package cluster
 
 import (
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 )
 
 type InstallClusterRequest struct {
 	Cluster string `uri:"cluster" binding:"required"`
-	Fork    string `json:"fork"`
+	Fork    int    `json:"fork"`
 	Verbose bool   `json:"verbose"`
 	VVV     bool   `json:"vvv"`
 }
@@ -36,13 +37,15 @@ func InstallCluster(c *gin.Context) {
 		common.HandleError(c, http.StatusInternalServerError, "failed to read package.", err)
 	}
 
-	// start merge resourcePackage info into inventory
+	// >>>> 设置资源包相关参数
 
+	// 设置 kubernetes 版本信息
 	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.kube_version", common.MapGet(resourcePackage, "kubernetes.kube_version"))
 	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.image_arch", common.MapGet(resourcePackage, "kubernetes.image_arch"))
 	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.gcr_image_repo", common.MapGet(resourcePackage, "kubernetes.gcr_image_repo"))
 	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.kube_image_repo", common.MapGet(resourcePackage, "kubernetes.kube_image_repo"))
 
+	// 设置容器引擎相关参数
 	container_manager := common.MapGet(inventory, "all.children.target.vars.container_manager")
 	containerMangerObjArray := common.MapGet(resourcePackage, "container_engine").([]interface{})
 	var containerManagerObj map[string]interface{}
@@ -56,8 +59,10 @@ func InstallCluster(c *gin.Context) {
 		common.MapSet(inventory, "all.children.target.vars."+key, value)
 	}
 
+	// 设置 etcd 版本信息
 	common.MapSet(inventory, "all.children.target.children.etcd.vars.etcd_version", common.MapGet(resourcePackage, "etcd.etcd_version"))
 
+	// 设置依赖组件版本信息
 	dependencies := resourcePackage["dependency"].([]interface{})
 	for _, d := range dependencies {
 		dependency := d.(map[string]interface{})
@@ -66,6 +71,7 @@ func InstallCluster(c *gin.Context) {
 		common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+field, version)
 	}
 
+	// 设置网络插件信息  FIXME 调整 package.yaml 的格式
 	cni := common.MapGet(inventory, "all.children.target.children.k8s_cluster.vars.kube_network_plugin").(string)
 	var cni_dependency map[string]interface{}
 	for _, c := range resourcePackage["cni"].([]interface{}) {
@@ -76,6 +82,7 @@ func InstallCluster(c *gin.Context) {
 	}
 	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+cni_dependency["target"].(string), cni_dependency["version"])
 
+	// 设置可选组件参数
 	addons := resourcePackage["addons"].([]interface{})
 	for _, a := range addons {
 		addon := a.(map[string]interface{})
@@ -87,7 +94,24 @@ func InstallCluster(c *gin.Context) {
 		}
 	}
 
-	// end merge resourcePackage info into inventory
+	// 设置软件源相关参数
+	targetVars := common.MapGet(inventory, "all.children.target.vars").(map[string]interface{})
+	for key, value := range targetVars {
+		if strings.Index(key, "kuboardspray_repo_") == 0 { // 忽略 kuboardspray_repo_ 和 kuboardspray_repo_docker_ 的差异
+			v := value.(string)
+			repo, err := common.ParseYamlFile(constants.GET_DATA_DIR() + "/mirror/" + v + "/status.yaml")
+			if err != nil {
+				common.HandleError(c, http.StatusInternalServerError, "cannot read repo. ", err)
+				return
+			}
+			params := repo["params"].(map[string]interface{})
+			for k, v := range params {
+				targetVars[k] = v
+			}
+		}
+	}
+
+	// <<<< 设置资源包相关参数
 
 	common.MapSet(inventory, "all.vars.kuboardspray_no_log", !req.Verbose)
 	common.MapSet(inventory, "all.vars.download_keep_remote_cache", false)
@@ -115,27 +139,20 @@ func InstallCluster(c *gin.Context) {
 		return "\n" + message, nil
 	}
 
-	env := []string{}
-	if req.Verbose {
-		env = append(env, "ANSIBLE_DISPLAY_ARGS_TO_STDOUT=True")
-	}
-	logrus.Trace(req.Verbose, env)
-
 	command := command.Execute{
 		OwnerType: "cluster",
 		OwnerName: req.Cluster,
 		Cmd:       "ansible-playbook",
 		Args: func(execute_dir string) []string {
 			if req.VVV {
-				return []string{"-i", execute_dir + "/inventory.yaml", "pb_cluster.yml", "-vvv", "--fork", req.Fork}
+				return []string{"-i", execute_dir + "/inventory.yaml", "pb_cluster.yml", "-vvv", "--fork", strconv.Itoa(req.Fork)}
 			}
-			return []string{"-i", execute_dir + "/inventory.yaml", "pb_cluster.yml", "--fork", "10"}
+			return []string{"-i", execute_dir + "/inventory.yaml", "pb_cluster.yml", "--fork", strconv.Itoa(req.Fork)}
 		},
 		Dir:      resourcePackagePath,
 		Type:     "install",
 		PreExec:  func(execute_dir string) error { return common.SaveYamlFile(execute_dir+"/inventory.yaml", inventory) },
 		PostExec: postExec,
-		Env:      env,
 	}
 
 	if err := command.Exec(); err != nil {

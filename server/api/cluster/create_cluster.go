@@ -286,8 +286,7 @@ func getInventoryTemplate() string {
         ## docker for docker, crio for cri-o and containerd for containerd.
         ## Default: containerd
         container_manager: containerd
-        ubuntu_repo: https://mirrors.aliyun.com/ubuntu/
-        yum_repo: https://repo.huaweicloud.com/centos/
+        kuboardspray_repo_ubuntu: ''
   vars: {}
 
 `

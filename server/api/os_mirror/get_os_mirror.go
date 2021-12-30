@@ -7,6 +7,7 @@ import (
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type GetMirrorRequest struct {
@@ -19,8 +20,9 @@ func GetMirror(c *gin.Context) {
 
 	inventory, err := common.ParseYamlFile(MirrorInventoryPath(req.Name))
 	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "cannnot parse file: "+MirrorInventoryPath(req.Name), err)
-		return
+		// common.HandleError(c, http.StatusInternalServerError, "cannnot parse file: ", err)
+		logrus.Trace("cannot parse file: ", err)
+		// return
 	}
 
 	statusFilePath := constants.GET_DATA_MIRROR_DIR() + "/" + req.Name + "/status.yaml"

@@ -8,6 +8,7 @@ en:
   created: Created
   success: Ready
   failed: Not Ready
+  basics: Base information
 zh:
   titleRepo: OS 软件源
   repoDescription1: 您必须定义您集群机器可以访问的操作系统软件源地址（例如 CentOS 的 yum 源、Ubuntu 的 apt 源等）以供使用
@@ -18,6 +19,7 @@ zh:
   created: 已创建
   success: 可用
   failed: 不可用
+  basics: 基本信息
 </i18n>
 
 <template>
@@ -41,7 +43,7 @@ zh:
       <el-card shadow="none" v-if="loading">
         <el-skeleton animated :rows="10"></el-skeleton>
       </el-card>
-      <div v-else>
+      <div v-else-if="os_mirror.status">
         <el-card class="app_margin_bottom" shadow="none">
           <div style="margin-bottom: -20px;">
             <el-form-item :label="$t('url')" prop="status.url" :rules="urlRules">
@@ -58,7 +60,10 @@ zh:
           </div>
         </el-card>
         <el-tabs type="border-card" v-model="currentTab">
-          <el-tab-pane v-if="os_mirror.stauts.kind === 'provision'" :label="$t('provision')" name="provision">
+          <el-tab-pane :label="$t('basics')" name="basics">
+            <Params v-if="os_mirror" :os_mirror="os_mirror"></Params>
+          </el-tab-pane>
+          <el-tab-pane v-if="os_mirror.status.kind === 'provision'" :label="$t('provision')" name="provision">
             <el-scrollbar height="calc(100vh - 345px)">
               <Provision v-if="os_mirror.inventory" :os_mirror="os_mirror"></Provision>
             </el-scrollbar>
@@ -73,6 +78,7 @@ zh:
 import mixin from '../../mixins/mixin.js'
 import {computed} from 'vue'
 import Provision from './provision/Provision.vue'
+import Params from './params/Params.vue'
 import MirrorProcessing from './MirrorProcessing.vue'
 
 export default {
@@ -87,7 +93,7 @@ export default {
       os_mirror: undefined,
       original_data: '',
       loading: false,
-      currentTab: 'provision',
+      currentTab: 'basics',
       urlRules: [
         { required: true, type: 'string', message: 'url is required.', trigger: 'blur' },
       ]
@@ -140,7 +146,7 @@ export default {
       return this.original_data === JSON.stringify(this.os_mirror)
     }
   },
-  components: { Provision, MirrorProcessing },
+  components: { Provision, MirrorProcessing, Params },
   mounted () {
     this.refresh()
   },

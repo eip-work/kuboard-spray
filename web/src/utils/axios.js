@@ -18,7 +18,7 @@ const comp = {
     vueapp = app
     kuboardSprayApi = axios.create({
       baseURL: baseURL,
-      timeout: 30000,
+      timeout: 120000,
       headers: {
         Authorization: 'Bearer ' + Cookies.get('KuboardToken')
       }

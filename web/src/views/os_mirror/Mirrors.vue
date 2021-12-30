@@ -57,7 +57,7 @@ zh:
               <template #default="scope">
                 <el-button icon="el-icon-view" type="primary" @click="$router.push(`/settings/mirrors/${scope.row.name}`)">{{ $t('msg.view') }}</el-button>
                 <el-popconfirm :confirm-button-text="$t('msg.ok')" :cancel-button-text="$t('msg.cancel')" icon="el-icon-warning" icon-color="red"
-                  placement="bottom-end" :title="$t('confirmToDelete')" @confirm="deleteMirror(scope.name)">
+                  placement="bottom-end" :title="$t('confirmToDelete')" @confirm="deleteMirror(scope.row.name)">
                   <template #reference>
                     <el-button icon="el-icon-delete" type="danger">{{ $t('msg.delete') }}</el-button>
                   </template>

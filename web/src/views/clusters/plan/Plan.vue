@@ -23,7 +23,7 @@ zh:
       <div class="left">
         <div style="padding: 5px; font-weight: bolder; font-size: 14px;">Kuboard Spray</div>
         <div>
-          <Node class="localhost" name="localhost" :inventory="inventory" style="width: 100px;" hideDeleteButton
+          <Node class="localhost" name="localhost" :inventory="inventory" hideDeleteButton
             :active="currentPropertiesTab === 'localhost'" @click="currentPropertiesTab = 'localhost'">
           </Node>
         </div>
@@ -32,7 +32,7 @@ zh:
           <div v-else class="horizontalConnection"></div>
         </div>
         <div>
-          <Node class="bastion" name="bastion" :inventory="inventory" style="width: 100px;" hideDeleteButton
+          <Node class="bastion" name="bastion" :inventory="inventory" hideDeleteButton
             :active="currentPropertiesTab === 'bastion'" @click="showBastion">
             <div style="margin-top: 10px;">
               <el-tag v-if="bastionEnabled" type="danger" effect="dark" size="small" style="width: 100px; text-align: center;">{{$t('enabledBation')}}</el-tag>

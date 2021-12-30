@@ -8,7 +8,7 @@ zh:
 </i18n>
 
 <template>
-  <el-form-item :rules="computedRules" :prop="prop ? prop + '.' + fieldName : fieldName">
+  <el-form-item :rules="computedRules" :prop="prop ? prop + '.' + fieldName : fieldName" :label-width="labelWidth">
     <template #label>
       {{ compute_label }}
     </template>
@@ -35,6 +35,7 @@ export default {
     placeholder: { type: String, required: false, default: undefined },
     antiFreeze: { type: Boolean, required: false, default: false },
     readOnly: { type: Boolean, required: false, default: false },
+    labelWidth: { type: String, required: false, default: undefined },
   },
   data () {
     return {

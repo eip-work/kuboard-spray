@@ -12,6 +12,7 @@ import (
 
 type InstallClusterRequest struct {
 	Cluster string `uri:"cluster" binding:"required"`
+	Fork    string `json:"fork"`
 	Verbose bool   `json:"verbose"`
 	VVV     bool   `json:"vvv"`
 }
@@ -126,9 +127,9 @@ func InstallCluster(c *gin.Context) {
 		Cmd:       "ansible-playbook",
 		Args: func(execute_dir string) []string {
 			if req.VVV {
-				return []string{"-i", execute_dir + "/inventory.yaml", "pb_cluster.yml", "-vvv"}
+				return []string{"-i", execute_dir + "/inventory.yaml", "pb_cluster.yml", "-vvv", "--fork", req.Fork}
 			}
-			return []string{"-i", execute_dir + "/inventory.yaml", "pb_cluster.yml"}
+			return []string{"-i", execute_dir + "/inventory.yaml", "pb_cluster.yml", "--fork", "10"}
 		},
 		Dir:      resourcePackagePath,
 		Type:     "install",

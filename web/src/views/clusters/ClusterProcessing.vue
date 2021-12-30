@@ -15,6 +15,8 @@ en:
   vvv: vvv
   vvv_true: includes more information in log
   vvv_false: usually false
+  fork: ansible fork
+  fork_more: Max number of nodes can be operated in the installation.
 zh:
   apply: 执 行
   confirmToApply: 将执行集群安装动作，请确认已完成集群规划！
@@ -31,6 +33,8 @@ zh:
   vvv: 显示调试信息
   vvv_true: 日志中会包含最详细的信息
   vvv_false: 通常设置为 false
+  fork: 并发数量
+  fork_more: 安装过程中可以同时操作的目标节点的最大数量。ansible fork.
 </i18n>
 
 <template>
@@ -68,6 +72,10 @@ zh:
         <el-switch v-model="form.vvv"></el-switch>
         <div style="width: 240px; font-size: 12px;">{{$t('vvv_' + form.vvv)}}</div>
       </el-form-item>
+      <el-form-item :label="$t('fork')">
+        <el-input-number v-model="form.fork" :step="2"></el-input-number>
+        <div style="width: 240px; font-size: 12px;">{{$t('fork_more')}}</div>
+      </el-form-item>
       <div style="text-align: right; margin-top: 20px;">
         <el-button type="default" icon="el-icon-close" @click="showConfirm = false">{{$t('msg.cancel')}}</el-button>
         <el-button type="primary" icon="el-icon-lightning" @click="applyPlan">{{$t('msg.ok')}}</el-button>
@@ -90,6 +98,7 @@ export default {
       form: {
         verbose: false,
         vvv: false,
+        fork: 5,
       }
     }
   },
@@ -109,6 +118,20 @@ export default {
     'loading': function() {
       this.forceHide = false
       this.showConfirm = false
+    },
+    showConfirm (newValue) {
+      if (newValue) {
+        let count = 0
+        for (let key in this.cluster.inventory.all.hosts) {
+          if (key !== 'localhost' && key !== 'bastion') {
+            count ++
+          }
+        }
+        if (count > 10) {
+          count = 10
+        }
+        this.form.fork = count
+      }
     }
   },
   components: { },

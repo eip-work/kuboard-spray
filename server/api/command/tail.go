@@ -30,7 +30,11 @@ const (
 	filePeriod = 1 * time.Second
 )
 
-func reader(ws *websocket.Conn) {
+type FileTailer struct {
+	Tailer *tail.Tail
+}
+
+func (ft *FileTailer) reader(ws *websocket.Conn) {
 	defer ws.Close()
 	ws.SetReadLimit(512)
 	ws.SetReadDeadline(time.Now().Add(pongWait))
@@ -38,6 +42,7 @@ func reader(ws *websocket.Conn) {
 	for {
 		_, _, err := ws.ReadMessage()
 		if err != nil {
+			logrus.Trace("break reader.")
 			break
 		}
 	}
@@ -58,11 +63,12 @@ func tailFile(filePath string) *tail.Tail {
 	}
 	return tailfs
 }
-func writer(ws *websocket.Conn, filePath string) {
-	tailfs := tailFile(filePath)
+func (ft *FileTailer) writer(ws *websocket.Conn, filePath string) {
+	ft.Tailer = tailFile(filePath)
 	pingTicker := time.NewTicker(pingPeriod)
 	fileTicker := time.NewTicker(filePeriod)
 	defer func() {
+		logrus.Trace("stop writer")
 		pingTicker.Stop()
 		fileTicker.Stop()
 		ws.Close()
@@ -70,7 +76,10 @@ func writer(ws *websocket.Conn, filePath string) {
 
 	for {
 		select {
-		case msg, ok := <-tailfs.Lines:
+		case dead := <-ft.Tailer.Dead():
+			logrus.Trace("dead", dead)
+			return
+		case msg, ok := <-ft.Tailer.Lines:
 			if ok {
 				ws.SetWriteDeadline(time.Now().Add(writeWait))
 				// fmt.Printf("read file content： %s\n", msg)
@@ -128,6 +137,11 @@ func TailFile(c *gin.Context) {
 
 	filePath := constants.GET_DATA_DIR() + "/" + reqParams.OwnerType + "/" + reqParams.OwnerName + "/history/" + pid + "/" + reqParams.File
 	logrus.Trace("[", filePath, "]")
-	go writer(ws, filePath)
-	reader(ws)
+	ft := FileTailer{}
+	go ft.writer(ws, filePath)
+	logrus.Trace("started writer")
+	ft.reader(ws)
+	ft.Tailer.Stop()
+	ft.Tailer.Cleanup()
+	logrus.Trace("stoped reader")
 }

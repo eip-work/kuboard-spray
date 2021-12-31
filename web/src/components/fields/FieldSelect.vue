@@ -12,9 +12,10 @@
       </div>
     </template>
     <template #view>
-      <div v-if="$slots.view">
-        <slot name="view"></slot>
-      </div>
+      <span v-if="value !== undefined && value !== ''">
+        {{ compute_display_value }}
+      </span>
+      <span v-else class="field_placeholder">{{ compute_placeholder }}</span>
     </template>
   </FieldCommon>
 </template>
@@ -51,6 +52,24 @@ export default {
       },
       set (v) {
         console.log(v)
+      }
+    },
+    value: {
+      get () { return this.obj[this.fieldName] },
+      set (v) { this.obj[this.fieldName] = v }
+    },
+    compute_display_value () {
+      let temp = ''
+      for (let i in this.options) {
+        if (this.options[i].value === this.value) {
+          return this.options[i].label
+        }
+      }
+      temp = this.$t('field.' + this.fieldName + '-' + this.value)
+      if (temp === 'field.' + this.fieldName + '-' + this.value) {
+        return this.value
+      } else {
+        return temp
       }
     },
   },

@@ -2,8 +2,6 @@ package constants
 
 import (
 	"os"
-
-	"github.com/sirupsen/logrus"
 )
 
 func GET_DATA_CLUSTER_DIR() string {
@@ -21,7 +19,6 @@ func GET_DATA_MIRROR_DIR() string {
 func GET_DATA_DIR() string {
 	dir, _ := os.Getwd()
 	dir = dir + "/data"
-	logrus.Trace("wd:", dir)
 	return dir
 }
 

@@ -1,15 +1,9 @@
-[submodule "server/3rd/ansible-apt-mirror"]
-	path = server/3rd/ansible-apt-mirror
-	url = git@github.com:eip-work/ansible-apt-mirror.git
-[submodule "server/ansible-script/ansible-apt-mirror"]
-	path = server/ansible-script/ansible-apt-mirror
-	url = git@github.com:eip-work/ansible-apt-mirror.git
 [submodule "server/ansible-script/roles/ansible-apt-mirror"]
 	path = server/ansible-script/roles/ansible-apt-mirror
 	url = git@github.com:eip-work/ansible-apt-mirror.git
-[submodule "server/roles/ansible-apache2"]
-	path = server/roles/ansible-apache2
-	url = git@github.com:mrlesmithjr/ansible-apache2.git
 [submodule "server/ansible-script/roles/ansible-apache2"]
 	path = server/ansible-script/roles/ansible-apache2
 	url = git@github.com:mrlesmithjr/ansible-apache2.git
+[submodule "server/ansible-script/roles/ansible-offline-yum-repo"]
+	path = server/ansible-script/roles/ansible-offline-yum-repo
+	url = git@github.com:eip-work/ansible-offline-yum-repo.git

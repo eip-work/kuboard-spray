@@ -19,9 +19,9 @@ zh:
   <div>
     <!-- <FieldNumber :holder="vars" :prop="prop" fieldName="apache2_default_port" required></FieldNumber> -->
     <FieldString :holder="vars" :prop="prop" fieldName="apt_mirror_dir" required disabled></FieldString>
-    <FieldCommon required anti-freeze :holder="vars" fieldName="apt_mirror_ubuntu_mirror" :prop="prop">
+    <FieldCommon required :holder="vars" fieldName="apt_mirror_ubuntu_mirror" :prop="prop">
       <template #edit>
-        <el-select v-model="apt_mirror_ubuntu_mirror" style="width: 100%;" v-if="editMode !== 'view'" :placeholder="$t('field.apt_mirror_ubuntu_mirror')">
+        <el-select v-model="apt_mirror_ubuntu_mirror" style="width: 100%;" :placeholder="$t('field.apt_mirror_ubuntu_mirror')" allow-create filterable>
           <el-option v-for="(url, index) in mirrorOptions[os_mirror.status.type]" :key="'url' + index" :value="url">
             {{ url }}
           </el-option>

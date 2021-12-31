@@ -33,16 +33,18 @@ zh:
         </FieldSelect>
         <FieldString :holder="form" fieldName="kuboardspray_os_mirror_name" required :rules="nameRules" :disabled="!form.kuboardspray_os_mirror_type"></FieldString>
         <FieldRadio :holder="form" fieldName="kuboardspray_os_mirror_kind" required :options="['existing', 'provision']">
-          <div class="create_kind">
-            <div v-if="form.kuboardspray_os_mirror_kind === 'provision'">
-              <el-alert :closable="false" type="warning" effect="dark" :title="$t('msg.prompt')">{{$t('provision_msg')}}</el-alert>
+          <template #edit>
+            <div class="create_kind">
+              <div v-if="form.kuboardspray_os_mirror_kind === 'provision'">
+                <el-alert :closable="false" type="warning" effect="dark" :title="$t('msg.prompt')">{{$t('provision_msg')}}</el-alert>
+              </div>
+              <div v-else>
+                <FieldSelect :holder="form" fieldName="kuboardspray_os_mirror_url" required :disabled="!form.kuboardspray_os_mirror_type"
+                  allow-create filterable :loadOptions="loadMirrorList" :placeholder="$t('canCreateItem')"></FieldSelect>
+                <el-alert :closable="false" type="warning" :title="$t('msg.prompt')">{{$t('existing_msg')}}</el-alert>
+              </div>
             </div>
-            <div v-else>
-              <FieldSelect :holder="form" fieldName="kuboardspray_os_mirror_url" required :disabled="!form.kuboardspray_os_mirror_type"
-                allow-create filterable :loadOptions="loadMirrorList" :placeholder="$t('canCreateItem')"></FieldSelect>
-              <el-alert :closable="false" type="warning" :title="$t('msg.prompt')">{{$t('existing_msg')}}</el-alert>
-            </div>
-          </div>
+          </template>
         </FieldRadio>
       </el-form>
       <div class="dialog-footer">

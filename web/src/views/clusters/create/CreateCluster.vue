@@ -21,7 +21,9 @@ zh:
       <el-form :model="form" label-position="left" label-width="120px" v-if="dialogVisible" ref="form">
         <FieldString :holder="form" fieldName="cluster_name" required :placeholder="$t('requiresName')" :rules="nameRules"></FieldString>
         <FieldSelect :holder="form" fieldName="kuboardspray_resource_package" :loadOptions="loadResourceList" required>
-          <el-button style="margin-left: 10px;" type="primary" icon="el-icon-plus">{{$t('createResource')}}</el-button>
+          <template #edit>
+            <el-button style="margin-left: 10px;" type="primary" icon="el-icon-plus">{{$t('createResource')}}</el-button>
+          </template>
         </FieldSelect>
       </el-form>
       <template #footer>

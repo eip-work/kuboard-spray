@@ -1,10 +1,8 @@
 <i18n>
 en:
   label: NetworkPlugin
-  // selectResourcePackageFirst: Please select resource package from KuboardSpray tab first.
 zh:
   label: 网络插件
-  // selectResourcePackageFirst: 请先在 KuboardSpray 标签页选择资源包
 </i18n>
 
 

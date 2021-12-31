@@ -18,7 +18,9 @@ zh:
     <FieldString :holder="holder" fieldName="ansible_user" :placeholder="placeholder('ansible_user')" anti-freeze></FieldString>
     <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList" anti-freeze
       :placeholder="placeholder('ansible_ssh_private_key_file')">
-      <el-button type="primary" plain style="margin-left: 10px;" icon="el-icon-plus" @click="$refs.addPrivateKey.show()">{{$t('addSshKey')}}</el-button>
+      <template #edit>
+        <el-button type="primary" plain style="margin-left: 10px;" icon="el-icon-plus" @click="$refs.addPrivateKey.show()">{{$t('addSshKey')}}</el-button>
+      </template>
     </FieldSelect>
     <FieldString :holder="holder" fieldName="ansible_password" show-password anti-freeze
       :placeholder="placeholder('ansible_password')"></FieldString>

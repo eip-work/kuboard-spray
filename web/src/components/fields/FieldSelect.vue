@@ -8,7 +8,12 @@
             {{item.label}}
           </el-option>
         </el-select>
-        <slot></slot>
+        <slot name="edit"></slot>
+      </div>
+    </template>
+    <template #view>
+      <div v-if="$slots.view">
+        <slot name="view"></slot>
       </div>
     </template>
   </FieldCommon>

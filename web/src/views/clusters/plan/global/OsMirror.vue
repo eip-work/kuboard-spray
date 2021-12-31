@@ -5,12 +5,14 @@ en:
   selectOs: Select OS
   source: Source
   addSource: Add Source
+  asis: Use pre-configured source in the OS.
 zh:
   label: 软件源
   description: OS 软件源（为操作系统指定软件源，例如 yum 源、apt 源等）
   selectOs: 请选择操作系统
   source: 源
   addSource: 添加软件源
+  asis: 使用操作系统预先配置的软件源
 </i18n>
 
 <template>
@@ -21,7 +23,7 @@ zh:
         <li>大部分企业都有自己的系统软件源，为了减小尺寸，KuboardSpray 资源包中不包含这些软件；</li>
       </div>
     </el-alert>
-    <FieldCommon :holder="temp" fieldName="os" :label="$t('selectOs')" label-width="150px">
+    <FieldCommon :holder="temp" fieldName="os" :label="$t('selectOs')" label-width="150px" anti-freeze>
       <template #edit>
         <el-checkbox-group v-model="os">
           <el-checkbox v-for="(item, index) in supportedOs" :key="'os_e' + index" :label="index.toLowerCase()">{{index}}</el-checkbox>
@@ -35,13 +37,17 @@ zh:
     </FieldCommon>
     <template v-for="(item, index) in os" :key="'repo' + index">
       <FieldSelect :holder="vars" :fieldName="'kuboardspray_repo_' + item" :loadOptions="loadRepoOptions" label-width="150px"
-        :label="item + ' ' + $t('source')" required :prop="prop">
-        <el-button style="margin-left: 10px;" type="primary" plain icon="el-icon-plus">{{ $t('addSource') }}</el-button>
+        :label="item + ' ' + $t('source')" required :prop="prop" anti-freeze>
+        <template #edit>
+          <el-button style="margin-left: 10px;" type="primary" plain icon="el-icon-plus">{{ $t('addSource') }}</el-button>
+        </template>
       </FieldSelect>
       <template v-if="vars.container_manager === 'docker'">
         <FieldSelect :holder="vars" :fieldName="'kuboardspray_repo_docker_' + item" :loadOptions="loadRepoOptions" label-width="150px"
-          :label="'docker_' + item + ' ' + $t('source')" required :prop="prop">
-          <el-button style="margin-left: 10px;" type="primary" plain icon="el-icon-plus">{{ $t('addSource') }}</el-button>
+          :label="'docker_' + item + ' ' + $t('source')" required :prop="prop" anti-freeze>
+          <template #edit>
+            <el-button style="margin-left: 10px;" type="primary" plain icon="el-icon-plus">{{ $t('addSource') }}</el-button>
+          </template>
         </FieldSelect>
       </template>
     </template>
@@ -120,6 +126,9 @@ export default {
     async loadRepoOptions (type) {
       let result = []
       await this.kuboardSprayApi.get(`/mirrors`, { params: { type: type.slice(18) } }).then(resp => {
+        if (type.slice(18).indexOf('docker_') !== 0) {
+          result.push({ label: this.$t('asis'), value: 'AS_IS'})
+        }
         for (let item of resp.data.data) {
           result.push({ label: item, value: item })
         }

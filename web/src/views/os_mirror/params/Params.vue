@@ -12,12 +12,14 @@ zh:
   <div>
     <el-alert :title="$t('params')" :closable="false" class="app_margin_bottom">{{ $t('params_desc') }}</el-alert>
     <template v-for="(value, key) in os_mirror.status.params" :key="key">
-      <FieldString :holder="os_mirror.status.params" :fieldName="key" label-width="240px"></FieldString>
+      <FieldString :holder="os_mirror.status.params" :fieldName="key" label-width="240px" anti-freeze></FieldString>
     </template>
   </div>
 </template>
 
 <script>
+import {syncParams} from './sync_params.js'
+
 export default {
   props: {
     os_mirror: { type: Object, required: true }
@@ -31,6 +33,11 @@ export default {
   },
   components: { },
   mounted () {
+  },
+  watch: {
+    'os_mirror.status.url': function (newValue) {
+      syncParams(this.os_mirror.status.params, this.os_mirror.status.type, newValue)
+    }
   },
   methods: {
 

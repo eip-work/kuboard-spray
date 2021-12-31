@@ -10,7 +10,7 @@
           </div>
       </router-link>
     </div>
-    <div v-else class="kb-button" @click="_ => {if (!loading) {$emit('click')}}" :style="`width: ${size}; height: ${size}; ${loading ? 'cursor: not-allowed;' : ''}`">
+    <div v-else class="kb-button" @click.prevent.stop="_ => {if (!loading) {$emit('click')}}" :style="`width: ${size}; height: ${size}; ${loading ? 'cursor: not-allowed;' : ''}`">
       <div class="kb-content" :style="`width: ${contentSize}; height: ${contentSize}`">
         <slot v-if="!loading">
           <i :class="`${icon} kb-icon`" :style="`width: ${contentSize}; height: ${contentSize}; font-size: ${contentSize}`"></i>

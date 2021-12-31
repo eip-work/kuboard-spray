@@ -143,10 +143,15 @@ export default {
         docker_ubuntu: [
             'https://repo.huaweicloud.com/docker-ce/linux/ubuntu/',
             'https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/',
-            // 'https://mirrors.aliyun.com/docker-ce/linux/ubuntu/',
+            'https://mirrors.aliyun.com/docker-ce/linux/ubuntu/',
             'https://mirrors.cloud.tencent.com/docker-ce/linux/ubuntu/',
           ],
-        centos: [],
+        centos: [
+          'http://mirrors.aliyun.com/repo/',
+          'https://repo.huaweicloud.com/centos/',
+          'https://mirrors.tuna.tsinghua.edu.cn/centos/',
+          'https://mirrors.cloud.tencent.com/centos/',
+        ],
         docker_centos: [
           'https://download.docker.com/linux/centos/',
         ],
@@ -165,9 +170,8 @@ export default {
           let temp = clone(this.form)
           temp.params = {}
           
-          if (this.form.kuboardspray_os_mirror_kind === 'existing') {
-            syncParams(temp.params, this.form.kuboardspray_os_mirror_type, this.kuboardspray_os_mirror_url)
-          }
+          syncParams(temp.params, this.form.kuboardspray_os_mirror_type, this.form.kuboardspray_os_mirror_url)
+
           await this.kuboardSprayApi.post('/mirrors', temp).then(() => {
             this.$message.success(this.$t('msg.save_succeeded'))
             if (this.form.kuboardspray_os_mirror_kind === 'existing') {

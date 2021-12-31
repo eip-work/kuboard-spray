@@ -6,6 +6,7 @@ en:
   source: Source
   addSource: Add Source
   asis: Use pre-configured source in the OS.
+  docker_asis: Use docker official repository download.docker.com
 zh:
   label: 软件源
   description: OS 软件源（为操作系统指定软件源，例如 yum 源、apt 源等）
@@ -13,6 +14,7 @@ zh:
   source: 源
   addSource: 添加软件源
   asis: 使用操作系统预先配置的软件源
+  docker_asis: 使用 Docker 官方软件源 download.docker.com
 </i18n>
 
 <template>
@@ -128,6 +130,8 @@ export default {
       await this.kuboardSprayApi.get(`/mirrors`, { params: { type: type.slice(18) } }).then(resp => {
         if (type.slice(18).indexOf('docker_') !== 0) {
           result.push({ label: this.$t('asis'), value: 'AS_IS'})
+        } else {
+          result.push({ label: this.$t('docker_asis'), value: 'AS_IS'})
         }
         for (let item of resp.data.data) {
           result.push({ label: item, value: item })

@@ -9,6 +9,7 @@ import (
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type InstallClusterRequest struct {
@@ -99,14 +100,20 @@ func InstallCluster(c *gin.Context) {
 	for key, value := range targetVars {
 		if strings.Index(key, "kuboardspray_repo_") == 0 { // 忽略 kuboardspray_repo_ 和 kuboardspray_repo_docker_ 的差异
 			v := value.(string)
-			repo, err := common.ParseYamlFile(constants.GET_DATA_DIR() + "/mirror/" + v + "/status.yaml")
-			if err != nil {
-				common.HandleError(c, http.StatusInternalServerError, "cannot read repo. ", err)
-				return
-			}
-			params := repo["params"].(map[string]interface{})
-			for k, v := range params {
-				targetVars[k] = v
+			if v == "AS_IS" {
+				logrus.Trace("使用操作系统已经配置的软件源 -> ", key, " : ", value)
+			} else {
+				repo, err := common.ParseYamlFile(constants.GET_DATA_DIR() + "/mirror/" + v + "/status.yaml")
+				if err != nil {
+					common.HandleError(c, http.StatusInternalServerError, "cannot read repo. ", err)
+					return
+				}
+				params := repo["params"].(map[string]interface{})
+				logrus.Trace("配置软件源参数  -> ", key, " : ", value)
+				for k, v := range params {
+					targetVars[k] = v
+					logrus.Trace("    ", k, " : ", v)
+				}
 			}
 		}
 	}

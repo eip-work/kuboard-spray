@@ -46,11 +46,11 @@ zh:
           <template #default="scope">
             <template v-if="importedPackageMap">
               <router-link v-if="importedPackageMap[scope.row.version]" :to="`/settings/resources/${scope.row.version}`">
-                <i class="el-icon-link"></i>
+                <!-- <i class="el-icon-link"></i> -->
                 {{scope.row.version}}
               </router-link>
               <router-link v-else :to="`/settings/resources/${scope.row.version}/on_air`">
-                <i class="el-icon-link"></i>
+                <!-- <i class="el-icon-link"></i> -->
                 {{scope.row.version}}
               </router-link>
             </template>
@@ -190,7 +190,8 @@ export default {
       this.importedPackageMap = {}
       this.packageMap = {}
       this.availablePackageList = undefined
-      await axios.get('https://addons.kuboard.cn/v-kuboard-spray-resources/package-list.yaml').then(resp => {
+      console.log('refresh')
+      await axios.get('https://addons.kuboard.cn/v-kuboard-spray-resources/package-list.yaml?nocache=' + new Date().getTime()).then(resp => {
         this.availablePackageList = yaml.load(resp.data).items
       }).catch(e => {
         console.log(e)
@@ -218,7 +219,7 @@ export default {
       })
     },
     loadPackageFromRepository (packageVersion) {
-      axios.get(`https://addons.kuboard.cn/v-kuboard-spray-resources/${packageVersion.version}/package.yaml`).then(resp => {
+      axios.get(`https://addons.kuboard.cn/v-kuboard-spray-resources/${packageVersion.version}/package.yaml?nocache=${new Date().getTime()}`).then(resp => {
         setTimeout(() => {
           this.packageMap[packageVersion.version] = yaml.load(resp.data)
           this.packageMap[packageVersion.version].loaded = true

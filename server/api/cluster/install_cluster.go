@@ -146,7 +146,7 @@ func InstallCluster(c *gin.Context) {
 		return "\n" + message, nil
 	}
 
-	command := command.Execute{
+	cmd := command.Execute{
 		OwnerType: "cluster",
 		OwnerName: req.Cluster,
 		Cmd:       "ansible-playbook",
@@ -162,7 +162,7 @@ func InstallCluster(c *gin.Context) {
 		PostExec: postExec,
 	}
 
-	if err := command.Exec(); err != nil {
+	if err := cmd.Exec(); err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "Faild to InstallCluster. ", err)
 		return
 	}
@@ -171,7 +171,7 @@ func InstallCluster(c *gin.Context) {
 		"code":    http.StatusOK,
 		"message": "success",
 		"data": gin.H{
-			"pid": command.R_Pid,
+			"pid": cmd.R_Pid,
 		},
 	})
 

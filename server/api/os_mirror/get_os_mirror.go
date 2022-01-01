@@ -20,31 +20,28 @@ func GetMirror(c *gin.Context) {
 
 	inventory, err := common.ParseYamlFile(MirrorInventoryPath(req.Name))
 	if err != nil {
-		// common.HandleError(c, http.StatusInternalServerError, "cannnot parse file: ", err)
 		logrus.Trace("cannot parse file: ", err)
-		// return
+		// 不通过 kuboardspray 安装的软件源没有 inventory.yaml
 	}
-
 	statusFilePath := constants.GET_DATA_MIRROR_DIR() + "/" + req.Name + "/status.yaml"
 	status, err := common.ParseYamlFile(statusFilePath)
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "cannot pase file: "+statusFilePath, err)
 	}
 
-	successTasks, err := command.ReadSuccessTasks("mirror", req.Name)
+	history, err := command.ReadTaskHistory("mirror", req.Name)
 	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "cannot read cluster status", err)
-		return
+		common.HandleError(c, http.StatusInternalServerError, "cannot read status", err)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"code":    http.StatusOK,
 		"message": "success",
 		"data": gin.H{
-			"inventory":     inventory,
-			"status":        status,
-			"success_tasks": successTasks,
-			"name":          req.Name,
+			"inventory": inventory,
+			"history":   history,
+			"name":      req.Name,
+			"status":    status,
 		},
 	})
 }

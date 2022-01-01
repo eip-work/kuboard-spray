@@ -21,7 +21,6 @@ zh:
         <template v-if="currentTab === 'plan'">
           <template v-if="mode === 'view'">
             <el-button type="primary" icon="el-icon-edit" @click="$router.replace(`/clusters/${name}?mode=edit`)">{{$t('msg.edit')}}</el-button>
-            <ClusterProcessing v-if="cluster" :cluster="cluster" :name="name" @refresh="refresh" :loading="loading"></ClusterProcessing>
           </template>
           <template v-if="mode === 'edit'">
             <el-popconfirm :confirm-button-text="$t('msg.ok')" :cancel-button-text="$t('msg.cancel')" placement="bottom-start"
@@ -33,6 +32,9 @@ zh:
             <el-button type="primary" icon="el-icon-check" :disabled="noSaveRequired" @click="save">{{$t('msg.save')}}</el-button>
           </template>
         </template>
+        <template v-if="currentTab === 'access' || currentTab === 'plan'">
+          <ClusterProcessing v-if="mode === 'view' && cluster" :cluster="cluster" :name="name" @refresh="refresh" :loading="loading" :hideOnSuccess="currentTab === 'access'"></ClusterProcessing>
+        </template>
       </div>
     </ControlBar>
     <el-card shadow="none" v-if="loading">
@@ -42,8 +44,8 @@ zh:
       <el-tab-pane :label="$t('plan')" name="plan">
         <Plan v-if="cluster" ref="plan" :cluster="cluster" :mode="mode"></Plan>
       </el-tab-pane>
-      <el-tab-pane :label="$t('access')" name="access" :disabled="cluster && cluster.success_tasks.length == 0">
-        <Access v-if="cluster && cluster.success_tasks.length > 0" ref="access" :cluster="cluster"></Access>
+      <el-tab-pane :label="$t('access')" name="access" :disabled="cluster && cluster.history.success_tasks.length == 0">
+        <Access v-if="cluster && cluster.history.success_tasks.length > 0" ref="access" :cluster="cluster"></Access>
       </el-tab-pane>
       <el-tab-pane disabled label="健康检查">检查集群的状态与集群规划内容的匹配情况（正在建设...）</el-tab-pane>
       <el-tab-pane disabled label="备份">备份 etcd 内容（正在建设...）</el-tab-pane>
@@ -103,7 +105,7 @@ export default {
         if (this.cluster === undefined) {
           return false
         }
-        if (this.cluster.success_tasks.length > 0) {
+        if (this.cluster.history.success_tasks.length > 0) {
           return true
         }
         return false
@@ -129,7 +131,7 @@ export default {
       await this.kuboardSprayApi.get(`/clusters/${this.name}`).then(resp => {
         this.cluster = resp.data.data
         // this.cluster.processing = true
-        if (this.cluster.success_tasks.length > 0) {
+        if (this.cluster.history.success_tasks.length > 0) {
           this.currentTab = 'access'
         } else {
           this.currentTab = 'plan'

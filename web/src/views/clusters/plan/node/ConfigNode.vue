@@ -63,7 +63,7 @@ zh:
 <script>
 import SshParamsNode from '../common/SshParamsNode.vue'
 import NodeRoleTag from '../common/NodeRoleTag.vue'
-import NodeFact from '../../../fact/NodeFact.vue'
+import NodeFact from '../../../common/fact/NodeFact.vue'
 
 export default {
   props: {

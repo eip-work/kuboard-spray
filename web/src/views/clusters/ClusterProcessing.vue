@@ -1,14 +1,5 @@
 <i18n>
 en:
-  apply: Apply
-  confirmToApply: Do the installation of Kubernetes Cluster, are you sure?
-  processingTitle: Executing
-  processingHints: There is a background task executing, just wait a moment.
-  succeeded: Installed cluster successfully before.
-  reset: This is going to makesure the config apply with preset.
-  viewLogs: View Task Logs
-  taskFinished: Task is already completed
-  viewPlan: I just want to view the Cluster Parameters.
   verbose: Include task params
   verbose_true: May include sensitive data in the trace, e.g. path to files, user name, password.
   verbose_false: Some information is hidden when there is a exception, which makes it more difficult to fix the issue.
@@ -17,16 +8,9 @@ en:
   vvv_false: usually false
   fork: ansible fork
   fork_more: Max number of nodes can be operated in the installation.
+
+  installCluster: Install Cluster
 zh:
-  apply: 执 行
-  confirmToApply: 将执行集群安装动作，请确认已完成集群规划！
-  processingTitle: 任务执行中
-  processingHints: 该集群有后台任务正在执行，请耐心等待。
-  succeeded: 已经成功安装过 K8S 集群。
-  reset: 此操作将重新设置 K8S 集群的参数！
-  viewLogs: 查看任务日志
-  taskFinished: 任务已结束
-  viewPlan: 我想看看集群规划
   verbose: 显示任务参数
   verbose_true: 日志中会包含部分敏感信息，例如：文件路径、用户名密码等
   verbose_false: 部分错误信息不能完整展示，使得出错时排查问题更困难
@@ -35,35 +19,14 @@ zh:
   vvv_false: 通常设置为 false
   fork: 并发数量
   fork_more: 安装过程中可以同时操作的目标节点的最大数量。ansible fork.
+
+  installCluster: 安装集群
 </i18n>
 
 <template>
-  <div v-if="dialogVisible" style="display: inline-block; width: 0px; height: 0px;">
-    <el-dialog v-model="dialogVisible" :title="$t('processingTitle')" width="50%" :close-on-click-modal="false" :append-to-body="true" :show-close="false">
-      <el-alert type="warning" :closable="false" :title="$t('processingTitle')" show-icon effect="dark" style="margin-top: 20px;">
-        <span>{{$t('processingHints')}}</span>
-      </el-alert>
-      <template #footer>
-        <el-button @click="forceHide = true" icon="el-icon-files">{{$t('viewPlan')}}</el-button>
-        <el-button @click="$emit('refresh')" type="danger" icon="el-icon-finished">{{$t('taskFinished')}}</el-button>
-        <el-button type="primary" icon="el-icon-check" @click="viewTaskLogs(cluster.current_pid)">{{$t('viewLogs')}}</el-button>
-      </template>
-    </el-dialog>
-  </div>
-  <el-popover v-else v-model:visible="showConfirm" placement="right-start" width="270" trigger="manual">
-    <template #reference>
-      <el-button type="danger" icon="el-icon-lightning" @click="showConfirm = !showConfirm">{{$t('apply')}}</el-button>
-    </template>
+  <ExecuteTask :history="cluster.history" :loading="loading" :title="$t('installCluster')" :startTask="applyPlan" @refresh="$emit('refresh')">
     <el-form @submit.prevent.stop label-position="left" label-width="120px">
       <div style="height: 10px;"></div>
-      <el-alert v-if="isInstalled" type="success" effect="dark" style="margin-bottom: 10px;" :closable="false">
-        <i class="el-icon-lightning" style="font-size: 16px; color: white; margin-right: 10px;"></i>
-        <span class="confirmText" style="color: white;">{{$t('succeeded')}}</span>
-      </el-alert>
-      <el-alert type="error" style="margin-bottom: 10px;" :closable="false">
-        <i class="el-icon-lightning" style="font-size: 16px; color: red; margin-right: 10px;"></i>
-        <span class="confirmText">{{isInstalled ? $t('reset') : $t('confirmToApply')}}</span>
-      </el-alert>
       <el-form-item :label="$t('verbose')">
         <el-switch v-model="form.verbose"></el-switch>
         <div style="width: 240px; font-size: 12px;">{{$t('verbose_' + form.verbose)}}</div>
@@ -76,15 +39,13 @@ zh:
         <el-input-number v-model="form.fork" :step="2"></el-input-number>
         <div style="width: 240px; font-size: 12px;">{{$t('fork_more')}}</div>
       </el-form-item>
-      <div style="text-align: right; margin-top: 20px;">
-        <el-button type="default" icon="el-icon-close" @click="showConfirm = false">{{$t('msg.cancel')}}</el-button>
-        <el-button type="primary" icon="el-icon-lightning" @click="applyPlan">{{$t('msg.ok')}}</el-button>
-      </div>
     </el-form>
-  </el-popover>
+  </ExecuteTask>
 </template>
 
 <script>
+import ExecuteTask from '../common/task/ExecuteTask.vue'
+
 export default {
   props: {
     cluster: { type: Object, required: true },
@@ -93,8 +54,6 @@ export default {
   },
   data() {
     return {
-      forceHide: false,
-      showConfirm: false,
       form: {
         verbose: false,
         vvv: false,
@@ -102,24 +61,8 @@ export default {
       }
     }
   },
-  computed: {
-    dialogVisible: {
-      get () {
-        if (this.loading) {
-          return false
-        }
-        return this.cluster.processing && !this.forceHide
-      },
-      set () {}
-    }
-  },
-  inject: ['isInstalled'],
   watch: {
-    'loading': function() {
-      this.forceHide = false
-      this.showConfirm = false
-    },
-    showConfirm (newValue) {
+    'cluster.inventory.all.hosts': function (newValue) {
       if (newValue) {
         let count = 0
         for (let key in this.cluster.inventory.all.hosts) {
@@ -134,24 +77,20 @@ export default {
       }
     }
   },
-  components: { },
+  components: { ExecuteTask },
   emits: ['refresh'],
   mounted () {
   },
   methods: {
-    applyPlan () {
-      this.forceHide = false
-      this.showConfirm = false
-      this.kuboardSprayApi.post(`/clusters/${this.name}/install`, this.form).then(resp => {
-        this.$emit('refresh')
-        this.viewTaskLogs(resp.data.data.pid)
+    async applyPlan () {
+      let pid = undefined
+      await this.kuboardSprayApi.post(`/clusters/${this.name}/install`, this.form).then(resp => {
+        pid = resp.data.data.pid
       }).catch(e => {
         this.$message.error('' + e.response.data.message)
       })
+      return pid
     },
-    viewTaskLogs (pid) {
-      this.openUrlInBlank(`/#/tail/cluster/${this.name}/history/${pid}/execute.log`)
-    }
   }
 }
 </script>

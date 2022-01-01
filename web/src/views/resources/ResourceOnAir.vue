@@ -12,7 +12,7 @@ zh:
 <template>
   <div>
     <ControlBar :title="name">
-      <ResourceDownload v-if="resourcePackage" :resource="resourcePackage"></ResourceDownload>
+      <ResourceDownload v-if="resourcePackage" :resource="{package: resourcePackage, history:{task_type: 'resource', task_name: name, processing: false, success_tasks: []}}"></ResourceDownload>
     </ControlBar>
     <div class="app_block_title">
       {{ $t('obj.resource') }}
@@ -22,7 +22,8 @@ zh:
       </el-tag>
     </div>
     <el-card>
-      <ResourceDetails v-if="resourcePackage" :resourcePackage="resourcePackage" expandAll></ResourceDetails>
+      <el-skeleton v-if="loading" animated></el-skeleton>
+      <ResourceDetails v-else-if="resourcePackage" :resourcePackage="resourcePackage" expandAll></ResourceDetails>
     </el-card>
   </div>
 </template>
@@ -55,6 +56,7 @@ export default {
   data() {
     return {
       resourcePackage: undefined,
+      loading: false,
     }
   },
   computed: {
@@ -65,16 +67,15 @@ export default {
   },
   methods: {
     async refresh () {
+      this.loading = true
       await axios.get(`https://addons.kuboard.cn/v-kuboard-spray-resources/${this.name}/package.yaml?nocache=${new Date().getTime()}`).then(resp => {
         this.resourcePackage = yaml.load(resp.data)
       }).catch(e => {
         console.log(e)
         this.$message.error('离线环境')
       })
+      this.loading = false
     },
-    download () {
-
-    }
   }
 }
 </script>

@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
@@ -27,11 +28,18 @@ func GetResource(c *gin.Context) {
 	res := gin.H{}
 	yaml.Unmarshal(packageContent, res)
 
+	history, err := command.ReadTaskHistory("resource", req.Name)
+	if err != nil {
+		common.HandleError(c, http.StatusInternalServerError, "cannot read task history", err)
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"code":    http.StatusOK,
 		"message": "success",
 		"data": gin.H{
 			"package": res,
+			"history": history,
 		},
 	})
 }

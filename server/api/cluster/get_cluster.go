@@ -1,7 +1,6 @@
 package cluster
 
 import (
-	"io/ioutil"
 	"net/http"
 
 	"github.com/eip-work/kuboard-spray/api/command"
@@ -24,34 +23,19 @@ func GetCluster(c *gin.Context) {
 		return
 	}
 
-	successTasks, err := command.ReadSuccessTasks("cluster", req.Cluster)
+	history, err := command.ReadTaskHistory("cluster", req.Cluster)
 	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "cannot read cluster status", err)
+		common.HandleError(c, http.StatusInternalServerError, "cannot read task history.", err)
 		return
 	}
-
-	processing := false
-	lockFile, err := command.LockOwner("cluster", req.Cluster)
-	if err != nil {
-		processing = true
-	}
-	lockFilePath := constants.GET_DATA_CLUSTER_DIR() + "/" + req.Cluster + "/inventory.lastrun"
-	pid, err := ioutil.ReadFile(lockFilePath)
-	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "cannot read current pid", err)
-		return
-	}
-	command.UnlockOwner(lockFile)
 
 	c.JSON(http.StatusOK, gin.H{
 		"code":    http.StatusOK,
 		"message": "success",
 		"data": gin.H{
-			"inventory":     inventory,
-			"name":          req.Cluster,
-			"success_tasks": successTasks,
-			"processing":    processing,
-			"current_pid":   string(pid),
+			"inventory": inventory,
+			"history":   history,
+			"name":      req.Cluster,
 		},
 	})
 }

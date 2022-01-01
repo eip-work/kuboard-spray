@@ -165,8 +165,8 @@ func (execute *Execute) exec() {
 		}
 		logStr := string(logs)
 		if strings.LastIndex(logStr, "PLAY RECAP *********************************************************************") < 0 {
-			logFile.WriteString("\033[31m\033[01m\033[05m  No Ansible PLAY RECAP found.\033[0m\n")
-			logFile.WriteString("\033[31m\033[01m\033[05m  ansible-playbook 执行出错。\033[0m\n")
+			logFile.WriteString("\033[31m\033[01m\033[05m  No PLAY RECAP found.\033[0m\n")
+			logFile.WriteString("\033[31m\033[01m\033[05m  执行出错。\033[0m\n")
 			logrus.Warn("No ansbile-playbook recap.")
 			return
 		}

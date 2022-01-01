@@ -38,7 +38,10 @@ zh:
         <div class="package_info">
           <el-form-item :label="$t('os')">
             <template v-for="(item, key) in resourcePackage.supported_os" :key="'os' + key">
-              <el-tag style="margin-right: 10px;">{{item.distribution}}_{{item.version}}</el-tag>
+              <div>
+                <el-tag effect="dark">{{item.distribution}}</el-tag>
+                <el-tag style="margin-left: 10px;" v-for="(version, i) in item.versions" :key="'v' + key + '' + i">{{version}}</el-tag>
+              </div>
             </template>
           </el-form-item>
           <PackageContentField :holder="resourcePackage.kubernetes" fieldName="image_arch"></PackageContentField>

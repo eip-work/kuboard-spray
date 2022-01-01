@@ -11,6 +11,7 @@ import (
 	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v3"
 )
 
 func DownloadResource(c *gin.Context) {
@@ -35,22 +36,28 @@ func DownloadResource(c *gin.Context) {
 		return
 	}
 
-	version := common.MapGet(downloadReq, "metadata.version").(string)
+	version := common.MapGet(downloadReq, "package.metadata.version").(string)
 	versionDir := constants.GET_DATA_RESOURCE_DIR() + "/" + version
-	_, err = os.ReadDir(versionDir)
-	if err == nil {
-		common.HandleError(c, http.StatusInternalServerError, "Dir already exist: "+versionDir, nil)
-		return
-	}
 
 	if err := common.CreateDirIfNotExists(versionDir); err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "Create dir failed. ", err)
 		return
 	}
 
-	if err := ioutil.WriteFile(versionDir+"/package.yaml", buf, 0655); err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "Write package.yaml failed. ", err)
-		return
+	pkg, _ := yaml.Marshal(downloadReq["package"])
+
+	pkgExists := false
+	entries, _ := os.ReadDir(versionDir)
+	for _, entry := range entries {
+		if entry.Name() == "package.yaml" {
+			pkgExists = true
+		}
+	}
+	if !pkgExists {
+		if err := ioutil.WriteFile(versionDir+"/package.yaml", pkg, 0655); err != nil {
+			common.HandleError(c, http.StatusInternalServerError, "Write package.yaml failed. ", err)
+			return
+		}
 	}
 
 	postExec := func(status command.ExecuteExitStatus) (string, error) {
@@ -72,7 +79,7 @@ func DownloadResource(c *gin.Context) {
 		OwnerName: version,
 		Cmd:       "./pull-resource-package.sh",
 		Args: func(execute_dir string) []string {
-			return []string{common.MapGet(downloadReq, "downloadFrom").(string)}
+			return []string{common.MapGet(downloadReq, "downloadFrom").(string) + ":" + version}
 		},
 		Type:     "download",
 		PostExec: postExec,

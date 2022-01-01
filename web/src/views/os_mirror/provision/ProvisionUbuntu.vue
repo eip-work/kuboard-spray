@@ -113,7 +113,7 @@ export default {
           i386: 'i386',
           src: 'src',
         },
-        'docker-ce_ubuntu': {
+        'docker_ubuntu': {
           amd64: 'amd64',
           arm64: 'arm64',
           armhf: 'armhf',
@@ -132,7 +132,7 @@ export default {
           'http://mirrors.163.com/ubuntu/',
           'http://mirrors.nju.edu.cn/ubuntu/',
         ],
-        'docker-ce_ubuntu': [
+        'docker_ubuntu': [
           'https://repo.huaweicloud.com/docker-ce/linux/ubuntu/',
           'https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/',
           // 'https://mirrors.aliyun.com/docker-ce/linux/ubuntu/',

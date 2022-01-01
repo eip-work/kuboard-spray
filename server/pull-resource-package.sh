@@ -40,4 +40,4 @@ echo -e "      \033[32m[ 清理完成。]\033[0m "
 echo ""
 
 echo "PLAY RECAP *********************************************************************"
-echo "kuboardspray : ok=5    unreachable=0    failed=0"
+echo "kuboardspray : ok=3    unreachable=0    failed=0"

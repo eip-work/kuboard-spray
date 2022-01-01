@@ -21,7 +21,7 @@ zh:
 
 <script>
 import SshParams from './SshParams.vue'
-import NodeFact from '../../fact/NodeFact.vue'
+import NodeFact from '../../common/fact/NodeFact.vue'
 import ProvisionUbuntu from './ProvisionUbuntu.vue'
 
 export default {

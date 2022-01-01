@@ -15,7 +15,7 @@ zh:
         <i class="el-icon-cloudy"></i>
         {{$t('online')}}
       </el-tag>
-      <ResourceDownload v-if="resource" :resource="resource"></ResourceDownload>
+      <ResourceDownload v-if="resource" :resource="resource" :loading="loading" @refresh="refresh"></ResourceDownload>
       <el-popconfirm :title="$t('confirmToDelete')" @confirm="removeResource">
         <template #reference>
           <el-button type="danger" icon="el-icon-delete">{{ $t('msg.delete') }}</el-button>
@@ -23,7 +23,8 @@ zh:
       </el-popconfirm>
     </ControlBar>
     <el-card>
-      <ResourceDetails v-if="resource" :resourcePackage="resource.package" expandAll></ResourceDetails>
+      <el-skeleton v-if="loading"></el-skeleton>
+      <ResourceDetails v-else-if="resource" :resourcePackage="resource.package" expandAll></ResourceDetails>
     </el-card>
   </div>
 </template>

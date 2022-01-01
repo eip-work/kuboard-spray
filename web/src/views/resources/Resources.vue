@@ -40,6 +40,7 @@ zh:
         <li>{{$t('resourceDescription2')}}</li>
       </div>
     </el-alert>
+    <ResourcesCreateOffline class="app_margin_top"></ResourcesCreateOffline>
     <div class="contentList">
       <el-table v-if="mergedPackageList" :data="mergedPackageList" style="width: 100%">
         <el-table-column prop="version" :label="$t('version')" min-width="100px">
@@ -76,7 +77,7 @@ zh:
           <template #default="scope">
             <template v-if="packageMap[scope.row.version]">
               <div v-for="(engine, key) in packageMap[scope.row.version].container_engine" :key="`c${scope.index}_${key}`">
-                <el-tag>{{ engine.container_manager }} {{ engine.version }}</el-tag>
+                <el-tag>{{ engine.container_manager }}_{{ engine.params[engine.container_manager + '_version'] }}</el-tag>
               </div>
             </template>
             <i class="el-icon-loading" v-else></i>
@@ -86,7 +87,10 @@ zh:
           <template #default="scope">
             <template v-if="packageMap[scope.row.version]">
               <div v-for="(os, key) in packageMap[scope.row.version].supported_os" :key="`os${scope.index}_${key}`">
-                <el-tag>{{ os.distribution }} {{ os.version }}</el-tag>
+                <el-tag>
+                  {{ os.distribution }}<span 
+                  v-for="(v, i) in os.versions" :key="key + 'v' + i">_{{v}}</span>
+                </el-tag>
               </div>
             </template>
             <i class="el-icon-loading" v-else></i>
@@ -134,6 +138,7 @@ zh:
 import mixin from '../../mixins/mixin.js'
 import axios from 'axios'
 import yaml from 'js-yaml'
+import ResourcesCreateOffline from './ResourcesCreateOffline.vue'
 
 export default {
   mixins: [mixin],
@@ -180,7 +185,7 @@ export default {
       return result
     }
   },
-  components: { },
+  components: { ResourcesCreateOffline },
   mounted () {
     this.refresh()
   },
@@ -190,7 +195,6 @@ export default {
       this.importedPackageMap = {}
       this.packageMap = {}
       this.availablePackageList = undefined
-      console.log('refresh')
       await axios.get('https://addons.kuboard.cn/v-kuboard-spray-resources/package-list.yaml?nocache=' + new Date().getTime()).then(resp => {
         this.availablePackageList = yaml.load(resp.data).items
       }).catch(e => {

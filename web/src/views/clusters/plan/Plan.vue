@@ -176,7 +176,7 @@ export default {
         if (this.mode === 'view') {
           return 'view'
         }
-        if (this.cluster && this.cluster.success_tasks.length > 0) {
+        if (this.cluster && this.cluster.history.success_tasks.length > 0) {
           return 'frozen'
         }
         return this.mode

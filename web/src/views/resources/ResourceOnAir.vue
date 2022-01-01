@@ -12,7 +12,7 @@ zh:
 <template>
   <div>
     <ControlBar :title="name">
-      <ResourceDownload v-if="resourcePackage" :resource="{package: resourcePackage, history:{task_type: 'resource', task_name: name, processing: false, success_tasks: []}}"></ResourceDownload>
+      <ResourceDownload v-if="resourcePackage" action="download" :resource="{package: resourcePackage, history:{task_type: 'resource', task_name: name, processing: false, success_tasks: []}}"></ResourceDownload>
     </ControlBar>
     <div class="app_block_title">
       {{ $t('obj.resource') }}

@@ -2,20 +2,28 @@
 en:
   resourceList: Resources List
   confirmToDelete: Do you confirm to delete the resource package ?
+  loaded: Loaded
+  not_load: Not loaded
 zh:
   resourceList: 资源包列表
   confirmToDelete: 是否确认要删除该资源包
+  loaded: '已成功加载'
+  not_load: '未加载'
 </i18n>
 
 <template>
   <div>
     <ControlBar :title="$t('obj.resource')">
       <span class="app_text_mono" style="margin-right: 20px;">{{name}}</span>
-      <el-tag type="warning" effect="dark" style="margin-right: 20px;">
+      <el-tag v-if="isInstalled" type="success" effect="dark" style="margin-right: 20px;">
         <i class="el-icon-cloudy"></i>
-        {{$t('online')}}
+        {{$t('loaded')}}
       </el-tag>
-      <ResourceDownload v-if="resource" :resource="resource" :loading="loading" @refresh="refresh"></ResourceDownload>
+      <el-tag v-else type="error" effect="dark" style="margin-right: 20px;">
+        <i class="el-icon-cloudy"></i>
+        {{$t('not_load')}}
+      </el-tag>
+      <ResourceDownload v-if="resource" :resource="resource" action="reload" :loading="loading" @refresh="refresh"></ResourceDownload>
       <el-popconfirm :title="$t('confirmToDelete')" @confirm="removeResource">
         <template #reference>
           <el-button type="danger" icon="el-icon-delete">{{ $t('msg.delete') }}</el-button>
@@ -59,6 +67,12 @@ export default {
     }
   },
   computed: {
+    isInstalled () {
+      if (this.resource) {
+        return this.resource.history.success_tasks.length > 0
+      }
+      return false
+    }
   },
   components: { ResourceDetails, ResourceDownload },
   mounted () {

@@ -36,6 +36,7 @@ export default {
   props: {
     resource: { type: Object, required: true },
     loading: { type: Boolean, required: false },
+    action: { type: String, required: true },
   },
   data() {
     return {
@@ -43,13 +44,14 @@ export default {
         downloadFrom: undefined,
       },
       sourceRules: [
-        { required: true, message: "required", trigger: 'change' }
+        { required: true, message: this.$t('selectSource'), trigger: 'change' }
       ]
     }
   },
   components: { ExecuteTask },
   emits: ['refresh'],
   mounted () {
+    this.form.downloadFrom = this.resource.package.metadata.available_at[0]
   },
   methods: {
     startTask () {
@@ -60,7 +62,7 @@ export default {
               package: clone(this.resource.package),
               downloadFrom: this.form.downloadFrom,
             }
-            this.kuboardSprayApi.post(`/resources/${request.package.metadata.version}/download`, request).then(resp => {
+            this.kuboardSprayApi.post(`/resources/${request.package.metadata.version}/${this.action}`, request).then(resp => {
               this.$router.replace(`/settings/resources/${request.package.metadata.version}`)
               resolve(resp.data.data.pid)
             }).catch(e => {

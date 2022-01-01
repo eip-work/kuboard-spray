@@ -14,8 +14,15 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func DownloadResource(c *gin.Context) {
+func CreateAndDownloadResource(c *gin.Context) {
+	templateMethod(c, false)
+}
 
+func ReloadResource(c *gin.Context) {
+	templateMethod(c, true)
+}
+
+func templateMethod(c *gin.Context, canUseExisting bool) {
 	var req GetResourceRequest
 	c.ShouldBindUri(&req)
 
@@ -37,7 +44,14 @@ func DownloadResource(c *gin.Context) {
 	}
 
 	version := common.MapGet(downloadReq, "package.metadata.version").(string)
+
 	versionDir := constants.GET_DATA_RESOURCE_DIR() + "/" + version
+
+	_, errExist := os.ReadDir(versionDir)
+	if errExist == nil && !canUseExisting {
+		common.HandleError(c, http.StatusConflict, "资源包已存在，不能重复创建", errExist)
+		return
+	}
 
 	if err := common.CreateDirIfNotExists(versionDir); err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "Create dir failed. ", err)
@@ -97,5 +111,4 @@ func DownloadResource(c *gin.Context) {
 			"pid": cmd.R_Pid,
 		},
 	})
-
 }

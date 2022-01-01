@@ -54,7 +54,6 @@ zh:
 
 <script>
 import Codemirror from "codemirror-editor-vue3"
-import "codemirror/theme/dracula.css"
 import "codemirror/theme/darcula.css"
 import "codemirror/mode/yaml/yaml.js"
 
@@ -68,7 +67,7 @@ export default {
       kubeconfig: undefined,
       kubeconfigLoading: false,
       cmOptions: {
-        mode: "text/yaml", // Language mode
+        mode: "yaml", // Language mode
         theme: "darcula", // Theme
         lineNumbers: true, // Show line number
         lineWrapping: true,

@@ -1,21 +1,32 @@
 #!/bin/bash
 
-echo "TASK [拉取镜像： $1] ******"
-echo "      镜像大小大概 1GB 左右，根据您的网速不同，需要等候的时间不等。"
-echo "      如果想要查看下载进度，您可以在运行 kuboard-spray 的服务器上执行以下命令。"
-echo -e "     \033[34m docker pull $1 \033[0m"
-echo ""
 
-docker pull $1
-
-if [ $? -ne 0 ]; then
-  echo "拉取镜像失败"
-  exit
-fi
-
+echo "TASK [检查镜像是否已下载： $1] ****"
+image="${1%:*}"
 version="${1#*:}"
+echo "      image  : ${image}"
+echo "      tag    : ${version}"
 
-echo -e "      \033[32m[ 拉取镜像成功。]\033[0m "
+tag=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "$1")
+
+if [ "$tag" == "$1" ]; then
+  echo -e "      \033[32m[ 镜像已存在，无需重复下载。]\033[0m "
+else
+  echo "TASK [拉取镜像： $1] ******"
+  echo "      镜像大小大概 1GB 左右，根据您的网速不同，需要等候的时间不等。"
+  echo "      如果想要查看下载进度，您可以在运行 kuboard-spray 的服务器上执行以下命令。"
+  echo -e "     \033[34m docker pull $1 \033[0m"
+  echo ""
+
+  docker pull $1
+
+  if [ $? -ne 0 ]; then
+    echo -e "      \033[31m\033[01m\033[05m[ 拉取镜像失败。]\033[0m "
+    echo -e "      如果您需要离线下载，请参考 https://kuboard.cn/support/kuboard-spray"
+    exit
+  fi
+  echo -e "      \033[32m[ 拉取镜像成功。]\033[0m "
+fi
 
 echo ""
 echo "TASK [加载资源包到本地] ********************************************************"

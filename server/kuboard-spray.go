@@ -48,7 +48,8 @@ func setupRouter() *gin.Engine {
 
 	api.GET("/resources", resource.ListResources)
 	api.GET("/resources/:name", resource.GetResource)
-	api.POST("/resources/:name/download", resource.DownloadResource)
+	api.POST("/resources/:name/download", resource.CreateAndDownloadResource)
+	api.POST("/resources/:name/reload", resource.ReloadResource)
 	api.DELETE("/resources/:name", resource.DeleteResource)
 
 	api.GET("/mirrors", os_mirror.ListOsMirrors)

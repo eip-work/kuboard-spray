@@ -8,7 +8,7 @@ import (
 	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 type CreateOsMirrorRequest struct {
@@ -55,7 +55,18 @@ func CreateOsMirror(c *gin.Context) {
 	if req.Kind == "provision" {
 		status["status"] = "created"
 
-		inventoryObj := getInventoryTemplate()
+		inventoryObj := map[string]interface{}{}
+
+		if req.Type == "docker_ubuntu" || req.Type == "ubuntu" {
+			template := getDockerUbuntuMirrorInventoryTemplate()
+			yaml.Unmarshal([]byte(template), inventoryObj)
+		} else if req.Type == "ubuntu" {
+			template := getUbuntuMirrorInventoryTemplate()
+			yaml.Unmarshal([]byte(template), inventoryObj)
+		} else {
+			common.HandleError(c, http.StatusInternalServerError, "not supported yet", nil)
+			return
+		}
 
 		inventoryContent, err := yaml.Marshal(inventoryObj)
 
@@ -95,28 +106,43 @@ func CreateOsMirror(c *gin.Context) {
 	})
 }
 
-func getInventoryTemplate() gin.H {
-	template := gin.H{
-		"all": gin.H{
-			"hosts": gin.H{
-				"localhost": gin.H{
-					"ansible_connection": "local",
-				},
-				"mirror_node": gin.H{},
-			},
-			"children": gin.H{
-				"target": gin.H{
-					"hosts": gin.H{
-						"mirror_node": gin.H{},
-					},
-					"vars": gin.H{
-						"apt_mirror_client": false,
-						"apt_mirror_dir":    "/var/spool/apt-mirror",
-					},
-				},
-			},
-		},
-	}
+func getDockerUbuntuMirrorInventoryTemplate() string {
+	return `all:
+  children:
+    target:
+      hosts:
+        mirror_node: {}
+      vars:
+        apt_mirror_client: false
+        apt_mirror_dir: /var/spool/apt-mirror
+        kuboardspray_get_gpg: true
+        apt_mirror_repos:
+        - "deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} focal stable"
+  hosts:
+    localhost:
+      ansible_connection: local
+    mirror_node: {}
+`
+}
 
-	return template
+func getUbuntuMirrorInventoryTemplate() string {
+	return `all:
+  children:
+    target:
+      hosts:
+        mirror_node: {}
+      vars:
+        apt_mirror_client: false
+        apt_mirror_dir: /var/spool/apt-mirror
+        apt_mirror_repos:
+          - deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} focal main restricted universe multiverse
+          - deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} focal-backports main restricted universe multiverse
+          - deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} focal-security main restricted universe multiverse
+          - deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} focal-updates main restricted universe multiverse
+          - deb-amd64 {{ apt_mirror_ubuntu_mirror_protocol }}{{ apt_mirror_ubuntu_mirror }} focal-proposed main restricted universe multiverse
+  hosts:
+    localhost:
+      ansible_connection: local
+    mirror_node: {}
+`
 }

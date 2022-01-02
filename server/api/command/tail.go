@@ -108,6 +108,11 @@ func TailFile(c *gin.Context) {
 	var reqParams TailFileRequest
 	c.ShouldBindUri(&reqParams)
 
+	if reqParams.File == "inventory.yaml" {
+		common.HandleError(c, http.StatusBadRequest, "cannot tail inventory.yaml", nil)
+		return
+	}
+
 	pid := reqParams.Pid
 	if reqParams.Pid == "lastrun" {
 		lockFilePath := constants.GET_DATA_DIR() + "/" + reqParams.OwnerType + "/" + reqParams.OwnerName + "/inventory.lastrun"

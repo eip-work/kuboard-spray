@@ -93,6 +93,13 @@ zh:
 </template>
 
 <script>
+function trimSlash(str) {
+  if (str[str.length - 1] === '/') {
+    return str.slice(0, str.length - 1)
+  }
+  return str
+}
+
 export default {
   props: {
     os_mirror: { type: Object, required: true },
@@ -123,20 +130,20 @@ export default {
       },
       mirrorOptions: {
         ubuntu: [
-          'https://repo.huaweicloud.com/ubuntu/',
-          'https://mirrors.aliyun.com/ubuntu/',
-          'https://mirrors.tuna.tsinghua.edu.cn/ubuntu/',
-          'http://cn.archive.ubuntu.com/ubuntu/',
-          'https://mirrors.cloud.tencent.com/ubuntu/',
+          'https://repo.huaweicloud.com/ubuntu',
+          'https://mirrors.aliyun.com/ubuntu',
+          'https://mirrors.tuna.tsinghua.edu.cn/ubuntu',
+          'http://cn.archive.ubuntu.com/ubuntu',
+          'https://mirrors.cloud.tencent.com/ubuntu',
           'http://ftp.sjtu.edu.cn/ubuntu',
-          'http://mirrors.163.com/ubuntu/',
-          'http://mirrors.nju.edu.cn/ubuntu/',
+          'http://mirrors.163.com/ubuntu',
+          'http://mirrors.nju.edu.cn/ubuntu',
         ],
         'docker_ubuntu': [
-          'https://repo.huaweicloud.com/docker-ce/linux/ubuntu/',
-          'https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/',
-          // 'https://mirrors.aliyun.com/docker-ce/linux/ubuntu/',
-          'https://mirrors.cloud.tencent.com/docker-ce/linux/ubuntu/',
+          'https://repo.huaweicloud.com/docker-ce/linux/ubuntu',
+          'https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu',
+          'https://mirrors.aliyun.com/docker-ce/linux/ubuntu',
+          'https://mirrors.cloud.tencent.com/docker-ce/linux/ubuntu',
         ]
       }
     }
@@ -161,7 +168,7 @@ export default {
         if (v) {
           let splited = v.split("://")
           this.vars.apt_mirror_ubuntu_mirror_protocol = splited[0] + "://"
-          this.vars.apt_mirror_ubuntu_mirror = splited[1]
+          this.vars.apt_mirror_ubuntu_mirror = trimSlash(splited[1])
         } else {
           this.vars.apt_mirror_ubuntu_mirror_protocol = undefined
           this.vars.apt_mirror_ubuntu_mirror = undefined

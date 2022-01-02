@@ -146,15 +146,17 @@ func InstallCluster(c *gin.Context) {
 		return "\n" + message, nil
 	}
 
+	playbook := common.MapGet(resourcePackage, "metadata.supported_playbooks.install_cluster").(string)
+
 	cmd := command.Execute{
 		OwnerType: "cluster",
 		OwnerName: req.Cluster,
 		Cmd:       "ansible-playbook",
 		Args: func(execute_dir string) []string {
 			if req.VVV {
-				return []string{"-i", execute_dir + "/inventory.yaml", "pb_cluster.yml", "-vvv", "--fork", strconv.Itoa(req.Fork)}
+				return []string{"-i", execute_dir + "/inventory.yaml", playbook, "-vvv", "--fork", strconv.Itoa(req.Fork)}
 			}
-			return []string{"-i", execute_dir + "/inventory.yaml", "pb_cluster.yml", "--fork", strconv.Itoa(req.Fork)}
+			return []string{"-i", execute_dir + "/inventory.yaml", playbook, "--fork", strconv.Itoa(req.Fork)}
 		},
 		Dir:      resourcePackagePath,
 		Type:     "install",

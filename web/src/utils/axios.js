@@ -1,15 +1,15 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
-let kuboardSprayId = 'default'
-let splitedPath = location.pathname.split('/')
-if (splitedPath[0] === 'kuboardspray' && splitedPath[1] !== undefined) {
-  kuboardSprayId = splitedPath[1]
-}
+// let kuboardSprayId = 'default'
+// let splitedPath = location.pathname.split('/')
+// if (splitedPath[0] === 'kuboardspray' && splitedPath[1] !== undefined) {
+//   kuboardSprayId = splitedPath[1]
+// }
 
 var kuboardSprayApi
 
-const baseURL = `/kuboardspray/${kuboardSprayId}/api`
+const baseURL = `./api`
 
 var vueapp
 

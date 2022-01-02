@@ -17,7 +17,7 @@
   border-radius: 3px;
   padding-top: 0px;
   
-  background-image: url("/images/menu/menu.png");
+  background-image: url("./images/menu.png");
   background-repeat:no-repeat;
   background-color: transparent;
   background-size: 100% 135%;
@@ -80,7 +80,7 @@
 .el-menu-item.is-active::before {
   width: 20px;
   height: 12px;
-  background-image: url("/images/menu/round.png");
+  background-image: url("./images/round.png");
   background-repeat:no-repeat;
   background-size: 100% 100%;
   // background-color: transparent;
@@ -93,7 +93,7 @@
 .el-menu-item.is-active::after {
   width: 20px;
   height: 12px;
-  background-image: url("/images/menu/round-1.png");
+  background-image: url("./images/round-1.png");
   background-repeat:no-repeat;
   background-size: 100% 100%;
   // background-color: transparent;

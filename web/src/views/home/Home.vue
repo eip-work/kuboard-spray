@@ -34,7 +34,7 @@ zh:
       </el-card>
       <el-card style="margin: 0 20px;" class="card">
         <template #header>
-          <el-icon :size="20" style="margin-right: 10px;"><img src="/images/kubernetes.png" style="width: 20px; height: 20px;"></el-icon>
+          <el-icon :size="20" style="margin-right: 10px;"><img src="./images/kubernetes.png" style="width: 20px; height: 20px;"></el-icon>
           {{$t('clusters')}}
         </template>
         <div class="description">
@@ -66,7 +66,7 @@ zh:
 
 <script>
 import mixin from '../../mixins/mixin.js'
-import { kuboardIcon } from './icon.js'
+import { kuboardIcon } from './images/icon.js'
 
 export default {
   mixins: [mixin],

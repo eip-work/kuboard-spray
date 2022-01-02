@@ -12,22 +12,14 @@ module.exports = {
         hot: true,
         historyApiFallback: true,
         proxy: {
-          '/kuboardspray/': {
+          '/api/': {
             target: 'http://localhost:8006',
             changeOrigin: true,
             ws: true,
             pathRewrite: {
-              '^/kuboardspray/': '/kuboardspray/'
+              '^/api/': '/api/'
             }
           },
-          // '/clusters/': {
-          //   target: 'http://localhost:8006',
-          //   changeOrigin: true,
-          //   ws: true,
-          //   pathRewrite: {
-          //     '^/clusters/': '/clusters/'
-          //   }
-          // },
         }
     },
     configureWebpack: config => {

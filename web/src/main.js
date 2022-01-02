@@ -14,25 +14,28 @@ import i18n from './i18n'
 import initAxios from './utils/axios.js'
 import openUrlInBlank from './utils/open-in-blank.js'
 
-import version from './version.json'
 import components from './components/index.js'
 
 import { VueClipboard } from '@soerenmartius/vue3-clipboard'
 
 import App from './App.vue'
 
-window.KuboardSpray = {version}
+import axios from 'axios'
 
-const app = createApp(App)
-app.use(ElementPlus, {size: 'mini', locale: zhCn})
-app.use(store)
-app.use(router)
-app.use(i18n)
-icons(app)
-app.use(components)
-app.use(initAxios)
-app.use(openUrlInBlank)
-app.use(VueClipboard)
-app.config.unwrapInjectedRef = true
-initKuboardMfe(app)
-app.mount('#app')
+axios.get("./version.json").then(resp => {
+  window.KuboardSpray = { version: resp.data}
+  const app = createApp(App)
+  app.use(ElementPlus, {size: 'mini', locale: zhCn})
+  app.use(store)
+  app.use(router)
+  app.use(i18n)
+  icons(app)
+  app.use(components)
+  app.use(initAxios)
+  app.use(openUrlInBlank)
+  app.use(VueClipboard)
+  app.config.unwrapInjectedRef = true
+  initKuboardMfe(app)
+  app.mount('#app')
+})
+

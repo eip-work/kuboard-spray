@@ -15,7 +15,7 @@ zh:
         离线安装 / 维护 Kubernetes 集群
       </div>
       <div style="display: flex;">
-        <img src="/images/login.png"/>
+        <img src="./login.png"/>
         <div class="logintext">登 录</div>
       </div>
     </div>

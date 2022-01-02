@@ -148,14 +148,14 @@ func getInventoryTemplate() string {
             kube_network_plugin_multus: false
 
             # Kubernetes internal network for services, unused block of space.
-            kube_service_addresses: 10.233.0.0/18
+            kube_service_addresses: 10.233.0.0/16
 
             # internal network. When used, it will assign IP
             # addresses from this range to individual pods.
             # This network must be unused in your network infrastructure!
-            kube_pods_subnet: 10.233.64.0/18
+            kube_pods_subnet: 10.234.0.0/16
 
-            kube_network_node_prefix: 24
+            kube_network_node_prefix: 22
 
             # Configure Dual Stack networking (i.e. both IPv4 and IPv6)
             enable_dual_stack_networks: false
@@ -278,8 +278,8 @@ func getInventoryTemplate() string {
             # auto_renew_certificates_systemd_calendar: "Mon *-*-1,2,3,4,5,6,7 03:{{ groups['kube_control_plane'].index(inventory_hostname) }}0:00"
       vars:
         bin_dir: /usr/local/bin
-        loadbalancer_apiserver_port: 6443
-        loadbalancer_apiserver_healthcheck_port: 8081
+        # loadbalancer_apiserver_port: 6443
+        # loadbalancer_apiserver_healthcheck_port: 8081
         containerd_use_systemd_cgroup: true
         docker_orphan_clean_up: true
         ## Container runtime

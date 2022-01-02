@@ -22,7 +22,7 @@ func setupRouter() *gin.Engine {
 
 	router := gin.Default()
 
-	root := router.Group("/kuboardspray/:kuboardsprayID")
+	root := router.Group("/")
 	root.POST("/api/login", login.AuthHandler)
 
 	api := root.Group("/api", login.JWTAuthMiddleware())

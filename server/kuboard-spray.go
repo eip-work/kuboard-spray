@@ -11,6 +11,7 @@ import (
 	"github.com/eip-work/kuboard-spray/api/os_mirror"
 	"github.com/eip-work/kuboard-spray/api/private_key"
 	"github.com/eip-work/kuboard-spray/api/resource"
+	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/eip-work/kuboard-spray/log"
 	"github.com/eip-work/kuboard-spray/login"
 	"github.com/eip-work/kuboard-spray/vue"
@@ -70,7 +71,7 @@ func main() {
 
 	router := setupRouter()
 
-	router.Run(":8006")
+	router.Run(constants.GetEnvDefault("KUBOARD_SPRAY_PORT", "8006"))
 	// s := &http.Server{
 	// 	Addr:         ":8006",
 	// 	Handler:      router,

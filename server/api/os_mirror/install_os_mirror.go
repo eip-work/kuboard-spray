@@ -3,10 +3,10 @@ package os_mirror
 import (
 	"io/ioutil"
 	"net/http"
-	"os"
 
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
+	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -43,11 +43,6 @@ func InstallOsMirror(c *gin.Context) {
 	}
 	logrus.Trace(req.Verbose, env)
 
-	dir, err := os.Getwd()
-	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "cannot find current working dir.", err)
-		return
-	}
 	command := command.Execute{
 		OwnerType: "mirror",
 		OwnerName: req.Name,
@@ -58,7 +53,7 @@ func InstallOsMirror(c *gin.Context) {
 			}
 			return []string{"-i", run_dir + "/inventory.yaml", "mirror_ubuntu.yaml"}
 		},
-		Dir:  dir + "/ansible-script",
+		Dir:  constants.GET_ANSIBLE_SCRIPT_DIR(),
 		Type: "install",
 		PreExec: func(run_dir string) error {
 			inventoryPath := MirrorInventoryPath(req.Name)

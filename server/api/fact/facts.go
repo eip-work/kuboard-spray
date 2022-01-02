@@ -100,11 +100,6 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 
 	defer os.Remove(inventoryPath)
 
-	// dir, err := os.Getwd()
-	// if err != nil {
-	// 	return nil, err
-	// }
-
 	run := command.Run{
 		Cmd:  "ansible",
 		Args: []string{req.Node, "-m", "setup", "-i", inventoryPath},

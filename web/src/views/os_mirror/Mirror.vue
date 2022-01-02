@@ -25,18 +25,20 @@ zh:
 <template>
   <div>
     <ControlBar :title="name">
-      <template v-if="mode === 'view'">
-        <el-button type="primary" icon="el-icon-edit" @click="$router.push(`${name}?mode=edit`)">{{ $t('msg.edit') }}</el-button>
-        <MirrorProcessing v-if="os_mirror && os_mirror.status.kind === 'provision'" :os_mirror="os_mirror" :loading="loading" :name="name" @refresh="refresh"></MirrorProcessing>
-      </template>
-      <template v-else>
-        <el-popconfirm :confirm-button-text="$t('msg.ok')" :cancel-button-text="$t('msg.cancel')" placement="bottom-start"
-          icon="el-icon-warning" icon-color="red" :title="$t('msg.confirmToCancel')" @confirm="cancelEdit">
-          <template #reference>
-            <el-button type="default" icon="el-icon-close">{{$t('msg.cancel')}}</el-button>
-          </template>
-        </el-popconfirm>
-        <el-button type="primary" icon="el-icon-check" :disabled="noSaveRequired" @click="save">{{$t('msg.save')}}</el-button>
+      <template v-if="os_mirror">
+        <template v-if="mode === 'view'">
+          <el-button v-if="!os_mirror.history.processing" type="primary" icon="el-icon-edit" @click="$router.push(`${name}?mode=edit`)">{{ $t('msg.edit') }}</el-button>
+          <MirrorProcessing v-if="os_mirror.status.kind === 'provision'" :os_mirror="os_mirror" :loading="loading" :name="name" @refresh="refresh"></MirrorProcessing>
+        </template>
+        <template v-else>
+          <el-popconfirm :confirm-button-text="$t('msg.ok')" :cancel-button-text="$t('msg.cancel')" placement="bottom-start"
+            icon="el-icon-warning" icon-color="red" :title="$t('msg.confirmToCancel')" @confirm="cancelEdit">
+            <template #reference>
+              <el-button type="default" icon="el-icon-close">{{$t('msg.cancel')}}</el-button>
+            </template>
+          </el-popconfirm>
+          <el-button type="primary" icon="el-icon-check" :disabled="noSaveRequired" @click="save">{{$t('msg.save')}}</el-button>
+        </template>
       </template>
     </ControlBar>
     <el-form v-if="os_mirror" ref="form" :model="os_mirror" label-position="left" label-width="150px" @submit.prevent.stop>

@@ -1,20 +1,10 @@
 <i18n>
 en:
-  proxy: Proxy
-  proxyDescription: Proxy (Generally speaking, you don't need this.)
   createResource: "Add Resource Package"
-  proxyUsage1: KuboardSpray can use the following proxy params to fetch content from internet that are not included in the resource package.
-  proxyUsage2: "Usually speaking, all the resources (exclude docker-ce / OS mirror) are already included in the resource package, you don't need the proxy params here."
-  proxyUsage3: "Proxy params here only apply to the KuboardSpray host."
   bastionUsage: KuboardSpray can access Kubernetes Cluster Nodes through bastion. 
   setSshParam: Bastion is not enabled, please set SSH params in {tabName} tab.
 zh:
-  proxy: 代理
-  proxyDescription: 代理（通常不需要设置）
   createResource: '添加资源包'
-  proxyUsage1: KuboardSpray 可以使用如下代理参数从外网获取资源包中未找到的资源；
-  proxyUsage2: 通常资源包中包含所需资源，您无需设置此处的代理参数；
-  proxyUsage3: 此处的代理参数只作用于 KuboardSpray 这台机器；
   bastionUsage: KuboardSpray 可以通过跳板机或堡垒机访问将要安装 K8S 集群的目标节点。
   setSshParam: 未使用跳板机或堡垒机时，请在 {tabName} 标签页设置 SSH 连接参数。
 </i18n>
@@ -32,16 +22,6 @@ zh:
       <div v-if="resourcePackage">
         <ResourceDetails :resourcePackage="resourcePackage"></ResourceDetails>
       </div>
-    </ConfigSection>
-    <ConfigSection v-model:enabled="proxyEnabled" :label="$t('proxy')" :description="$t('proxyDescription')" anti-freeze>
-      <el-alert class="app_margin_bottom" :closable="false">
-        <li>{{$t('proxyUsage1')}}</li>
-        <li>{{$t('proxyUsage2')}}</li>
-        <li>{{$t('proxyUsage3')}}</li>
-      </el-alert>
-      <FieldString :holder="inventory.all.hosts.localhost" fieldName="http_proxy" prop="all.hosts.localhost" required></FieldString>
-      <FieldString :holder="inventory.all.hosts.localhost" fieldName="https_proxy" prop="all.hosts.localhost" required></FieldString>
-      <FieldString :holder="inventory.all.hosts.localhost" fieldName="no_proxy" prop="all.hosts.localhost" required></FieldString>
     </ConfigSection>
     <ConfigSection v-model:enabled="bastionEnabled" :label="$t('obj.bastion')" :description="$t('bastionUsage')" anti-freeze>
       <el-alert class="app_margin_bottom" :closable="false">{{$t('bastionUsage')}}</el-alert>
@@ -85,22 +65,6 @@ export default {
     resourcePackage: {
       get () { return this.cluster.resourcePackage},
       set () {}
-    },
-    proxyEnabled: {
-      get () {
-        if (this.inventory.all.hosts.localhost.vars) {
-          return this.inventory.all.hosts.localhost.vars.http_proxy !== undefined
-        }
-        return false
-      },
-      set (v) {
-        if (v) {
-          this.inventory.all.hosts.localhost.vars = this.inventory.all.hosts.localhost.vars || {}
-          this.inventory.all.hosts.localhost.vars.http_proxy = ''
-        } else {
-          delete this.inventory.all.hosts.localhost.vars.http_proxy
-        }
-      }
     },
     bastionEnabled: {
       get () {

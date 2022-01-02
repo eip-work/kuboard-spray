@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "element-theme": "^2.0.1"
-  },
-  "devDependencies": {
-    "element-theme-chalk": "^2.15.6"
-  }
-}

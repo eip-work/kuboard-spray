@@ -12,9 +12,9 @@ RUN apt update -y \
 
 
 
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
+RUN curl -fsSL https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/gpg | apt-key add - \
     && add-apt-repository \
-    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+    "deb [arch=amd64] https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu \
     $(lsb_release -cs) \
     stable" \
     && apt update -y && apt-get install --no-install-recommends -y docker-ce \
@@ -26,13 +26,8 @@ RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
 # See: https://github.com/pypa/pip/issues/10219
 ENV LANG=C.UTF-8
 
-WORKDIR /kubespray
-COPY . .
+WORKDIR /kuboard-spray
+COPY ./requirements.txt ./requirements.txt
 RUN /usr/bin/python3 -m pip install --no-cache-dir pip -U \
     && python3 -m pip install --no-cache-dir -r requirements.txt \
     && update-alternatives --install /usr/bin/python python /usr/bin/python3 1
-
-RUN KUBE_VERSION=$(sed -n 's/^kube_version: //p' roles/kubespray-defaults/defaults/main.yaml) \
-    && http_proxy=http://192.168.2.60:7890 https_proxy=http://192.168.2.60:7890 curl -LO https://storage.googleapis.com/kubernetes-release/release/$KUBE_VERSION/bin/linux/amd64/kubectl \
-    && chmod a+x kubectl \
-    && mv kubectl /usr/local/bin/kubectl

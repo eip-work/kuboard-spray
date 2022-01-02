@@ -71,7 +71,7 @@ func main() {
 
 	router := setupRouter()
 
-	router.Run(constants.GetEnvDefault("KUBOARD_SPRAY_PORT", "8006"))
+	router.Run(constants.GetEnvDefault("KUBOARD_SPRAY_PORT", ":8006"))
 	// s := &http.Server{
 	// 	Addr:         ":8006",
 	// 	Handler:      router,

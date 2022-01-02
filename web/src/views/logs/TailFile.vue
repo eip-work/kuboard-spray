@@ -96,6 +96,13 @@ import ChangeFontSize from './ChangeFontSize'
 import Find from './Find'
 import ChangeColor from './ChangeColor'
 
+function trimSlash(str) {
+  if (str[str.length - 1] === '/') {
+    return str.slice(0, str.length - 1)
+  }
+  return str
+}
+
 export default {
   props: {
     ownerType: { type: String, required: true },
@@ -120,7 +127,7 @@ export default {
     wsUrl() {
       let wsHost = location.host
       let protocol = location.protocol === 'http:' ? 'ws:' : 'wss:'
-      let str = `${protocol}//${wsHost}/kuboardspray/default/api/execute/${this.ownerType}/${this.ownerName}/tail/${this.pid}/${this.file}`
+      let str = `${protocol}//${wsHost}${trimSlash(location.pathname)}/api/execute/${this.ownerType}/${this.ownerName}/tail/${this.pid}/${this.file}`
       return str
     },
     stateStr() {

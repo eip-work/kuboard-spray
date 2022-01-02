@@ -6,7 +6,8 @@ echo $datetime
 tag=eipwork/kuboard-spray
 tag_backup=swr.cn-east-2.myhuaweicloud.com/kuboard/kuboard-spray
 
-echo "构建 web"
+echo
+echo "【构建 web】"
 
 cd web
 yarn install
@@ -16,12 +17,17 @@ echo \{\"version\":\"$1\",\"buildDate\":\"$datetime\"\} > ./dist/version.json
 cd ..
 
 echo
-echo "构建 server"
+echo "【构建 server】"
 rm -f ./server/kuboard-spray
 docker run --rm -v ${PWD}:/usr/src/kuboard-spray \
   -v ~/temp/build-temp/pkg:/go/pkg \
   -w /usr/src/kuboard-spray/server golang:1.16.5-buster \
   sh -c "export GOPROXY=https://goproxy.io,direct && go build kuboard-spray.go"
+
+ls -lh ./server/kuboard-spray
+
+echo
+echo "【构建 镜像】"
 
 docker build -f Dockerfile -t $tag:$1-amd64 .
 

@@ -32,8 +32,11 @@ echo ""
 echo "TASK [加载资源包到本地] ********************************************************"
 docker run -d --rm --name ${version} $1 sleep 3600
 
-rm -rf "$(pwd)/data/resource/${version}/content/"
-docker cp "${version}:/kuboard-spray/resource/content/" "$(pwd)/data/resource/${version}/content/"
+dataDir=$(pwd)
+dataDir=${dataDir%/*}/data
+
+rm -rf "${dataDir}/resource/${version}/content/"
+docker cp "${version}:/kuboard-spray/resource/content/" "${dataDir}/resource/${version}/content/"
 
 echo -e "      \033[32m[ 加载成功。]\033[0m "
 
@@ -44,7 +47,7 @@ echo "TASK [执行清理动作] ************************************************
 docker stop ${version}
 
 
-# docker rmi $1
+docker rmi $1
 
 echo -e "      \033[32m[ 清理完成。]\033[0m "
 

@@ -16,8 +16,7 @@ zh:
 <template>
   <div>
     <ControlBar :title="name">
-      <div v-show="cluster && !cluster.processing">
-      <!-- <el-select style="margin-right: 10px;"></el-select> -->
+      <div v-show="cluster && !cluster.history.processing">
         <template v-if="currentTab === 'plan'">
           <template v-if="mode === 'view'">
             <el-button type="primary" icon="el-icon-edit" @click="$router.replace(`/clusters/${name}?mode=edit`)">{{$t('msg.edit')}}</el-button>
@@ -36,6 +35,9 @@ zh:
           <ClusterProcessing v-if="mode === 'view' && cluster" :cluster="cluster" :name="name" @refresh="refresh" :loading="loading" :hideOnSuccess="currentTab === 'access'"></ClusterProcessing>
         </template>
       </div>
+      <div v-if="cluster && cluster.history.processing">
+        <ClusterProcessing v-if="mode === 'view'" :cluster="cluster" :name="name" @refresh="refresh" :loading="loading" :hideOnSuccess="currentTab === 'access'"></ClusterProcessing>
+      </div>
     </ControlBar>
     <el-card shadow="none" v-if="loading">
       <el-skeleton animated :rows="10"></el-skeleton>
@@ -44,15 +46,21 @@ zh:
       <el-tab-pane :label="$t('plan')" name="plan">
         <Plan v-if="cluster" ref="plan" :cluster="cluster" :mode="mode"></Plan>
       </el-tab-pane>
-      <el-tab-pane :label="$t('access')" name="access" :disabled="cluster && cluster.history.success_tasks.length == 0">
+      <el-tab-pane :label="$t('access')" name="access" :disabled="disableNonePlanTab">
         <Access v-if="cluster && cluster.history.success_tasks.length > 0" ref="access" :cluster="cluster"></Access>
       </el-tab-pane>
-      <el-tab-pane disabled label="健康检查">检查集群的状态与集群规划内容的匹配情况（正在建设...）</el-tab-pane>
-      <el-tab-pane disabled label="备份">备份 etcd 内容（正在建设...）</el-tab-pane>
-      <el-tab-pane disabled label="CIS扫描">
-        <li>https://github.com/aquasecurity/kube-bench</li>
+      <el-tab-pane :disabled="disableNonePlanTab" label="健康检查">
+        <el-alert>检查集群当前的状况与集群安装计划的匹配情况，正在建设...</el-alert>
       </el-tab-pane>
-      <el-tab-pane disabled label="升级包检测">检查是否有更新的 KuboardSpray 资源包（正在建设...）</el-tab-pane>
+      <el-tab-pane :disabled="disableNonePlanTab" label="备份/恢复">
+        <el-alert>对 etcd 及 control-plane 做备份及恢复，正在建设...</el-alert>      
+      </el-tab-pane>
+      <el-tab-pane :disabled="disableNonePlanTab" label="CIS扫描">
+        <el-alert>CIS 扫描，正在建设...</el-alert>
+      </el-tab-pane>
+      <el-tab-pane :disabled="disableNonePlanTab" label="升级包检测">
+        <el-alert>检测 kuboard-spray 升级资源包，正在建设...</el-alert>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -98,17 +106,20 @@ export default {
       } 
       return this.originalInventoryYaml == yaml.dump(this.cluster.inventory)
     },
+    installed () {
+      return !(this.cluster && this.cluster.history.success_tasks.length == 0)
+    },
+    disableNonePlanTab () {
+      if (this.mode !== 'view') {
+        return true
+      }
+      return !this.installed
+    }
   },
   provide () {
     return {
       isInstalled: computed(() => {
-        if (this.cluster === undefined) {
-          return false
-        }
-        if (this.cluster.history.success_tasks.length > 0) {
-          return true
-        }
-        return false
+        return this.installed
       })
     }
   },

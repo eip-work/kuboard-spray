@@ -7,6 +7,7 @@ en:
   viewLogs: View Task Logs
   taskFinished: Task is already completed
   closeWindow: Force to close this dialog window.
+  taskInCurrent: Task in Running
 zh:
   apply: 执 行
   processingTitle: 任务执行中
@@ -18,6 +19,7 @@ zh:
   reset: 再次尝试执行任务
   succeeded: 已经成功执行任务
   confirmToExecute: 执行任务
+  taskInCurrent: 当前有任务正在执行
 </i18n>
 
 <template>
@@ -65,6 +67,7 @@ zh:
         </div>
       </el-form>
     </el-popover>
+    <el-button v-if="history.processing" type="danger" round @click="forceHide = false">{{ $t('taskInCurrent') }}</el-button>
   </template>
 </template>
 

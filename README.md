@@ -21,7 +21,7 @@ docker run -d \
 
 ### 社区
 
-对此项目感兴趣的同学，请点击此处 <span><iframe style="display:inline-block;vertical-align:middle;" src="https://addons.kuboard.cn/downloads/github-star-kuboard-spray.html" frameborder="0" scrolling="0" width="100" height="20" title="GitHub"></iframe></span> 在 GitHub 添加本项目的 Star 以后，扫码加入群聊（提供 star 截图才会被拉入群聊哦！）
+对此项目感兴趣的同学，请添加本项目的 Star 以后，扫码加入群聊（提供 star 截图才会被拉入群聊哦！）
 
 <p>
   <img src="https://addons.kuboard.cn/downloads/qr_code_kuboard-spray.jpg" style="width: 150px; height: 150px;"/>

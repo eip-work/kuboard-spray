@@ -33,6 +33,8 @@ docker build -f Dockerfile -t $tag:$1-amd64 .
 
 docker tag $tag:$1-amd64 $tag_backup:$1-amd64
 
+docker push $tag:$1-amd64
+
 docker push $tag_backup:$1-amd64
 
 echo $datetime

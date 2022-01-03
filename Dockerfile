@@ -43,6 +43,7 @@ RUN /usr/bin/python3 -m pip install --no-cache-dir pip -U \
 
 ENV KUBOARD_SPRAY_WEB_DIR="/kuboard-spray/ui"
 ENV KUBOARD_SPRAY_PORT=":80"
+ENV GIN_MODE=release
 
 COPY ./server/ansible-script ansible-script
 COPY ./server/kuboard-spray kuboard-spray

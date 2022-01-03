@@ -17,7 +17,7 @@ docker run -d \
   eipwork/kuboard-spray:v1.0.0-alpha.1-amd64
 ```
 
-在浏览器地址栏中输入 `http://这台机器的IP地址`，输入默认密码 `123456`，即可登录 kuboard-spray 界面，剩下的事情，在界面上操作一下，您就会啦。如果有困难，试试这篇文档 [使用 KuboardSpray 安装 Kubernetes 集群](https://kuboard.cn/install/install-k8s.html)
+在浏览器地址栏中输入 `http://这台机器的IP地址`，输入默认密码 `Kuboard123`，即可登录 kuboard-spray 界面，剩下的事情，在界面上操作一下，您就会啦。如果有困难，试试这篇文档 [使用 KuboardSpray 安装 Kubernetes 集群](https://kuboard.cn/install/install-k8s.html)
 
 ### 社区
 

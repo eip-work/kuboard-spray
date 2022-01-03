@@ -8,6 +8,8 @@ en:
   taskFinished: Task is already completed
   closeWindow: Force to close this dialog window.
   taskInCurrent: Task in Running
+  viewLastSuccessLog: Last success log
+  viewLastLog: Last log
 zh:
   apply: 执 行
   processingTitle: 任务执行中
@@ -20,6 +22,8 @@ zh:
   succeeded: 已经成功执行任务
   confirmToExecute: 执行任务
   taskInCurrent: 当前有任务正在执行
+  viewLastSuccessLog: 最后成功日志
+  viewLastLog: 最后日志
 </i18n>
 
 <template>
@@ -36,7 +40,7 @@ zh:
     </el-dialog>
   </div>
   <template v-else-if="!loading">
-    <el-popover v-if="!(finished && hideOnSuccess) && !history.processing" v-model:visible="showConfirm" placement="bottom" width="270" trigger="manual">
+    <el-popover v-if="!(finished && hideOnSuccess) && !history.processing" v-model:visible="showConfirm" placement="bottom" width="420" trigger="manual">
       <template #reference>
         <el-button type="warning" icon="el-icon-lightning" @click="showConfirm = !showConfirm">{{ label || $t('apply')}}</el-button>
       </template>
@@ -62,6 +66,10 @@ zh:
         <slot></slot>
 
         <div style="text-align: right; margin-top: 20px;">
+          <el-button v-if="history.success_tasks.length > 0" @click="viewTaskLogs(lastSucessPid)"
+            type="success" plain icon="el-icon-files" style="float: left;">{{ $t('viewLastSuccessLog') }}</el-button>
+          <el-button v-if="history.current_pid && history.current_pid !== lastSucessPid" @click="viewTaskLogs(history.current_pid)" 
+            type="danger" plain icon="el-icon-document" style="float: left;">{{$t('viewLastLog')}}</el-button>
           <el-button type="default" icon="el-icon-close" @click="showConfirm = false">{{$t('msg.cancel')}}</el-button>
           <el-button type="primary" icon="el-icon-lightning" @click="applyPlan">{{$t('msg.ok')}}</el-button>
         </div>
@@ -88,6 +96,16 @@ export default {
     }
   },
   computed: {
+    lastSucessPid () {
+      let task = undefined
+      for (let t of this.history.success_tasks) {
+        task = task || t
+        if (task.pid < t.pid) {
+          task = t
+        }
+      }
+      return task ? task.pid : ''
+    },
     finished () {
       if (this.history && this.history.success_tasks && this.history.success_tasks.length > 0) {
         return true

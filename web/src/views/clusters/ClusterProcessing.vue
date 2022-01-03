@@ -29,15 +29,15 @@ zh:
       <div style="height: 10px;"></div>
       <el-form-item :label="$t('verbose')">
         <el-switch v-model="form.verbose"></el-switch>
-        <div style="width: 240px; font-size: 12px;">{{$t('verbose_' + form.verbose)}}</div>
+        <div style="width: 350px; font-size: 12px;">{{$t('verbose_' + form.verbose)}}</div>
       </el-form-item>
       <el-form-item :label="$t('vvv')">
         <el-switch v-model="form.vvv"></el-switch>
-        <div style="width: 240px; font-size: 12px;">{{$t('vvv_' + form.vvv)}}</div>
+        <div style="width: 350px; font-size: 12px;">{{$t('vvv_' + form.vvv)}}</div>
       </el-form-item>
       <el-form-item :label="$t('fork')">
         <el-input-number v-model="form.fork" :step="2"></el-input-number>
-        <div style="width: 240px; font-size: 12px;">{{$t('fork_more')}}</div>
+        <div style="width: 350px; font-size: 12px;">{{$t('fork_more')}}</div>
       </el-form-item>
     </el-form>
   </ExecuteTask>

@@ -20,7 +20,7 @@ func AuthHandler(c *gin.Context) {
 		return
 	}
 
-	if user.Username == "admin" && user.Password == "123456" {
+	if user.Username == "admin" && user.Password == "Kuboard123" {
 		tokenString, _ := GenerateToken(user.Username)
 		c.JSON(http.StatusOK, gin.H{
 			"code":    http.StatusOK,

@@ -21,6 +21,7 @@ import { VueClipboard } from '@soerenmartius/vue3-clipboard'
 import App from './App.vue'
 
 import axios from 'axios'
+import checkNewVersion from './utils/version-checker.js'
 
 axios.get("./version.json").then(resp => {
   window.KuboardSpray = { version: resp.data}
@@ -37,5 +38,6 @@ axios.get("./version.json").then(resp => {
   app.config.unwrapInjectedRef = true
   initKuboardMfe(app)
   app.mount('#app')
+  checkNewVersion.init()
 })
 

@@ -47,6 +47,10 @@ const messages = {
       status: 'Status',
       confirmToCancel: "Modifications will be lost to proceed, do you confirm ?",
       operations: 'Operations',
+    },
+    upgrade: {
+      ignoreThisVersion: 'Ignore this version.',
+      ignored: 'ignored version {version}, will keep in silence until we get a newer upgrade.',
     }
   },
   zh: { 
@@ -90,6 +94,10 @@ const messages = {
       status: '状 态',
       confirmToCancel: '将丢失已修改内容，确认取消编辑？',
       operations: '操 作',
+    },
+    upgrade: {
+      ignoreThisVersion: '忽略这个版本',
+      ignored: '已经忽略了版本 {version}，不会再提示您更新到该版本。',
     }
   },
 }

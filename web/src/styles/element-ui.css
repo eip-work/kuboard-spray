@@ -237,3 +237,7 @@ a {
 .CodeMirror pre.CodeMirror-line, .CodeMirror pre.CodeMirror-line-like {
   font-family: Consolas,Menlo,Bitstream Vera Sans Mono,Monaco,"微软雅黑",monospace !important;
 }
+
+.kuboard-spray-upgrade-notification {
+  width: 400px;
+}

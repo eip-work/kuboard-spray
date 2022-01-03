@@ -29,10 +29,14 @@ zh:
         </div>
         <div class="header-right">
           <div class="msg">
-            <div class="version">
+            <div class="version" :style="showGithubStar ? '' : 'line-height: 70px;'">
               <div class="dot"></div>
-              <div style="margin-right: 10px; width: 80px; display: inline-block; vertical-align: top" class="nowrap">{{$t('version')}}</div>
+              <div style="margin-right: 10px; width: 80px; display: inline-block; vertical-align: top; text-align: left;" class="nowrap">{{$t('version')}}</div>
               <span class="font-weight">{{ version }}</span>
+            </div>
+            <div class="version" v-if="showGithubStar">
+              <div class="dot"></div>
+              <iframe id="github-star-iframe" style="display:inline-block;vertical-align:middle;" src="https://addons.kuboard.cn/downloads/github-star-kuboard-spray.html" frameborder="0" scrolling="0" width="120" height="20" title="GitHub"></iframe>
             </div>
           </div>
           <LoginInfo></LoginInfo>
@@ -47,6 +51,7 @@ import { mapGetters } from 'vuex'
 import HeaderBreadCrumb from './HeaderBreadCrumb.vue'
 import KbButton from './KbButton.vue'
 import LoginInfo from './LoginInfo.vue'
+import axios from 'axios'
 
 export default {
   props: {
@@ -60,6 +65,7 @@ export default {
     return {
       dialogVisible: false,
       current: 0,
+      showGithubStar: false,
     }
   },
   computed: {
@@ -87,6 +93,11 @@ export default {
     this.interval = setInterval(() => {
       this.current = this.current + 1
     }, 5000)
+    axios.get('https://addons.kuboard.cn/downloads/github-star-kuboard-spray.html').then(() => {
+      this.showGithubStar = true
+    }).catch(e => {
+      console.log('hide github-star', e)
+    })
   },
   beforeUnmount () {
     clearInterval(this.interval)
@@ -117,23 +128,22 @@ export default {
 
 <style scoped lang="scss">
 .version {
-  display: inline-block;
+  // display: inline-block;
   width: 400px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
   margin-right: 30px;
   user-select: none;
-  // cursor: pointer;
   vertical-align: top;
   font-size: 14px;
-  // color: $--color-white;
   color: $--color-text-regular;
   transition: 0.2s;
+  line-height: 35px;
 }
-// .version:hover {
-//   color: $--color-primary-light-5;
-// }
+.version:hover {
+  color: $--color-primary-light-5;
+}
 .version .dot {
   width: 6px;
   height: 6px;
@@ -145,7 +155,8 @@ export default {
 }
 .msg {
   display: inline-block;
-  width: 500px;
+  width: 300px;
+  text-align: left;
 }
 .setting {
   height: 70px;
@@ -174,14 +185,9 @@ export default {
 }
 .header-warpper {
   height: 72px;
-  // background:linear-gradient(0deg,#16386E,#1E4A90);
   background: transparent;
 }
-// .header {
-//   top: 0;
-//   position: fixed;
-//   z-index: 1;
-// }
+
 .bg {
   height: 70px;
   overflow: hidden;
@@ -192,30 +198,20 @@ export default {
   // background-color: white;
 }
 .slot {
-  // float: right;
-  // display: inline-block;
   height: 70px;
   overflow: hidden;
-  // width: 100vw;
   padding: 0px 0 0px 20px;
   text-align: left;
   line-height: 70px;
-  // background: linear-gradient(0deg,#16386E,#1E4A90);
   background: transparent;
-  // font-size: 28px;
   z-index: 1;
   color: $--color-white;
-  // background-image: linear-gradient(to right, mix($--color-white, $--color-kuboard-header, 70%), mix($--color-white, $--color-kuboard-header, 90%));
 }
 .slot-cluster {
   color: $--color-white;
-  // background-image: linear-gradient(to right, mix($--color-white, $--color-golden, 70%), mix($--color-white, $--color-golden, 90%));
 }
 .header-right {
-  // background-image: linear-gradient(to right, $--color-kuboard-header, mix($--color-white, $--color-kuboard-header, 25%));
   padding-right: 10px;
-  // display: inline-block;
-  // width: calc(50vw - 20px);
   position: fixed;
   top: 2px;
   right: 0;
@@ -237,23 +233,18 @@ export default {
   color: white;
   padding: 0px 10px;
   width: 65px;
-  // margin-right: 8px;
   border-radius: 4px;
   vertical-align: top;
   line-height: 50px;
   height: 50px;
   margin-top: 10px;
-  // border: 1px solid rgb(217, 236, 255);
 }
 .logo:hover {
-  // color: $--color-primary;
   color: $--color-kuboard-header;
-  // border: 1px solid $--color-primary;
   background-color: white;
 }
 .logo:active {
   color: $--color-primary;
-  // border: 1px solid $--color-primary;
   outline: none;
 }
 .yaml {

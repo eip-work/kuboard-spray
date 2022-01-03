@@ -12,6 +12,7 @@ tag=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "$1")
 if [ "$tag" == "$1" ]; then
   echo -e "      \033[32m[ 镜像已存在，无需重复下载。]\033[0m "
 else
+  echo ""
   echo "TASK [拉取镜像： $1] ******"
   echo "      镜像大小大概 1GB 左右，根据您的网速不同，需要等候的时间不等。"
   echo "      如果想要查看下载进度，您可以在运行 kuboard-spray 的服务器上执行以下命令。"
@@ -40,7 +41,7 @@ docker cp "${version}:/kuboard-spray/resource/content/" "${dataDir}/resource/${v
 
 echo -e "      \033[32m[ 加载成功。]\033[0m "
 
-echo
+echo ""
 
 echo "TASK [执行清理动作] ************************************************************"
 

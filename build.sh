@@ -31,10 +31,13 @@ echo "【构建 镜像】"
 
 docker build -f Dockerfile -t $tag:$1-amd64 .
 
+docker tag $tag:$1-amd64 $tag:latest-amd64
 docker tag $tag:$1-amd64 $tag_backup:$1-amd64
+docker tag $tag:$1-amd64 $tag_backup:latest-amd64
 
 docker push $tag:$1-amd64
-
+docker push $tag:latest-amd64
 docker push $tag_backup:$1-amd64
+docker push $tag_backup:latest-amd64
 
 echo $datetime

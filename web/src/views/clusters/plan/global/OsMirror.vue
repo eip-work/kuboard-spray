@@ -7,6 +7,7 @@ en:
   addSource: Add Source
   asis: Use pre-configured source in the OS.
   docker_asis: Use docker official repository download.docker.com
+  goToMirrorPage: It's about to go to OS Software Source management page, you are going to lose unsaved content on this page, do you confirm?
 zh:
   label: 软件源
   description: OS 软件源（为操作系统指定软件源，例如 yum 源、apt 源等）
@@ -15,6 +16,7 @@ zh:
   addSource: 添加软件源
   asis: 使用操作系统预先配置的软件源
   docker_asis: 使用 Docker 官方软件源 download.docker.com
+  goToMirrorPage: 此操作将跳转到软件源管理页面，您将丢失当前页面中未保存的内容，是否继续？
 </i18n>
 
 <template>
@@ -41,14 +43,16 @@ zh:
       <FieldSelect :holder="vars" :fieldName="'kuboardspray_repo_' + item" :loadOptions="loadRepoOptions" label-width="150px"
         :label="item + ' ' + $t('source')" required :prop="prop" anti-freeze>
         <template #edit>
-          <el-button style="margin-left: 10px;" type="primary" plain icon="el-icon-plus">{{ $t('addSource') }}</el-button>
+          <ConfirmButton @confirm="$router.push('/settings/mirrors')" buttonStyle="margin-left: 10px;"
+            icon="el-icon-plus" plain :text="$t('addSource')" :message="$t('goToMirrorPage')"></ConfirmButton>
         </template>
       </FieldSelect>
       <template v-if="vars.container_manager === 'docker'">
         <FieldSelect :holder="vars" :fieldName="'kuboardspray_repo_docker_' + item" :loadOptions="loadRepoOptions" label-width="150px"
           :label="'docker_' + item + ' ' + $t('source')" required :prop="prop" anti-freeze>
           <template #edit>
-            <el-button style="margin-left: 10px;" type="primary" plain icon="el-icon-plus">{{ $t('addSource') }}</el-button>
+            <ConfirmButton @confirm="$router.push('/settings/mirrors')" buttonStyle="margin-left: 10px;"
+              icon="el-icon-plus" plain :text="$t('addSource')" :message="$t('goToMirrorPage')"></ConfirmButton>
           </template>
         </FieldSelect>
       </template>

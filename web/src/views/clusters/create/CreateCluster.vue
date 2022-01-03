@@ -11,6 +11,7 @@ zh:
   name: 名称
   requiresName: 请填写名称
   conflict: 与已有的重复 {name}
+  goToResourcePage: 此操作将要跳转到资源包加载页面，是否继续？
 </i18n>
 
 
@@ -22,7 +23,9 @@ zh:
         <FieldString :holder="form" fieldName="cluster_name" required :placeholder="$t('requiresName')" :rules="nameRules"></FieldString>
         <FieldSelect :holder="form" fieldName="kuboardspray_resource_package" :loadOptions="loadResourceList" required>
           <template #edit>
-            <el-button style="margin-left: 10px;" type="primary" icon="el-icon-plus">{{$t('createResource')}}</el-button>
+            <ConfirmButton buttonStyle="margin-left: 10px;" icon="el-icon-plus"
+              @confirm="$router.push('/settings/resources')"
+              :text="$t('createResource')" :message="$t('goToResourcePage')" width="420"></ConfirmButton>
           </template>
         </FieldSelect>
       </el-form>

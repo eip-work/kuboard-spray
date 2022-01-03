@@ -8,6 +8,7 @@ import FieldSelect from './fields/FieldSelect.vue'
 import ControlBar from './page/ControlBar.vue'
 import ConfigSection from './ConfigSection.vue'
 import CopyToClipBoard from './clipboard/CopyToClipBoard.vue'
+import ConfirmButton from './page/ConfirmButton.vue'
 
 export default {
   install(app) {
@@ -21,5 +22,6 @@ export default {
     app.component('ControlBar', ControlBar)
     app.component('ConfigSection', ConfigSection)
     app.component('CopyToClipBoard', CopyToClipBoard)
+    app.component('ConfirmButton', ConfirmButton)
   } 
 }

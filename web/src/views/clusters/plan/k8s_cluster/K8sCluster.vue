@@ -11,7 +11,7 @@ zh:
   <ConfigSection v-model:enabled="enabled" :label="$t('label')" :description="$t('description')" disabled anti-freeze>
     <template v-if="cluster.resourcePackage !== undefined">
       <el-form-item label="kube_version">
-        <span class="app_text_mono">{{cluster.resourcePackage.kubernetes.kube_version}}</span>
+        <span class="app_text_mono">{{cluster.resourcePackage.data.kubernetes.kube_version}}</span>
       </el-form-item>
     </template>
     <FieldString :holder="vars" :prop="prop" fieldName="cluster_name" required></FieldString>

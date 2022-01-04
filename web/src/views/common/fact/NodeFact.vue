@@ -117,9 +117,6 @@ export default {
       this.fact = undefined
       if (this.form) {
         this.form.validate(flag => {
-          // if (this.inventory.all.children.target.children.etcd.hosts[this.nodeName] && !this.inventory.all.children.target.children.etcd.hosts[this.nodeName].etcd_member_name && !fromCache) {
-          //   this.$message.warning(this.$t('etcd_member_name_required'))
-          // }
           if (flag) {
             this.doLoad(fromCache)
           }

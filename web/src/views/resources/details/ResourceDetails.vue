@@ -3,16 +3,16 @@ en:
   os: Operation System
   included: Included
   not_included: Not included
-  addons: Addons
-  cni: Cni plugins
+  addon: Addons
+  network_plugin: Cni plugins
   dependency: Dependencies
   package_content: Package Content
 zh:
   os: 操作系统
   included: 已包含
   not_included: 未包含
-  addons: 可选组件
-  cni: 网络插件
+  addon: 可选组件
+  network_plugin: 网络插件
   dependency: 依赖组件
   package_content: 资源包内容
 </i18n>
@@ -28,7 +28,7 @@ zh:
         <div class="package_info">
           <PackageContentField :holder="resourcePackage.metadata" fieldName="version" label="资源包版本"></PackageContentField>
           <PackageContentField :holder="resourcePackage.metadata" fieldName="issue_date" label="发布时间"></PackageContentField>
-          <PackageContentField :holder="resourcePackage.metadata" fieldName="kubespray_version"></PackageContentField>
+          <PackageContentField :holder="resourcePackage.data" fieldName="kubespray_version"></PackageContentField>
         </div>
       </el-collapse-item>
       <el-collapse-item name="2">
@@ -37,19 +37,19 @@ zh:
         </template>
         <div class="package_info">
           <el-form-item :label="$t('os')">
-            <template v-for="(item, key) in resourcePackage.supported_os" :key="'os' + key">
+            <template v-for="(item, key) in resourcePackage.metadata.supported_os" :key="'os' + key">
               <div>
                 <el-tag effect="dark">{{item.distribution}}</el-tag>
                 <el-tag style="margin-left: 10px;" v-for="(version, i) in item.versions" :key="'v' + key + '' + i">{{version}}</el-tag>
               </div>
             </template>
           </el-form-item>
-          <PackageContentField :holder="resourcePackage.kubernetes" fieldName="image_arch"></PackageContentField>
-          <PackageContentField :holder="resourcePackage.kubernetes" fieldName="gcr_image_repo"></PackageContentField>
-          <PackageContentField :holder="resourcePackage.kubernetes" fieldName="kube_image_repo"></PackageContentField>
-          <PackageContentField :holder="resourcePackage.kubernetes" fieldName="kube_version"></PackageContentField>
+          <PackageContentField :holder="resourcePackage.data.kubernetes" fieldName="image_arch"></PackageContentField>
+          <PackageContentField :holder="resourcePackage.data.kubernetes" fieldName="gcr_image_repo"></PackageContentField>
+          <PackageContentField :holder="resourcePackage.data.kubernetes" fieldName="kube_image_repo"></PackageContentField>
+          <PackageContentField :holder="resourcePackage.data.kubernetes" fieldName="kube_version"></PackageContentField>
           <el-form-item label="container_manager">
-            <div v-for="(engine, index) in resourcePackage.container_engine" :key="'ce' + index">
+            <div v-for="(engine, index) in resourcePackage.data.container_engine" :key="'ce' + index">
               <el-tag>
                 <span class="app_text_mono">{{engine.container_manager}}_{{engine.params.containerd_version || engine.params.docker_version}}</span>
               </el-tag>
@@ -62,9 +62,9 @@ zh:
           <span class="package_title">etcd</span>
         </template>
         <div class="package_info">
-          <PackageContentField :holder="resourcePackage.etcd" fieldName="etcd_version"></PackageContentField>
+          <PackageContentField :holder="resourcePackage.data.etcd" fieldName="etcd_version"></PackageContentField>
           <el-form-item :label="$t('field.etcd_deployment_type')">
-            <div v-for="(item, key) in resourcePackage.etcd.etcd_deployment_type" :key="'k' + key">
+            <div v-for="(item, key) in resourcePackage.data.etcd.etcd_deployment_type" :key="'k' + key">
               <el-tag>{{$t('field.etcd_deployment_type-' +item)}}</el-tag>
             </div>
           </el-form-item>
@@ -72,15 +72,18 @@ zh:
       </el-collapse-item>
       <el-collapse-item name="4">
         <template #title>
-          <span class="package_title">{{$t('cni')}}</span>
+          <span class="package_title">{{$t('network_plugin')}}</span>
         </template>
         <div class="package_info">
-          <template v-for="(item, index) in resourcePackage.cni" :key="index + 'cni'">
-            <el-form-item :label="item.target">
-              <div class="app_text_mono" style="font-size: 13px">
-                {{item.version}}
+          <template v-for="(item, index) in resourcePackage.data.network_plugin" :key="index + 'network_plugin'">
+              <div style="font-weight: bolder;">{{item.name}}</div>
+              <div class="package_info">
+                <el-form-item v-for="(value, key) in item.params" :key="index + 'p' + key" :label="key" label-width="180px">
+                  <div class="app_text_mono" style="font-size: 13px" >
+                    {{value}}
+                  </div>
+                </el-form-item>
               </div>
-            </el-form-item>
           </template>
         </div>
       </el-collapse-item>
@@ -89,7 +92,7 @@ zh:
           <span class="package_title">{{$t('dependency')}}</span>
         </template>
         <div class="package_info">
-          <template v-for="(item, index) in resourcePackage.dependency" :key="index + 'dependency'">
+          <template v-for="(item, index) in resourcePackage.data.dependency" :key="index + 'dependency'">
             <el-form-item :label="item.target">
               <div class="app_text_mono" style="font-size: 13px">
                 {{item.version}}
@@ -100,10 +103,10 @@ zh:
       </el-collapse-item>
       <el-collapse-item name="6">
         <template #title>
-          <span class="package_title">{{$t('addons')}}</span>
+          <span class="package_title">{{$t('addon')}}</span>
         </template>
         <div class="package_info">
-          <template v-for="(item, index) in resourcePackage.addons" :key="index + 'addons'">
+          <template v-for="(item, index) in resourcePackage.data.addon" :key="index + 'addon'">
             <el-form-item>
               <template #label>
                 <div style="font-weight: bolder;">{{item.name}}</div>
@@ -114,7 +117,7 @@ zh:
               </div>
             </el-form-item>
             <div class="package_info">
-              <template v-for="(value, key) in item.params" :key="key + 'addons' + index">
+              <template v-for="(value, key) in item.params" :key="key + 'addon' + index">
                 <el-form-item :label="key" label-width="280px" v-if="value.indexOf('{{') < 0">
                   <template #label>
                     <div style="font-size: 12px">{{key}}</div>

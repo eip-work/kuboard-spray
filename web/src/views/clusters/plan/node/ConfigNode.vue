@@ -175,14 +175,18 @@ export default {
   },
   components: { SshParamsNode, NodeRoleTag, NodeFact },
   mounted () {
-    this.$refs.nodeFact.loadFacts()
+    if (this.inventory.all.hosts[this.nodeName].ansible_host) {
+      this.$refs.nodeFact.loadFacts()
+    }
   },
   watch: {
-    nodeName: function() {
+    nodeName: function(newValue) {
       this.fact = undefined
-      setTimeout(() => {
-        this.$refs.nodeFact.loadFacts()
-      }, 200)
+      if (this.inventory.all.hosts[newValue].ansible_host) {
+        setTimeout(() => {
+          this.$refs.nodeFact.loadFacts()
+        }, 200)
+      }
     }
   },
   methods: {

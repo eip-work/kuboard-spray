@@ -41,14 +41,14 @@ func InstallCluster(c *gin.Context) {
 	// >>>> 设置资源包相关参数
 
 	// 设置 kubernetes 版本信息
-	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.kube_version", common.MapGet(resourcePackage, "kubernetes.kube_version"))
-	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.image_arch", common.MapGet(resourcePackage, "kubernetes.image_arch"))
-	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.gcr_image_repo", common.MapGet(resourcePackage, "kubernetes.gcr_image_repo"))
-	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.kube_image_repo", common.MapGet(resourcePackage, "kubernetes.kube_image_repo"))
+	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.kube_version", common.MapGet(resourcePackage, "data.kubernetes.kube_version"))
+	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.image_arch", common.MapGet(resourcePackage, "data.kubernetes.image_arch"))
+	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.gcr_image_repo", common.MapGet(resourcePackage, "data.kubernetes.gcr_image_repo"))
+	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.kube_image_repo", common.MapGet(resourcePackage, "data.kubernetes.kube_image_repo"))
 
 	// 设置容器引擎相关参数
 	container_manager := common.MapGet(inventory, "all.children.target.vars.container_manager")
-	containerMangerObjArray := common.MapGet(resourcePackage, "container_engine").([]interface{})
+	containerMangerObjArray := common.MapGet(resourcePackage, "data.container_engine").([]interface{})
 	var containerManagerObj map[string]interface{}
 	for _, cmo := range containerMangerObjArray {
 		cmObj := cmo.(map[string]interface{})
@@ -61,10 +61,10 @@ func InstallCluster(c *gin.Context) {
 	}
 
 	// 设置 etcd 版本信息
-	common.MapSet(inventory, "all.children.target.children.etcd.vars.etcd_version", common.MapGet(resourcePackage, "etcd.etcd_version"))
+	common.MapSet(inventory, "all.children.target.children.etcd.vars.etcd_version", common.MapGet(resourcePackage, "data.etcd.etcd_version"))
 
 	// 设置依赖组件版本信息
-	dependencies := resourcePackage["dependency"].([]interface{})
+	dependencies := common.MapGet(resourcePackage, "data.dependency").([]interface{}) // resourcePackage["dependency"].([]interface{})
 	for _, d := range dependencies {
 		dependency := d.(map[string]interface{})
 		field := dependency["target"].(string)
@@ -73,18 +73,21 @@ func InstallCluster(c *gin.Context) {
 	}
 
 	// 设置网络插件信息  FIXME 调整 package.yaml 的格式
-	cni := common.MapGet(inventory, "all.children.target.children.k8s_cluster.vars.kube_network_plugin").(string)
-	var cni_dependency map[string]interface{}
-	for _, c := range resourcePackage["cni"].([]interface{}) {
-		cni_option := c.(map[string]interface{})
-		if cni_option["name"] == cni {
-			cni_dependency = cni_option
+	np := common.MapGet(inventory, "all.children.target.children.k8s_cluster.vars.kube_network_plugin").(string)
+	var np_dependency map[string]interface{}
+	network_plugins := common.MapGet(resourcePackage, "data.network_plugin").([]interface{})
+	for _, c := range network_plugins {
+		np_option := c.(map[string]interface{})
+		if np_option["name"] == np {
+			np_dependency = np_option
 		}
 	}
-	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+cni_dependency["target"].(string), cni_dependency["version"])
+	for key, value := range np_dependency["params"].(map[string]interface{}) {
+		common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+key, value)
+	}
 
 	// 设置可选组件参数
-	addons := resourcePackage["addons"].([]interface{})
+	addons := common.MapGet(resourcePackage, "data.addon").([]interface{})
 	for _, a := range addons {
 		addon := a.(map[string]interface{})
 		enabled := common.MapGet(inventory, "all.children.target.children.k8s_cluster.vars."+addon["target"].(string))
@@ -146,7 +149,7 @@ func InstallCluster(c *gin.Context) {
 		return "\n" + message, nil
 	}
 
-	playbook := common.MapGet(resourcePackage, "metadata.supported_playbooks.install_cluster").(string)
+	playbook := common.MapGet(resourcePackage, "data.supported_playbooks.install_cluster").(string)
 
 	cmd := command.Execute{
 		OwnerType: "cluster",

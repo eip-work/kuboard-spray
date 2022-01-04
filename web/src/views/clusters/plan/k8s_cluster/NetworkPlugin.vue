@@ -33,11 +33,11 @@ export default {
     },
     kube_network_plugin () {
       if (this.cluster.resourcePackage) {
-        let cnies = this.cluster.resourcePackage.cni
+        let cnies = this.cluster.resourcePackage.data.network_plugin
         for (let i in cnies) {
           let cni = cnies[i]
           if (cni.name === this.cluster.inventory.all.children.target.children.k8s_cluster.vars.kube_network_plugin) {
-            return cni.name + (cni.version ? '_' + cni.version : '')
+            return cni.name + '_' + cni.params[cni.name + '_version']
           }
         }
       }
@@ -51,11 +51,11 @@ export default {
     async loadKubeNetworkPlugin () {
       let result = []
       await this.kuboardSprayApi.get(`/resources/${this.cluster.inventory.all.hosts.localhost.kuboardspray_resource_package}`).then(resp => {
-        let cnies = resp.data.data.package.cni
+        let cnies = resp.data.data.package.data.network_plugin
         for (let i in cnies) {
           let cni = cnies[i]
           result.push({
-            label: cni.name + (cni.version ? '_' + cni.version : ''),
+            label: cni.name + '_' + cni.params[cni.name + '_version'],
             value: cni.name,
           })
         }

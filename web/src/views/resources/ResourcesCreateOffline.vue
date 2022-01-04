@@ -92,21 +92,25 @@ export default {
         this.$message.error('缺少 downloadFrom 字段，请正确复制文件内容')
         return
       }
-      if (!req.package) {
-        this.$message.error('缺少 package 字段，请正确复制文件内容')
+      if (!req.data) {
+        this.$message.error('缺少 data 字段，请正确复制文件内容')
         return
       }
-      if (!req.package.metadata) {
-        this.$message.error('缺少 package.metadata 字段，请正确复制文件内容')
+      if (!req.metadata) {
+        this.$message.error('缺少 metadata 字段，请正确复制文件内容')
         return
       }
-      if (!req.package.metadata.version) {
-        this.$message.error('缺少 package.metadata.version 字段，请正确复制文件内容')
+      if (!req.metadata.version) {
+        this.$message.error('缺少 metadata.version 字段，请正确复制文件内容')
         return
       }
-      this.kuboardSprayApi.post(`/resources/${req.package.metadata.version}/download`, req).then(resp => {
-        this.openUrlInBlank(`/#/tail/resource/${req.package.metadata.version}/history/${resp.data.data.pid}/execute.log`)
-        this.$router.push(`/settings/resources/${req.package.metadata.version}`)
+      let request = {
+        package: req,
+        downloadFrom: req.downloadFrom
+      }
+      this.kuboardSprayApi.post(`/resources/${req.metadata.version}/download`, request).then(resp => {
+        this.openUrlInBlank(`/#/tail/resource/${req.metadata.version}/history/${resp.data.data.pid}/execute.log`)
+        this.$router.push(`/settings/resources/${req.metadata.version}`)
       }).catch(e => {
         console.log(e)
         if (e.response && e.response.data.message)

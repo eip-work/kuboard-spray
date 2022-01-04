@@ -68,7 +68,7 @@ export default {
   methods: {
     async refresh () {
       this.loading = true
-      await axios.get(`https://addons.kuboard.cn/v-kuboard-spray-resources/${this.name}/package.yaml?nocache=${new Date().getTime()}`).then(resp => {
+      await axios.get(`https://addons.kuboard.cn/v-kuboard-spray/${this.name}/package.yaml?nocache=${new Date().getTime()}`).then(resp => {
         this.resourcePackage = yaml.load(resp.data)
       }).catch(e => {
         console.log(e)

@@ -82,7 +82,7 @@ export default {
         return {}
       }
       let result = {}
-      for (let item of this.cluster.resourcePackage.supported_os) {
+      for (let item of this.cluster.resourcePackage.metadata.supported_os) {
         result[item.distribution] = true
       }
       return result

@@ -70,7 +70,7 @@ export default {
   methods: {
     async loadContainerEngines () {
       let result = []
-      let engines = this.cluster.resourcePackage.container_engine
+      let engines = this.cluster.resourcePackage.data.container_engine
       for (let i in engines) {
         let engine = engines[i]
         let label = engine.container_manager

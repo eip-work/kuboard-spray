@@ -60,7 +60,7 @@ zh:
         <el-table-column :label="$t('kubespray_version')">
           <template #default="scope">
             <span v-if="packageMap[scope.row.version]">
-              {{ packageMap[scope.row.version].metadata.kubespray_version }}
+              {{ packageMap[scope.row.version].data.kubespray_version }}
             </span>
             <i class="el-icon-loading" v-else></i>
           </template>
@@ -68,7 +68,7 @@ zh:
         <el-table-column :label="$t('kube_version')">
           <template #default="scope">
             <span v-if="packageMap[scope.row.version]">
-              {{ packageMap[scope.row.version].kubernetes.kube_version }}
+              {{ packageMap[scope.row.version].data.kubernetes.kube_version }}
             </span>
             <i class="el-icon-loading" v-else></i>
           </template>
@@ -76,7 +76,7 @@ zh:
         <el-table-column :label="$t('container_engine')">
           <template #default="scope">
             <template v-if="packageMap[scope.row.version]">
-              <div v-for="(engine, key) in packageMap[scope.row.version].container_engine" :key="`c${scope.index}_${key}`">
+              <div v-for="(engine, key) in packageMap[scope.row.version].data.container_engine" :key="`c${scope.index}_${key}`">
                 <el-tag>{{ engine.container_manager }}_{{ engine.params[engine.container_manager + '_version'] }}</el-tag>
               </div>
             </template>
@@ -86,7 +86,7 @@ zh:
         <el-table-column :label="$t('supported_os')">
           <template #default="scope">
             <template v-if="packageMap[scope.row.version]">
-              <div v-for="(os, key) in packageMap[scope.row.version].supported_os" :key="`os${scope.index}_${key}`">
+              <div v-for="(os, key) in packageMap[scope.row.version].metadata.supported_os" :key="`os${scope.index}_${key}`">
                 <el-tag>
                   {{ os.distribution }}<span 
                   v-for="(v, i) in os.versions" :key="key + 'v' + i">_{{v}}</span>
@@ -195,7 +195,7 @@ export default {
       this.importedPackageMap = {}
       this.packageMap = {}
       this.availablePackageList = undefined
-      await axios.get('https://addons.kuboard.cn/v-kuboard-spray-resources/package-list.yaml?nocache=' + new Date().getTime()).then(resp => {
+      await axios.get('https://addons.kuboard.cn/v-kuboard-spray/package-list.yaml?nocache=' + new Date().getTime()).then(resp => {
         this.availablePackageList = yaml.load(resp.data).items
       }).catch(e => {
         console.log(e)
@@ -223,7 +223,7 @@ export default {
       })
     },
     loadPackageFromRepository (packageVersion) {
-      axios.get(`https://addons.kuboard.cn/v-kuboard-spray-resources/${packageVersion.version}/package.yaml?nocache=${new Date().getTime()}`).then(resp => {
+      axios.get(`https://addons.kuboard.cn/v-kuboard-spray/${packageVersion.version}/package.yaml?nocache=${new Date().getTime()}`).then(resp => {
         setTimeout(() => {
           this.packageMap[packageVersion.version] = yaml.load(resp.data)
           this.packageMap[packageVersion.version].loaded = true

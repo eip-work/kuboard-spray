@@ -13,7 +13,7 @@ ADD .docker/pip.conf /root/.pip/pip.conf
 RUN apt-get update -y \
     && apt-get install -y \
     libssl-dev sshpass apt-transport-https moreutils \
-    ca-certificates curl gnupg2 python3-pip unzip rsync git \
+    ca-certificates curl gnupg2 python3-pip unzip rsync \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -29,10 +29,10 @@ RUN curl -o docker-ce-cli.deb https://mirrors.tuna.tsinghua.edu.cn/docker-ce/lin
     && dpkg -i docker-ce-cli.deb \
     && rm -rf docker-ce-cli.deb
 
-RUN curl -o nerdctl.tar.gz https://github.com/containerd/nerdctl/releases/download/v0.15.0/nerdctl-0.15.0-linux-amd64.tar.gz \
-    && tar -xvf nerdctl.tar.gz \
-    && mv nerdctl /usr/local/bin/nerdctl \
-    && rm -f nerdctl.tar.gz containerd-rootless*.sh
+# RUN curl -o nerdctl.tar.gz https://github.com/containerd/nerdctl/releases/download/v0.15.0/nerdctl-0.15.0-linux-amd64.tar.gz \
+#     && tar -xvf nerdctl.tar.gz \
+#     && mv nerdctl /usr/local/bin/nerdctl \
+#     && rm -f nerdctl.tar.gz containerd-rootless*.sh
 
 # Some tools like yamllint need this
 # Pip needs this as well at the moment to install ansible

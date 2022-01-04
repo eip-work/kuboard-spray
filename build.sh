@@ -13,7 +13,7 @@ cd web
 yarn install
 yarn build
 
-echo \{\"version\":\"$1\",\"buildDate\":\"$datetime\"\} > ./dist/version.json
+echo \{\"version\":\"${1}-amd64\",\"buildDate\":\"$datetime\"\} > ./dist/version.json
 cd ..
 
 echo

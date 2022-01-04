@@ -6,19 +6,18 @@ async function init () {
       withCredentials: false,
     }).then(resp => {
       let installed = window.KuboardSpray.version.version
-      // let vArray = installed.split('-')
       let arch = installed.slice(installed.lastIndexOf('-') + 1)
       let channel = 'latest'
       if (installed.indexOf('beta') > 0) channel = 'beta'
       if (installed.indexOf('alpha') > 0) channel = 'alpha'
-      if (installed.indexOf('arm') > 0) channel = 'arm'
       let currentVersion = resp.data[arch].channel[channel]
       
-      let newVersion = currentVersion.version //Vue.prototype.versionWrapper.newVersion.channel[channel].version
-      console.log(installed, newVersion)
+      let newVersion = currentVersion.version
+      console.log('installed version: ' + installed)
+      console.log('      new version: ' + newVersion)
       if (installed !== newVersion) {
         if (localStorage.getItem('IgnoreThisVersion') === newVersion) {
-          console.log('Ignored version: ' + newVersion)
+          console.log('  Ignored version: ' + newVersion)
           return
         }
         setTimeout(() => {

@@ -80,6 +80,7 @@ export default {
           this.inventory.all.children.target.children.bastion = {hosts: {bastion: {}}}
         } else {
           delete this.inventory.all.children.target.children.bastion
+          delete this.inventory.all.hosts.bastion
         }
       }
     }

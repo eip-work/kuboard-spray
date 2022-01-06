@@ -22,7 +22,7 @@ zh:
       <el-alert :title="$t('controlPlanes')" :closable="false" type="success"></el-alert>
       <div class="details">
         <template v-for="(item, key) in cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts" :key="key">
-          <div class="app_margin_top">
+          <div v-if="cluster.state && cluster.state.nodes[key]" class="app_margin_top">
             <el-tag style="margin-right: 10px;" size="medium">
               <span class="app_text_mono">{{key}}</span>
             </el-tag>
@@ -57,7 +57,6 @@ import Codemirror from "codemirror-editor-vue3"
 import "codemirror/theme/darcula.css"
 import "codemirror/mode/yaml/yaml.js"
 
-
 export default {
   props: {
     cluster: {type: Object, required: true,}
@@ -89,7 +88,7 @@ export default {
       this.kubeconfig = undefined
       this.kuboardSprayApi.get(`/clusters/${this.cluster.name}/access/kubeconfig`).then(resp => {
         let kubeconfig = resp.data.data
-        this.kubeconfig = kubeconfig.substring(kubeconfig.indexOf("\n") + 1)
+        this.kubeconfig = kubeconfig.stdout
         this.kubeconfigLoading = false
       }).catch(e => {
         console.log(e)

@@ -50,11 +50,11 @@ zh:
         <el-scrollbar height="calc(100vh - 283px)">
           <div class="masters">
             <Node v-for="(item, index) in inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts" :key="'control_plane' + index"
-              @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)"
+              @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)" :nodes="cluster.state ? cluster.state.nodes : undefined"
               :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'addons' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"
               :name="index" :inventory="inventory"></Node>
             <template v-for="(item, index) in inventory.all.children.target.children.etcd.hosts" :key="'etcd' + index">
-              <Node v-if="isEtcdAndNotControlPlane(index)" :name="index" :inventory="inventory"
+              <Node v-if="isEtcdAndNotControlPlane(index)" :name="index" :inventory="inventory" :nodes="cluster.state ? cluster.state.nodes : undefined"
                 @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)"
                 :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"></Node>
             </template>
@@ -62,7 +62,7 @@ zh:
           <div class="workers">
             <template v-for="(item, index) in inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts" :key="'node' + index">
               <Node v-if="isNode(index)" :name="index" :inventory="inventory"
-                @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)"
+                @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)" :nodes="cluster.state ? cluster.state.nodes : undefined"
                 :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'addons' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"></Node>
             </template>
           </div>
@@ -128,7 +128,7 @@ zh:
             </template>
             <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
-                <ConfigNode :cluster="cluster" :nodeName="currentPropertiesTab.slice(5)"></ConfigNode>
+                <ConfigNode :cluster="cluster" :nodeName="currentPropertiesTab.slice(5)" :nodes="cluster.state ? cluster.state.nodes : undefined"></ConfigNode>
               </div>
             </el-scrollbar>
           </el-tab-pane>

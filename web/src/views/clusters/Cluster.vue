@@ -149,12 +149,27 @@ export default {
         }
         this.originalInventoryYaml = yaml.dump(this.cluster.inventory)
         this.loadResourcePackage()
+        if (this.installed) {
+          this.loadStateNodes()
+        }
       }).catch(e => {
         console.log(e.response)
       })
       setTimeout(() => {
         this.loading = false
       }, 200)
+    },
+    loadStateNodes() {
+      this.kuboardSprayApi.get(`/clusters/${this.name}/state/nodes`).then(resp => {
+        if (resp.data.data.stdout_obj && resp.data.data.stdout_obj.items) {
+          for (let item of resp.data.data.stdout_obj.items) {
+            this.cluster.state = this.cluster.state || { nodes: {} }
+            this.cluster.state.nodes[item.metadata.name] = item
+          }
+        }
+      }).catch(e => {
+        console.log(e)
+      })
     },
     async loadResourcePackage () {
       this.cluster.resourcePackage = undefined

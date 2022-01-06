@@ -112,6 +112,9 @@ export default {
   mounted () {
   },
   methods: {
+    expand (flag) {
+      this.expanded = flag
+    },
     confirm (flag) {
       if (flag) {
         this.expanded = false

@@ -7,6 +7,9 @@ zh:
 
 <template>
   <div class="node_wrapper">
+    <div class="status" v-if="nodes[name]">
+      <el-button type="success" circle icon="el-icon-cloudy"></el-button>
+    </div>
     <div class="delete_button" v-if="!hideDeleteButton && editMode !== 'view'">
         <el-popconfirm icon="el-icon-info" icon-color="red" :title="$t('confirmDelete')" @confirm="$emit('delete_button')" placement="right-start">
           <template #reference>
@@ -14,7 +17,7 @@ zh:
           </template>
         </el-popconfirm>
     </div>
-    <div :class="active ? 'node active' : 'node'">
+    <div :class="nodeClass">
       <div class="app_text_mono" style="font-weight: bold;">
         <span v-if="name !== 'localhost' && name !== 'bastion'">{{ name }}</span>
         <span v-else>{{ $t('obj.' + name) }}</span>
@@ -36,9 +39,20 @@ export default {
     inventory: { type: Object, required: true },
     active: { type: Boolean, required: false, default: false },
     hideDeleteButton: { type: Boolean, required: false, default: false },
+    nodes: { type: Object, required: false, default: () => {return {}} },
   },
   inject: ['editMode'],
   computed: {
+    nodeClass () {
+      let result = 'node'
+      if (this.active) {
+        result += ' active'
+      }
+      if (this.nodes[this.name]) {
+        result += ' online'
+      }
+      return result
+    },
     roles () {
       let result = {}
       for (let role in this.inventory.all.children.target.children.k8s_cluster.children) {
@@ -72,6 +86,10 @@ export default {
 
 <style scoped lang="scss">
 .node_wrapper{
+  .status {
+    height: 0px;
+    text-align: left;
+  }
   .delete_button {
     height: 0px;
     text-align: right;
@@ -136,12 +154,12 @@ export default {
       background-color: $--color-warning;
     }
   }
-  // .node.active:hover {
-  //   filter: alpha(opacity=80);
-  //   -moz-opacity: 0.8;
-  //   -khtml-opacity: 0.8;
-  //   opacity: 0.8;
-  // }
+  .node.online {
+    border-color: $--color-success;
+  }
+  .node.online.active {
+    background-color: $--color-success-lighter;
+  }
 }
 
 .node_wrapper:hover .delete_button {

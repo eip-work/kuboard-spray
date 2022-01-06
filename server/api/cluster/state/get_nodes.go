@@ -1,4 +1,4 @@
-package cluster_access
+package state
 
 import (
 	"net/http"
@@ -11,20 +11,23 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func GetKubeConfig(c *gin.Context) {
-	var req cluster.GetClusterRequest
-	c.ShouldBindUri(&req)
+type GetNodesRequest struct {
+	ClusterName string `uri:"cluster"`
+}
 
-	inventoryYamlPath := cluster.ClusterInventoryYamlPath(req.Cluster)
+func GetNodes(c *gin.Context) {
+
+	var request GetNodesRequest
+	c.ShouldBindUri(&request)
+
+	inventoryYamlPath := cluster.ClusterInventoryYamlPath(request.ClusterName)
 
 	cmd := command.Run{
 		Cmd: "ansible",
 		Args: []string{
 			"kube_control_plane[0]",
-			// "-m", "fetch",
-			// "-a", "src=/root/.kube/config dest=" + clusterDir + "/kubeconfig.yaml force=yes",
 			"-m", "shell",
-			"-a", "cat /root/.kube/config",
+			"-a", "kubectl get nodes -o json",
 			"-i", inventoryYamlPath,
 		},
 		Env: []string{"ANSIBLE_CONFIG=" + constants.GET_ADHOC_CFG_PATH()},
@@ -44,4 +47,5 @@ func GetKubeConfig(c *gin.Context) {
 		Message: "success",
 		Data:    result,
 	})
+
 }

@@ -19,7 +19,8 @@ zh:
 
 <template>
   <el-form ref="form" :model="inventory" label-width="120px" label-position="left" @submit.enter.prevent>
-    <SshParamsNode :cluster="cluster" :holder="inventory.all.hosts[nodeName]" :prop="`all.hosts.${nodeName}`" :clusterName="cluster.name" :nodeName="nodeName" :description="$t('sshcommon', {nodeName: nodeName})" isNode>
+    <SshParamsNode :cluster="cluster" :nodes="nodes"
+      :holder="inventory.all.hosts[nodeName]" :prop="`all.hosts.${nodeName}`" :clusterName="cluster.name" :nodeName="nodeName" :description="$t('sshcommon', {nodeName: nodeName})">
       <NodeFact ref="nodeFact" class="app_margin_bottom"
         :form="$refs.form"
         node_owner_type="cluster"
@@ -69,6 +70,7 @@ export default {
   props: {
     cluster: { type: Object, required: true },
     nodeName: { type: String, required: true },
+    nodes: { type: Object, required: false, default: () => {return {}} },
   },
   data() {
     return {
@@ -175,17 +177,21 @@ export default {
   },
   components: { SshParamsNode, NodeRoleTag, NodeFact },
   mounted () {
-    if (this.inventory.all.hosts[this.nodeName].ansible_host) {
+    if (this.inventory.all.hosts[this.nodeName].ansible_host && this.$refs.nodeFact) {
       this.$refs.nodeFact.loadFacts()
     }
   },
   watch: {
     nodeName: function(newValue) {
-      this.$refs.nodeFact.clear()
-      if (this.inventory.all.hosts[newValue].ansible_host) {
-        setTimeout(() => {
-          this.$refs.nodeFact.loadFacts()
-        }, 200)
+      if (this.$refs.nodeFact) {
+        this.$refs.nodeFact.clear()
+        if (this.inventory.all.hosts[newValue].ansible_host) {
+          setTimeout(() => {
+            if (this.$refs.nodeFact) {
+              this.$refs.nodeFact.loadFacts()
+            }
+          }, 200)
+        }
       }
     }
   },

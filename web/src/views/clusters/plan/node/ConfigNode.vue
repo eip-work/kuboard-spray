@@ -181,7 +181,7 @@ export default {
   },
   watch: {
     nodeName: function(newValue) {
-      this.fact = undefined
+      this.$refs.nodeFact.clear()
       if (this.inventory.all.hosts[newValue].ansible_host) {
         setTimeout(() => {
           this.$refs.nodeFact.loadFacts()

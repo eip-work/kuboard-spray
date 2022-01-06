@@ -113,6 +113,9 @@ export default {
   mounted () {
   },
   methods: {
+    clear () {
+      this.fact = undefined
+    },
     loadFacts(fromCache = true) {
       this.fact = undefined
       if (this.form) {

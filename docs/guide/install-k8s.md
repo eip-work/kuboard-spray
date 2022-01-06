@@ -21,7 +21,7 @@ Kuboard-Spray 是一款可以在图形界面引导下完成 Kubernetes 高可用
 
 ### 社区
 
-对此项目感兴趣的同学，请点击此处 <span><iframe style="display:inline-block;vertical-align:middle;" src="https://addons.kuboard.cn/downloads/github-star-kuboard-spray.html" frameborder="0" scrolling="0" width="100" height="20" title="GitHub"></iframe></span> 在 GitHub 添加本项目的 Star 以后，扫码加入群聊（提供 star 截图才会被拉入群聊哦！）
+对此项目感兴趣的同学，请点击此处 <span><iframe style="display:inline-block;vertical-align:middle;" src="https://addons.kuboard.cn/downloads/github-star-kuboard-spray.html" frameborder="0" scrolling="0" width="100" height="20" title="GitHub"></iframe></span> 在 GitHub 添加本项目的 Star 以后，扫码加入群聊
 
 <p>
   <img src="https://addons.kuboard.cn/downloads/qr_code_kuboard-spray.jpg" style="width: 150px; height: 150px;"/>
@@ -152,8 +152,6 @@ Kuboard-Spray 是一款可以在图形界面引导下完成 Kubernetes 高可用
 
 ## 下一步
 
-如果您使用自己笔记本上的虚拟机安装的集群，将来打算重启虚拟机，请参考 [重启Kubernetes集群](./k8s-restart.html)
-
 :tada: :tada: :tada: 
 
 您已经完成了 Kubernetes 集群的安装，下一步请：
@@ -162,9 +160,9 @@ Kuboard-Spray 是一款可以在图形界面引导下完成 Kubernetes 高可用
 <!-- <span v-on:click="$sendGaEvent('安装后求GitHub Star','安装后求GitHub Star','安装后求GitHub Star')"><a href="https://github.com/eip-work/kuboard-press" target="_blank">点击此处，给个GitHub Star</a></span>
 支持一下吧，<StarCount></StarCount>这么多人都 star 了呢，怎么能少得了您呢？ -->
 
-[安装 Kuboard - K8s 集群管理界面](/install/v3/install-built-in.html)
+[安装 Kuboard - K8s 集群管理界面](https://kuboard.cn/install/v3/install-built-in.html)
 
-[获取 Kubernetes 免费教程](/learning/)
+[获取 Kubernetes 免费教程](https://kuboard.cn/learning/)
 
 
 <!-- </div>

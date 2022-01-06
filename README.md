@@ -23,12 +23,12 @@ docker run -d \
 
 ## 自制资源包
 
-资源包的项目地址在 [kuboard-spray-resource](https://github.com/eip-work/kuboard-spray-resource)，您可以查看一下该项目，尝试自己制作资源包。
+Kuboard-Spray 将定期提供最新版本的资源包，可以在 kubord-spray 资源包管理界面中查到，如果您是离线环境，也可以在 [https://kuboard.cn/support/kuboard-spray/](https://kuboard.cn/support/kuboard-spray/)找到最新的资源包。您也可以自己制作资源包，资源包的项目地址在 [kuboard-spray-resource](https://github.com/eip-work/kuboard-spray-resource)，资源包的制作方法会在2022年2月提供文档。
 
 ## 社区
 
 对此项目感兴趣的同学，请添加本项目的 Star 以后，扫码加入群聊（提供 star 截图才会被拉入群聊哦！）
 
 <p>
-  <iframe frameborder="0" src="https://addons.kuboard.cn/downloads/qr_code_kuboard-spray.jpg" style="width: 150px; height: 150px;"/>
+  <img frameborder="0" src="https://addons.kuboard.cn/downloads/qr_code_kuboard-spray.jpg" style="width: 150px; height: 150px;"/>
 </p>

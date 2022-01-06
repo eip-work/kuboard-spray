@@ -8,5 +8,8 @@
   "main": "index.js",
   "devDependencies": {
     "vuepress": "^2.0.0-beta.32"
+  },
+  "dependencies": {
+    "@vuepress/plugin-google-analytics": "^2.0.0-beta.32"
   }
 }

@@ -8,7 +8,7 @@ zh:
 <template>
   <div class="node_wrapper">
     <div class="status" v-if="nodes[name]">
-      <el-button type="success" circle icon="el-icon-cloudy"></el-button>
+      <el-button type="success" circle icon="el-icon-check"></el-button>
     </div>
     <div class="delete_button" v-if="!hideDeleteButton && editMode !== 'view'">
         <el-popconfirm icon="el-icon-info" icon-color="red" :title="$t('confirmDelete')" @confirm="$emit('delete_button')" placement="right-start">

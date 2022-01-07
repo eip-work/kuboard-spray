@@ -16,7 +16,7 @@ zh:
 <template>
   <div>
     <ControlBar :title="name">
-      <div v-show="cluster && !cluster.history.processing">
+      <span v-show="cluster && !cluster.history.processing" style="margin-right: 10px;">
         <template v-if="currentTab === 'plan'">
           <template v-if="mode === 'view'">
             <el-button type="primary" icon="el-icon-edit" @click="$router.replace(`/clusters/${name}?mode=edit`)">{{$t('msg.edit')}}</el-button>
@@ -34,10 +34,13 @@ zh:
         <template v-if="currentTab === 'access' || currentTab === 'plan'">
           <ClusterProcessing v-if="mode === 'view' && cluster" :cluster="cluster" :name="name" @refresh="refresh" :loading="loading" :hideOnSuccess="currentTab === 'access'"></ClusterProcessing>
         </template>
-      </div>
-      <div v-if="cluster && cluster.history.processing">
+      </span>
+      <template v-if="cluster && cluster.history.processing">
         <ClusterProcessing v-if="mode === 'view'" :cluster="cluster" :name="name" @refresh="refresh" :loading="loading" :hideOnSuccess="currentTab === 'access'"></ClusterProcessing>
-      </div>
+      </template>
+      <template v-if="cluster && cluster.state">
+        <ClusterStateNodes :state="cluster.state"></ClusterStateNodes>
+      </template>
     </ControlBar>
     <el-card shadow="none" v-if="loading">
       <el-skeleton animated :rows="10"></el-skeleton>
@@ -47,18 +50,18 @@ zh:
         <Plan v-if="cluster" ref="plan" :cluster="cluster" :mode="mode"></Plan>
       </el-tab-pane>
       <el-tab-pane :label="$t('access')" name="access" :disabled="disableNonePlanTab">
-        <Access v-if="cluster && cluster.history.success_tasks.length > 0" ref="access" :cluster="cluster"></Access>
+        <Access v-if="cluster && cluster.history.success_tasks.length > 0" ref="access" :cluster="cluster" @switch="currentTab = $event"></Access>
       </el-tab-pane>
-      <el-tab-pane :disabled="disableNonePlanTab" label="健康检查">
+      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" label="健康检查">
         <el-alert>检查集群当前的状况与集群安装计划的匹配情况，正在建设...</el-alert>
       </el-tab-pane>
-      <el-tab-pane :disabled="disableNonePlanTab" label="备份/恢复">
+      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" label="备份/恢复">
         <el-alert>对 etcd 及 control-plane 做备份及恢复，正在建设...</el-alert>      
       </el-tab-pane>
-      <el-tab-pane :disabled="disableNonePlanTab" label="CIS扫描">
+      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" label="CIS扫描">
         <el-alert>CIS 扫描，正在建设...</el-alert>
       </el-tab-pane>
-      <el-tab-pane :disabled="disableNonePlanTab" label="升级包检测">
+      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" label="升级包检测">
         <el-alert>检测 kuboard-spray 升级资源包，正在建设...</el-alert>
       </el-tab-pane>
     </el-tabs>
@@ -72,6 +75,7 @@ import yaml from 'js-yaml'
 import ClusterProcessing from './ClusterProcessing.vue'
 import Access from './access/Access.vue'
 import { computed } from 'vue'
+import ClusterStateNodes from './ClusterStateNodes.vue'
 
 export default {
   mixins: [mixin],
@@ -109,6 +113,14 @@ export default {
     installed () {
       return !(this.cluster && this.cluster.history.success_tasks.length == 0)
     },
+    isClusterOnline () {
+      if (this.cluster) {
+        if (this.cluster.state && this.cluster.state.code === 200) {
+          return true
+        }
+      }
+      return false
+    },
     disableNonePlanTab () {
       if (this.mode !== 'view') {
         return true
@@ -123,7 +135,7 @@ export default {
       })
     }
   },
-  components: { Plan, ClusterProcessing, Access },
+  components: { Plan, ClusterProcessing, Access, ClusterStateNodes },
   watch: {
     'cluster.inventory.all.hosts.localhost.kuboardspray_resource_package': function() {
       this.loadResourcePackage()
@@ -162,9 +174,15 @@ export default {
     loadStateNodes() {
       this.kuboardSprayApi.get(`/clusters/${this.name}/state/nodes`).then(resp => {
         if (resp.data.data.stdout_obj && resp.data.data.stdout_obj.items) {
+          this.cluster.state = { nodes: {}, code: 200 }
           for (let item of resp.data.data.stdout_obj.items) {
-            this.cluster.state = this.cluster.state || { nodes: {} }
             this.cluster.state.nodes[item.metadata.name] = item
+          }
+        }
+        if (resp.data.data.return_code === '' && resp.data.data.stdout_obj.changed === false && resp.data.data.stdout_obj.msg) {
+          this.cluster.state = {
+            code: 500,
+            msg: resp.data.data.stdout_obj.msg
           }
         }
       }).catch(e => {

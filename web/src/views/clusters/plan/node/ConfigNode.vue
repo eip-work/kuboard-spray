@@ -19,6 +19,7 @@ zh:
 
 <template>
   <el-form ref="form" :model="inventory" label-width="120px" label-position="left" @submit.enter.prevent>
+    <StateNode v-if="nodes[nodeName]" :cluster="cluster" :nodeName="nodeName" :nodes="nodes"></StateNode>
     <SshParamsNode :cluster="cluster" :nodes="nodes"
       :holder="inventory.all.hosts[nodeName]" :prop="`all.hosts.${nodeName}`" :clusterName="cluster.name" :nodeName="nodeName" :description="$t('sshcommon', {nodeName: nodeName})">
       <NodeFact ref="nodeFact" class="app_margin_bottom"
@@ -65,6 +66,7 @@ zh:
 import SshParamsNode from '../common/SshParamsNode.vue'
 import NodeRoleTag from '../common/NodeRoleTag.vue'
 import NodeFact from '../../../common/fact/NodeFact.vue'
+import StateNode from './StateNode.vue'
 
 export default {
   props: {
@@ -175,7 +177,7 @@ export default {
       }
     },
   },
-  components: { SshParamsNode, NodeRoleTag, NodeFact },
+  components: { SshParamsNode, NodeRoleTag, NodeFact, StateNode },
   mounted () {
     if (this.inventory.all.hosts[this.nodeName].ansible_host && this.$refs.nodeFact) {
       this.$refs.nodeFact.loadFacts()

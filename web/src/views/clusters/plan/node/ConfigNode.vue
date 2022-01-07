@@ -56,7 +56,7 @@ zh:
       </FieldCommon>
     </ConfigSection>
     <ConfigSection v-if="enabledEtcd" v-model:enabled="enabledEtcd" label="ETCD" :description="$t('etcd', {nodeName: nodeName})" disabled anti-freeze>
-      <FieldString :holder="inventory.all.children.target.children.etcd.hosts[nodeName]" fieldName="etcd_member_name" :rules="etcd_member_name_rules"
+      <FieldString :holder="inventory.all.children.target.children.etcd.hosts[nodeName]" fieldName="etcd_member_name" :rules="etcd_member_name_rules" :anti-freeze="nodes[nodeName] === undefined"
         :prop="`all.children.target.children.etcd.hosts.${nodeName}`" required></FieldString>
     </ConfigSection>
   </el-form>

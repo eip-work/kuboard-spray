@@ -1,7 +1,31 @@
 import { defineUserConfig } from 'vuepress'
 import type { DefaultThemeOptions } from 'vuepress'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+
+const { path } = require('@vuepress/utils')
 
 export default defineUserConfig<DefaultThemeOptions>({
+  clientAppEnhanceFiles: path.resolve(
+    __dirname,
+    './clientAppEnhance.js'
+  ),
+
+  bundler: '@vuepress/bundler-vite',
+  // Vite 打包工具的配置项
+  bundlerConfig: {
+    plugins: [
+      // ...
+      AutoImport({
+        resolvers: [ElementPlusResolver()],
+      }),
+      Components({
+        resolvers: [ElementPlusResolver()],
+      }),
+    ],
+  },
+
   // 站点配置
   lang: 'zh-CN',
   title: 'Kuboard Spray',

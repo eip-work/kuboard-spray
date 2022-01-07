@@ -25,3 +25,5 @@ manifest
 .shnode_modules
 .temp
 .cache
+
+change-log-v1.md

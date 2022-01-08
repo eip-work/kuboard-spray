@@ -1,7 +1,9 @@
 <template>
   <FieldCommon :fieldName="fieldName" :holder="holder" :prop="prop" :rules="rules" :required="required" :label="label" :placeholder="placeholder">
     <template #edit>
-      <el-input v-model.trim="value" :show-password="showPassword" :disabled="disabled"
+      <el-input v-if="showPassword" v-model="value" show-password :disabled="disabled"
+        :placeholder="compute_placeholder"></el-input>
+      <el-input v-else v-model.trim="value" :disabled="disabled"
         :placeholder="compute_placeholder"></el-input>
     </template>
     <template #view>

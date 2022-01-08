@@ -24,7 +24,7 @@ async function init () {
             window.$kuboardVersionCheckNotification = window.VueAppComponent.$notify({
               title: '检测到新版本',
               dangerouslyUseHTMLString: true,
-              message: `<a href="https://github.com/eip-work/kuboard-spray/releases" target=_blank class="app_notify" style="width: 100%;" onclick="window.$kuboardVersionCheckNotification.close()">
+              message: `<a href="https://kuboard-spray.cn/support/change-log/v1.html" target=_blank class="app_notify" style="width: 100%;" onclick="window.$kuboardVersionCheckNotification.close()">
                         <div class="app_text_mono">已经安装的版本是 <span style="color: var(--el-color-success); font-weight: bold;">${installed} </span></div>
                         <div class="app_text_mono">当前最新的版本是 <span style="color: var(--el-color-danger); font-weight: bold;">${newVersion} </span></div>
                         <div style="text-align: right; margin-top: 10px; color: var(--el-color-primary); font-weight: bold;">

@@ -54,7 +54,7 @@ zh:
     </div>
   </el-scrollbar>
   <el-alert v-else-if="cluster.state.code === 500" type="error" :closable="false" effect="dark" show-icon>
-    {{cluster.state.msg}}
+    <span class="app_text_mono" v-html="cluster.state.msg.replaceAll('\n', '<br>').replaceAll('    ', '<span style=margin-right:20px;></span>')"></span>
     <div style="margin-top: 20px;">
       <el-button type="primary" round icon="el-icon-arrow-left" @click="$emit('switch', 'plan')">{{$t('switchToPlan')}}</el-button>
     </div>
@@ -68,7 +68,8 @@ import "codemirror/mode/yaml/yaml.js"
 
 export default {
   props: {
-    cluster: {type: Object, required: true,}
+    cluster: { type: Object, required: true },
+    loading: { type: Boolean, required: true },
   },
   data() {
     return {
@@ -91,13 +92,20 @@ export default {
   components: { Codemirror },
   mounted () {
   },
+  watch: {
+    loading (newValue) {
+      if (newValue) {
+        this.kubeconfig = undefined
+      }
+    }
+  },
   methods: {
     fetchKubeconfig () {
       this.kubeconfigLoading = true
       this.kubeconfig = undefined
       this.kuboardSprayApi.get(`/clusters/${this.cluster.name}/access/kubeconfig`).then(resp => {
-        let kubeconfig = resp.data.data
-        this.kubeconfig = kubeconfig.stdout
+        let out = resp.data.data
+        this.kubeconfig = out.stdout.replace("127.0.0.1", this.cluster.inventory.all.hosts[out.node_name].ansible_host)
         this.kubeconfigLoading = false
       }).catch(e => {
         console.log(e)

@@ -71,7 +71,7 @@ zh:
       <el-button v-if="isRunning" style="float: right; margin-right: 20px;" type="danger" @click="dialogVisible = true">{{ $t('forceKill') }}</el-button>
       <el-tag v-else size="medium" style="float: right; margin-right: 20px;" type="primary">{{ $t('finished') }}</el-tag>
     </div>
-    <div id="terminal" :style="`width: 100%; height: calc(100vh - 39px); background-color: black;`"></div>
+    <div id="terminal" :style="`width: 100%; height: calc(100vh - 38px); background-color: black;`"></div>
     <el-dialog :title="$t('msg.prompt')" v-model="dialogVisible" width="60%" top="calc(50vh - 180px)" :close-on-click-modal="false">
       <el-alert type="error" :closable="false" effect="dark" show-icon>
         <div class="confirmText">{{$t('confirmToKill')}}</div>

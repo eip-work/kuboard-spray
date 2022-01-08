@@ -16,7 +16,7 @@ zh:
     <ConfigSection v-model:enabled="useResourcePackage" disabled anti-freeze
       :label="$t('obj.resource')"
       :description="$t('obj.resource') + ' ' + (inventory.all.hosts.localhost.kuboardspray_resource_package ? inventory.all.hosts.localhost.kuboardspray_resource_package : '')">
-      <FieldSelect :holder="inventory.all.hosts.localhost" fieldName="kuboardspray_resource_package" :loadOptions="loadResourceList" prop="all.hosts.localhost" required :disabled="isInstalled">
+      <FieldSelect :holder="inventory.all.hosts.localhost" fieldName="kuboardspray_resource_package" :loadOptions="loadResourceList" prop="all.hosts.localhost" required :disabled="isClusterInstalled">
         <template #edit>
           <ConfirmButton buttonStyle="margin-left: 10px;" icon="el-icon-plus" 
             @confirm="$router.push('/settings/resources')"
@@ -58,7 +58,7 @@ export default {
       useResourcePackage: true,
     }
   },
-  inject: ['isInstalled'],
+  inject: ['isClusterInstalled', 'isClusterOnline'],
   computed: {
     inventory: {
       get () {

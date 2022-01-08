@@ -7,3 +7,6 @@
 [submodule "server/ansible-script/roles/ansible-offline-yum-repo"]
 	path = server/ansible-script/roles/ansible-offline-yum-repo
 	url = git@github.com:eip-work/ansible-offline-yum-repo.git
+[submodule "go-yaml"]
+	path = go-yaml
+	url = git@github.com:eip-work/yaml.git

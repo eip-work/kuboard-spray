@@ -4,18 +4,20 @@ en:
   nodeName: Node Name
   nodeRoles: Node Roles
   conflict: Conflict with a existing node {name}.
+  removeNodeFirst: Please remove node or cancel removing node first.
 zh:
   addNode: 添加节点
   nodeName: 节点名称
   nodeRoles: 节点角色
   conflict: 与已有节点重名 {name}
+  removeNodeFirst: 请先删除或者取消删除节点
 </i18n>
 
 <template>
   <el-popover placement="right-start" :title="$t('addNode')" v-if="editMode !== 'view'"
-    v-model:visible="addNodeForm.visible" :width="420" trigger="manual">
+    v-model:visible="visible" :width="420" trigger="manual">
     <template #reference>
-      <el-button icon="el-icon-plus" type="primary" @click="addNodeForm.visible = true"
+      <el-button icon="el-icon-plus" type="primary" @click="visible = true"
         :disabled="editMode === 'view'">{{$t('addNode')}}</el-button>
     </template>
     <el-form label-position="left" label-width="80px" ref="addNodeForm" :model="addNodeForm" @submit.enter.prevent>
@@ -74,9 +76,23 @@ export default {
     inventoryRef: {
       get () {return this.inventory},
       set () {},
+    },
+    visible: {
+      get () { return this.addNodeForm.visible },
+      set (v) {
+        if (v) {
+          if (this.isClusterInstalled && this.isClusterOnline) {
+            if (this.pendingRemoveNodes.length > 0) {
+              this.$message.error(this.$t('removeNodeFirst'))
+              return
+            }
+          }
+        }
+        this.addNodeForm.visible = v
+      },
     }
   },
-  inject: ['editMode'],
+  inject: ['editMode', 'isClusterInstalled', 'isClusterOnline', 'pendingRemoveNodes'],
   methods: {
     addNode () {
       this.$refs.addNodeForm.validate(flag => {

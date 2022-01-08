@@ -6,6 +6,7 @@ import (
 
 	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/api/cluster/cluster_access"
+	"github.com/eip-work/kuboard-spray/api/cluster/operation"
 	"github.com/eip-work/kuboard-spray/api/cluster/state"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/api/fact"
@@ -34,7 +35,9 @@ func setupRouter() *gin.Engine {
 	api.PUT("/clusters/:cluster", cluster.ModifyCluster)
 	api.DELETE("/clusters/:cluster", cluster.DeleteCluster)
 
-	api.POST("/clusters/:cluster/install", cluster.InstallCluster)
+	api.POST("/clusters/:cluster/install_cluster", operation.InstallCluster)
+	api.POST("/clusters/:cluster/remove_node", operation.RemoveNode)
+	api.POST("/clusters/:cluster/add_node", operation.AddNode)
 
 	api.GET("/clusters/:cluster/access/kubeconfig", cluster_access.GetKubeConfig)
 

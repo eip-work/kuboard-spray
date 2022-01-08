@@ -49,3 +49,25 @@ func MapSet(m map[string]interface{}, path string, value interface{}) {
 		}
 	}
 }
+
+func MapDelete(m map[string]interface{}, path string) {
+	defer func() {
+		if err := recover(); err != nil {
+			logrus.Warn("error:", err)
+		}
+	}()
+	p := strings.Split(path, ".")
+	var temp map[string]interface{}
+	temp = m
+	for i := 0; i < len(p); i++ {
+		if i == len(p)-1 {
+			delete(temp, p[i])
+			return
+		}
+		if temp[p[i]] == nil {
+			temp[p[i]] = map[string]interface{}{}
+		} else {
+			temp = temp[p[i]].(map[string]interface{})
+		}
+	}
+}

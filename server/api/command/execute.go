@@ -232,6 +232,20 @@ type ExecuteExitNodeStatus struct {
 	Ignored     string
 }
 
+func trimColoredText(text string) string {
+	result := text
+	if strings.Index(result, "[0;32m") > 0 {
+		result = result[strings.Index(result, "[0;32m")+6:]
+	}
+	if strings.Index(result, "[0;33m") > 0 {
+		result = result[strings.Index(result, "[0;33m")+6:]
+	}
+	if strings.Index(result, "\033[0m") > 0 {
+		result = result[:strings.Index(result, "\033[0m")]
+	}
+	return result
+}
+
 func parseAnsibleRecapLine(line string) ExecuteExitNodeStatus {
 	result := make(map[string]string)
 	s1 := strings.Split(line, ":")
@@ -247,10 +261,11 @@ func parseAnsibleRecapLine(line string) ExecuteExitNodeStatus {
 		v := strings.Trim(s3[1], " ")
 		result[k] = v
 	}
+
 	nodeStatus := ExecuteExitNodeStatus{
-		NodeName:    result["node"],
+		NodeName:    trimColoredText(result["node"]),
 		OK:          result["ok"],
-		Changed:     result["changed"],
+		Changed:     trimColoredText(result["changed"]),
 		Unreachable: result["unreachable"],
 		Failed:      result["failed"],
 		Skipped:     result["skipped"],

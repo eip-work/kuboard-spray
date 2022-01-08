@@ -23,7 +23,7 @@ zh:
       <div class="left">
         <div style="padding: 5px; font-weight: bolder; font-size: 14px;">Kuboard Spray</div>
         <div>
-          <Node class="localhost" name="localhost" :inventory="inventory" hideDeleteButton
+          <Node class="localhost" name="localhost" :cluster="cluster" hideDeleteButton
             :active="currentPropertiesTab === 'localhost'" @click="currentPropertiesTab = 'localhost'">
           </Node>
         </div>
@@ -32,7 +32,7 @@ zh:
           <div v-else class="horizontalConnection"></div>
         </div>
         <div>
-          <Node class="bastion" name="bastion" :inventory="inventory" hideDeleteButton
+          <Node class="bastion" name="bastion" :cluster="cluster" hideDeleteButton
             :active="currentPropertiesTab === 'bastion'" @click="showBastion">
             <div style="margin-top: 10px;">
               <el-tag v-if="bastionEnabled" type="danger" effect="dark" size="small" style="width: 100px; text-align: center;">{{$t('enabledBation')}}</el-tag>
@@ -50,19 +50,19 @@ zh:
         <el-scrollbar height="calc(100vh - 283px)">
           <div class="masters">
             <Node v-for="(item, index) in inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts" :key="'control_plane' + index"
-              @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)" :nodes="cluster.state ? cluster.state.nodes : undefined"
+              @click="currentPropertiesTab = 'NODE_' + index" :nodes="cluster.state ? cluster.state.nodes : undefined"
               :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'addons' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"
-              :name="index" :inventory="inventory"></Node>
+              :name="index" :cluster="cluster"></Node>
             <template v-for="(item, index) in inventory.all.children.target.children.etcd.hosts" :key="'etcd' + index">
-              <Node v-if="isEtcdAndNotControlPlane(index)" :name="index" :inventory="inventory" :nodes="cluster.state ? cluster.state.nodes : undefined"
+              <Node v-if="isEtcdAndNotControlPlane(index)" :name="index" :cluster="cluster" :nodes="cluster.state ? cluster.state.nodes : undefined"
                 @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)"
                 :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"></Node>
             </template>
           </div>
           <div class="workers">
             <template v-for="(item, index) in inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts" :key="'node' + index">
-              <Node v-if="isNode(index)" :name="index" :inventory="inventory"
-                @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)" :nodes="cluster.state ? cluster.state.nodes : undefined"
+              <Node v-if="isNode(index)" :name="index" :cluster="cluster"
+                @click="currentPropertiesTab = 'NODE_' + index" :nodes="cluster.state ? cluster.state.nodes : undefined"
                 :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'addons' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"></Node>
             </template>
           </div>
@@ -255,12 +255,6 @@ export default {
       }, 400)
       this.$message.info(this.$t('bastionPrompt'))
     },
-    deleteNode(nodeName) {
-      delete this.inventory.all.hosts[nodeName]
-      delete this.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[nodeName]
-      delete this.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts[nodeName]
-      delete this.inventory.all.children.target.children.etcd.hosts[nodeName]
-    }
   }
 }
 </script>

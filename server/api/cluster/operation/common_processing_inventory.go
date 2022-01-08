@@ -1,41 +1,29 @@
-package cluster
+package operation
 
 import (
-	"net/http"
-	"strconv"
 	"strings"
 
-	"github.com/eip-work/kuboard-spray/api/command"
+	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
-	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
 
-type InstallClusterRequest struct {
-	Cluster string `uri:"cluster" binding:"required"`
-	Fork    int    `json:"fork"`
-	Verbose bool   `json:"verbose"`
-	VVV     bool   `json:"vvv"`
+func resourcePackagePathForInventory(inventory map[string]interface{}) string {
+	return constants.GET_DATA_RESOURCE_DIR() + "/" + common.MapGet(inventory, "all.hosts.localhost.kuboardspray_resource_package").(string) + "/content"
 }
 
-func InstallCluster(c *gin.Context) {
-
-	var req InstallClusterRequest
-	c.ShouldBindUri(&req)
-	c.ShouldBindJSON(&req)
-
-	inventoryPath := ClusterInventoryYamlPath(req.Cluster)
+func updateResourcePackageVarsToInventory(clusterName string) (map[string]interface{}, map[string]interface{}, error) {
+	inventoryPath := cluster.ClusterInventoryYamlPath(clusterName)
 	inventory, err := common.ParseYamlFile(inventoryPath)
 	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "failed to read inventory.", err)
-		return
+		return nil, nil, err
 	}
-	resourcePackagePath := constants.GET_DATA_RESOURCE_DIR() + "/" + common.MapGet(inventory, "all.hosts.localhost.kuboardspray_resource_package").(string) + "/content"
+	resourcePackagePath := resourcePackagePathForInventory(inventory)
 
 	resourcePackage, err := common.ParseYamlFile(resourcePackagePath + "/package.yaml")
 	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "failed to read package.", err)
+		return nil, nil, err
 	}
 
 	// >>>> 设置资源包相关参数
@@ -108,8 +96,7 @@ func InstallCluster(c *gin.Context) {
 			} else {
 				repo, err := common.ParseYamlFile(constants.GET_DATA_DIR() + "/mirror/" + v + "/status.yaml")
 				if err != nil {
-					common.HandleError(c, http.StatusInternalServerError, "cannot read repo. ", err)
-					return
+					return nil, nil, err
 				}
 				params := repo["params"].(map[string]interface{})
 				logrus.Trace("配置软件源参数  -> ", key, " : ", value)
@@ -123,7 +110,6 @@ func InstallCluster(c *gin.Context) {
 
 	// <<<< 设置资源包相关参数
 
-	common.MapSet(inventory, "all.vars.kuboardspray_no_log", !req.Verbose)
 	common.MapSet(inventory, "all.vars.download_keep_remote_cache", false)
 	common.MapSet(inventory, "all.vars.download_run_once", true)
 	common.MapSet(inventory, "all.vars.download_localhost", true)
@@ -131,53 +117,9 @@ func InstallCluster(c *gin.Context) {
 	common.MapSet(inventory, "all.vars.download_always_pull", false)
 	common.MapSet(inventory, "all.vars.download_cache_dir", resourcePackagePath+"/kubespray_cache")
 	common.MapSet(inventory, "all.vars.ansible_ssh_common_args", "-o StrictHostKeyChecking=no")
-	common.MapSet(inventory, "all.vars.kuboardspray_cluster_dir", constants.GET_DATA_CLUSTER_DIR()+"/"+req.Cluster)
+	common.MapSet(inventory, "all.vars.kuboardspray_cluster_dir", constants.GET_DATA_CLUSTER_DIR()+"/"+clusterName)
 	common.MapSet(inventory, "all.children.target.vars.disable_service_firewall", true)
 	common.MapSet(inventory, "all.children.target.vars.ansible_python_interpreter", "auto")
 
-	postExec := func(status command.ExecuteExitStatus) (string, error) {
-
-		success := status.Success
-		var message string
-		if success {
-			message = "\033[32m[ " + "Kubernetes Cluster has been installed successfully, please go back to the cluster page for information about how to access the cluster." + " ]\033[0m \n"
-			message += "\033[32m[ " + "Kubernetes 集群已成功安装，请回到集群详情页面查看如何访问该集群。" + " ]\033[0m \n"
-		} else {
-			message = "\033[31m\033[01m\033[05m[" + "Failed to install Kubernetes Cluster. Please review the logs and fix the problem." + "]\033[0m \n"
-			message += "\033[31m\033[01m\033[05m[" + "集群安装失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + "]\033[0m \n"
-		}
-		return "\n" + message, nil
-	}
-
-	playbook := common.MapGet(resourcePackage, "data.supported_playbooks.install_cluster").(string)
-
-	cmd := command.Execute{
-		OwnerType: "cluster",
-		OwnerName: req.Cluster,
-		Cmd:       "ansible-playbook",
-		Args: func(execute_dir string) []string {
-			if req.VVV {
-				return []string{"-i", execute_dir + "/inventory.yaml", playbook, "-vvv", "--fork", strconv.Itoa(req.Fork)}
-			}
-			return []string{"-i", execute_dir + "/inventory.yaml", playbook, "--fork", strconv.Itoa(req.Fork)}
-		},
-		Dir:      resourcePackagePath,
-		Type:     "install",
-		PreExec:  func(execute_dir string) error { return common.SaveYamlFile(execute_dir+"/inventory.yaml", inventory) },
-		PostExec: postExec,
-	}
-
-	if err := cmd.Exec(); err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "Faild to InstallCluster. ", err)
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"code":    http.StatusOK,
-		"message": "success",
-		"data": gin.H{
-			"pid": cmd.R_Pid,
-		},
-	})
-
+	return inventory, resourcePackage, nil
 }

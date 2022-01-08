@@ -18,7 +18,7 @@ zh:
     <ControlBar :title="name">
       <span v-show="cluster && !cluster.history.processing" style="margin-right: 10px;">
         <template v-if="currentTab === 'plan'">
-          <template v-if="mode === 'view'">
+          <template v-if="mode === 'view' && (isClusterOnline || !isClusterInstalled)">
             <el-button type="primary" icon="el-icon-edit" @click="$router.replace(`/clusters/${name}?mode=edit`)">{{$t('msg.edit')}}</el-button>
           </template>
           <template v-if="mode === 'edit'">
@@ -32,11 +32,12 @@ zh:
           </template>
         </template>
         <template v-if="currentTab === 'access' || currentTab === 'plan'">
-          <ClusterProcessing v-if="mode === 'view' && cluster" :cluster="cluster" :name="name" @refresh="refresh" :loading="loading" :hideOnSuccess="currentTab === 'access'"></ClusterProcessing>
+          <ClusterProcessing v-if="mode === 'view' && cluster && !cluster.history.processing" :cluster="cluster" :name="name" @refresh="refresh" 
+            :loading="loading"></ClusterProcessing>
         </template>
       </span>
       <template v-if="cluster && cluster.history.processing">
-        <ClusterProcessing v-if="mode === 'view'" :cluster="cluster" :name="name" @refresh="refresh" :loading="loading" :hideOnSuccess="currentTab === 'access'"></ClusterProcessing>
+        <ClusterProcessing v-if="mode === 'view'" :cluster="cluster" :name="name" @refresh="refresh" :loading="loading"></ClusterProcessing>
       </template>
       <template v-if="cluster && cluster.state">
         <ClusterStateNodes :state="cluster.state"></ClusterStateNodes>
@@ -50,7 +51,7 @@ zh:
         <Plan v-if="cluster" ref="plan" :cluster="cluster" :mode="mode"></Plan>
       </el-tab-pane>
       <el-tab-pane :label="$t('access')" name="access" :disabled="disableNonePlanTab">
-        <Access v-if="cluster && cluster.history.success_tasks.length > 0" ref="access" :cluster="cluster" @switch="currentTab = $event"></Access>
+        <Access v-if="cluster && cluster.history.success_tasks.length > 0" ref="access" :cluster="cluster" :loading="loading" @switch="currentTab = $event"></Access>
       </el-tab-pane>
       <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" label="健康检查">
         <el-alert>检查集群当前的状况与集群安装计划的匹配情况，正在建设...</el-alert>
@@ -76,6 +77,7 @@ import ClusterProcessing from './ClusterProcessing.vue'
 import Access from './access/Access.vue'
 import { computed } from 'vue'
 import ClusterStateNodes from './ClusterStateNodes.vue'
+import clone from 'clone'
 
 export default {
   mixins: [mixin],
@@ -110,7 +112,7 @@ export default {
       } 
       return this.originalInventoryYaml == yaml.dump(this.cluster.inventory)
     },
-    installed () {
+    isClusterInstalled () {
       return !(this.cluster && this.cluster.history.success_tasks.length == 0)
     },
     isClusterOnline () {
@@ -125,14 +127,64 @@ export default {
       if (this.mode !== 'view') {
         return true
       }
-      return !this.installed
+      return !this.isClusterInstalled
     }
   },
   provide () {
     return {
-      isInstalled: computed(() => {
-        return this.installed
-      })
+      isClusterInstalled: computed(() => {
+        return this.isClusterInstalled
+      }),
+      isClusterOnline: computed(() => {
+        return this.isClusterOnline
+      }),
+      pendingRemoveNodes: computed(() => {
+        let result = []
+        if (this.isClusterInstalled && this.isClusterOnline) {
+          for (let key in this.cluster.inventory.all.hosts) {
+            let host = this.cluster.inventory.all.hosts[key]
+            if (host.kuboard_spray_remove_node) {
+              let h = clone(host)
+              h.name = key
+              if (this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[key]) {
+                h.isControlPlane = true
+              }
+              if (this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts[key]) {
+                h.isNode = true
+              }
+              if (this.cluster.inventory.all.children.target.children.etcd.hosts[key]) {
+                h.isEtcd = true
+              }
+              result.push(h)
+            }
+          }
+        }
+        return result
+      }),
+      pendingAddNodes: computed(() => {
+        let result = []
+        console.log(this.isClusterInstalled, this.isClusterOnline)
+        if (this.isClusterInstalled && this.isClusterOnline) {
+          for (let key in this.cluster.inventory.all.hosts) {
+            let host = this.cluster.inventory.all.hosts[key]
+            if (!this.cluster.state.nodes[key] && key !== 'localhost' && key !== 'bastion') {
+              let h = clone(host)
+              h.name = key
+              if (this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[key]) {
+                h.isControlPlane = true
+              }
+              if (this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts[key]) {
+                h.isNode = true
+              }
+              if (this.cluster.inventory.all.children.target.children.etcd.hosts[key]) {
+                h.isEtcd = true
+              }
+              result.push(h)
+            }
+          }
+        }
+        return result
+      }),
     }
   },
   components: { Plan, ClusterProcessing, Access, ClusterStateNodes },
@@ -161,7 +213,7 @@ export default {
         }
         this.originalInventoryYaml = yaml.dump(this.cluster.inventory)
         this.loadResourcePackage()
-        if (this.installed) {
+        if (this.isClusterInstalled) {
           this.loadStateNodes()
         }
       }).catch(e => {
@@ -186,7 +238,10 @@ export default {
           }
         }
       }).catch(e => {
-        console.log(e)
+        this.cluster.state = {
+          code: 500,
+          msg: e.response.data.message
+        }
       })
     },
     async loadResourcePackage () {

@@ -7,6 +7,8 @@ en:
   roles: Node Role
   roleDescription: 'Node Role (scope: node {nodeName})'
   requiresAtLeastOneRole: Requires at least one role
+  pendingDelete: Pending Delete.
+  pendingDeleteAction: Click Execute button to do the actural deletion.
 zh:
   sshcommon: SSH 连接参数（适用范围：节点 {nodeName}）
   etcd: "ETCD 参数（适用范围：节点 {nodeName}）"
@@ -15,10 +17,15 @@ zh:
   roles: 节点角色
   roleDescription: 节点角色（适用范围：节点 {nodeName}）
   requiresAtLeastOneRole: 至少需要一个角色
+  pendingDelete: 等待删除
+  pendingDeleteAction: 点击 “执行” 按钮，执行删除操作
 </i18n>
 
 <template>
   <el-form ref="form" :model="inventory" label-width="120px" label-position="left" @submit.enter.prevent>
+    <el-alert v-if="pendingDelete" :title="$t('pendingDelete')" type="error" :closable="false" effect="dark" class="app_margin_bottom" show-icon>
+      {{$t('pendingDeleteAction')}}
+    </el-alert>
     <StateNode v-if="nodes[nodeName]" :cluster="cluster" :nodeName="nodeName" :nodes="nodes"></StateNode>
     <SshParamsNode :cluster="cluster" :nodes="nodes"
       :holder="inventory.all.hosts[nodeName]" :prop="`all.hosts.${nodeName}`" :clusterName="cluster.name" :nodeName="nodeName" :description="$t('sshcommon', {nodeName: nodeName})">
@@ -101,6 +108,12 @@ export default {
       set (v) {
         console.log(v)
       }
+    },
+    pendingDelete () {
+      if (this.inventory.all.hosts[this.nodeName] && this.inventory.all.hosts[this.nodeName].kuboard_spray_remove_node) {
+        return true
+      }
+      return false
     },
     enabledEtcd: {
       get () {

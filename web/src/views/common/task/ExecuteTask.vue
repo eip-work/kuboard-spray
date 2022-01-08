@@ -10,6 +10,11 @@ en:
   taskInCurrent: Task in Running
   viewLastSuccessLog: Last success log
   viewLastLog: Last log
+
+  install_cluster: Install / Setup K8S Cluster
+  add_node: Add node to cluster
+  remove_node: Remove node from cluster
+
 zh:
   apply: 执 行
   processingTitle: 任务执行中
@@ -18,12 +23,16 @@ zh:
   taskFinished: 任务已结束
   closeWindow: 强制关闭此对话框
 
-  reset: 再次尝试执行任务
-  succeeded: 已经成功执行任务
+  reset: 将要执行任务
+  succeeded: 已经成功完成
   confirmToExecute: 执行任务
   taskInCurrent: 当前有任务正在执行
   viewLastSuccessLog: 最后成功日志
   viewLastLog: 最后日志
+
+  install_cluster: 安装 / 设置集群
+  add_node: 添加节点到集群
+  remove_node: 删除集群节点
 </i18n>
 
 <template>
@@ -42,17 +51,17 @@ zh:
   <template v-else-if="!loading">
     <el-popover v-if="!(finished && hideOnSuccess) && !history.processing" v-model:visible="showConfirm" placement="bottom" width="420" trigger="manual">
       <template #reference>
-        <el-button type="warning" icon="el-icon-lightning" @click="showConfirm = !showConfirm">{{ label || $t('apply')}}</el-button>
+        <el-button type="warning" icon="el-icon-lightning" @click="showConfirm = !showConfirm">{{ title || $t('apply')}}</el-button>
       </template>
       <el-form @submit.prevent.stop label-position="left" label-width="120px">
         <div style="height: 10px;"></div>
         <template v-if="finished">
           <el-alert type="success" effect="dark" style="margin-bottom: 10px;" :closable="false">
             <i class="el-icon-lightning" style="font-size: 16px; color: white; margin-right: 10px;"></i>
-            <span class="confirmText" style="color: white;">{{$t('succeeded')}} {{title ? `[ ${title} ]` : ''}}</span>
+            <span class="confirmText" style="color: white;">{{$t('succeeded')}} [ {{ $t(lastSuccess.type) }} ]</span>
           </el-alert>
-          <el-alert type="warning" style="margin-bottom: 10px;" :closable="false">
-            <i class="el-icon-lightning" style="font-size: 16px; color: red; margin-right: 10px;"></i>
+          <el-alert type="warning" effect="dark" style="margin-bottom: 10px;" :closable="false">
+            <i class="el-icon-lightning" style="font-size: 16px; color: white; margin-right: 10px;"></i>
             <span class="confirmText">{{$t('reset')}} {{title ? `[ ${title} ]` : ''}}</span>
           </el-alert>
         </template>
@@ -92,10 +101,22 @@ export default {
   data() {
     return {
       forceHide: false,
-      showConfirm: false,
+      showConfirmData: false,
     }
   },
   computed: {
+    lastSuccess () {
+      if (this.history.success_tasks.length > 0) {
+        let temp = { successTime: '2000', type: 'install_cluster', pid: '' }
+        for (let item of this.history.success_tasks) {
+          if (temp.pid < item.pid) {
+            temp = item
+          }
+        }
+        return temp
+      }
+      return {}
+    },
     lastSucessPid () {
       let task = undefined
       for (let t of this.history.success_tasks) {
@@ -120,6 +141,13 @@ export default {
         return this.history.processing && !this.forceHide
       },
       set () {}
+    },
+    showConfirm: {
+      get () { return this.showConfirmData },
+      set (v) {
+        this.$emit('visibleChange', v)
+        this.showConfirmData = v
+      }
     }
   },
   watch: {
@@ -129,7 +157,7 @@ export default {
     },
   },
   components: { },
-  emits: ['refresh'],
+  emits: ['refresh', 'visibleChange'],
   mounted () {
   },
   methods: {

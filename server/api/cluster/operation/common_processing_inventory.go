@@ -116,7 +116,7 @@ func updateResourcePackageVarsToInventory(clusterName string) (map[string]interf
 	common.MapSet(inventory, "all.vars.download_force_cache", true)
 	common.MapSet(inventory, "all.vars.download_always_pull", false)
 	common.MapSet(inventory, "all.vars.download_cache_dir", resourcePackagePath+"/kubespray_cache")
-	common.MapSet(inventory, "all.vars.ansible_ssh_common_args", "-o StrictHostKeyChecking=no")
+	// common.MapSet(inventory, "all.vars.ansible_ssh_common_args", "-o StrictHostKeyChecking=no")
 	common.MapSet(inventory, "all.vars.kuboardspray_cluster_dir", constants.GET_DATA_CLUSTER_DIR()+"/"+clusterName)
 	common.MapSet(inventory, "all.children.target.vars.disable_service_firewall", true)
 	common.MapSet(inventory, "all.children.target.vars.ansible_python_interpreter", "auto")

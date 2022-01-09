@@ -219,9 +219,7 @@ export default {
       }).catch(e => {
         console.log(e.response)
       })
-      setTimeout(() => {
-        this.loading = false
-      }, 200)
+      this.loading = false
     },
     loadStateNodes() {
       this.kuboardSprayApi.get(`/clusters/${this.name}/state/nodes`).then(resp => {

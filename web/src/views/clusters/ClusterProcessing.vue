@@ -32,7 +32,7 @@ zh:
 </i18n>
 
 <template>
-  <ExecuteTask :history="cluster.history" :loading="loading" :title="title" :startTask="applyPlan" @refresh="$emit('refresh')" @visibleChange="updateForm">
+  <ExecuteTask v-if="!loading" :history="cluster.history" :loading="loading" :title="title" :startTask="applyPlan" @refresh="$emit('refresh')" @visibleChange="onVisibleChange">
     <el-form ref="form" :model="form" @submit.prevent.stop label-position="left" label-width="120px">
       <div style="height: 10px;"></div>
       <el-form-item :label="$t('verbose')">
@@ -52,11 +52,34 @@ zh:
           <div style="margin-bottom: 15px;">
             <el-radio v-if="pendingRemoveNodes.length >0" label="remove_node">
               {{ $t('aboutToRemoveNode') }}
-              <div style="margin-left: 25px;">
-                <el-tag v-for="(item, key) in pendingRemoveNodes" :key="'h' + key" style="margin-top: 10px; margin-right: 10px;">
-                  <span class="app_text_mono">{{item.name}}</span>
-                </el-tag>
+              <div v-if="pingpong_loading" style="display: block;">
+                <el-skeleton animated></el-skeleton>
               </div>
+              <div v-else style="margin-left: 25px; margin-top: 10px;" class="app_form_mini">
+                <el-form-item prop="reset_nodes" required>
+                  <el-radio-group v-model="reset_nodes">
+                    <el-radio-button :label="true">重置节点（不能选择已停机的节点）</el-radio-button>
+                    <el-radio-button :label="false">不重置节点</el-radio-button>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item prop="nodes_to_remove" required>
+                  <el-checkbox-group v-model="form.nodes_to_remove">
+                    <el-checkbox v-for="(item, key) in pendingRemoveNodes" :key="'h' + key" style="margin-top: 10px; margin-right: 10px;" :label="item.name"
+                      :disabled="(pingpong[item.name] === undefined || pingpong[item.name].status !== 'SUCCESS') && form.reset_nodes">
+                      <el-tooltip v-if="pingpong[item.name] && pingpong[item.name].status !== 'SUCCESS'" :content="pingpong[item.name].message" placement="top-start">
+                        <span class="app_text_mono">{{item.name}}</span>
+                      </el-tooltip>
+                      <span v-else class="app_text_mono">{{item.name}}</span>
+                    </el-checkbox>
+                  </el-checkbox-group>
+                </el-form-item>
+              </div>
+              <el-form-item label="排空等候时间" required prop="drain_out_time" style="margin-top: 20px;">
+                <el-input-number v-model="form.drain_out_time" :min="1"></el-input-number> 分钟
+              </el-form-item>
+              <el-form-item label="排空重试次数" required prop="drain_retries">
+                <el-input-number v-model="form.drain_retries" :min="1"></el-input-number> 次
+              </el-form-item>
             </el-radio>
           </div>
           <div>
@@ -70,6 +93,10 @@ zh:
             </el-radio>
           </div>
         </el-radio-group>
+        <el-form-item v-if="cluster && cluster.resourcePackage && cluster.resourcePackage.data.supported_playbooks[this.action] === undefined" prop="min_resource_package_version" 
+          style="margin-top: -10px;"
+          :rules="min_resource_package_version_rules">
+        </el-form-item>
       </el-form-item>
     </el-form>
   </ExecuteTask>
@@ -77,6 +104,13 @@ zh:
 
 <script>
 import ExecuteTask from '../common/task/ExecuteTask.vue'
+
+function trimMark(str) {
+  if (str[str.length - 1] === ',') {
+    return str.slice(0, str.length - 1)
+  }
+  return str
+}
 
 export default {
   props: {
@@ -91,11 +125,36 @@ export default {
         vvv: false,
         fork: 5,
         action: '',
-      }
+        reset_nodes: true,
+        nodes_to_remove: [],
+        drain_out_time: 10,
+        drain_retries: 3,
+        min_resource_package_version: '',
+      },
+      min_resource_package_version_rules: [
+        { required: true, message: '当前资源包不支持此操作，请使用新的资源包' }
+      ],
+      pingpong: {},
+      pingpong_loading: true,
     }
   },
   inject: ['isClusterInstalled', 'isClusterOnline', 'pendingRemoveNodes', 'pendingAddNodes'],
   computed: {
+    reset_nodes: {
+      get () { return this.form.reset_nodes },
+      set (v) {
+        let temp = []
+        for (let node of this.pendingRemoveNodes) {
+          console.log(node.name, this.pingpong[node.name].status)
+          if ((this.pingpong[node.name].status === 'SUCCESS') === v) {
+            temp.push(node.name)
+          }
+        }
+        console.log(temp)
+        this.form.nodes_to_remove = temp
+        this.form.reset_nodes = v
+      }
+    },
     action () {
       if (this.pendingRemoveNodes.length > 0 || this.pendingAddNodes.length > 0) {
         return this.form.action
@@ -105,39 +164,110 @@ export default {
     },
     title () {
       return this.$t(this.action, {count: this.pendingAddNodes.length || this.pendingRemoveNodes.length })
+    },
+    hosts () {
+      if (this.cluster && this.cluster.inventory) {
+        return this.cluster.inventory.all.hosts
+      }
+      return {}
+    },
+    nodesToRemove: {
+      get () { return this.pendingRemoveNodes },
+      set () {}
     }
   },
   watch: {
+    'hosts': {
+      deep: true,
+      handler: function () {
+        this.updateForm(true)
+      }
+    },
+    isClusterOnline () {
+      this.updateForm(true)
+    },
+    isClusterInstalled () {
+      this.updateForm(true)
+    }
   },
   components: { ExecuteTask },
   emits: ['refresh'],
   mounted () {
+    this.updateForm(true)
   },
   methods: {
-    updateForm (flag) {
+    onVisibleChange (flag) {
       if (flag) {
-        let count = 0
-        for (let key in this.cluster.inventory.all.hosts) {
-          if (key !== 'localhost' && key !== 'bastion') {
-            count ++
-          }
+        this.updateForm()
+        if (this.pendingAddNodes.length > 0) {
+          this.testPingPong(this.pendingAddNodes)
+        } else if (this.pendingRemoveNodes.length > 0) {
+          this.testPingPong(this.pendingRemoveNodes)
         }
-        if (count > 50) {
-          count = 50
+      }
+    },
+    testPingPong (nodes) {
+      this.pingpong = {}
+      this.pingpong_loading = true
+      let temp = ''
+      for (let node of nodes) {
+        temp += node.name + ','
+      }
+      temp = trimMark(temp, ',')
+      let req = { nodes: temp }
+      this.kuboardSprayApi.post(`/clusters/${this.name}/state/ping`, req).then(resp => {
+        this.pingpong = resp.data.data.items
+        this.pingpong_loading = false
+      }).catch(e => {
+        if (e.response && e.response.data) {
+          this.$message.error('不能测试节点是否在线: ' + e.response.data.message)
+        } else {
+          this.$message.error('不能测试节点是否在线: ' + e)
         }
-        this.form.fork = count
-        if (this.pendingRemoveNodes.length > 0) {
-          this.form.action = 'remove_node'
-        } else if (this.pendingAddNodes.length > 0) {
-          this.form.action = 'add_node'
+      })
+    },
+    updateForm () {
+      let count = 0
+      for (let key in this.cluster.inventory.all.hosts) {
+        if (key !== 'localhost' && key !== 'bastion') {
+          count ++
         }
+      }
+      if (count > 50) {
+        count = 50
+      }
+      this.form.fork = count
+      if (this.pendingRemoveNodes.length > 0) {
+        this.form.action = 'remove_node'
+        this.form.nodes_to_remove = []
+        this.form.reset_nodes = true
+        this.form.drain_out_time = 10
+        this.form.drain_retries = 3
+      } else if (this.pendingAddNodes.length > 0) {
+        this.form.action = 'add_node'
       }
     },
     async applyPlan () {
       return new Promise((resolve, reject) => {
         this.$refs.form.validate(flag => {
           if (flag) {
-            this.kuboardSprayApi.post(`/clusters/${this.name}/${this.action}`, this.form).then(resp => {
+            let req = {
+              verbose: this.form.verbose,
+              vvv: this.form.vvv,
+              fork: this.form.fork,
+            }
+            if (this.action === 'remove_node') {
+              req.reset_nodes = this.form.reset_nodes
+              let temp = ''
+              for (let node of this.form.nodes_to_remove) {
+                temp += node + ','
+              }
+              temp = trimMark(temp)
+              req.nodes_to_remove = temp
+              req.drain_out_time = this.form.drain_out_time * 60 + 's'
+              req.drain_retries = this.form.drain_retries + ''
+            }
+            this.kuboardSprayApi.post(`/clusters/${this.name}/${this.action}`, req).then(resp => {
               let pid = resp.data.data.pid
               resolve(pid)
             }).catch(e => {

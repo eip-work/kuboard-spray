@@ -33,7 +33,7 @@ func AddNode(c *gin.Context) {
 	}
 	onlineNodes := common.MapGet(result.StdoutObj, "items").([]interface{})
 
-	// 找出 inventory 中不在线的节点
+	// 找出 inventory 中待添加的节点
 	hosts := common.MapGet(inventory, "all.hosts").(map[string]interface{})
 	nodes := ""
 	includesControlPlane := false

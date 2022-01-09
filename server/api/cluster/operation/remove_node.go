@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/api/command"
@@ -14,8 +13,16 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type RemoveNodeRequest struct {
+	InstallClusterRequest
+	Nodes           string `json:"nodes_to_remove"`
+	ResetNodes      bool   `json:"reset_nodes"`
+	DrainOutTime    string `json:"drain_out_time"`
+	DrainOutRetries string `json:"drain_retries"`
+}
+
 func RemoveNode(c *gin.Context) {
-	var req InstallClusterRequest
+	var req RemoveNodeRequest
 	c.ShouldBindUri(&req)
 	c.ShouldBindJSON(&req)
 
@@ -26,18 +33,23 @@ func RemoveNode(c *gin.Context) {
 	}
 	common.MapSet(inventory, "all.vars.kuboardspray_no_log", !req.Verbose)
 
-	hosts := common.MapGet(inventory, "all.hosts").(map[string]interface{})
-	nodes := ""
-	for key, value := range hosts {
-		vars := value.(map[string]interface{})
-		if vars["kuboard_spray_remove_node"] == true {
-			nodes += key + ","
-		}
-	}
-	nodes = "node=" + nodes
-	nodes = strings.Trim(nodes, ",")
+	// hosts := common.MapGet(inventory, "all.hosts").(map[string]interface{})
+	// nodes := ""
+	// for key, value := range hosts {
+	// 	vars := value.(map[string]interface{})
+	// 	if vars["kuboard_spray_remove_node"] == true {
+	// 		nodes += key + ","
+	// 	}
+	// }
+	// nodes = "node=" + nodes
+	// nodes = strings.Trim(nodes, ",")
 
+	nodes := "node=" + req.Nodes
 	logrus.Trace("remove_nodes: ", nodes)
+	resetNodes := "reset_nodes=false"
+	if req.ResetNodes {
+		resetNodes = "reset_nodes=true"
+	}
 
 	postExec := func(status command.ExecuteExitStatus) (string, error) {
 
@@ -84,9 +96,25 @@ func RemoveNode(c *gin.Context) {
 		Cmd:       "ansible-playbook",
 		Args: func(execute_dir string) []string {
 			if req.VVV {
-				return []string{"-i", execute_dir + "/inventory.yaml", playbook, "-vvv", "--fork", strconv.Itoa(req.Fork), "-e", nodes, "-e", "allow_ungraceful_removal=true", "-e", "reset_nodes=true"}
+				return []string{
+					"-i", execute_dir + "/inventory.yaml", playbook, "-vvv",
+					"--fork", strconv.Itoa(req.Fork),
+					"-e", nodes,
+					"-e", "allow_ungraceful_removal=true",
+					"-e", resetNodes,
+					"-e", "drain_out_time=" + req.DrainOutTime,
+					"-e", "drain_retries=" + req.DrainOutRetries,
+				}
 			}
-			return []string{"-i", execute_dir + "/inventory.yaml", playbook, "--fork", strconv.Itoa(req.Fork), "-e", nodes, "-e", "allow_ungraceful_removal=true", "-e", "reset_nodes=true"}
+			return []string{
+				"-i", execute_dir + "/inventory.yaml", playbook,
+				"--fork", strconv.Itoa(req.Fork),
+				"-e", nodes,
+				"-e", "allow_ungraceful_removal=true",
+				"-e", resetNodes,
+				"-e", "drain_out_time=" + req.DrainOutTime,
+				"-e", "drain_retries=" + req.DrainOutRetries,
+			}
 		},
 		Dir:      resourcePackagePathForInventory(inventory),
 		Type:     "remove_node",

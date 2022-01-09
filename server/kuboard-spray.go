@@ -41,6 +41,7 @@ func setupRouter() *gin.Engine {
 
 	api.GET("/clusters/:cluster/access/kubeconfig", cluster_access.GetKubeConfig)
 
+	api.POST("/clusters/:cluster/state/ping", state.Ping)
 	api.GET("/clusters/:cluster/state/nodes", state.GetNodes)
 
 	api.GET("/execute/:owner_type/:owner_name/tail/:pid/:file", command.TailFile)

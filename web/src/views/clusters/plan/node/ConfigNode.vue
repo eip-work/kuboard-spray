@@ -18,7 +18,7 @@ zh:
   roleDescription: 节点角色（适用范围：节点 {nodeName}）
   requiresAtLeastOneRole: 至少需要一个角色
   pendingDelete: 等待删除
-  pendingDeleteAction: 点击 “执行” 按钮，执行删除操作
+  pendingDeleteAction: 点击控制栏的 “节点待删除” 按钮，执行删除操作
 </i18n>
 
 <template>

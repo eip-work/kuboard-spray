@@ -71,7 +71,7 @@ zh:
       <el-button v-if="isRunning" style="float: right; margin-right: 20px;" type="danger" @click="dialogVisible = true">{{ $t('forceKill') }}</el-button>
       <el-tag v-else size="medium" style="float: right; margin-right: 20px;" type="primary">{{ $t('finished') }}</el-tag>
     </div>
-    <div id="terminal" :style="`width: 100%; height: calc(100vh - 38px); background-color: black;`"></div>
+    <div id="terminal" :style="`width: 100%; height: calc(100vh - 39px); background-color: black;`"></div>
     <el-dialog :title="$t('msg.prompt')" v-model="dialogVisible" width="60%" top="calc(50vh - 180px)" :close-on-click-modal="false">
       <el-alert type="error" :closable="false" effect="dark" show-icon>
         <div class="confirmText">{{$t('confirmToKill')}}</div>
@@ -189,6 +189,7 @@ export default {
       this.xterm = new Terminal({
         fontFamily: 'Consolas,Menlo,Bitstream Vera Sans Mono,Monaco,"微软雅黑",monospace',
         fontSize: this.fontSize,
+        scrollback: 100000,
         theme: { selection: 'rgba(255,36,36,0.5)', foreground: localStorage.getItem('terminalForegroundColor') || '#ccc' }
       })
       this.fitAddon = new FitAddon();

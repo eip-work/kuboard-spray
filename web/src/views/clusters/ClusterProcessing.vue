@@ -122,7 +122,7 @@ zh:
                 <el-input-number v-model="form.remove_node.drain_retries" :min="1"></el-input-number> 次
               </el-form-item>
               <el-form-item label-width="150px" :label="$t('drain_retry_delay_seconds')" required prop="remove_node.drain_retry_delay_seconds">
-                <el-input-number v-model="form.remove_node.drain_retry_delay_seconds" :min="5"></el-input-number> 秒
+                <el-input-number v-model="form.remove_node.drain_retry_delay_seconds" :min="5" :step="5"></el-input-number> 秒
               </el-form-item>
             </div>
           </div>

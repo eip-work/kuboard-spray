@@ -49,19 +49,19 @@ zh:
     </el-dialog>
   </div>
   <template v-else-if="!loading">
-    <el-popover v-if="!(finished && hideOnSuccess) && !history.processing" v-model:visible="showConfirm" placement="bottom" width="420" trigger="manual">
+    <el-popover v-if="!(finished && hideOnSuccess) && !history.processing" v-model:visible="showConfirm" placement="bottom-start" width="420" trigger="manual">
       <template #reference>
         <el-button type="warning" icon="el-icon-lightning" @click="showConfirm = !showConfirm">{{ title || $t('apply')}}</el-button>
       </template>
       <el-form @submit.prevent.stop label-position="left" label-width="120px">
-        <div style="height: 10px;"></div>
+        <!-- <div style="height: 10px;"></div> -->
         <template v-if="finished">
-          <el-alert type="success" effect="dark" style="margin-bottom: 10px;" :closable="false">
-            <i class="el-icon-lightning" style="font-size: 16px; color: white; margin-right: 10px;"></i>
+          <!-- <el-alert type="success" effect="dark" style="margin-bottom: 10px;" :closable="false">
+            <i class="el-icon-lightning" style="font-size: 15px; color: white; margin-right: 10px;"></i>
             <span class="confirmText" style="color: white;">{{$t('succeeded')}} [ {{ $t(lastSuccess.type) }} ]</span>
-          </el-alert>
+          </el-alert> -->
           <el-alert type="warning" effect="dark" style="margin-bottom: 10px;" :closable="false">
-            <i class="el-icon-lightning" style="font-size: 16px; color: white; margin-right: 10px;"></i>
+            <i class="el-icon-lightning" style="font-size: 15px; color: white; margin-right: 10px;"></i>
             <span class="confirmText">{{$t('reset')}} {{title ? `[ ${title} ]` : ''}}</span>
           </el-alert>
         </template>

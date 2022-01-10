@@ -81,16 +81,14 @@ func AddNode(c *gin.Context) {
 		OwnerName: req.Cluster,
 		Cmd:       "ansible-playbook",
 		Args: func(execute_dir string) []string {
-			if req.VVV {
-				if includesControlPlane {
-					return []string{"-i", execute_dir + "/inventory.yaml", clusterPlaybook, "-vvv", "--fork", strconv.Itoa(req.Fork)}
-				}
-				return []string{"-i", execute_dir + "/inventory.yaml", playbook, "-vvv", "--fork", strconv.Itoa(req.Fork), "--limit", nodes}
-			}
+			result := []string{"-i", execute_dir + "/inventory.yaml", playbook, "--fork", strconv.Itoa(req.Fork), "--limit", nodes}
 			if includesControlPlane {
-				return []string{"-i", execute_dir + "/inventory.yaml", clusterPlaybook, "--fork", strconv.Itoa(req.Fork)}
+				result = []string{"-i", execute_dir + "/inventory.yaml", clusterPlaybook, "--fork", strconv.Itoa(req.Fork)}
 			}
-			return []string{"-i", execute_dir + "/inventory.yaml", playbook, "--fork", strconv.Itoa(req.Fork), "--limit", nodes}
+			if req.VVV {
+				result = append(result, "-vvv")
+			}
+			return result
 		},
 		Dir:      resourcePackagePathForInventory(inventory),
 		Type:     "add_node",

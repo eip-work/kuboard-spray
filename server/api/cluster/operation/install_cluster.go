@@ -50,10 +50,11 @@ func InstallCluster(c *gin.Context) {
 		OwnerName: req.Cluster,
 		Cmd:       "ansible-playbook",
 		Args: func(execute_dir string) []string {
+			result := []string{"-i", execute_dir + "/inventory.yaml", playbook, "--fork", strconv.Itoa(req.Fork)}
 			if req.VVV {
-				return []string{"-i", execute_dir + "/inventory.yaml", playbook, "-vvv", "--fork", strconv.Itoa(req.Fork)}
+				result = append(result, "-vvv")
 			}
-			return []string{"-i", execute_dir + "/inventory.yaml", playbook, "--fork", strconv.Itoa(req.Fork)}
+			return result
 		},
 		Dir:      resourcePackagePathForInventory(inventory),
 		Type:     "install_cluster",

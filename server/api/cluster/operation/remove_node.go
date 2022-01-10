@@ -15,10 +15,13 @@ import (
 
 type RemoveNodeRequest struct {
 	InstallClusterRequest
-	Nodes           string `json:"nodes_to_remove"`
-	ResetNodes      bool   `json:"reset_nodes"`
-	DrainOutTime    string `json:"drain_out_time"`
-	DrainOutRetries string `json:"drain_retries"`
+	Nodes                  string `json:"nodes_to_remove"`
+	ResetNodes             bool   `json:"reset_nodes"`
+	AllowUngracefulRemoval bool   `json:"allow_ungraceful_removal"`
+	DrainTimeout           string `json:"drain_timeout"`
+	DrainOutRetries        string `json:"drain_retries"`
+	DrainRetryDelaySeconds string `json:"drain_retry_delay_seconds"`
+	DrainGracePeriod       string `json:"drain_grace_period"`
 }
 
 func RemoveNode(c *gin.Context) {
@@ -33,23 +36,7 @@ func RemoveNode(c *gin.Context) {
 	}
 	common.MapSet(inventory, "all.vars.kuboardspray_no_log", !req.Verbose)
 
-	// hosts := common.MapGet(inventory, "all.hosts").(map[string]interface{})
-	// nodes := ""
-	// for key, value := range hosts {
-	// 	vars := value.(map[string]interface{})
-	// 	if vars["kuboard_spray_remove_node"] == true {
-	// 		nodes += key + ","
-	// 	}
-	// }
-	// nodes = "node=" + nodes
-	// nodes = strings.Trim(nodes, ",")
-
 	nodes := "node=" + req.Nodes
-	logrus.Trace("remove_nodes: ", nodes)
-	resetNodes := "reset_nodes=false"
-	if req.ResetNodes {
-		resetNodes = "reset_nodes=true"
-	}
 
 	postExec := func(status command.ExecuteExitStatus) (string, error) {
 
@@ -95,26 +82,21 @@ func RemoveNode(c *gin.Context) {
 		OwnerName: req.Cluster,
 		Cmd:       "ansible-playbook",
 		Args: func(execute_dir string) []string {
-			if req.VVV {
-				return []string{
-					"-i", execute_dir + "/inventory.yaml", playbook, "-vvv",
-					"--fork", strconv.Itoa(req.Fork),
-					"-e", nodes,
-					"-e", "allow_ungraceful_removal=true",
-					"-e", resetNodes,
-					"-e", "drain_out_time=" + req.DrainOutTime,
-					"-e", "drain_retries=" + req.DrainOutRetries,
-				}
-			}
-			return []string{
+			result := []string{
 				"-i", execute_dir + "/inventory.yaml", playbook,
 				"--fork", strconv.Itoa(req.Fork),
 				"-e", nodes,
-				"-e", "allow_ungraceful_removal=true",
-				"-e", resetNodes,
-				"-e", "drain_out_time=" + req.DrainOutTime,
+				"-e", "reset_nodes=" + strconv.FormatBool(req.ResetNodes),
+				"-e", "allow_ungraceful_removal=" + strconv.FormatBool(req.AllowUngracefulRemoval),
+				"-e", "drain_grace_period=" + req.DrainGracePeriod,
+				"-e", "drain_timeout=" + req.DrainTimeout,
 				"-e", "drain_retries=" + req.DrainOutRetries,
+				"-e", "drain_retry_delay_seconds=" + req.DrainRetryDelaySeconds,
 			}
+			if req.VVV {
+				result = append(result, "-vvv")
+			}
+			return result
 		},
 		Dir:      resourcePackagePathForInventory(inventory),
 		Type:     "remove_node",

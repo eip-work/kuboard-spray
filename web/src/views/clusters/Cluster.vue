@@ -139,51 +139,10 @@ export default {
         return this.isClusterOnline
       }),
       pendingRemoveNodes: computed(() => {
-        let result = []
-        if (this.isClusterInstalled && this.isClusterOnline) {
-          for (let key in this.cluster.inventory.all.hosts) {
-            let host = this.cluster.inventory.all.hosts[key]
-            if (host.kuboard_spray_remove_node) {
-              let h = clone(host)
-              h.name = key
-              if (this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[key]) {
-                h.isControlPlane = true
-              }
-              if (this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts[key]) {
-                h.isNode = true
-              }
-              if (this.cluster.inventory.all.children.target.children.etcd.hosts[key]) {
-                h.isEtcd = true
-              }
-              result.push(h)
-            }
-          }
-        }
-        return result
+        return this.pendingNodes('remove_node')
       }),
       pendingAddNodes: computed(() => {
-        let result = []
-        console.log(this.isClusterInstalled, this.isClusterOnline)
-        if (this.isClusterInstalled && this.isClusterOnline) {
-          for (let key in this.cluster.inventory.all.hosts) {
-            let host = this.cluster.inventory.all.hosts[key]
-            if (!this.cluster.state.nodes[key] && key !== 'localhost' && key !== 'bastion') {
-              let h = clone(host)
-              h.name = key
-              if (this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[key]) {
-                h.isControlPlane = true
-              }
-              if (this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts[key]) {
-                h.isNode = true
-              }
-              if (this.cluster.inventory.all.children.target.children.etcd.hosts[key]) {
-                h.isEtcd = true
-              }
-              result.push(h)
-            }
-          }
-        }
-        return result
+        return this.pendingNodes('add_node')
       }),
     }
   },
@@ -197,6 +156,29 @@ export default {
     this.refresh()
   },
   methods: {
+    pendingNodes (action) {
+      let result = []
+        if (this.isClusterInstalled && this.isClusterOnline) {
+          for (let key in this.cluster.inventory.all.hosts) {
+            let host = this.cluster.inventory.all.hosts[key]
+            if (host.kuboardspray_node_action === action) {
+              let h = clone(host)
+              h.name = key
+              if (this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[key]) {
+                h.isControlPlane = true
+              }
+              if (this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts[key]) {
+                h.isNode = true
+              }
+              if (this.cluster.inventory.all.children.target.children.etcd.hosts[key]) {
+                h.isEtcd = true
+              }
+              result.push(h)
+            }
+          }
+        }
+        return result
+    },
     cancelEdit () {
       this.$router.replace(`/clusters/${this.name}`)
       this.refresh()
@@ -213,6 +195,11 @@ export default {
         }
         this.originalInventoryYaml = yaml.dump(this.cluster.inventory)
         this.loadResourcePackage()
+        setTimeout(() => {
+          if (this.$refs.plan) {
+            this.$refs.plan.ping()
+          }
+        }, 200)
         if (this.isClusterInstalled) {
           this.loadStateNodes()
         }

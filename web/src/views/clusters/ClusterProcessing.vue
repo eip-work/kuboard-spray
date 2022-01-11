@@ -13,8 +13,8 @@ en:
   install_cluster: Install / Setup K8S Cluster
   add_node: "{count} nodes waiting to be added"
   remove_node: "{count} nodes waiting to be removed"
-  aboutToRemoveNode: About to remove the following nodes
-  aboutToAddNode: About to add the following nodes
+  aboutToRemoveNode: Remove nodes
+  aboutToAddNode: Add nodes
   resetNodes: Reset nodes(non-applicable to offline nodes)
   resetNodesNo: Do not reset nodes
   allow_ungraceful_removal: Allow remove nodes failed to drain
@@ -40,8 +40,8 @@ zh:
   install_cluster: 安装 / 设置集群
   add_node: "{count} 个节点待添加"
   remove_node: "{count} 个节点待删除"
-  aboutToRemoveNode: 将要删除如下节点
-  aboutToAddNode: 将要添加如下节点
+  aboutToRemoveNode: 删除节点
+  aboutToAddNode: 添加节点
   resetNodes: 重置节点（不能选择已停机的节点）
   resetNodesNo: 不重置节点
   allow_ungraceful_removal: 允许删除未排空的节点
@@ -73,70 +73,75 @@ zh:
           <span style="width: 350px; margin-left: 20px; color: #aaa; font-size: 12px;">{{$t('fork_more')}}</span>
         </el-form-item>
       </el-form-item>
-      <el-form-item v-if="pendingRemoveNodes.length > 0 || pendingAddNodes.length > 0" :label="$t('operation')" prop="action" required style="margin-top: 10px;">
+      <el-form-item :label="$t('operation')" prop="action" required style="margin-top: 10px;">
         <el-radio-group v-model="form.action">
-          <el-radio-button v-if="pendingRemoveNodes.length >0" label="remove_node">
+          <el-radio-button :disabled="pendingAddNodes.length > 0 || pendingRemoveNodes.length > 0">
+            {{ $t('install_cluster') }}
+          </el-radio-button>
+          <el-radio-button :disabled="pendingRemoveNodes.length === 0" label="remove_node">
             {{ $t('aboutToRemoveNode') }}
           </el-radio-button>
-          <div style="margin-bottom: 15px;" v-if="action === 'remove_node'">
-            <div v-if="pingpong_loading" style="display: block;">
-              <el-skeleton animated></el-skeleton>
-            </div>
-            <div v-else style="margin-left: 0px; margin-top: 10px;" class="app_form_mini">
-              <el-form-item prop="remove_node.reset_nodes" required>
-                <el-radio-group v-model="reset_nodes">
-                  <el-radio-button :label="true">{{ $t('resetNodes') }}</el-radio-button>
-                  <el-radio-button :label="false">{{ $t('resetNodesNo') }}</el-radio-button>
-                </el-radio-group>
-              </el-form-item>
-              <el-form-item prop="remove_node.nodes_to_remove" :rules="nodes_to_remove_rules">
-                <el-checkbox-group v-model="form.remove_node.nodes_to_remove">
-                  <el-checkbox v-for="(item, key) in pendingRemoveNodes" :key="'h' + key" style="margin-top: 10px; margin-right: 10px;" :label="item.name"
-                    :disabled="(pingpong[item.name] === undefined || pingpong[item.name].status !== 'SUCCESS') && form.remove_node.reset_nodes">
-                    <el-tooltip v-if="pingpong[item.name] && pingpong[item.name].status !== 'SUCCESS'" :content="pingpong[item.name].message" placement="top-start">
-                      <span class="app_text_mono">{{item.name}}</span>
-                    </el-tooltip>
-                    <span v-else class="app_text_mono">{{item.name}}</span>
-                  </el-checkbox>
-                </el-checkbox-group>
-              </el-form-item>
-              <el-form-item label-width="150px" :label="$t('allow_ungraceful_removal')" style="margin-top: 10px;">
-                <el-switch v-model="form.remove_node.allow_ungraceful_removal"></el-switch>
-                <div style="line-height: 20px; display: inline-block; vertical-align: top; margin-left: 10px;">
-                  <div class="form_description">{{$t('allow_ungraceful_removal_desc')}}</div>
-                  <div class="form_description app_text_mono" style="color: #666; font-weight: bold;">
-                    kubectl drain --force --ignore-daemonsets --grace-period {{ form.remove_node.drain_grace_period * 60}} 
-                      --timeout {{ form.remove_node.drain_timeout * 60 }}s
-                  </div>
-                </div>
-              </el-form-item>
-              <el-form-item label-width="150px" :label="$t('drain_grace_period')" required prop="remove_node.drain_grace_period">
-                <el-input-number v-model="form.remove_node.drain_grace_period" :min="1" :max="form.remove_node.drain_timeout - 1"></el-input-number> 分钟
-                <span style="margin-left: 20px;" class="form_description">kubectl drain --grace-period</span>
-              </el-form-item>
-              <el-form-item label-width="150px" :label="$t('drain_timeout')" required prop="remove_node.drain_timeout">
-                <el-input-number v-model="form.remove_node.drain_timeout" :min="form.remove_node.drain_grace_period + 1"></el-input-number> 分钟
-                <span style="margin-left: 20px;" class="form_description">kubectl drain --timeout</span>
-              </el-form-item>
-              <el-form-item label-width="150px" :label="$t('drain_retries')" required prop="remove_node.drain_retries">
-                <el-input-number v-model="form.remove_node.drain_retries" :min="1"></el-input-number> 次
-              </el-form-item>
-              <el-form-item label-width="150px" :label="$t('drain_retry_delay_seconds')" required prop="remove_node.drain_retry_delay_seconds">
-                <el-input-number v-model="form.remove_node.drain_retry_delay_seconds" :min="5" :step="5"></el-input-number> 秒
-              </el-form-item>
-            </div>
-          </div>
-          <div>
-          <el-radio-button v-if="pendingAddNodes.length > 0" label="add_node">
+          <el-radio-button :disabled="pendingAddNodes.length === 0" label="add_node">
             {{ $t('aboutToAddNode') }}
-            <div style="margin-left: 25px;">
-              <el-tag v-for="(item, key) in pendingAddNodes" :key="'h' + key" style="margin-top: 10px; margin-right: 10px;">
-                <span class="app_text_mono">{{item.name}}</span>
-              </el-tag>
-            </div>
           </el-radio-button>
-          </div>
         </el-radio-group>
+        <!-- 添加节点的参数 -->
+        <div v-if="action === 'add_node'">
+          <el-tag v-for="(item, key) in pendingAddNodes" :key="'h' + key" style="margin-top: 10px; margin-right: 10px;">
+            <span class="app_text_mono">{{item.name}}</span>
+          </el-tag>
+        </div>
+
+        <!-- 删除节点的参数 -->
+        <div style="margin-bottom: 15px;" v-if="action === 'remove_node'">
+          <div v-if="pingpong_loading" style="display: block;">
+            <el-skeleton animated></el-skeleton>
+          </div>
+          <div v-else style="margin-left: 0px; margin-top: 10px;" class="app_form_mini">
+            <el-form-item prop="remove_node.reset_nodes" required>
+              <el-radio-group v-model="reset_nodes">
+                <el-radio-button :label="true">{{ $t('resetNodes') }}</el-radio-button>
+                <el-radio-button :label="false">{{ $t('resetNodesNo') }}</el-radio-button>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item prop="remove_node.nodes_to_remove" :rules="nodes_to_remove_rules">
+              <el-checkbox-group v-model="form.remove_node.nodes_to_remove">
+                <el-checkbox v-for="(item, key) in pendingRemoveNodes" :key="'h' + key" style="margin-top: 10px; margin-right: 10px;" :label="item.name"
+                  :disabled="(pingpong[item.name] === undefined || pingpong[item.name].status !== 'SUCCESS') && form.remove_node.reset_nodes">
+                  <el-tooltip v-if="pingpong[item.name] && pingpong[item.name].status !== 'SUCCESS'" :content="pingpong[item.name].message" placement="top-start">
+                    <span class="app_text_mono">{{item.name}}</span>
+                  </el-tooltip>
+                  <span v-else class="app_text_mono">{{item.name}}</span>
+                </el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+            <el-form-item label-width="150px" :label="$t('allow_ungraceful_removal')" style="margin-top: 10px;">
+              <el-switch v-model="form.remove_node.allow_ungraceful_removal"></el-switch>
+              <div style="line-height: 20px; display: inline-block; vertical-align: top; margin-left: 10px;">
+                <div class="form_description">{{$t('allow_ungraceful_removal_desc')}}</div>
+                <div class="form_description app_text_mono" style="color: #666; font-weight: bold;">
+                  kubectl drain --force --ignore-daemonsets --grace-period {{ form.remove_node.drain_grace_period * 60}} 
+                    --timeout {{ form.remove_node.drain_timeout * 60 }}s
+                </div>
+              </div>
+            </el-form-item>
+            <el-form-item label-width="150px" :label="$t('drain_grace_period')" required prop="remove_node.drain_grace_period">
+              <el-input-number v-model="form.remove_node.drain_grace_period" :min="1" :max="form.remove_node.drain_timeout - 1"></el-input-number> 分钟
+              <span style="margin-left: 20px;" class="form_description">kubectl drain --grace-period</span>
+            </el-form-item>
+            <el-form-item label-width="150px" :label="$t('drain_timeout')" required prop="remove_node.drain_timeout">
+              <el-input-number v-model="form.remove_node.drain_timeout" :min="form.remove_node.drain_grace_period + 1"></el-input-number> 分钟
+              <span style="margin-left: 20px;" class="form_description">kubectl drain --timeout</span>
+            </el-form-item>
+            <el-form-item label-width="150px" :label="$t('drain_retries')" required prop="remove_node.drain_retries">
+              <el-input-number v-model="form.remove_node.drain_retries" :min="1"></el-input-number> 次
+            </el-form-item>
+            <el-form-item label-width="150px" :label="$t('drain_retry_delay_seconds')" required prop="remove_node.drain_retry_delay_seconds">
+              <el-input-number v-model="form.remove_node.drain_retry_delay_seconds" :min="5" :step="5"></el-input-number> 秒
+            </el-form-item>
+          </div>
+        </div>
+
         <el-form-item v-if="cluster && cluster.resourcePackage && cluster.resourcePackage.data.supported_playbooks[this.action] === undefined" prop="min_resource_package_version" 
           style="margin-top: -10px;"
           :rules="min_resource_package_version_rules">

@@ -130,6 +130,7 @@ export default {
     },
     async doLoad (fromCache) {
       this.loadingFact = true
+      let _this = this
       let req = {
         from_cache: fromCache,
         ansible_host: this.ansible_host,
@@ -162,7 +163,7 @@ export default {
         } else {
           this.fact = {
             changed: false,
-            msg: this.$t('no_cached_facts')
+            msg: _this.$t('no_cached_facts')
           }
         }
       })

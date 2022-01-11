@@ -3,8 +3,8 @@ en:
   title: Resource Packages
   resourceDescription1: Kuboard provides a set of pre-verified resource packages.
   resourceDescription2: You can also refer to https://github.com/eip-work/kuboard-spray-resource to create your own resource package.
-  kuboard_spray_version_min: KuboardSpray min version
-  kuboard_spray_version_max: KuboardSpray max version
+  kuboardspray_version_min: KuboardSpray min version
+  kuboardspray_version_max: KuboardSpray max version
   version: Version
   container_engine: Supported Container Engine
   supported_os: Supported OS
@@ -18,8 +18,8 @@ zh:
   title: 资源包列表
   resourceDescription1: Kuboard 提供一组经过预先测试验证的资源包列表，可以帮助您快速完成集群安装
   resourceDescription2: 您也可以参考项目 https://github.com/eip-work/kuboard-spray-resource 自己创建资源包
-  kuboard_spray_version_min: KuboardSpray最低版本
-  kuboard_spray_version_max: KuboardSpray最高版本
+  kuboardspray_version_min: KuboardSpray最低版本
+  kuboardspray_version_max: KuboardSpray最高版本
   version: 资源包版本
   container_engine: 支持的容器引擎
   supported_os: 支持的操作系统

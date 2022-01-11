@@ -21,7 +21,9 @@ zh:
   <div style="display:flex;">
     <div class="plan">
       <div class="left">
-        <div style="padding: 5px; font-weight: bolder; font-size: 14px;">Kuboard Spray</div>
+        <div style="padding: 5px; font-weight: bolder; font-size: 14px;">
+          Kuboard Spray
+        </div>
         <div>
           <Node class="localhost" name="localhost" :cluster="cluster" hideDeleteButton
             :active="currentPropertiesTab === 'localhost'" @click="currentPropertiesTab = 'localhost'">
@@ -46,22 +48,25 @@ zh:
         <div style="padding: 5px; font-weight: bolder; font-size: 14px; height: 28px; line-height: 28px;">
           <span style="margin-right: 20px;">Kubernetes Cluster</span>
           <AddNode :inventory="inventory" v-model:currentPropertiesTab="currentPropertiesTab"></AddNode>
+          <el-button type="primary" plain icon="el-icon-lightning" @click="ping" :loading="pingpong_loading">
+            <span class="app_text_mono">PING</span>
+          </el-button>
         </div>
         <el-scrollbar height="calc(100vh - 283px)">
           <div class="masters">
             <Node v-for="(item, index) in inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts" :key="'control_plane' + index"
-              @click="currentPropertiesTab = 'NODE_' + index" :nodes="cluster.state ? cluster.state.nodes : undefined"
+              @click="currentPropertiesTab = 'NODE_' + index" :nodes="cluster.state ? cluster.state.nodes : undefined" :pingpong="pingpong"
               :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'addons' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"
               :name="index" :cluster="cluster"></Node>
             <template v-for="(item, index) in inventory.all.children.target.children.etcd.hosts" :key="'etcd' + index">
               <Node v-if="isEtcdAndNotControlPlane(index)" :name="index" :cluster="cluster" :nodes="cluster.state ? cluster.state.nodes : undefined"
-                @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)"
+                @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)" :pingpong="pingpong"
                 :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"></Node>
             </template>
           </div>
           <div class="workers">
             <template v-for="(item, index) in inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts" :key="'node' + index">
-              <Node v-if="isNode(index)" :name="index" :cluster="cluster"
+              <Node v-if="isNode(index)" :name="index" :cluster="cluster" :pingpong="pingpong"
                 @click="currentPropertiesTab = 'NODE_' + index" :nodes="cluster.state ? cluster.state.nodes : undefined"
                 :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'addons' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"></Node>
             </template>
@@ -128,7 +133,7 @@ zh:
             </template>
             <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
-                <ConfigNode :cluster="cluster" :nodeName="currentPropertiesTab.slice(5)" :nodes="cluster.state ? cluster.state.nodes : undefined"></ConfigNode>
+                <ConfigNode :cluster="cluster" :nodeName="currentPropertiesTab.slice(5)" :nodes="cluster.state ? cluster.state.nodes : undefined" :pingpong="pingpong"></ConfigNode>
               </div>
             </el-scrollbar>
           </el-tab-pane>
@@ -152,7 +157,7 @@ zh:
 <script>
 import { computed } from 'vue'
 import Node from './Node.vue'
-import ConfigKuboardSpray from './kuboard_spray/ConfigKuboardSpray.vue'
+import ConfigKuboardSpray from './kuboardspray/ConfigKuboardSpray.vue'
 import ConfigK8sCluster from './k8s_cluster/ConfigK8sCluster.vue'
 import ConfigGlobal from './global/ConfigGlobal.vue'
 import ConfigAddons from './addons/ConfigAddons.vue'
@@ -168,6 +173,8 @@ export default {
   data () {
     return {
       currentPropertiesTab: 'k8s_cluster',
+      pingpong: {},
+      pingpong_loading: false,
     }
   },
   provide () {
@@ -255,6 +262,21 @@ export default {
       }, 400)
       this.$message.info(this.$t('bastionPrompt'))
     },
+    ping () {
+      this.pingpong = {}
+      this.pingpong_loading = true
+      let req = { nodes: 'target' }
+      this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/state/ping`, req).then(resp => {
+        this.pingpong = resp.data.data.items
+        this.pingpong_loading = false
+      }).catch(e => {
+        if (e.response && e.response.data) {
+          this.$message.error('不能测试节点是否在线: ' + e.response.data.message)
+        } else {
+          this.$message.error('不能测试节点是否在线: ' + e)
+        }
+      })
+    }
   }
 }
 </script>

@@ -11,12 +11,13 @@ zh:
 
 <template>
   <div class="node_wrapper">
-    <div class="status" v-if="nodes[name]">
-      <el-button v-if="pendingDelete" type="danger" circle icon="el-icon-delete"></el-button>
-      <el-button v-else type="success" circle icon="el-icon-check"></el-button>
+    <div class="status" v-if="name !== 'localhost' && name !== 'bastion'">
+      <el-button v-if="pendingAction === 'remove_node'" type="danger" circle icon="el-icon-delete"></el-button>
+      <el-button v-else-if="pendingAction === 'add_node'" type="warning" circle icon="el-icon-plus"></el-button>
+      <el-button v-else type="success" circle :plain="nodes[name] === undefined" icon="el-icon-check"></el-button>
     </div>
     <div class="delete_button" v-if="!hideDeleteButton && editMode !== 'view'">
-      <el-button v-if="pendingDelete" icon="el-icon-check" type="success" circle @click="cancelDelete"></el-button>
+      <el-button v-if="pendingAction === 'remove_node'" icon="el-icon-check" type="success" circle @click="cancelDelete"></el-button>
       <el-popconfirm v-else icon="el-icon-info" icon-color="red" :title="$t('confirmDelete')" @confirm="deleteNode" placement="right-start">
         <template #reference>
           <el-button icon="el-icon-delete" type="danger" circle @submit.prevent.stop></el-button>
@@ -46,6 +47,7 @@ export default {
     active: { type: Boolean, required: false, default: false },
     hideDeleteButton: { type: Boolean, required: false, default: false },
     nodes: { type: Object, required: false, default: () => {return {}} },
+    pingpong: { type: Object, required: false, default: () => {return {}} },
   },
   inject: ['editMode', 'isClusterInstalled', 'isClusterOnline', 'pendingAddNodes'],
   computed: {
@@ -53,11 +55,11 @@ export default {
       get () { return this.cluster.inventory },
       set () {}
     },
-    pendingDelete () {
-      if (this.inventory.all.hosts[this.name] && this.inventory.all.hosts[this.name].kuboard_spray_remove_node) {
-        return true
+    pendingAction () {
+      if (this.inventory.all.hosts[this.name] && this.inventory.all.hosts[this.name].kuboardspray_node_action) {
+        return this.inventory.all.hosts[this.name].kuboardspray_node_action
       }
-      return false
+      return undefined
     },
     nodeClass () {
       let result = 'node'
@@ -67,8 +69,17 @@ export default {
       if (this.nodes[this.name]) {
         result += ' online'
       }
-      if (this.pendingDelete) {
+      if (this.pendingAction === 'remove_node') {
         result += ' delete_node'
+      }
+      if (this.name !== 'localhost' && this.name !== 'bastion') {
+        if (this.pingpong[this.name] === undefined) {
+          result += ' unknown_status'
+        } else if (this.pingpong[this.name].status === 'SUCCESS') {
+          result += ' online_node'
+        } else {
+          result += ' offline_node'
+        }
       }
       return result
     },
@@ -109,12 +120,12 @@ export default {
         return
       }
       if (this.nodes[this.name]) {
-        this.inventory.all.hosts[this.name].kuboard_spray_remove_node = true
+        this.inventory.all.hosts[this.name].kuboardspray_node_action = 'remove_node'
         if (this.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[this.name]) {
-          this.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[this.name].kuboard_spray_remove_node = true
+          this.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[this.name].kuboardspray_node_action = 'remove_node'
         }
         if (this.inventory.all.children.target.children.etcd.hosts[this.name]) {
-          this.inventory.all.children.target.children.etcd.hosts[this.name].kuboard_spray_remove_node = true
+          this.inventory.all.children.target.children.etcd.hosts[this.name].kuboardspray_node_action = 'remove_node'
         }
       } else {
         delete this.inventory.all.hosts[this.name]
@@ -124,12 +135,12 @@ export default {
       }
     },
     cancelDelete () {
-      delete this.inventory.all.hosts[this.name].kuboard_spray_remove_node
+      delete this.inventory.all.hosts[this.name].kuboardspray_node_action
       if (this.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[this.name]) {
-        delete this.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[this.name].kuboard_spray_remove_node
+        delete this.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[this.name].kuboardspray_node_action
       }
       if (this.inventory.all.children.target.children.etcd.hosts[this.name]) {
-        delete this.inventory.all.children.target.children.etcd.hosts[this.name].kuboard_spray_remove_node
+        delete this.inventory.all.children.target.children.etcd.hosts[this.name].kuboardspray_node_action
       }
     }
   }
@@ -218,6 +229,20 @@ export default {
   }
   .node.delete_node.active {
     background-color: var(--el-color-danger-lighter) !important;
+  }
+  .node.unknown_status {
+    border-block-style: dashed;
+    border-inline-style: dashed;
+  }
+  .node.online_node {
+    border-block-style: solid;
+    border-inline-style: solid;
+  }
+  .node.offline_node {
+    border-block-style: dashed;
+    border-inline-style: dashed;
+    background-color: var(--el-color-info-light);
+    border-color: var(--el-color-info);
   }
 }
 

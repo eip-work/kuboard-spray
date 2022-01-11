@@ -23,6 +23,19 @@ zh:
 
 <template>
   <el-form ref="form" :model="inventory" label-width="120px" label-position="left" @submit.enter.prevent>
+    <el-alert :type="pingpongType" title="PING" :closable="false" class="app_margin_bottom">
+      <div v-if="pingpong[nodeName]" class="app_text_mono">
+        <span v-if="pingpong[nodeName].status === 'SUCCESS'">
+          {{ JSON.parse(pingpong[nodeName].message).ansible_facts }}
+        </span>
+        <span v-else>
+          {{ JSON.parse(pingpong[nodeName].message).msg }}
+        </span>
+      </div>
+      <div v-else>
+        <el-button @click="$emit('ping')" icon="el-icon-lightning">PING</el-button>
+      </div>
+    </el-alert>
     <el-alert v-if="pendingDelete" :title="$t('pendingDelete')" type="error" :closable="false" effect="dark" class="app_margin_bottom" show-icon>
       {{$t('pendingDeleteAction')}}
     </el-alert>
@@ -80,6 +93,7 @@ export default {
     cluster: { type: Object, required: true },
     nodeName: { type: String, required: true },
     nodes: { type: Object, required: false, default: () => {return {}} },
+    pingpong: { type: Object, required: false, default: () => {return {}} },
   },
   data() {
     return {
@@ -101,6 +115,12 @@ export default {
     }
   },
   computed: {
+    pingpongType () {
+      if (this.pingpong[this.nodeName]) {
+        return this.pingpong[this.nodeName].status === 'SUCCESS' ? 'success' : 'error'
+      }
+      return 'info'
+    },
     inventory: {
       get () {
         return this.cluster.inventory
@@ -110,7 +130,7 @@ export default {
       }
     },
     pendingDelete () {
-      if (this.inventory.all.hosts[this.nodeName] && this.inventory.all.hosts[this.nodeName].kuboard_spray_remove_node) {
+      if (this.inventory.all.hosts[this.nodeName] && this.inventory.all.hosts[this.nodeName].kuboardspray_node_action === 'remove_node') {
         return true
       }
       return false

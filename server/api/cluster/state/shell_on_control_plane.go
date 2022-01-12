@@ -2,7 +2,6 @@ package state
 
 import (
 	"errors"
-	"strconv"
 
 	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/api/command"
@@ -21,14 +20,13 @@ func ExecuteShellOnControlPlane(clusterName string, shellCommand string) (*comma
 
 	control_planes := common.MapGet(inventory, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts").(map[string]interface{})
 
-	index := 0
 	errMsg := ""
 	for key := range control_planes {
 		logrus.Trace("try on ", key, " : ", shellCommand)
 		cmd := command.Run{
 			Cmd: "ansible",
 			Args: []string{
-				"kube_control_plane[" + strconv.Itoa(index) + "]",
+				key,
 				"-m", "shell",
 				"-a", shellCommand,
 				"-i", inventoryYamlPath,
@@ -47,9 +45,9 @@ func ExecuteShellOnControlPlane(clusterName string, shellCommand string) (*comma
 		if result.Changed == "CHANGED" {
 			return result, nil
 		} else {
-			errMsg += "\nfailed on kube_control_plane[" + strconv.Itoa(index) + "] " + result.Stdout
-			index++
+			logrus.Warn("failed on " + key + ". " + result.Stdout)
+			errMsg += "\nfailed on " + key + ". " + result.Stdout
 		}
 	}
-	return nil, errors.New("cannot reach any of the kube_control_plane \n" + errMsg)
+	return nil, errors.New("cannot execute on any of the kube_control_plane \n" + errMsg)
 }

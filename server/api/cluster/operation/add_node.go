@@ -1,18 +1,14 @@
 package operation
 
 import (
-	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
 
-	"github.com/eip-work/kuboard-spray/api/cluster"
-	"github.com/eip-work/kuboard-spray/api/cluster/state"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v3"
 )
 
 type AddNodeRequest struct {
@@ -32,16 +28,7 @@ func AddNode(c *gin.Context) {
 	}
 	common.MapSet(inventory, "all.vars.kuboardspray_no_log", !req.Verbose)
 
-	// 获取在线的节点
-	result, err := state.ExecuteShellOnControlPlane(req.Cluster, "kubectl get nodes -o json")
-
-	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "failed", err)
-		return
-	}
-	onlineNodes := common.MapGet(result.StdoutObj, "items").([]interface{})
-
-	// 找出 inventory 中待添加的节点
+	// 判断待添加节点是否有控制节点或者 etcd 节点
 	nodes := strings.Split(req.Nodes, ",")
 	nodesToAdd := ""
 	includesControlPlane := false
@@ -49,23 +36,12 @@ func AddNode(c *gin.Context) {
 	controlPlaneHosts := common.MapGet(inventory, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts").(map[string]interface{})
 	etcdHosts := common.MapGet(inventory, "all.children.target.children.etcd.hosts").(map[string]interface{})
 	for _, key := range nodes {
-		flag := false
-		for _, node := range onlineNodes {
-			onlineNode := node.(map[string]interface{})
-			name := common.MapGet(onlineNode, "metadata.name")
-			if key == name {
-				flag = true
-				break
-			}
+		nodesToAdd += key + ","
+		if controlPlaneHosts[key] != nil {
+			includesControlPlane = true
 		}
-		if !flag {
-			nodesToAdd += key + ","
-			if controlPlaneHosts[key] != nil {
-				includesControlPlane = true
-			}
-			if etcdHosts[key] != nil {
-				includesEtcd = true
-			}
+		if etcdHosts[key] != nil {
+			includesEtcd = true
 		}
 	}
 	nodesToAdd = strings.Trim(nodesToAdd, ",")
@@ -77,32 +53,12 @@ func AddNode(c *gin.Context) {
 		if success {
 			message = "\033[32m[ " + "Nodes are already added to cluster, please release the machine." + " ]\033[0m \n"
 			message += "\033[32m[ " + "节点已添加到 Kubernetes 集群，请返回集群详情页查看" + " ]\033[0m \n"
-
-			inventoryPath := cluster.ClusterInventoryYamlPath(req.Cluster)
-			inventoryNew, _ := common.ParseYamlFile(inventoryPath)
-			for _, nodeStatus := range status.NodeStatus {
-				logrus.Trace(nodeStatus.NodeName, nodeStatus.Failed, "-", nodeStatus.Changed)
-				if nodeStatus.NodeName != "localhost" && nodeStatus.NodeName != "bastion" && nodeStatus.Failed == "0" && nodeStatus.Changed != "0" {
-					logrus.Trace("deleteNode [", "all.hosts."+nodeStatus.NodeName, "] kuboardspray_node_action")
-					common.MapDelete(inventoryNew, "all.hosts."+nodeStatus.NodeName+".kuboardspray_node_action")
-					common.MapDelete(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts."+nodeStatus.NodeName+".kuboardspray_node_action")
-					common.MapDelete(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_node.hosts."+nodeStatus.NodeName+".kuboardspray_node_action")
-					common.MapDelete(inventoryNew, "all.children.target.children.etcd.hosts."+nodeStatus.NodeName+".kuboardspray_node_action")
-				}
-			}
-
-			inventoryNewContent, err := yaml.Marshal(inventoryNew)
-			if err != nil {
-				return "", err
-			}
-			// logrus.Trace(string(inventoryNewContent))
-			if err := ioutil.WriteFile(inventoryPath, inventoryNewContent, 0655); err != nil {
-				logrus.Trace(err)
-			}
 		} else {
 			message = "\033[31m\033[01m\033[05m[" + "Failed to add node. Please review the logs and fix the problem." + "]\033[0m \n"
 			message += "\033[31m\033[01m\033[05m[" + "添加节点失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + "]\033[0m \n"
 		}
+
+		PostProcessInventory(req.Cluster, "add_node")
 
 		return "\n" + message, nil
 	}

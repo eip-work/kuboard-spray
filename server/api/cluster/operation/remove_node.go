@@ -1,16 +1,12 @@
 package operation
 
 import (
-	"io/ioutil"
 	"net/http"
 	"strconv"
 
-	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v3"
 )
 
 type RemoveNodeRequest struct {
@@ -50,27 +46,7 @@ func RemoveNode(c *gin.Context) {
 			message += "\033[31m\033[01m\033[05m[" + "删除节点失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + "]\033[0m \n"
 		}
 
-		inventoryPath := cluster.ClusterInventoryYamlPath(req.Cluster)
-		inventoryNew, _ := common.ParseYamlFile(inventoryPath)
-		for _, nodeStatus := range status.NodeStatus {
-			logrus.Trace(nodeStatus.NodeName, nodeStatus.Failed, "-", nodeStatus.Changed)
-			if nodeStatus.NodeName != "localhost" && nodeStatus.NodeName != "bastion" && nodeStatus.Failed == "0" && nodeStatus.Changed != "0" {
-				logrus.Trace("deleteNode [", "all.hosts."+nodeStatus.NodeName, "]")
-				common.MapDelete(inventoryNew, "all.hosts."+nodeStatus.NodeName)
-				common.MapDelete(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts."+nodeStatus.NodeName)
-				common.MapDelete(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_node.hosts."+nodeStatus.NodeName)
-				common.MapDelete(inventoryNew, "all.children.target.children.etcd.hosts."+nodeStatus.NodeName)
-			}
-		}
-
-		inventoryNewContent, err := yaml.Marshal(inventoryNew)
-		if err != nil {
-			return "", err
-		}
-		// logrus.Trace(string(inventoryNewContent))
-		if err := ioutil.WriteFile(inventoryPath, inventoryNewContent, 0655); err != nil {
-			logrus.Trace(err)
-		}
+		PostProcessInventory(req.Cluster, "remove_node")
 
 		return "\n" + message, nil
 	}

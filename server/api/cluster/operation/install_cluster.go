@@ -1,16 +1,12 @@
 package operation
 
 import (
-	"io/ioutil"
 	"net/http"
 	"strconv"
 
-	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v3"
 )
 
 type InstallClusterRequest struct {
@@ -41,33 +37,12 @@ func InstallCluster(c *gin.Context) {
 		if success {
 			message = "\033[32m[ " + "Kubernetes Cluster has been installed successfully, please go back to the cluster page for information about how to access the cluster." + " ]\033[0m \n"
 			message += "\033[32m[ " + "Kubernetes 集群已成功安装，请回到集群详情页面查看如何访问该集群。" + " ]\033[0m \n"
-
-			inventoryPath := cluster.ClusterInventoryYamlPath(req.Cluster)
-			inventoryNew, _ := common.ParseYamlFile(inventoryPath)
-			for _, nodeStatus := range status.NodeStatus {
-				logrus.Trace(nodeStatus.NodeName, nodeStatus.Failed, "-", nodeStatus.Changed)
-				if nodeStatus.NodeName != "localhost" && nodeStatus.NodeName != "bastion" && nodeStatus.Failed == "0" && nodeStatus.Changed != "0" {
-					logrus.Trace("deleteNode [", "all.hosts."+nodeStatus.NodeName, "] kuboardspray_node_action")
-					common.MapDelete(inventoryNew, "all.hosts."+nodeStatus.NodeName+".kuboardspray_node_action")
-					common.MapDelete(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts."+nodeStatus.NodeName+".kuboardspray_node_action")
-					common.MapDelete(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_node.hosts."+nodeStatus.NodeName+".kuboardspray_node_action")
-					common.MapDelete(inventoryNew, "all.children.target.children.etcd.hosts."+nodeStatus.NodeName+".kuboardspray_node_action")
-				}
-			}
-
-			inventoryNewContent, err := yaml.Marshal(inventoryNew)
-			if err != nil {
-				return "", err
-			}
-			// logrus.Trace(string(inventoryNewContent))
-			if err := ioutil.WriteFile(inventoryPath, inventoryNewContent, 0655); err != nil {
-				logrus.Trace(err)
-			}
 		} else {
 			message = "\033[31m\033[01m\033[05m[" + "Failed to install Kubernetes Cluster. Please review the logs and fix the problem." + "]\033[0m \n"
 			message += "\033[31m\033[01m\033[05m[" + "集群安装失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + "]\033[0m \n"
 		}
 
+		PostProcessInventory(req.Cluster, "install_cluster")
 		return "\n" + message, nil
 	}
 

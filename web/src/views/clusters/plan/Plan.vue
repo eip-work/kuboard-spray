@@ -45,14 +45,14 @@ zh:
         </div>
       </div>
       <div class="right">
-        <div style="padding: 5px; font-weight: bolder; font-size: 14px; height: 28px; line-height: 28px;">
+        <div style="padding: 5px; font-weight: bolder; font-size: 14px; height: 28px; line-height: 28px; margin-bottom: 10px;">
           <span style="margin-right: 20px;">Kubernetes Cluster</span>
           <AddNode :inventory="inventory" v-model:currentPropertiesTab="currentPropertiesTab"></AddNode>
           <el-button type="primary" plain icon="el-icon-lightning" @click="ping" :loading="pingpong_loading">
             <span class="app_text_mono">PING</span>
           </el-button>
         </div>
-        <el-scrollbar height="calc(100vh - 283px)">
+        <el-scrollbar height="calc(100vh - 293px)">
           <div class="masters">
             <Node v-for="(item, index) in inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts" :key="'control_plane' + index"
               @click="currentPropertiesTab = 'NODE_' + index" :nodes="cluster.state ? cluster.state.nodes : undefined" :pingpong="pingpong"
@@ -69,6 +69,13 @@ zh:
               <Node v-if="isNode(index)" :name="index" :cluster="cluster" :pingpong="pingpong"
                 @click="currentPropertiesTab = 'NODE_' + index" :nodes="cluster.state ? cluster.state.nodes : undefined"
                 :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'addons' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"></Node>
+            </template>
+          </div>
+          <div class="workers">
+            <template v-for="(item, index) in nodeGap.inventory.all.hosts" :key="'gap_node' + index">
+              <Node :name="index" :cluster="nodeGap" :pingpong="pingpong"
+                @click="currentPropertiesTab = 'GAP_NODE_' + index" :nodes="cluster.state ? cluster.state.nodes : undefined"
+                :active="'GAP_NODE_' + index === currentPropertiesTab"></Node>
             </template>
           </div>
         </el-scrollbar>
@@ -127,13 +134,17 @@ zh:
               </div>
             </el-scrollbar>
           </el-tab-pane>
-          <el-tab-pane :name="currentPropertiesTab" v-if="currentPropertiesTab.indexOf('NODE_') === 0 && cluster.inventory.all.hosts[currentPropertiesTab.slice(5)]">
+          <el-tab-pane :name="currentPropertiesTab" v-if="currentPropertiesTab.indexOf('NODE_') === 0 || currentPropertiesTab.indexOf('GAP_NODE_') === 0">
             <template #label>
-              <div style="width: 100px; text-align: center;">{{ currentPropertiesTab.slice(5) }}</div>
+              <div v-if="currentPropertiesTab.indexOf('NODE_') === 0" style="width: 100px; text-align: center;">{{ currentPropertiesTab.slice(5) }}</div>
+              <div v-else style="width: 100px; text-align: center;">{{ currentPropertiesTab.slice(9) }}</div>
             </template>
             <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
-                <ConfigNode :cluster="cluster" :nodeName="currentPropertiesTab.slice(5)" :nodes="cluster.state ? cluster.state.nodes : undefined" :pingpong="pingpong"></ConfigNode>
+                <ConfigNode v-if="currentPropertiesTab.indexOf('NODE_') === 0" :cluster="cluster" :nodeName="currentPropertiesTab.slice(5)" :nodes="cluster.state ? cluster.state.nodes : undefined" 
+                  :pingpong="pingpong" :pingpongLoading="pingpong_loading" @ping="ping"></ConfigNode>
+                <CopyGapNodeToInventory v-else :cluster="nodeGap" :nodeName="currentPropertiesTab.slice(9)" :nodes="cluster.state ? cluster.state.nodes : undefined" 
+                  :pingpong="pingpong" :pingpongLoading="pingpong_loading" @ping="ping"></CopyGapNodeToInventory>
               </div>
             </el-scrollbar>
           </el-tab-pane>
@@ -162,6 +173,7 @@ import ConfigK8sCluster from './k8s_cluster/ConfigK8sCluster.vue'
 import ConfigGlobal from './global/ConfigGlobal.vue'
 import ConfigAddons from './addons/ConfigAddons.vue'
 import ConfigNode from './node/ConfigNode.vue'
+import CopyGapNodeToInventory from './node/CopyGapNodeToInventory.vue'
 import ConfigEtcd from './etcd/ConfigEtcd.vue'
 import AddNode from './common/AddNode.vue'
 
@@ -202,8 +214,57 @@ export default {
     bastionEnabled() {
       return this.cluster.inventory.all.children.target.children.bastion !== undefined
     },
+    nodeGap () {
+      let temp = {
+        name: this.cluster.name,
+        type: 'gap',
+        inventory: {
+          all: {
+            hosts: {},
+            children: {
+              target: {
+                children: {
+                  calico_rr: {
+                    hosts: {}
+                  },
+                  etcd: {
+                    hosts: {}
+                  },
+                  k8s_cluster: {
+                    children: {
+                      kube_control_plane: { hosts: {}},
+                      kube_node: { hosts: {}},
+                    }
+                  }
+                },
+                vars: {},
+              }
+            }
+          },
+        }
+      }
+      if (this.cluster.state === undefined || this.cluster.state.nodes === undefined) {
+        return temp
+      }
+      temp.inventory.all.children.target.vars = this.cluster.inventory.all.children.target.vars
+      for (let nodeName in this.cluster.state.nodes) {
+        let node = this.cluster.state.nodes[nodeName]
+        if (this.cluster.inventory.all.hosts[nodeName] === undefined) {
+          let ip = ''
+          for (let i in node.status.addresses) {
+            if (node.status.addresses[i].type === 'InternalIP') {
+              ip = node.status.addresses[i].address
+            }
+          }
+          temp.inventory.all.hosts[nodeName] = {
+            ansible_host: ip
+          }
+        }
+      }
+      return temp
+    }
   },
-  components: { Node, ConfigKuboardSpray, ConfigK8sCluster, ConfigGlobal, ConfigAddons, ConfigNode, ConfigEtcd, AddNode },
+  components: { Node, ConfigKuboardSpray, ConfigK8sCluster, ConfigGlobal, ConfigAddons, ConfigNode, ConfigEtcd, AddNode, CopyGapNodeToInventory },
   mounted () {
   },
   watch: {

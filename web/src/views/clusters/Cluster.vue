@@ -158,7 +158,7 @@ export default {
   methods: {
     pendingNodes (action) {
       let result = []
-        if (this.isClusterInstalled && this.isClusterOnline) {
+        if (this.isClusterInstalled) {
           for (let key in this.cluster.inventory.all.hosts) {
             let host = this.cluster.inventory.all.hosts[key]
             if (host.kuboardspray_node_action === action) {

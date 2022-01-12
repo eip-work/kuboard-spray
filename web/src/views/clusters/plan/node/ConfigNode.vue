@@ -29,11 +29,14 @@ zh:
           {{ JSON.parse(pingpong[nodeName].message).ansible_facts }}
         </span>
         <span v-else>
-          {{ JSON.parse(pingpong[nodeName].message).msg }}
+          <div class="app_margin_bottom">
+            {{ JSON.parse(pingpong[nodeName].message).msg }}
+          </div>
+          <el-button type="primary" @click="$emit('ping')" :loading="pingpongLoading" icon="el-icon-lightning">PING</el-button>  
         </span>
       </div>
       <div v-else>
-        <el-button @click="$emit('ping')" icon="el-icon-lightning">PING</el-button>
+        <el-button type="primary" @click="$emit('ping')" :loading="pingpongLoading" icon="el-icon-lightning">PING</el-button>  
       </div>
     </el-alert>
     <el-alert v-if="pendingDelete" :title="$t('pendingDelete')" type="error" :closable="false" effect="dark" class="app_margin_bottom" show-icon>
@@ -58,7 +61,7 @@ zh:
       ></NodeFact>
     </SshParamsNode>
     <ConfigSection v-model:enabled="enabledRoles" :label="$t('roles')" :description="$t('roleDescription', {nodeName: nodeName})" disabled anti-freeze>
-      <FieldCommon :label="$t('roles')">
+      <FieldCommon :label="$t('roles')" :anti-freeze="cluster.type === 'gap'">
         <template #edit>
           <div class="roles">
             <NodeRoleTag :enabled="isKubeControlPlane" role="kube_control_plane" @clickTag="isKubeControlPlane = !isKubeControlPlane"></NodeRoleTag>
@@ -94,6 +97,7 @@ export default {
     nodeName: { type: String, required: true },
     nodes: { type: Object, required: false, default: () => {return {}} },
     pingpong: { type: Object, required: false, default: () => {return {}} },
+    pingpongLoading: { type: Boolean, required: false, default: false },
   },
   data() {
     return {

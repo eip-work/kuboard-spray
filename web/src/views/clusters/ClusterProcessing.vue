@@ -24,6 +24,11 @@ en:
   drain_grace_period: drain_grace_period
   drain_retry_delay_seconds: drain_retry_delay_seconds
   nodes_to_remove_required: Please select nodes to remove.
+  nodesToExclude: Exclude nodes.
+  nodesToExcludeDesc: Exclude the following offline nodes.
+  nodesToIncludeDesc: Include the following nodes.
+  allNodesMustBeOnline: All nodes must be reachable.
+  removeOneEtcdNodeOnce: If you want to remove etcd node, can only remove them one by one.
 
   newResourcePackageRequired: This resource package does not support the operation, please choose a new one.
 zh:
@@ -51,13 +56,21 @@ zh:
   drain_grace_period: 应用停止等候时间
   drain_retry_delay_seconds: 两次排空尝试间隔
   nodes_to_remove_required: 请选择要删除的节点
+  nodesToExclude: 排除节点
+  nodesToExcludeDesc: 排除以下不在线的节点：
+  nodesToIncludeDesc: 包含以下节点：
+  allNodesMustBeOnline: 所有节点必须在线，请删除不在线节点或者使其在线
+  removeOneEtcdNodeOnce: 如果要删除 etcd 节点，一次只能选择一个节点删除。
 
   newResourcePackageRequired: 当前资源包不支持此操作，请使用新的资源包
 </i18n>
 
 <template>
   <ExecuteTask v-if="!loading" :history="cluster.history" :loading="loading" :title="title" :startTask="applyPlan" @refresh="$emit('refresh')" @visibleChange="onVisibleChange">
-    <el-form ref="form" :model="form" @submit.prevent.stop label-position="left" label-width="120px" class="app_form_mini">
+    <div v-if="pingpong_loading" style="display: block; min-width: 420px;">
+      <el-skeleton animated></el-skeleton>
+    </div>
+    <el-form v-else ref="form" :model="form" @submit.prevent.stop label-position="left" label-width="120px" class="app_form_mini">
       <!-- <div style="height: 10px;"></div> -->
       <el-form-item :label="$t('control_params')">
         <el-form-item :label="$t('verbose')">
@@ -73,7 +86,7 @@ zh:
           <span style="width: 350px; margin-left: 20px; color: #aaa; font-size: 12px;">{{$t('fork_more')}}</span>
         </el-form-item>
       </el-form-item>
-      <el-form-item :label="$t('operation')" prop="action" required style="margin-top: 10px;">
+      <el-form-item :label="$t('operation')" prop="action" style="margin-top: 10px;" :rules="nodes_to_exclude_rules">
         <el-radio-group v-model="form.action">
           <el-radio-button :disabled="pendingAddNodes.length > 0 || pendingRemoveNodes.length > 0">
             {{ $t('install_cluster') }}
@@ -85,19 +98,29 @@ zh:
             {{ $t('aboutToAddNode') }}
           </el-radio-button>
         </el-radio-group>
+
+        <!-- 安装集群的参数 -->
+        <div v-if="action === 'install_cluster'">
+          <div class="form_description">{{ $t('nodesToIncludeDesc') }}</div>
+          <template v-for="(item, key) in hosts" :key="'h' + key">
+            <el-tag v-if="pingpong[key] && pingpong[key].status === 'SUCCESS'" style="margin-bottom: 10px; margin-right: 10px;" effect="dark">
+              <span class="app_text_mono" style="font-size: 14px;">{{key}}</span>
+            </el-tag>
+          </template>
+        </div>
+
         <!-- 添加节点的参数 -->
         <div v-if="action === 'add_node'">
-          <el-tag v-for="(item, key) in pendingAddNodes" :key="'h' + key" style="margin-top: 10px; margin-right: 10px;">
-            <span class="app_text_mono">{{item.name}}</span>
-          </el-tag>
+          <template v-for="(item, key) in pendingAddNodes" :key="'h' + key">
+            <el-tag v-if="pingpong[item.name] && pingpong[item.name].status === 'SUCCESS'" style="margin-top: 10px; margin-right: 10px;">
+              <span class="app_text_mono" style="font-size: 14px;">{{item.name}}</span>
+            </el-tag>
+          </template>
         </div>
 
         <!-- 删除节点的参数 -->
         <div style="margin-bottom: 15px;" v-if="action === 'remove_node'">
-          <div v-if="pingpong_loading" style="display: block;">
-            <el-skeleton animated></el-skeleton>
-          </div>
-          <div v-else style="margin-left: 0px; margin-top: 10px;" class="app_form_mini">
+          <div style="margin-left: 0px; margin-top: 10px;" class="app_form_mini">
             <el-form-item prop="remove_node.reset_nodes" required>
               <el-radio-group v-model="reset_nodes">
                 <el-radio-button :label="true">{{ $t('resetNodes') }}</el-radio-button>
@@ -141,11 +164,18 @@ zh:
             </el-form-item>
           </div>
         </div>
-
-        <el-form-item v-if="cluster && cluster.resourcePackage && cluster.resourcePackage.data.supported_playbooks[this.action] === undefined" prop="min_resource_package_version" 
-          style="margin-top: -10px;"
-          :rules="min_resource_package_version_rules">
-        </el-form-item>
+      </el-form-item>
+      <el-form-item :label="$t('nodesToExclude')" class="app_margin_top" v-if="nodesToExclude.length > 0">
+        <div class="form_description">{{ $t('nodesToExcludeDesc') }}</div>
+        <template v-for="node in nodesToExclude" :key="'exclude' + node">
+          <el-tag type="error" effect="dark" style="margin: 0 10px 10px 0;">
+            <span class="app_text_mono" style="font-size: 14px;">{{ node }}</span>
+          </el-tag>
+        </template>
+      </el-form-item>
+      <el-form-item v-if="cluster && cluster.resourcePackage && cluster.resourcePackage.data.supported_playbooks[this.action] === undefined" prop="min_resource_package_version" 
+        style="margin-top: -10px;"
+        :rules="min_resource_package_version_rules">
       </el-form-item>
     </el-form>
   </ExecuteTask>
@@ -153,6 +183,7 @@ zh:
 
 <script>
 import ExecuteTask from '../common/task/ExecuteTask.vue'
+import clone from 'clone'
 
 function trimMark(str) {
   if (str[str.length - 1] === ',') {
@@ -184,12 +215,56 @@ export default {
           drain_retry_delay_seconds: 10,
         },
         min_resource_package_version: '',
+        nodes_to_exclude: []
       },
       min_resource_package_version_rules: [
         { required: true, message: this.$t('newResourcePackageRequired') }
       ],
       nodes_to_remove_rules: [
         { required: true, message: this.$t('nodes_to_remove_required') }
+      ],
+      nodes_to_exclude_rules: [
+        {
+          validator: (rule, value, callback) => {
+            if (this.action === 'install_cluster' || this.action === 'add_node') {
+              // if (this.nodesToExclude.length > 0) {
+              //   return callback(this.$t('allNodesMustBeOnline'))
+              // }
+              
+              // 至少有一个被添加的节点在线
+              let temp = ''
+              for (let node of this.pendingAddNodes) {
+                if (this.pingpong[node.name] && this.pingpong[node.name].status === 'SUCCESS') {
+                  temp += node.name + ','
+                }
+              }
+              if (temp === '') {
+                return callback('All nodes pending to add are offline.')
+              }
+
+              // 所有的控制节点必须在线
+              for (let controlPlane in this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts) {
+                if (this.pingpong[controlPlane] === undefined || this.pingpong[controlPlane].status !== 'SUCCESS') {
+                  return callback(controlPlane + " is offline. Remove it, or bring it back.")
+                }
+              }
+              // 所有的 etcd 节点必须在线
+              for (let etcd in this.cluster.inventory.all.children.target.children.etcd.hosts) {
+                if (this.pingpong[etcd] === undefined || this.pingpong[etcd].status !== 'SUCCESS') {
+                  return callback(etcd + " is offline. Remove it, or bring it back.")
+                }
+              }
+            } else if (this.action === 'remove_node') {
+              for (let node of this.form.remove_node.nodes_to_remove) {
+                if (this.cluster.inventory.all.children.target.children.etcd.hosts[node] !== undefined && this.form.remove_node.nodes_to_remove.length > 1) {
+                  return callback(this.$t('removeOneEtcdNodeOnce'))
+                }
+              }
+            }
+            return callback()
+          },
+          trigger: 'change',
+        }
       ],
       pingpong: {},
       pingpong_loading: true,
@@ -202,15 +277,25 @@ export default {
       set (v) {
         let temp = []
         for (let node of this.pendingRemoveNodes) {
-          console.log(node.name, this.pingpong[node.name].status)
           if ((this.pingpong[node.name].status === 'SUCCESS') === v) {
             temp.push(node.name)
           }
         }
-        console.log(temp)
         this.form.remove_node.nodes_to_remove = temp
         this.form.remove_node.reset_nodes = v
       }
+    },
+    nodesToExclude () {
+      let result = []
+      if (this.action === 'remove_node' && !this.reset_nodes) {
+        return result
+      }
+      for (let key in this.cluster.inventory.all.hosts) {
+        if (this.pingpong[key] && this.pingpong[key].status !== 'SUCCESS') {
+          result.push(key)
+        }
+      }
+      return result
     },
     action () {
       if (this.pendingRemoveNodes.length > 0 || this.pendingAddNodes.length > 0) {
@@ -224,7 +309,10 @@ export default {
     },
     hosts () {
       if (this.cluster && this.cluster.inventory) {
-        return this.cluster.inventory.all.hosts
+        let temp = clone(this.cluster.inventory.all.hosts)
+        delete temp.localhost
+        delete temp.bastion
+        return temp
       }
       return {}
     },
@@ -256,22 +344,13 @@ export default {
     onVisibleChange (flag) {
       if (flag) {
         this.updateForm()
-        if (this.pendingAddNodes.length > 0) {
-          this.testPingPong(this.pendingAddNodes)
-        } else if (this.pendingRemoveNodes.length > 0) {
-          this.testPingPong(this.pendingRemoveNodes)
-        }
+        this.testPingPong('target')
       }
     },
     testPingPong (nodes) {
       this.pingpong = {}
       this.pingpong_loading = true
-      let temp = ''
-      for (let node of nodes) {
-        temp += node.name + ','
-      }
-      temp = trimMark(temp, ',')
-      let req = { nodes: temp }
+      let req = { nodes: nodes }
       this.kuboardSprayApi.post(`/clusters/${this.name}/state/ping`, req).then(resp => {
         this.pingpong = resp.data.data.items
         this.pingpong_loading = false
@@ -316,10 +395,33 @@ export default {
               vvv: this.form.vvv,
               fork: this.form.fork,
             }
-            if (this.action === 'remove_node') {
+            if (this.nodesToExclude.length > 0) {
+              let temp = ''
+              for (let node of this.nodesToExclude) {
+                temp += '!' + node + ','
+              }
+              req.nodes_to_exclude = trimMark(temp)
+            }
+            if (this.action === 'install_cluster') {
+              let temp = ''
+              for (let node in this.hosts) {
+                if (this.nodesToExclude.indexOf(node) < 0) {
+                  temp += node + ','
+                }
+              }
+              req.nodes = trimMark(temp)
+            } else if (this.action === 'add_node') {
+              let temp = ''
+              for (let node of this.pendingAddNodes) {
+                if (this.pingpong[node.name] && this.pingpong[node.name].status === 'SUCCESS') {
+                  temp += node.name + ','
+                }
+              }
+              req.nodes_to_add = trimMark(temp)
+            } else if (this.action === 'remove_node') {
               let temp = ''
               for (let node of this.form.remove_node.nodes_to_remove) {
-                temp += node + ','
+                  temp += node + ','
               }
               temp = trimMark(temp)
               req.nodes_to_remove = temp

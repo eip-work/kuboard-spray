@@ -97,12 +97,18 @@ export default {
     addNode () {
       this.$refs.addNodeForm.validate(flag => {
         if (flag) {
-          this.inventoryRef.all.hosts[this.addNodeForm.name] = {}
+          this.inventoryRef.all.hosts[this.addNodeForm.name] = {
+            'kuboardspray_node_action': 'add_node',
+          }
           for (let role of this.addNodeForm.roles) {
             if (role === 'etcd') {
-              this.inventoryRef.all.children.target.children.etcd.hosts[this.addNodeForm.name] = {}
+              this.inventoryRef.all.children.target.children.etcd.hosts[this.addNodeForm.name] = {
+                'kuboardspray_node_action': 'add_node',
+              }
             } else {
-              this.inventoryRef.all.children.target.children.k8s_cluster.children[role].hosts[this.addNodeForm.name] = {}
+              this.inventoryRef.all.children.target.children.k8s_cluster.children[role].hosts[this.addNodeForm.name] = {
+                'kuboardspray_node_action': 'add_node',
+              }
             }
           }
           this.$emit('update:currentPropertiesTab', 'NODE_' + this.addNodeForm.name)

@@ -12,7 +12,8 @@ zh:
 <template>
   <div class="node_wrapper">
     <div class="status" v-if="name !== 'localhost' && name !== 'bastion'">
-      <el-button v-if="pendingAction === 'remove_node'" type="danger" circle icon="el-icon-delete"></el-button>
+      <el-button v-if="cluster.type === 'gap'" type="primary" circle icon="el-icon-document-checked"></el-button>
+      <el-button v-else-if="pendingAction === 'remove_node'" type="danger" circle icon="el-icon-delete"></el-button>
       <el-button v-else-if="pendingAction === 'add_node'" type="warning" circle icon="el-icon-plus"></el-button>
       <el-button v-else type="success" circle :plain="nodes[name] === undefined" icon="el-icon-check"></el-button>
     </div>
@@ -30,7 +31,7 @@ zh:
         <span v-else>{{ $t('obj.' + name) }}</span>
       </div>
       <div class="app_text_mono" v-if="inventory.all.hosts[name]">
-        {{ inventory.all.hosts[name].ansible_host }}
+        {{ inventory.all.hosts[name].ansible_host || (name !== 'localhost' && name !== 'bastion' ? '???.???.???.???' : '') }}
       </div>
       <div :class="role + ' role app_text_mono'" v-for="(_, role) in roles" :key="'r' + role">{{ roleName(role) }}</div>
       <slot></slot>
@@ -80,6 +81,9 @@ export default {
         } else {
           result += ' offline_node'
         }
+      }
+      if (this.cluster.type === 'gap') {
+        result += ' gap'
       }
       return result
     },
@@ -241,8 +245,24 @@ export default {
   .node.offline_node {
     border-block-style: dashed;
     border-inline-style: dashed;
-    background-color: var(--el-color-info-light);
+    background-color: var(--el-color-info-lighter);
     border-color: var(--el-color-info);
+    .role {
+      background-color: var(--el-color-info-light);
+    }
+  }
+  .node.active.offline_node {
+    .role {
+      opacity: 0.5;
+      background-color: var(--el-color-info);
+    }
+  }
+  .node.gap {
+    background-color: var(--el-color-primary-light-9) !important;
+    border-color: var(--el-color-primary);
+  }
+  .node.gap.active {
+    background-color: var(--el-color-primary-light-6) !important;
   }
 }
 

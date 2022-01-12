@@ -56,6 +56,7 @@ func PingPong(clusterName string, nodes string) (*PingPongResult, error) {
 			"-m", "ping",
 			"-i", inventoryYamlPath,
 			"--fork", "100",
+			"-t", "2",
 		},
 		Env: []string{"ANSIBLE_CONFIG=" + constants.GET_ADHOC_CFG_PATH()},
 		// Dir: resourcePackageDir,

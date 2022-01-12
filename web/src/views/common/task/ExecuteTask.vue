@@ -80,7 +80,7 @@ zh:
           <el-button v-if="history.current_pid && history.current_pid !== lastSucessPid" @click="viewTaskLogs(history.current_pid)" 
             type="danger" plain icon="el-icon-document" style="float: left;">{{$t('viewLastLog')}}</el-button>
           <el-button type="default" icon="el-icon-close" @click="showConfirm = false">{{$t('msg.cancel')}}</el-button>
-          <el-button type="primary" icon="el-icon-lightning" @click="applyPlan">{{$t('msg.ok')}}</el-button>
+          <el-button type="primary" icon="el-icon-lightning" @click="applyPlan" :loading="executing">{{$t('msg.ok')}}</el-button>
         </div>
       </el-form>
     </el-popover>
@@ -102,6 +102,7 @@ export default {
     return {
       forceHide: false,
       showConfirmData: false,
+      executing: false,
     }
   },
   computed: {
@@ -161,8 +162,9 @@ export default {
   mounted () {
   },
   methods: {
-    applyPlan () {
-      this.startTask.call(this.$parent).then(pid => {
+    async applyPlan () {
+      this.executing = true
+      await this.startTask.call(this.$parent).then(pid => {
         if (pid) {
           this.forceHide = false
           this.showConfirm = false
@@ -176,6 +178,7 @@ export default {
         }
         this.$message.error('failed to start task: ' + msg)
       })
+      this.executing = false
     },
     viewTaskLogs(pid) {
       this.openUrlInBlank(`/#/tail/${this.history.task_type}/${this.history.task_name}/history/${pid}/execute.log`)

@@ -65,7 +65,8 @@ func MapDelete(m map[string]interface{}, path string) {
 			return
 		}
 		if temp[p[i]] == nil {
-			temp[p[i]] = map[string]interface{}{}
+			// temp[p[i]] = map[string]interface{}{}
+			return
 		} else {
 			temp = temp[p[i]].(map[string]interface{})
 		}

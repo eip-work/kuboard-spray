@@ -1,11 +1,7 @@
-import KuboardDemo from './KuboardDemo.vue'
-import KuboardSprayResources from './kuboard-spray/Resources.vue'
-import CopyToClipBoard from './CopyToClipBoard.vue'
-
 let components = [
-  { name: 'KuboardDemo', component: KuboardDemo },
-  { name: 'KuboardSprayResources', component: KuboardSprayResources },
-  { name: 'CopyToClipBoard', component: CopyToClipBoard },
+  { name: 'KuboardDemo', component: () => import('./KuboardDemo.vue') },
+  { name: 'KuboardSprayResources', component: () => import('./kuboard-spray/Resources.vue') },
+  { name: 'CopyToClipBoard', component: () => import('./CopyToClipBoard.vue') },
 ]
 
 export default function (app) {

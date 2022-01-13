@@ -1,6 +1,6 @@
 
 <template>
-  <el-button 
+  <el-button icon="el-icon-document-copy"
     type="primary" plain
     :disabled="value === undefined || value === ''" 
     v-clipboard:copy="value"

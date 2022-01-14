@@ -63,16 +63,16 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 		"all": gin.H{
 			"hosts": gin.H{
 				req.Node: gin.H{
-					"ansible_host":                      req.Ip,
-					"ansible_port":                      req.Port,
-					"ansible_user":                      req.User,
-					"ansible_password":                  req.Password,
-					"ansible_ssh_private_key_file":      req.PrivateKeyFile,
-					"ansible_become":                    req.Become,
-					"ansible_become_user":               req.BecomeUser,
-					"ansible_become_password":           req.BecomePassword,
-					"ansible_ssh_common_args":           "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5 -o ConnectionAttempts=1",
-					"all.vars.kuboardspray_cluster_dir": constants.GET_DATA_DIR() + "/" + req.NodeOwnerType + "/" + req.NodeOwner,
+					"ansible_host":                 req.Ip,
+					"ansible_port":                 req.Port,
+					"ansible_user":                 req.User,
+					"ansible_password":             req.Password,
+					"ansible_ssh_private_key_file": req.PrivateKeyFile,
+					"ansible_become":               req.Become,
+					"ansible_become_user":          req.BecomeUser,
+					"ansible_become_password":      req.BecomePassword,
+					"ansible_ssh_common_args":      "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5 -o ConnectionAttempts=1",
+					"kuboardspray_cluster_dir":     constants.GET_DATA_DIR() + "/" + req.NodeOwnerType + "/" + req.NodeOwner,
 				},
 			},
 		},
@@ -102,9 +102,10 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 	defer os.Remove(inventoryPath)
 
 	run := command.Run{
-		Cmd:  "ansible",
-		Args: []string{req.Node, "-m", "setup", "-i", inventoryPath},
-		Env:  []string{"ANSIBLE_CONFIG=" + constants.GET_ADHOC_CFG_PATH()},
+		Cmd:     "ansible",
+		Args:    []string{req.Node, "-m", "setup", "-i", inventoryPath},
+		Env:     []string{"ANSIBLE_CONFIG=" + constants.GET_ADHOC_CFG_PATH()},
+		Timeout: 5,
 		// Dir:  dir + "/ansible-script",
 	}
 

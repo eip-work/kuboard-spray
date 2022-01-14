@@ -6,15 +6,17 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"time"
 
 	"github.com/sirupsen/logrus"
 )
 
 type Run struct {
-	Cmd  string
-	Args []string
-	Env  []string
-	Dir  string
+	Cmd     string
+	Args    []string
+	Env     []string
+	Dir     string
+	Timeout int
 }
 
 func (run *Run) ToString() string {
@@ -72,6 +74,14 @@ func (run *Run) Run() ([]byte, []byte, error) {
 		}
 		logrus.Trace("terminated out reader thread.")
 	}()
+
+	if run.Timeout > 0 {
+		go func() {
+			time.Sleep(time.Duration(time.Second * time.Duration(run.Timeout)))
+			cmd.Process.Kill()
+			outContent += "KilledByKuboardSpray[Timeout]"
+		}()
+	}
 
 	cmd.Wait()
 	return []byte(outContent), []byte(errContent), err

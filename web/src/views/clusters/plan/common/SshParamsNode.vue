@@ -101,6 +101,11 @@ export default {
       if (fieldName.indexOf('password') > 0 && default_value) {
         default_value = '******'
       }
+      if (fieldName === 'ansible_ssh_private_key_file') {
+        if (default_value && default_value.length > 43) {
+          return default_value.slice(43)
+        }
+      }
       return default_value ? this.$t('default_value', {default_value: default_value}) : this.$t('field.' + fieldName + '_placeholder')
     },
     async loadSshKeyList () {

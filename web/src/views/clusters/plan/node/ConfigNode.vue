@@ -23,7 +23,7 @@ zh:
 
 <template>
   <el-form ref="form" :model="inventory" label-width="120px" label-position="left" @submit.enter.prevent>
-    <el-alert :type="pingpongType" title="PING" :closable="false" class="app_margin_bottom">
+    <el-alert v-if="editMode === 'view'" :type="pingpongType" title="PING" :closable="false" class="app_margin_bottom">
       <div v-if="pingpong[nodeName]" class="app_text_mono">
         <span v-if="pingpong[nodeName].status === 'SUCCESS'">
           {{ JSON.parse(pingpong[nodeName].message).ansible_facts }}
@@ -118,6 +118,7 @@ export default {
       ]
     }
   },
+  inject: ['editMode'],
   computed: {
     pingpongType () {
       if (this.pingpong[this.nodeName]) {

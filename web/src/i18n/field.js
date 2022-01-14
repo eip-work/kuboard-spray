@@ -13,7 +13,7 @@ const field = {
     
     http_proxy: 'HTTP_PROXY',
     https_proxy: 'HTTPS_PROXY',
-    no_proxy: 'NO_PROXY',
+    additional_no_proxy: 'NO_PROXY',
 
 
     ansible_connection: 'ansible_connection',
@@ -39,8 +39,8 @@ const field = {
     http_proxy_placeholder: 'HTTP Proxy',
     https_proxy: 'HTTPS_PROXY',
     https_proxy_placeholder: 'HTTPS Proxy',
-    no_proxy: 'NO_PROXY',
-    no_proxy_placeholder: 'NO_PROXY',
+    additional_no_proxy: 'NO_PROXY',
+    additional_no_proxy_placeholder: 'NO_PROXY',
     
     ansible_connection: 'ansible 连接类型',
     'ansible_connection-local': 'local',

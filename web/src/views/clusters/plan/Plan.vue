@@ -48,32 +48,32 @@ zh:
         <div style="padding: 5px; font-weight: bolder; font-size: 14px; height: 28px; line-height: 28px; margin-bottom: 10px;">
           <span style="margin-right: 20px;">Kubernetes Cluster</span>
           <AddNode :inventory="inventory" v-model:currentPropertiesTab="currentPropertiesTab"></AddNode>
-          <el-button type="primary" plain icon="el-icon-lightning" @click="ping" :loading="pingpong_loading">
+          <el-button v-if="mode == 'view'" type="primary" plain icon="el-icon-lightning" @click="ping" :loading="pingpong_loading">
             <span class="app_text_mono">PING</span>
           </el-button>
         </div>
         <el-scrollbar height="calc(100vh - 293px)">
           <div class="masters">
             <Node v-for="(item, index) in inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts" :key="'control_plane' + index"
-              @click="currentPropertiesTab = 'NODE_' + index" :nodes="cluster.state ? cluster.state.nodes : undefined" :pingpong="pingpong"
+              @click="currentPropertiesTab = 'NODE_' + index" :nodes="cluster.state ? cluster.state.nodes : undefined" :pingpong="pingpong" :pingpong_loading="pingpong_loading"
               :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'addons' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"
               :name="index" :cluster="cluster"></Node>
             <template v-for="(item, index) in inventory.all.children.target.children.etcd.hosts" :key="'etcd' + index">
               <Node v-if="isEtcdAndNotControlPlane(index)" :name="index" :cluster="cluster" :nodes="cluster.state ? cluster.state.nodes : undefined"
-                @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)" :pingpong="pingpong"
+                @click="currentPropertiesTab = 'NODE_' + index" @delete_button="deleteNode(index)" :pingpong="pingpong" :pingpong_loading="pingpong_loading"
                 :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"></Node>
             </template>
           </div>
           <div class="workers">
             <template v-for="(item, index) in inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts" :key="'node' + index">
-              <Node v-if="isNode(index)" :name="index" :cluster="cluster" :pingpong="pingpong"
+              <Node v-if="isNode(index)" :name="index" :cluster="cluster" :pingpong="pingpong" :pingpong_loading="pingpong_loading"
                 @click="currentPropertiesTab = 'NODE_' + index" :nodes="cluster.state ? cluster.state.nodes : undefined"
                 :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'addons' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"></Node>
             </template>
           </div>
           <div class="workers">
             <template v-for="(item, index) in nodeGap.inventory.all.hosts" :key="'gap_node' + index">
-              <Node :name="index" :cluster="nodeGap" :pingpong="pingpong"
+              <Node :name="index" :cluster="nodeGap" :pingpong="pingpong" :pingpong_loading="pingpong_loading"
                 @click="currentPropertiesTab = 'GAP_NODE_' + index" :nodes="cluster.state ? cluster.state.nodes : undefined"
                 :active="'GAP_NODE_' + index === currentPropertiesTab"></Node>
             </template>

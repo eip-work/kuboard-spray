@@ -158,26 +158,26 @@ export default {
   methods: {
     pendingNodes (action) {
       let result = []
-        if (this.isClusterInstalled) {
-          for (let key in this.cluster.inventory.all.hosts) {
-            let host = this.cluster.inventory.all.hosts[key]
-            if (host.kuboardspray_node_action === action) {
-              let h = clone(host)
-              h.name = key
-              if (this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[key]) {
-                h.isControlPlane = true
-              }
-              if (this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts[key]) {
-                h.isNode = true
-              }
-              if (this.cluster.inventory.all.children.target.children.etcd.hosts[key]) {
-                h.isEtcd = true
-              }
-              result.push(h)
+      if (this.isClusterInstalled) {
+        for (let key in this.cluster.inventory.all.hosts) {
+          let host = this.cluster.inventory.all.hosts[key]
+          if (host.kuboardspray_node_action === action) {
+            let h = clone(host)
+            h.name = key
+            if (this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[key]) {
+              h.isControlPlane = true
             }
+            if (this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts[key]) {
+              h.isNode = true
+            }
+            if (this.cluster.inventory.all.children.target.children.etcd.hosts[key]) {
+              h.isEtcd = true
+            }
+            result.push(h)
           }
         }
-        return result
+      }
+      return result
     },
     cancelEdit () {
       this.$router.replace(`/clusters/${this.name}`)

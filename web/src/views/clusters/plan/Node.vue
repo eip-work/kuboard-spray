@@ -12,10 +12,10 @@ zh:
 <template>
   <div class="node_wrapper">
     <div class="status" v-if="name !== 'localhost' && name !== 'bastion'">
-      <el-button v-if="cluster.type === 'gap'" type="primary" circle icon="el-icon-document-checked"></el-button>
-      <el-button v-else-if="pendingAction === 'remove_node'" type="danger" circle icon="el-icon-delete"></el-button>
-      <el-button v-else-if="pendingAction === 'add_node'" type="warning" circle icon="el-icon-plus"></el-button>
-      <el-button v-else type="success" circle :plain="nodes[name] === undefined" icon="el-icon-check"></el-button>
+      <el-button v-if="cluster.type === 'gap'" type="primary" circle icon="el-icon-document-checked" :loading="pingpong_loading"></el-button>
+      <el-button v-else-if="pendingAction === 'remove_node'" type="danger" circle icon="el-icon-delete" :loading="pingpong_loading"></el-button>
+      <el-button v-else-if="pendingAction === 'add_node'" type="warning" circle icon="el-icon-plus" :loading="pingpong_loading"></el-button>
+      <el-button v-else type="success" circle :plain="nodes[name] === undefined" icon="el-icon-check" :loading="pingpong_loading"></el-button>
     </div>
     <div class="delete_button" v-if="!hideDeleteButton && editMode !== 'view'">
       <el-button v-if="pendingAction === 'remove_node'" icon="el-icon-check" type="success" circle @click="cancelDelete"></el-button>
@@ -49,6 +49,7 @@ export default {
     hideDeleteButton: { type: Boolean, required: false, default: false },
     nodes: { type: Object, required: false, default: () => {return {}} },
     pingpong: { type: Object, required: false, default: () => {return {}} },
+    pingpong_loading: { type: Boolean, required: false, default: false },
   },
   inject: ['editMode', 'isClusterInstalled', 'isClusterOnline', 'pendingAddNodes'],
   computed: {

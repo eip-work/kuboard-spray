@@ -29,6 +29,12 @@ en:
   nodesToIncludeDesc: Include the following nodes.
   allNodesMustBeOnline: All nodes must be reachable.
   removeOneEtcdNodeOnce: If you want to remove etcd node, can only remove them one by one.
+  requiresAtLeastOneOnlineNode: All nodes pending to add are offline.
+  requiresAllControlNodeOnline: "{node} is offline. Remove it, or bring it back."
+  requireAtLeastOneControlPlane: Requires at least one control_plane.
+  requiresOddEtcdCount: Etcd count should be an odd number.
+  requiresAllEtcdNodeOnline: "All Etcd nodes must be online, currently, we cannot reach node {node}"
+  requiresKubeNodeCount: Requires at lease one kube_node.
 
   newResourcePackageRequired: This resource package does not support the operation, please choose a new one.
 zh:
@@ -61,6 +67,13 @@ zh:
   nodesToIncludeDesc: 包含以下节点：
   allNodesMustBeOnline: 所有节点必须在线，请删除不在线节点或者使其在线
   removeOneEtcdNodeOnce: 如果要删除 etcd 节点，一次只能选择一个节点删除。
+  requiresAtLeastOneOnlineNode: 至少需要一个在线节点
+  requiresAllControlNodeOnline: "安装集群或者添加控制节点时，所有控制节点必须在线。请启动 {node} 或者将其移除。"
+  requireAtLeastOneControlPlane: 至少需要一个控制节点
+  requiresOddEtcdCount: ETCD 节点的数量必须为奇数
+  requiresAllEtcdNodeOnline: "所有 ETCD 节点必须在线，当前 {node} 不在线"
+  requiresKubeNodeCount: 至少要有一个在线的工作节点
+
 
   newResourcePackageRequired: 当前资源包不支持此操作，请使用新的资源包
 </i18n>
@@ -168,9 +181,11 @@ zh:
       <el-form-item :label="$t('nodesToExclude')" class="app_margin_top" v-if="nodesToExclude.length > 0">
         <div class="form_description">{{ $t('nodesToExcludeDesc') }}</div>
         <template v-for="node in nodesToExclude" :key="'exclude' + node">
-          <el-tag type="error" effect="dark" style="margin: 0 10px 10px 0;">
-            <span class="app_text_mono" style="font-size: 14px;">{{ node }}</span>
-          </el-tag>
+          <el-tooltip class="box-item" effect="dark" :content="pingpong[node].message" placement="top-end">
+            <el-tag type="error" effect="dark" style="margin: 0 10px 10px 0;">
+              <span class="app_text_mono" style="font-size: 14px;">{{ node }}</span>
+            </el-tag>
+          </el-tooltip>
         </template>
       </el-form-item>
       <el-form-item v-if="cluster && cluster.resourcePackage && cluster.resourcePackage.data.supported_playbooks[this.action] === undefined" prop="min_resource_package_version" 
@@ -233,26 +248,53 @@ export default {
               
               // 至少有一个被添加的节点在线
               let temp = ''
-              for (let node of this.pendingAddNodes) {
-                if (this.pingpong[node.name] && this.pingpong[node.name].status === 'SUCCESS') {
-                  temp += node.name + ','
+              for (let node in this.cluster.inventory.all.hosts) {
+                if (this.cluster.inventory.all.hosts[node].kuboardspray_node_action === 'add_node' && this.pingpong[node] && this.pingpong[node].status === 'SUCCESS') {
+                  temp += node + ','
+                }
+                if (this.cluster.inventory.all.children.target.vars.http_proxy || this.cluster.inventory.all.children.target.vars.https_proxy) {
+                  if (this.pingpong[node] && this.pingpong[node].status !== 'SUCCESS') {
+                    return callback('All nodes must be online, currently, we cannot reach node ' + node)
+                  }
                 }
               }
               if (temp === '') {
-                return callback('All nodes pending to add are offline.')
+                return callback(this.$t('requiresAtLeastOneOnlineNode'))
               }
 
-              // 所有的控制节点必须在线
-              for (let controlPlane in this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts) {
-                if (this.pingpong[controlPlane] === undefined || this.pingpong[controlPlane].status !== 'SUCCESS') {
-                  return callback(controlPlane + " is offline. Remove it, or bring it back.")
+              // 至少有一个工作节点
+              let countKubeNodeCount = 0
+              for (let node in this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts) {
+                if (this.pingpong[node] && this.pingpong[node].status === 'SUCCESS') {
+                  countKubeNodeCount ++
                 }
               }
+              if (countKubeNodeCount === 0) {
+                return callback(this.$t('requiresKubeNodeCount'))
+              }
+
+
+              // 所有的控制节点必须在线
+              let controlPlaneCount = 0
+              for (let controlPlane in this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts) {
+                if (this.pingpong[controlPlane] === undefined || this.pingpong[controlPlane].status !== 'SUCCESS') {
+                  return callback(this.$t('requiresAllControlNodeOnline', { node: controlPlane }))
+                }
+                controlPlaneCount ++
+              }
+              if (controlPlaneCount === 0) {
+                return callback(this.$t('requireAtLeastOneControlPlane'))
+              }
               // 所有的 etcd 节点必须在线
+              let etcdCount = 0
               for (let etcd in this.cluster.inventory.all.children.target.children.etcd.hosts) {
                 if (this.pingpong[etcd] === undefined || this.pingpong[etcd].status !== 'SUCCESS') {
-                  return callback(etcd + " is offline. Remove it, or bring it back.")
+                  return callback(this.$t('requiresAllEtcdNodeOnline, { node: etcd }'))
                 }
+                etcdCount ++
+              }
+              if (etcdCount % 2 == 0) {
+                return callback(this.$t('requiresOddEtcdCount'))
               }
             } else if (this.action === 'remove_node') {
               for (let node of this.form.remove_node.nodes_to_remove) {

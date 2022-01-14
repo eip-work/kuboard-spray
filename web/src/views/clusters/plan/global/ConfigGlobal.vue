@@ -9,7 +9,7 @@ zh:
 <template>
   <div>
     <SshParamsCluster :cluster="cluster" :holder="cluster.inventory.all.children.target.vars" prop="all.children.target.vars" :description="$t('sshcommon')"></SshParamsCluster>
-    <HttpProxy v-if="false" :cluster="cluster"></HttpProxy>
+    <HttpProxy v-if="showHttpProxy" :cluster="cluster"></HttpProxy>
     <ContainerManager :cluster="cluster"></ContainerManager>
     <OsMirror :cluster="cluster"></OsMirror>
   </div>
@@ -31,6 +31,9 @@ export default {
     }
   },
   computed: {
+    showHttpProxy () {
+      return location.hash.indexOf("showHttpProxy=true") > 0
+    }
   },
   components: { SshParamsCluster, OsMirror, ContainerManager, HttpProxy },
   mounted () {

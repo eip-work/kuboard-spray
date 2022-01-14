@@ -19,7 +19,7 @@ zh:
     </el-alert>
     <FieldString :holder="vars" fieldName="http_proxy" prop="all.children.target.vars" anti-freeze></FieldString>
     <FieldString :holder="vars" fieldName="https_proxy" prop="all.children.target.vars" anti-freeze></FieldString>
-    <FieldString :holder="vars" fieldName="no_proxy" prop="all.children.target.vars" anti-freeze></FieldString>
+    <FieldString :holder="vars" fieldName="additional_no_proxy" prop="all.children.target.vars" anti-freeze></FieldString>
   </ConfigSection>
 </template>
 
@@ -53,6 +53,8 @@ export default {
           this.vars.http_proxy = ''
         } else {
           delete this.vars.http_proxy
+          delete this.vars.https_proxy
+          delete this.vars.additional_no_proxy
         }
       }
     },

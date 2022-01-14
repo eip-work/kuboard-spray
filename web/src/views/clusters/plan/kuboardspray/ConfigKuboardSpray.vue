@@ -3,12 +3,12 @@ en:
   createResource: "Add Resource Package"
   bastionUsage: KuboardSpray can access Kubernetes Cluster Nodes through bastion. 
   setSshParam: Bastion is not enabled, please set SSH params in {tabName} tab.
-  goToResourcePage: It's about to go to Resource Package Download page, you are going to lose the unsaved content on this page, do you confirm?
+  goToResourcePage: It's about to open Resource Package Download page in new window, do you confirm?
 zh:
   createResource: '添加资源包'
   bastionUsage: KuboardSpray 可以通过跳板机或堡垒机访问将要安装 K8S 集群的目标节点。
   setSshParam: 未使用跳板机或堡垒机时，请在 {tabName} 标签页设置 SSH 连接参数。
-  goToResourcePage: '此操作将跳转到资源包导入页面，您将丢失当前页面中未保存的内容，是否继续？'
+  goToResourcePage: '此操作将在新窗口打开资源包导入页面，完成设置后，您可以切换窗口会到当前页面，是否继续？'
 </i18n>
 
 <template>
@@ -19,7 +19,7 @@ zh:
       <FieldSelect :holder="inventory.all.hosts.localhost" fieldName="kuboardspray_resource_package" :loadOptions="loadResourceList" prop="all.hosts.localhost" required :disabled="isClusterInstalled">
         <template #edit>
           <ConfirmButton buttonStyle="margin-left: 10px;" icon="el-icon-plus" 
-            @confirm="$router.push('/settings/resources')"
+            @confirm="openUrlInBlank('/#/settings/resources')"
             :text="$t('createResource')" :message="$t('goToResourcePage')"></ConfirmButton>
         </template>
       </FieldSelect>

@@ -5,13 +5,14 @@ en:
   name: Name
   requiresName: Please input name.
   conflict: conflict with existing one.
+  goToResourcePage: This is going to open Resource package management page in a new window, do you confirm?
 zh:
   addCluster: 添加集群安装计划
   createResource: '添加资源包'
   name: 名称
   requiresName: 请填写名称
   conflict: 与已有的重复 {name}
-  goToResourcePage: 此操作将要跳转到资源包加载页面，是否继续？
+  goToResourcePage: 此操作将要在新窗口打开资源包加载页面，完成设置后，您可以切换窗口回到当前页面，是否继续？
 </i18n>
 
 
@@ -24,7 +25,7 @@ zh:
         <FieldSelect :holder="form" fieldName="kuboardspray_resource_package" :loadOptions="loadResourceList" required>
           <template #edit>
             <ConfirmButton buttonStyle="margin-left: 10px;" icon="el-icon-plus"
-              @confirm="$router.push('/settings/resources')"
+              @confirm="openUrlInBlank('/#/settings/resources')"
               :text="$t('createResource')" :message="$t('goToResourcePage')" width="420"></ConfirmButton>
           </template>
         </FieldSelect>

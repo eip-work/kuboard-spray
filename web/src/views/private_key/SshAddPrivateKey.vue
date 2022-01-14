@@ -45,7 +45,7 @@ zh:
           {{$t('addSshKey')}}
         </div>
         <el-upload ref="upload" :action="`${baseURL}/private-keys/${ownerType}/${ownerName}/${form.name}`"
-          :headers="headers"
+          :headers="headers" :on-change="changeFileList" :multiple="false" :limit="2" :file-list="fileListToUpload"
           :auto-upload="false">
           <template #trigger>
             <div class="step">1</div>
@@ -90,6 +90,7 @@ export default {
     return {
       dialogVisible: false,
       keyFiles: [],
+      fileListToUpload: [],
       loading: false,
       uploading: false,
       form: {
@@ -122,6 +123,13 @@ export default {
   mounted () {
   },
   methods: {
+    changeFileList (file, fileList) {
+      console.log(file, fileList)
+      if (file && file.percentage === 0) {
+        this.form.name = file.name
+        this.fileListToUpload = [file]
+      }
+    },
     async show () {
       this.dialogVisible = true
       this.load ()

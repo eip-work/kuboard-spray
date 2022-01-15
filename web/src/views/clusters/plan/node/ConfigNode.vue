@@ -43,9 +43,9 @@ zh:
       {{$t('pendingDeleteAction')}}
     </el-alert>
     <StateNode v-if="nodes[nodeName]" :cluster="cluster" :nodeName="nodeName" :nodes="nodes"></StateNode>
-    <SshParamsNode :cluster="cluster" :nodes="nodes"
+    <SshParamsNode :cluster="cluster" :nodes="nodes" v-if="inventory.all.hosts[nodeName]"
       :holder="inventory.all.hosts[nodeName]" :prop="`all.hosts.${nodeName}`" :clusterName="cluster.name" :nodeName="nodeName" :description="$t('sshcommon', {nodeName: nodeName})">
-      <NodeFact ref="nodeFact" class="app_margin_bottom"
+      <NodeFact ref="nodeFact" class="app_margin_bottom" v-if="inventory.all.hosts[nodeName]"
         :form="$refs.form"
         node_owner_type="cluster"
         :node_owner="cluster.name"

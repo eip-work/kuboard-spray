@@ -138,6 +138,7 @@ export default {
         delete this.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts[this.name]
         delete this.inventory.all.children.target.children.etcd.hosts[this.name]
       }
+      this.$emit('deleted')
     },
     cancelDelete () {
       delete this.inventory.all.hosts[this.name].kuboardspray_node_action

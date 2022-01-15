@@ -1,11 +1,11 @@
 <i18n>
 en:
   title: K8s cluster status
-  nodeCount: '{count} nodes in k8s cluster'
+  nodeCount: '{count} nodes, {etcdCount} etcd members in k8s cluster'
   unreachable: Cannot reach cluster
 zh:
   title: K8S 集群状态
-  nodeCount: K8S 集群中已有 {count} 个节点
+  nodeCount: K8S 集群中已有 {count} 个节点，{etcdCount} 个 ETCD 节点
   unreachable: 不能访问集群
 
 </i18n>
@@ -13,7 +13,7 @@ zh:
 <template>
   <el-popover placement="bottom-start" :title="$t('title')" :width="320" trigger="click">
     <template #reference>
-      <el-button v-if="state.code === 200" type="success" round icon="el-icon-success">{{$t('nodeCount', {count: count})}}</el-button>
+      <el-button v-if="state.code === 200" type="success" round icon="el-icon-success">{{$t('nodeCount', { count, etcdCount: state.etcd_members_count })}}</el-button>
       <el-button v-else type="danger" round icon="el-icon-info">{{$t('unreachable')}}</el-button>
     </template>
     <div>
@@ -23,6 +23,9 @@ zh:
             {{name}}
             <template v-for="(addr, index) in node.status.addresses" :key="name + index">
               <el-tag type="primary" v-if="addr.type === 'InternalIP'">{{addr.address}}</el-tag>
+            </template>
+            <template v-if="etcdMember(name) && state.etcd_members[etcdMember(name)]">
+              <el-tag type="primary" effect="dark" style="margin-left: 20px;">{{ etcdMember(name) }}</el-tag>
             </template>
           </div>
         </div>
@@ -37,7 +40,7 @@ zh:
 <script>
 export default {
   props: {
-    state: { type: Object, required: false, default: () => { return {} } }
+    cluster: { type: Object, required: false, default: () => { return {} } },
   },
   data() {
     return {
@@ -45,6 +48,12 @@ export default {
     }
   },
   computed: {
+    state () {
+      if (this.cluster && this.cluster.state) {
+        return this.cluster.state
+      }
+      return {}
+    },
     count () {
       let c = 0
       for (let k in this.state.nodes) {
@@ -52,13 +61,19 @@ export default {
         console.log(k)
       }
       return c
-    }
+    },
   },
   components: { },
   mounted () {
   },
   methods: {
-
+    etcdMember (nodeName) {
+      let host = this.cluster.inventory.all.children.target.children.etcd.hosts[nodeName]
+      if (host) {
+        return host.etcd_member_name
+      }
+      return undefined
+    }
   }
 }
 </script>

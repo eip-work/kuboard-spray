@@ -11,7 +11,7 @@ import (
 
 type RemoveNodeRequest struct {
 	InstallClusterRequest
-	Nodes                  string `json:"nodes_to_remove"`
+	NodesToRemove          string `json:"nodes_to_remove"`
 	ResetNodes             bool   `json:"reset_nodes"`
 	AllowUngracefulRemoval bool   `json:"allow_ungraceful_removal"`
 	DrainTimeout           string `json:"drain_timeout"`
@@ -32,7 +32,7 @@ func RemoveNode(c *gin.Context) {
 	}
 	common.MapSet(inventory, "all.vars.kuboardspray_no_log", !req.Verbose)
 
-	nodes := "node=" + req.Nodes
+	nodesToRemove := req.NodesToRemove
 
 	postExec := func(status command.ExecuteExitStatus) (string, error) {
 
@@ -46,7 +46,9 @@ func RemoveNode(c *gin.Context) {
 			message += "\033[31m\033[01m\033[05m[" + "删除节点失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + "]\033[0m \n"
 		}
 
-		PostProcessInventory(req.Cluster, "remove_node")
+		extraMsg, _ := PostProcessInventory(req.Cluster, "remove_node")
+
+		message += extraMsg
 
 		return "\n" + message, nil
 	}
@@ -61,7 +63,7 @@ func RemoveNode(c *gin.Context) {
 			result := []string{
 				"-i", execute_dir + "/inventory.yaml", playbook,
 				"--fork", strconv.Itoa(req.Fork),
-				"-e", nodes,
+				"-e", "node=" + nodesToRemove,
 				"-e", "reset_nodes=" + strconv.FormatBool(req.ResetNodes),
 				"-e", "allow_ungraceful_removal=" + strconv.FormatBool(req.AllowUngracefulRemoval),
 				"-e", "drain_grace_period=" + req.DrainGracePeriod,

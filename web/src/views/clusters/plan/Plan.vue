@@ -7,6 +7,7 @@ en:
   disabledBation: Disabled
   selectANode: Please select a node from the diagram to the left.
   bastionPrompt: Bastion params are placed at the bottom of KuboardSpray tab.
+  kuboardspray_etcd_max_count_desc: Please make sure there are {count} ETCD nodes, and count of ETCD nodes is an odd number, or you are imposed with highavailability risks.
 zh:
   singleNode: 单个节点
   global_config: 全局设置
@@ -15,6 +16,7 @@ zh:
   disabledBation: 不使用跳板机
   selectANode: 请从左侧图中选择一个节点
   bastionPrompt: 跳板机参数设置在 KuboardSpray 标签页的最后
+  kuboardspray_etcd_max_count_desc: 请添加 ETCD 节点，确保有 {count} 个有效的 ETCD 节点，并且 ETCD 节点数为奇数，以避免高可用风险。
 </i18n>
 
 <template>
@@ -54,6 +56,14 @@ zh:
         </div>
         <el-scrollbar height="calc(100vh - 293px)">
           <div class="masters">
+            <el-alert class="app_margin_bottom" v-if="cluster.state && (cluster.inventory.all.hosts.localhost.kuboardspray_etcd_max_count > cluster.state.etcd_members_count)" type="error" :closable="false" effect="dark">
+              <div style="line-height: 20px;">
+                {{ $t('kuboardspray_etcd_max_count_desc', {count: cluster.inventory.all.hosts.localhost.kuboardspray_etcd_max_count}) }}
+                <el-link href="https://kuboard-spray.cn/guide/maintain/ha-mode.html#etcd" target="blank">
+                  <span class="app_text_mono" style="color: white;"><i class="el-icon-link"></i> ETCD High Availability.</span>
+                </el-link>
+              </div>
+            </el-alert>
             <Node v-for="(item, index) in inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts" :key="'control_plane' + index" @deleted="currentPropertiesTab = 'node_nodes'"
               @click="currentPropertiesTab = 'NODE_' + index" :nodes="cluster.state ? cluster.state.nodes : undefined" :pingpong="pingpong" :pingpong_loading="pingpong_loading"
               :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'addons' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"

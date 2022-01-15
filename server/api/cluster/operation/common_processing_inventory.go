@@ -51,6 +51,9 @@ func updateResourcePackageVarsToInventory(clusterName string) (map[string]interf
 	// 设置 etcd 版本信息
 	common.MapSet(inventory, "all.children.target.children.etcd.vars.etcd_version", common.MapGet(resourcePackage, "data.etcd.etcd_version"))
 
+	common.MapSet(inventory, "all.children.target.children.etcd.vars.etcd_config_dir", "/etc/ssl/etcd")
+	common.MapSet(inventory, "all.children.target.children.etcd.vars.etcd_cert_dir", "{{ etcd_config_dir }}/ssl")
+
 	// 设置依赖组件版本信息
 	dependencies := common.MapGet(resourcePackage, "data.dependency").([]interface{}) // resourcePackage["dependency"].([]interface{})
 	for _, d := range dependencies {

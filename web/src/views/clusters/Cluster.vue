@@ -40,7 +40,7 @@ zh:
         <ClusterProcessing v-if="mode === 'view'" :cluster="cluster" :name="name" @refresh="refresh" :loading="loading"></ClusterProcessing>
       </template>
       <template v-if="cluster && cluster.state">
-        <ClusterStateNodes :state="cluster.state"></ClusterStateNodes>
+        <ClusterStateNodes :cluster="cluster"></ClusterStateNodes>
       </template>
     </ControlBar>
     <el-card shadow="none" v-if="loading">
@@ -208,26 +208,43 @@ export default {
       })
       this.loading = false
     },
-    loadStateNodes() {
-      this.kuboardSprayApi.get(`/clusters/${this.name}/state/nodes`).then(resp => {
+    async loadStateNodes() {
+      let temp = { nodes: {}, code: 0, etcd_members: {}, etcd_code: 0 }
+      await this.kuboardSprayApi.get(`/clusters/${this.name}/state/nodes`).then(resp => {
         if (resp.data.data.stdout_obj && resp.data.data.stdout_obj.items) {
-          this.cluster.state = { nodes: {}, code: 200 }
+          temp.code = 200
           for (let item of resp.data.data.stdout_obj.items) {
-            this.cluster.state.nodes[item.metadata.name] = item
+            temp.nodes[item.metadata.name] = item
           }
         }
         if (resp.data.data.return_code === '' && resp.data.data.stdout_obj.changed === false && resp.data.data.stdout_obj.msg) {
-          this.cluster.state = {
-            code: 500,
-            msg: resp.data.data.stdout_obj.msg
-          }
+          temp.code = 500
+          temp.msg = resp.data.data.stdout_obj.msg
         }
       }).catch(e => {
-        this.cluster.state = {
-          code: 500,
-          msg: e.response.data.message
-        }
+        temp.code = 500
+        temp.msg = e.response.data.message
       })
+      await this.kuboardSprayApi.get(`/clusters/${this.name}/state/etcd_members`).then(resp => {
+        if (resp.data.data.stdout_obj && resp.data.data.stdout_obj.members) {
+          temp.etcd_code = 200
+          let count = 0
+          for (let item of resp.data.data.stdout_obj.members) {
+            temp.etcd_members[item.name] = item
+            count ++
+          }
+          temp.etcd_members_count = count
+        }
+        if (resp.data.data.return_code == '' && resp.data.data.stdout_obj.changed === false && resp.data.data.stdout_obj.msg) {
+          temp.etcd_code = 500
+          temp.etcd_msg = resp.data.data.stdout_obj.msg
+        }
+      }).catch(e => {
+        console.log(e)
+        temp.etcd_code = 500
+        temp.etcd_msg = e.response.data.message
+      })
+      this.cluster.state = temp
     },
     async loadResourcePackage () {
       this.cluster.resourcePackage = undefined

@@ -13,7 +13,7 @@ import (
 
 type AddNodeRequest struct {
 	InstallClusterRequest
-	Nodes string `json:"nodes_to_add"`
+	NodesToAdd string `json:"nodes_to_add"`
 }
 
 func AddNode(c *gin.Context) {
@@ -29,7 +29,7 @@ func AddNode(c *gin.Context) {
 	common.MapSet(inventory, "all.vars.kuboardspray_no_log", !req.Verbose)
 
 	// 判断待添加节点是否有控制节点或者 etcd 节点
-	nodes := strings.Split(req.Nodes, ",")
+	nodes := strings.Split(req.NodesToAdd, ",")
 	nodesToAdd := ""
 	includesControlPlane := false
 	includesEtcd := false
@@ -58,7 +58,9 @@ func AddNode(c *gin.Context) {
 			message += "\033[31m\033[01m\033[05m[" + "添加节点失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + "]\033[0m \n"
 		}
 
-		PostProcessInventory(req.Cluster, "add_node")
+		extraMsg, _ := PostProcessInventory(req.Cluster, "add_node")
+
+		message += extraMsg
 
 		return "\n" + message, nil
 	}
@@ -77,10 +79,9 @@ func AddNode(c *gin.Context) {
 			if includesControlPlane || includesEtcd {
 				playbook = common.MapGet(resourcePackage, "data.supported_playbooks.install_cluster").(string)
 				if includesEtcd {
-					nodesToAdd = "kube_control_plane,etcd," + nodesToAdd
-				} else {
-					nodesToAdd = "kube_control_plane," + nodesToAdd
+					nodesToAdd = "etcd," + nodesToAdd
 				}
+				nodesToAdd = "kube_control_plane," + nodesToAdd
 				if req.ExcludeNodes != "" {
 					nodesToAdd += "," + req.ExcludeNodes
 				}

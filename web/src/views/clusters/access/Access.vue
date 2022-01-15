@@ -54,7 +54,8 @@ zh:
     </div>
   </el-scrollbar>
   <el-alert v-else-if="cluster.state.code === 500" type="error" :closable="false" effect="dark" show-icon>
-    <span class="app_text_mono" v-html="cluster.state.msg.replaceAll('\n', '<br>').replaceAll('    ', '<span style=margin-right:20px;></span>')"></span>
+    <span v-if="cluster.state.msg" class="app_text_mono" v-html="cluster.state.msg.replaceAll('\n', '<br>').replaceAll('    ', '<span style=margin-right:20px;></span>')"></span>
+    <span v-else>{{cluster.state}}</span>
     <div style="margin-top: 20px;">
       <el-button type="primary" round icon="el-icon-arrow-left" @click="$emit('switch', 'plan')">{{$t('switchToPlan')}}</el-button>
     </div>

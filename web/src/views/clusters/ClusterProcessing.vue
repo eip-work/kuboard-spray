@@ -35,6 +35,11 @@ en:
   requiresOddEtcdCount: Etcd count should be an odd number.
   requiresAllEtcdNodeOnline: "All Etcd nodes must be online, currently, we cannot reach node {node}"
   requiresKubeNodeCount: Requires at lease one kube_node.
+  kuboardspray_etcd_max_count: Requires {count} active ETCD nodes.
+  kuboardspray_etcd_max_count_desc: Please make sure there are {count} ETCD nodes, and count of ETCD nodes is an odd number, or you are imposed with highavailability risks.
+  sync_nginx_config: "Sync config"
+  sync_nginx_config_desc: "It's required to update apiserver's loadbalancer on kube_node, when kube_control_plane node is removed."
+  update_apiserver_loadbalancer: update apiserver loadbalancer on kube_node
 
   newResourcePackageRequired: This resource package does not support the operation, please choose a new one.
 zh:
@@ -73,6 +78,11 @@ zh:
   requiresOddEtcdCount: ETCD 节点的数量必须为奇数
   requiresAllEtcdNodeOnline: "所有 ETCD 节点必须在线，当前 {node} 不在线"
   requiresKubeNodeCount: 至少要有一个在线的工作节点
+  kuboardspray_etcd_max_count: 需要 {count} 个有效的 ETCD 节点
+  kuboardspray_etcd_max_count_desc: 请添加 ETCD 节点，确保有 {count} 个有效的 ETCD 节点，并且 ETCD 节点数为奇数，以避免高可用风险。
+  sync_nginx_config: "同步配置"
+  sync_nginx_config_desc: "在删除控制节点后需要更新工作节点上apiserver的反向代理，以使得 kubelet 向 apiserver 发起的请求被均衡地分发到所有的 apiserver。"
+  update_apiserver_loadbalancer: "同步apsierver的负载均衡"
 
 
   newResourcePackageRequired: 当前资源包不支持此操作，请使用新的资源包
@@ -100,15 +110,18 @@ zh:
         </el-form-item>
       </el-form-item>
       <el-form-item :label="$t('operation')" prop="action" style="margin-top: 10px;" :rules="nodes_to_exclude_rules">
-        <el-radio-group v-model="form.action">
-          <el-radio-button :disabled="pendingAddNodes.length > 0 || pendingRemoveNodes.length > 0">
+        <el-radio-group v-model="action">
+          <el-radio-button :disabled="action !== 'install_cluster'" label="install_cluster">
             {{ $t('install_cluster') }}
           </el-radio-button>
-          <el-radio-button :disabled="pendingRemoveNodes.length === 0" label="remove_node">
+          <el-radio-button :disabled="pendingRemoveNodes.length == 0" label="remove_node">
             {{ $t('aboutToRemoveNode') }}
           </el-radio-button>
-          <el-radio-button :disabled="pendingAddNodes.length === 0" label="add_node">
+          <el-radio-button :disabled="pendingAddNodes.length == 0" label="add_node">
             {{ $t('aboutToAddNode') }}
+          </el-radio-button>
+          <el-radio-button :disabled="!cluster.inventory.all.hosts.localhost.kuboardspray_sync_nginx_config" label="sync_nginx_config">
+            {{ $t('sync_nginx_config') }}
           </el-radio-button>
         </el-radio-group>
 
@@ -124,8 +137,11 @@ zh:
 
         <!-- 添加节点的参数 -->
         <div v-if="action === 'add_node'">
+          <el-alert class="form_description" v-if="etcdInDanger" type="error" :closable="false">
+            {{ $t('kuboardspray_etcd_max_count_desc', { count: cluster.inventory.all.hosts.localhost.kuboardspray_etcd_max_count }) }}
+          </el-alert>
           <template v-for="(item, key) in pendingAddNodes" :key="'h' + key">
-            <el-tag v-if="pingpong[item.name] && pingpong[item.name].status === 'SUCCESS'" style="margin-top: 10px; margin-right: 10px;">
+            <el-tag v-if="pingpong[item.name]" style="margin-top: 10px; margin-right: 10px;" :disabled="pingpong[item.name].status !== 'SUCCESS'" :label="item.name">
               <span class="app_text_mono" style="font-size: 14px;">{{item.name}}</span>
             </el-tag>
           </template>
@@ -177,13 +193,20 @@ zh:
             </el-form-item>
           </div>
         </div>
+
+        <!-- 同步配置的参数 -->
+        <div v-if="action === 'sync_nginx_config'" style="margin-top: 10px;">
+          <div class="form_description" style="margin-bottom: 10px;">
+            {{ $t('sync_nginx_config_desc') }}
+          </div>
+        </div>
       </el-form-item>
       <el-form-item :label="$t('nodesToExclude')" class="app_margin_top" v-if="nodesToExclude.length > 0">
         <div class="form_description">{{ $t('nodesToExcludeDesc') }}</div>
         <template v-for="node in nodesToExclude" :key="'exclude' + node">
           <el-tooltip class="box-item" effect="dark" :content="pingpong[node].message" placement="top-end">
             <el-tag type="error" effect="dark" style="margin: 0 10px 10px 0;">
-              <span class="app_text_mono" style="font-size: 14px;">{{ node }}</span>
+              <span class="app_text_mono" style="font-size: 14px; margin-right: 10px;">{{ node }}</span> <i class="el-icon-question"></i>
             </el-tag>
           </el-tooltip>
         </template>
@@ -339,15 +362,23 @@ export default {
       }
       return result
     },
-    action () {
-      if (this.pendingRemoveNodes.length > 0 || this.pendingAddNodes.length > 0) {
+    action: {
+      get () {
         return this.form.action
-      } else {
-        return 'install_cluster'
+      },
+      set (v) { this.form.action = v }
+    },
+    etcdInDanger () {
+      if (this.cluster.state) {
+        return this.cluster.inventory.all.hosts.localhost.kuboardspray_etcd_max_count > this.cluster.state.etcd_members_count
       }
+      return false
     },
     title () {
-      return this.$t(this.action, {count: this.pendingAddNodes.length || this.pendingRemoveNodes.length })
+      if (this.action === 'add_node' && this.etcdInDanger) {
+        return this.$t('kuboardspray_etcd_max_count', { count: this.cluster.inventory.all.hosts.localhost.kuboardspray_etcd_max_count })
+      }
+      return this.$t(this.action, { count: this.pendingAddNodes.length || this.pendingRemoveNodes.length })
     },
     hosts () {
       if (this.cluster && this.cluster.inventory) {
@@ -415,7 +446,11 @@ export default {
         count = 50
       }
       this.form.fork = count
-      if (this.pendingRemoveNodes.length > 0) {
+      if (this.cluster.inventory.all.hosts.localhost.kuboardspray_sync_nginx_config) {
+        this.form.action = 'sync_nginx_config'
+      } else if (this.etcdInDanger) {
+          this.form.action = 'add_node'
+      } else if (this.pendingRemoveNodes.length > 0) {
         this.form.action = 'remove_node'
         this.form.remove_node.nodes_to_remove = []
         this.form.remove_node.reset_nodes = true
@@ -426,7 +461,10 @@ export default {
         this.form.remove_node.drain_retry_delay_seconds = 10
       } else if (this.pendingAddNodes.length > 0) {
         this.form.action = 'add_node'
+      } else {
+        this.form.action = 'install_cluster'
       }
+
     },
     async applyPlan () {
       return new Promise((resolve, reject) => {
@@ -473,7 +511,13 @@ export default {
               req.drain_timeout = this.form.remove_node.drain_timeout * 60 + 's'
               req.drain_retries = this.form.remove_node.drain_retries + ''
               req.drain_retry_delay_seconds = this.form.remove_node.drain_retry_delay_seconds + ''
+            } else if (this.action === 'sync_nginx_config') {
+              let syncActions = this.cluster.inventory.all.hosts.localhost.kuboardspray_cluster_sync_nginx_config
+              for (let i in syncActions) {
+                req[syncActions[i]] = true
+              }
             }
+            console.log(req)
             this.kuboardSprayApi.post(`/clusters/${this.name}/${this.action}`, req).then(resp => {
               let pid = resp.data.data.pid
               resolve(pid)

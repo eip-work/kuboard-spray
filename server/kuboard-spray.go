@@ -38,11 +38,13 @@ func setupRouter() *gin.Engine {
 	api.POST("/clusters/:cluster/install_cluster", operation.InstallCluster)
 	api.POST("/clusters/:cluster/remove_node", operation.RemoveNode)
 	api.POST("/clusters/:cluster/add_node", operation.AddNode)
+	api.POST("/clusters/:cluster/sync_nginx_config", operation.SyncNginxConfigActions)
 
 	api.GET("/clusters/:cluster/access/kubeconfig", cluster_access.GetKubeConfig)
 
 	api.POST("/clusters/:cluster/state/ping", state.Ping)
 	api.GET("/clusters/:cluster/state/nodes", state.GetNodes)
+	api.GET("/clusters/:cluster/state/etcd_members", state.GetEtcdNodes)
 
 	api.GET("/execute/:owner_type/:owner_name/tail/:pid/:file", command.TailFile)
 	api.DELETE("/execute/:owner_type/:owner_name/kill/:pid", command.ExecuteKill)

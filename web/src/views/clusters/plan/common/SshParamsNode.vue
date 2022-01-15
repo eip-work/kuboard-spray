@@ -1,17 +1,21 @@
 <i18n>
 en:
   addSshKey: Add Private Key
+  ansible_host_placeholder: 'KuboardSpray use this ip or hostname to connect to the node.'
+  default_value: 'Default: {default_value} (inhirit from value configured in Global Config tab)'
+  duplicateIP: "IP address conflict with {node}"
 zh:
   addSshKey: 添加私钥
   ansible_host_placeholder: 'KuboardSpray 连接该主机时所使用的主机名或 IP 地址'
-  default_value: '默认值：{default_value} （继承自 K8s 集群标签页中的设置）'
+  default_value: '默认值：{default_value} （继承自全局设置标签页中的配置）'
+  duplicateIP: "IP 地址不能与其他节点相同：{node}"
 </i18n>
 
 
 <template>
   <ConfigSection ref="configSection" v-model:enabled="enableSsh" label="SSH" :description="description" disabled anti-freeze>
     <FieldString :holder="holder" fieldName="ansible_host" :prop="`all.hosts.${nodeName}`" :anti-freeze="nodes[nodeName] === undefined"
-      :placeholder="$t('ansible_host_placeholder')" required></FieldString>
+      :placeholder="$t('ansible_host_placeholder')" :rules="hostRules"></FieldString>
     <FieldString :holder="holder" fieldName="ansible_port" :prop="`all.hosts.${nodeName}`"
       :placeholder="placeholder('ansible_port')" anti-freeze
       :required="!cluster.inventory.all.children.target.vars.ansible_port"></FieldString>
@@ -55,7 +59,20 @@ export default {
   },
   data() {
     return {
-
+      hostRules: [
+        { required: true, message: this.$t('field.ansible_host') + this.$t('field.is_required_field'), trigger: 'blur' },
+        {
+          validator: (rule, value, callback) => {
+            for (let key in this.cluster.inventory.all.hosts) {
+              if (key !== this.nodeName && this.cluster.inventory.all.hosts[key].ansible_host === value) {
+                return callback(this.$t('duplicateIP', {node: key}))
+              }
+            }
+            return callback()
+          },
+          trigger: 'blur'
+        },
+      ]
     }
   },
   computed: {

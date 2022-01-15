@@ -21,11 +21,10 @@ func GetKubeConfig(c *gin.Context) {
 		Cmd: "ansible",
 		Args: []string{
 			"kube_control_plane[0]",
-			// "-m", "fetch",
-			// "-a", "src=/root/.kube/config dest=" + clusterDir + "/kubeconfig.yaml force=yes",
 			"-m", "shell",
 			"-a", "cat /root/.kube/config",
 			"-i", inventoryYamlPath,
+			"-e", "kuboardspray_cluster_dir=" + constants.GET_DATA_DIR() + "/cluster/" + req.Cluster,
 		},
 		Env: []string{"ANSIBLE_CONFIG=" + constants.GET_ADHOC_CFG_PATH()},
 		// Dir: resourcePackageDir,

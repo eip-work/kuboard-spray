@@ -102,10 +102,10 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 	defer os.Remove(inventoryPath)
 
 	run := command.Run{
-		Cmd:     "ansible",
-		Args:    []string{req.Node, "-m", "setup", "-i", inventoryPath},
-		Env:     []string{"ANSIBLE_CONFIG=" + constants.GET_ADHOC_CFG_PATH()},
-		Timeout: 5,
+		Cmd:  "ansible",
+		Args: []string{req.Node, "-m", "setup", "-i", inventoryPath},
+		Env:  []string{"ANSIBLE_CONFIG=" + constants.GET_ADHOC_CFG_PATH()},
+		// Timeout: 5,
 		// Dir:  dir + "/ansible-script",
 	}
 

@@ -31,13 +31,32 @@ echo "【构建 镜像】"
 
 docker build -f Dockerfile -t $tag:$1-amd64 .
 
+echo "【构建 成功】"
+echo $tag:$1-amd64
+
+
 docker tag $tag:$1-amd64 $tag:latest-amd64
 docker tag $tag:$1-amd64 $tag_backup:$1-amd64
 docker tag $tag:$1-amd64 $tag_backup:latest-amd64
 
-docker push $tag:$1-amd64
-docker push $tag:latest-amd64
-docker push $tag_backup:$1-amd64
-docker push $tag_backup:latest-amd64
+if [ "$2" == "" ]
+then
+
+  docker push $tag:$1-amd64
+  docker push $tag:latest-amd64
+  docker push $tag_backup:$1-amd64
+  docker push $tag_backup:latest-amd64
+
+else
+
+  echo "稍后推送镜像："
+
+  echo "#!/bin/bash" > push.sh
+  echo "docker push $tag:$1-amd64" >> push.sh
+  echo "docker push $tag:latest-amd64" >> push.sh
+  echo "docker push $tag_backup:$1-amd64" >> push.sh
+  echo "docker push $tag_backup:latest-amd64" >> push.sh
+
+fi
 
 echo $datetime

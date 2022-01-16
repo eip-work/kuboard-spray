@@ -6,6 +6,7 @@ en:
   controlPlanes: SSH connect to any of the following nodes, and use kubectl command to administrate the cluster.
   proposeKuboard: Kuboard is a popular K8S cluster management UI, you can refer to its website to learn how to install and use it.
   switchToPlan: Swith to cluster plan view.
+  etcdAccess: SSH connect to any of the following nodes, and use etcdctl command to administrate the etcd cluster.
 zh:
   getKubeconfig: 获取 kubeconfig 文件
   accessFromControlPlane: 在主节点上使用 kubectl
@@ -13,6 +14,7 @@ zh:
   controlPlanes: 您可以 ssh 到如下节点中的任意一个，直接执行 kubectl 命令可以管理集群。
   proposeKuboard: Kuboard 是一款非常值得推荐的 K8S 集群管理界面，请参考 Kuboard 网站，安装改管理界面。
   switchToPlan: 切换到集群规划页
+  etcdAccess: 您可以 ssh 到如下节点中的任意一个，执行以下指令后，可以通过 etcdctl 操作 etcd 集群。通常您并不需要直接操作 etcd。
 </i18n>
 
 
@@ -52,6 +54,21 @@ zh:
         <el-link class="app_margin_top" href="https://www.kuboard.cn/" target="_blank">https://www.kuboard.cn</el-link>
       </div>
     </div>
+    <div class="app_block_title">etcd</div>
+    <div class="access_details" v-if="cluster.state">
+      <el-alert :closable="false" type="success" effect="dark" :title="$t('etcdAccess')"></el-alert>
+      <div class="details">
+        <template v-for="(item, key) in cluster.state.etcd_members" :key="'etcd' + key">
+          <div style="margin-top: 10px;">
+            <el-tag type="primary" style="margin-right: 10px" size="medium">{{ etcdIp(item) }}</el-tag>
+            <el-tag type="primary" effect="dark" size="medium">{{item.clientURLs && item.clientURLs.length > 0 ? item.clientURLs[0] : ''}}</el-tag>
+          </div>
+        </template>
+        <div class="app_margin_bottom"></div>
+        <CopyToClipBoard :value="etcdSsh"></CopyToClipBoard>
+        <Codemirror class="app_margin_top" v-model:value="etcdSsh" :options="etcdCmOptions"></Codemirror>
+      </div>
+    </div>
   </el-scrollbar>
   <el-alert v-else-if="cluster.state.code === 500" type="error" :closable="false" effect="dark" show-icon>
     <span v-if="cluster.state.msg" class="app_text_mono" v-html="cluster.state.msg.replaceAll('\n', '<br>').replaceAll('    ', '<span style=margin-right:20px;></span>')"></span>
@@ -66,6 +83,7 @@ zh:
 import Codemirror from "codemirror-editor-vue3"
 import "codemirror/theme/darcula.css"
 import "codemirror/mode/yaml/yaml.js"
+import "codemirror/mode/shell/shell.js"
 
 export default {
   props: {
@@ -86,9 +104,31 @@ export default {
         foldGutter: true, // Code folding
         styleActiveLine: true, // Display the style of the selected row
       },
+      etcdCmOptions: {
+        mode: "shell",
+        theme: "darcula",
+        lineNumbers: true,
+        lineWrapping: true,
+        smartIndent: true,
+        indentUnit: 2,
+        foldGutter: true,
+        styleActiveLine: true,
+      }
     }
   },
   computed: {
+    etcdSsh: {
+      get () {
+        return `export ETCDCTL_API=3
+export ETCDCTL_CERT=/etc/ssl/etcd/ssl/admin-$(hostname).pem
+export ETCDCTL_KEY=/etc/ssl/etcd/ssl/admin-$(hostname)-key.pem
+export ETCDCTL_CACERT=/etc/ssl/etcd/ssl/ca.pem
+etcdctl member list
+# 此处开始，执行您想要执行的 etcdctl 命令
+`
+      },
+      set () {}
+    }
   },
   components: { Codemirror },
   mounted () {
@@ -113,6 +153,15 @@ export default {
         this.kubeconfigLoading = false
         this.$message.error('failed to get kubeconfig: ' + e.response.data.msg)
       })
+    },
+    etcdIp (item) {
+      if (item.clientURLs && item.clientURLs.length > 0) {
+        let temp = item.clientURLs[0]
+        temp = temp.split(':')
+        return temp[1].slice(2)
+      }
+      return ''
+
     }
   }
 }

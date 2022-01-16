@@ -21,6 +21,14 @@ func ParseAnsibleStdout(stdout string) *AnsibleStdout {
 
 	index := strings.Index(stdout, "\n")
 
+	if index <= 0 {
+		result.ReturnCode = ""
+		result.NodeName = ""
+		result.Stdout = ""
+		result.StdoutObj = nil
+		return &result
+	}
+
 	line0 := stdout[:index]
 	content := stdout[index+1:]
 

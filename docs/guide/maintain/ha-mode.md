@@ -50,9 +50,6 @@ master 节点（控制节点）上的 kubelet / kube-proxy / kube-scheduler / ku
 
 ::: tip 外置的负载均衡
 
-* 如果您直接使用 kubespray 部署 K8S 集群，也可以为 kube-apiserver 配置一个外置的负载均衡器。但是因为如下的原因，KuboardSpray 并未开放此配置：
-  * 配置参数复杂
-  * 配置步骤复杂
-  * 没有带来额外好处
+* 如果您直接使用 kubespray 部署 K8S 集群，也可以为 kube-apiserver 配置一个外置的负载均衡器。但是KuboardSpray 暂时未开放此配置。
 
 :::

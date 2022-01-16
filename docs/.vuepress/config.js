@@ -31,17 +31,19 @@ module.exports = {
         link: '/guide/install-k8s.md',
       },
       {
-        text: '技术支持',
-        link: '/support/',
+        text: 'Kuboard',
+        link: 'https://kuboard.cn',
       },
     ],
     sidebar: {
-      '/guide/': [
+      '/': [
+        {
+          title: 'TLDR',
+          path: '/',
+        },
         {
           title: '集群安装',
-          children: [
-            '/guide/install-k8s.md',
-          ]
+          path: '/guide/install-k8s.md',
         },
         {
           title: '集群维护',
@@ -54,7 +56,7 @@ module.exports = {
         {
           title: '资源包',
           children: [
-            '/guide/resource-package/repo.md',
+            '/support/',
             '/guide/resource-package/make.md',
           ]
         },
@@ -63,13 +65,10 @@ module.exports = {
           children: [
             '/guide/network-plugin/calico.md',
             '/guide/network-plugin/flannel.md',
-          ]
-        }
+          ],
+        },
+        '/support/change-log/v1.md',
       ],
-      '/support/': [
-        '',
-        'change-log/v1.md',
-      ]
     }
   },
 }

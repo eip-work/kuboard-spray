@@ -9,13 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type MandatoryActionsRequest struct {
-	InstallClusterRequest
-	ShouldUpdateApiServerLoadBalancer bool `json:"update_apiserver_loadbalancer"`
-}
-
 func SyncNginxConfigActions(c *gin.Context) {
-	var req MandatoryActionsRequest
+	var req InstallClusterRequest
 	c.ShouldBindUri(&req)
 	c.ShouldBindJSON(&req)
 
@@ -50,13 +45,11 @@ func SyncNginxConfigActions(c *gin.Context) {
 
 			playbook := common.MapGet(resourcePackage, "data.supported_playbooks.sync_nginx_config").(string)
 			result := []string{"-i", execute_dir + "/inventory.yaml", playbook, "--fork", strconv.Itoa(req.Fork), "--tags", "nginx"}
-			if req.ShouldUpdateApiServerLoadBalancer {
-				if req.ExcludeNodes != "" {
-					result = append(result, "--limit ", req.ExcludeNodes)
-				}
-				if req.VVV {
-					result = append(result, "-vvv")
-				}
+			if req.ExcludeNodes != "" {
+				result = append(result, "--limit ", req.ExcludeNodes)
+			}
+			if req.VVV {
+				result = append(result, "-vvv")
 			}
 			return result
 		},

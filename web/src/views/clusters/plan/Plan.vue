@@ -45,6 +45,12 @@ zh:
           </Node>
           <div class="horizontalConnection" :style="bastionEnabled ? '' : 'border-color: white;'"></div>
         </div>
+        <div style="line-height: 28px;">
+          <el-link href="https://kuboard-spray.cn/guide/install-k8s.html" target="blank">如何安装 K8S 集群？</el-link>
+          <el-link href="https://kuboard-spray.cn/guide/maintain/ha-mode.html" target="blank">如何实现高可用？</el-link>
+          <el-link href="https://kuboard-spray.cn/guide/maintain/add-replace-node.html" target="blank">如何添加删除节点？</el-link>
+          <el-link href="https://kuboard-spray.cn/guide/maintain/upgrade.html" target="blank">如何升级集群？</el-link>
+        </div>
       </div>
       <div class="right">
         <div style="padding: 5px; font-weight: bolder; font-size: 14px; height: 28px; line-height: 28px; margin-bottom: 10px;">
@@ -56,14 +62,14 @@ zh:
         </div>
         <el-scrollbar height="calc(100vh - 293px)">
           <div class="masters">
-            <el-alert class="app_margin_bottom" v-if="cluster.state && (cluster.inventory.all.hosts.localhost.kuboardspray_etcd_max_count > cluster.state.etcd_members_count)" type="error" :closable="false" effect="dark">
+            <!-- <el-alert class="app_margin_bottom" v-if="cluster.state && (cluster.inventory.all.hosts.localhost.kuboardspray_etcd_max_count > cluster.state.etcd_members_count)" type="error" :closable="false" effect="dark">
               <div style="line-height: 20px;">
                 {{ $t('kuboardspray_etcd_max_count_desc', {count: cluster.inventory.all.hosts.localhost.kuboardspray_etcd_max_count}) }}
                 <el-link href="https://kuboard-spray.cn/guide/maintain/ha-mode.html#etcd" target="blank">
                   <span class="app_text_mono" style="color: white;"><i class="el-icon-link"></i> ETCD High Availability.</span>
                 </el-link>
               </div>
-            </el-alert>
+            </el-alert> -->
             <Node v-for="(item, index) in inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts" :key="'control_plane' + index" @deleted="currentPropertiesTab = 'node_nodes'"
               @click="currentPropertiesTab = 'NODE_' + index" :nodes="cluster.state ? cluster.state.nodes : undefined" :pingpong="pingpong" :pingpong_loading="pingpong_loading"
               :active="nodeRoles(index)[currentPropertiesTab] || currentPropertiesTab === 'global_config' || currentPropertiesTab === 'addons' || currentPropertiesTab === 'k8s_cluster' || 'NODE_' + index === currentPropertiesTab"

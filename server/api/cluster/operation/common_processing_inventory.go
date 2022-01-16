@@ -50,6 +50,14 @@ func updateResourcePackageVarsToInventory(clusterName string) (map[string]interf
 
 	// 设置 etcd 版本信息
 	common.MapSet(inventory, "all.children.target.children.etcd.vars.etcd_version", common.MapGet(resourcePackage, "data.etcd.etcd_version"))
+	params := common.MapGet(resourcePackage, "data.etcd.etcd_params")
+	if params != nil {
+		etcdParams := params.(map[string]interface{})
+		for k, v := range etcdParams {
+			common.MapSet(inventory, "all.children.target.children.etcd.vars."+k, v)
+			logrus.Trace("set inventory: ", "all.children.target.children.etcd.vars."+k, v)
+		}
+	}
 
 	common.MapSet(inventory, "all.children.target.children.etcd.vars.etcd_config_dir", "/etc/ssl/etcd")
 	common.MapSet(inventory, "all.children.target.children.etcd.vars.etcd_cert_dir", "{{ etcd_config_dir }}/ssl")

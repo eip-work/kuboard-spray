@@ -37,14 +37,11 @@ func PostProcessInventory(clusterName string, action string) (string, error) {
 
 	message := ""
 
-	common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_nginx_config", false)
-
 	if action == "add_node" || action == "install_cluster" {
 		includeControlPlane := false
 		for _, node := range nodesInK8s {
 			if common.MapGet(inventoryNew, "all.hosts."+node+".kuboardspray_node_action") == "add_node" {
-				controlPlanes := common.MapGet(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts").(map[string]interface{})
-				if controlPlanes[node] != nil {
+				if common.MapGet(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts."+node) != nil {
 					includeControlPlane = true
 				}
 				common.MapDelete(inventoryNew, "all.hosts."+node+".kuboardspray_node_action")
@@ -64,13 +61,16 @@ func PostProcessInventory(clusterName string, action string) (string, error) {
 	if action == "remove_node" {
 		nodesInvent := common.MapGet(inventoryNew, "all.hosts").(map[string]interface{})
 		includeControlPlane := false
+		// includeEtcd := false
 		for key, nodeInfo := range nodesInvent {
 			n := nodeInfo.(map[string]interface{})
 			if n["kuboardspray_node_action"] == "remove_node" && !contains(nodesInK8s, key) {
-				controlPlanes := common.MapGet(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts").(map[string]interface{})
-				if controlPlanes[key] != nil {
+				if common.MapGet(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts."+key) != nil {
 					includeControlPlane = true
 				}
+				// if common.MapGet(inventoryNew, "all.children.target.children.etcd.hosts."+key) != nil {
+				// 	includeEtcd = true
+				// }
 				common.MapDelete(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts."+key)
 				common.MapDelete(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_node.hosts."+key)
 				common.MapDelete(inventoryNew, "all.children.target.children.etcd.hosts."+key)
@@ -82,40 +82,55 @@ func PostProcessInventory(clusterName string, action string) (string, error) {
 			message += "\n\033[31m\033[01m\033[05m[ " + "Apiserver list changed, it's required to update all nginx proxy in kube_nodes." + " ]\033[0m \n"
 			message += "\033[31m\033[01m\033[05m[ " + "Apiserver 列表发生变化，请在集群页面更新所有工作节点的 nginx proxy 配置." + " ]\033[0m \n"
 		}
+		// if includeEtcd {
+		// 	common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_etcd_config", true)
+		// 	message += "\n\033[31m\033[01m\033[05m[ " + "Etcd list changed, it's required to update all kube_control_plane and etcd nodes." + " ]\033[0m \n"
+		// 	message += "\033[31m\033[01m\033[05m[ " + "Etcd 列表发生变化，请在集群页面更新所有控制节点/ETCD节点的配置." + " ]\033[0m \n"
+		// }
 	}
+	if action == "sync_nginx_config" {
+		common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_nginx_config", false)
+	}
+	// if action == "sync_etcd_config" {
+	// 	common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_etcd_config", false)
+	// }
 
 	// 对比 etcd 成员
-	etcdInvent := common.MapGet(inventoryNew, "all.children.target.children.etcd.hosts").(map[string]interface{})
+	// etcdInvent := common.MapGet(inventoryNew, "all.children.target.children.etcd.hosts").(map[string]interface{})
 
-	etcdOut, err := state.ExecuteShellOnETCD(clusterName, "etcdctl member list --write-out=json")
-	if err == nil {
-		count := 0
-		for _, node := range etcdOut.StdoutObj["members"].([]interface{}) {
-			nodeObj := node.(map[string]interface{})
-			nodeName := nodeObj["name"].(string)
-			logrus.Trace("etcdName: ", nodeName)
-			for _, v := range etcdInvent {
-				etcdvar := v.(map[string]interface{})
-				if etcdvar["etcd_member_name"] == nodeName {
-					count++
-				}
-			}
-		}
+	// etcdOut, err := state.ExecuteShellOnETCD(clusterName, "etcdctl member list --write-out=json")
+	// if err == nil {
+	// 	count := 0
+	// 	for _, member := range etcdOut.StdoutObj["members"].([]interface{}) {
+	// 		memberObj := member.(map[string]interface{})
+	// 		logrus.Trace("etcd member:", memberObj)
+	// 		if memberObj["name"] == nil {
+	// 			logrus.Warn("etcd member doesnot have attribute name : ", memberObj)
+	// 			break
+	// 		}
+	// 		nodeName := memberObj["name"].(string)
+	// 		for _, v := range etcdInvent {
+	// 			etcdvar := v.(map[string]interface{})
+	// 			if etcdvar["etcd_member_name"] == nodeName {
+	// 				count++
+	// 			}
+	// 		}
+	// 	}
 
-		logrus.Trace(etcdOut.Stdout)
-		logrus.Trace("current etcd_count: ", count)
+	// 	logrus.Trace(etcdOut.Stdout)
+	// 	logrus.Trace("current etcd_count: ", count)
 
-		etcdMaxCount := common.MapGet(inventoryNew, "all.hosts.localhost.kuboardspray_etcd_max_count")
-		maxCount := 0
-		if etcdMaxCount != nil {
-			maxCount = etcdMaxCount.(int)
-			logrus.Trace("history etcd_max_count: ", maxCount)
-		}
-		if maxCount < count {
-			maxCount = count
-		}
-		common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_etcd_max_count", maxCount)
-	}
+	// 	etcdMaxCount := common.MapGet(inventoryNew, "all.hosts.localhost.kuboardspray_etcd_max_count")
+	// 	maxCount := 0
+	// 	if etcdMaxCount != nil {
+	// 		maxCount = etcdMaxCount.(int)
+	// 		logrus.Trace("history etcd_max_count: ", maxCount)
+	// 	}
+	// 	if maxCount < count {
+	// 		maxCount = count
+	// 	}
+	// 	common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_etcd_max_count", maxCount)
+	// }
 
 	inventoryNewContent, err := yaml.Marshal(inventoryNew)
 	if err != nil {

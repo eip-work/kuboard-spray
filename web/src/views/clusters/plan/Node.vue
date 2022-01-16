@@ -3,10 +3,12 @@ en:
   confirmDelete: Are you sure to delete this node ?
   noRemoveOffline: cannot remove node when cluster is unreachable
   addNodeFirst: Please complete or cancel the deletion of nodes first.
+  etcdMinCount: Cannot remove etcd node any more, or etcd cluster will become unavailable.
 zh:
   confirmDelete: 您是否确认要删除此节点？
   noRemoveOffline: 集群不在线，不能删除节点
   addNodeFirst: 请先完成或取消节点添加动作，再执行节点删除动作。
+  etcdMinCount: 不能继续删除 etcd 节点，否则 etcd 集群将不可用
 </i18n>
 
 <template>
@@ -124,6 +126,27 @@ export default {
         this.$message.error(this.$t('addNodeFirst'))
         return
       }
+      // if (this.inventory.all.children.target.children.etcd.hosts[this.name]) {
+      //   let count = 0
+      //   for (let k in this.inventory.all.children.target.children.etcd.hosts) {
+      //     let host = this.inventory.all.children.target.children.etcd.hosts[k]
+      //     if (k === this.name) {
+      //       continue
+      //     }
+      //     if (host.kuboardspray_node_action === undefined) {
+      //       count ++
+      //     }
+      //   }
+      //   let temp = this.inventory.all.hosts.localhost.kuboardspray_etcd_max_count
+      //   if (temp % 2 != 0) {
+      //     temp = temp + 1
+      //   }
+      //   temp = temp / 2
+      //   if (temp > count) {
+      //     this.$message.error(this.$t('etcdMinCount'))
+      //     return
+      //   }
+      // }
       if (this.nodes[this.name]) {
         this.inventory.all.hosts[this.name].kuboardspray_node_action = 'remove_node'
         if (this.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[this.name]) {

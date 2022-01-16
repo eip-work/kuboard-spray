@@ -7,6 +7,7 @@ en:
   proposeKuboard: Kuboard is a popular K8S cluster management UI, you can refer to its website to learn how to install and use it.
   switchToPlan: Swith to cluster plan view.
   etcdAccess: SSH connect to any of the following nodes, and use etcdctl command to administrate the etcd cluster.
+  requiredToSyncEtcd: You removed a etcd node, and it's a must to sync etcd config to all kube_control_plane and etcd nodes.
 zh:
   getKubeconfig: 获取 kubeconfig 文件
   accessFromControlPlane: 在主节点上使用 kubectl
@@ -15,12 +16,14 @@ zh:
   proposeKuboard: Kuboard 是一款非常值得推荐的 K8S 集群管理界面，请参考 Kuboard 网站，安装改管理界面。
   switchToPlan: 切换到集群规划页
   etcdAccess: 您可以 ssh 到如下节点中的任意一个，执行以下指令后，可以通过 etcdctl 操作 etcd 集群。通常您并不需要直接操作 etcd。
+  requiredToSyncEtcd: 您删除了 ETCD 节点，必须将 ETCD 配置同步到所有控制节点和 ETCD 节点
 </i18n>
 
 
 <template>
   <el-skeleton v-if="cluster.state === undefined" animated></el-skeleton>
   <el-scrollbar height="calc(100vh - 220px)" v-else-if="cluster.state.code === 200">
+    <!-- <el-alert type="error" effect="dark" class="app_margin_bottom" :title="$t('requiredToSyncEtcd')" :closable="false" show-icon></el-alert> -->
     <el-alert type="info" :title="$t('accessMethods')" :closable="false"></el-alert>
     <div class="app_block_title">{{ $t('accessFromControlPlane') }}</div>
     <div class="access_details" v-if="cluster">

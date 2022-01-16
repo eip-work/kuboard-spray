@@ -61,7 +61,7 @@ zh:
       ></NodeFact>
     </SshParamsNode>
     <ConfigSection v-model:enabled="enabledRoles" :label="$t('roles')" :description="$t('roleDescription', {nodeName: nodeName})" disabled anti-freeze>
-      <FieldCommon :label="$t('roles')" :anti-freeze="cluster.type === 'gap'">
+      <FieldCommon :label="$t('roles')" :anti-freeze="inventory.all.hosts[nodeName].kuboardspray_node_action === 'add_node'">
         <template #edit>
           <div class="roles">
             <NodeRoleTag :enabled="isKubeControlPlane" role="kube_control_plane" @clickTag="isKubeControlPlane = !isKubeControlPlane"></NodeRoleTag>
@@ -79,7 +79,8 @@ zh:
       </FieldCommon>
     </ConfigSection>
     <ConfigSection v-if="enabledEtcd" v-model:enabled="enabledEtcd" label="ETCD" :description="$t('etcd', {nodeName: nodeName})" disabled anti-freeze>
-      <FieldString :holder="inventory.all.children.target.children.etcd.hosts[nodeName]" fieldName="etcd_member_name" :rules="etcd_member_name_rules" :anti-freeze="nodes[nodeName] === undefined"
+      <FieldString :holder="inventory.all.children.target.children.etcd.hosts[nodeName]" fieldName="etcd_member_name" :rules="etcd_member_name_rules" 
+        :anti-freeze="nodes[nodeName] === undefined || inventory.all.hosts[nodeName].kuboardspray_node_action === 'add_node'"
         :prop="`all.children.target.children.etcd.hosts.${nodeName}`" required></FieldString>
     </ConfigSection>
   </el-form>

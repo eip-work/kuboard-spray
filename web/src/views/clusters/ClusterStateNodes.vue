@@ -20,13 +20,16 @@ zh:
       <el-scrollbar max-height="45vh">
         <div v-if="state.code === 200">
           <div v-for="(node, name) in state.nodes" :key="'n' + name" class="nodeInfo app_text_mono">
-            {{name}}
+            node: {{name}}
             <template v-for="(addr, index) in node.status.addresses" :key="name + index">
               <el-tag type="primary" v-if="addr.type === 'InternalIP'">{{addr.address}}</el-tag>
             </template>
-            <template v-if="etcdMember(name) && state.etcd_members[etcdMember(name)]">
-              <el-tag type="primary" effect="dark" style="margin-left: 20px;">{{ etcdMember(name) }}</el-tag>
-            </template>
+          </div>
+        </div>
+        <div v-if="state.etcd_code === 200">
+          <div v-for="(node, name) in state.etcd_members" :key="'n' + name" class="nodeInfo app_text_mono">
+            etcd: {{node.name}}
+            <el-tag type="primary" effect="dark" style="margin-left: 20px; float: right;">{{ node.clientURLs && node.clientURLs.length > 0 ? node.clientURLs[0] : '' }}</el-tag>
           </div>
         </div>
         <el-alert v-else type="error" :closable="false" :title="$t('unreachable')" effect="dark" show-icon>

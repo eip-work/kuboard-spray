@@ -40,10 +40,22 @@ func arraySubtract(array1, array2 []string) []string {
 	return result
 }
 
-// func getMembersInEtcd(clusterName string) ([]string, error) {
-// 	result, err := state.ExecuteShellOnETCD(clusterName, "etcdctl member list --write-out=json")
-// 	if err != nil {
-// 		return nil, err
-// 	}
+func getMembersInEtcd(clusterName string) ([]string, error) {
+	result := []string{}
+	temp, err := state.ExecuteShellOnETCD(clusterName, "etcdctl member list --write-out=json")
+	if err != nil {
+		return nil, err
+	}
+	for _, member := range temp.StdoutObj["members"].([]interface{}) {
+		memberObj := member.(map[string]interface{})
+		logrus.Trace("etcd member:", memberObj)
+		if memberObj["name"] == nil {
+			logrus.Warn("etcd member doesnot have attribute name : ", memberObj)
+			break
+		}
+		nodeName := memberObj["name"].(string)
+		result = append(result, nodeName)
+	}
 
-// }
+	return result, nil
+}

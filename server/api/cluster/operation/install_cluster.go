@@ -1,12 +1,16 @@
 package operation
 
 import (
+	"io/ioutil"
 	"net/http"
 	"strconv"
 
+	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v3"
 )
 
 type InstallClusterRequest struct {
@@ -42,7 +46,24 @@ func InstallCluster(c *gin.Context) {
 			message += "\033[31m\033[01m\033[05m[" + "集群安装失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + "]\033[0m \n"
 		}
 
-		PostProcessInventory(req.Cluster, "install_cluster")
+		inventoryPath := cluster.ClusterInventoryYamlPath(req.Cluster)
+		inventoryNew, _ := common.ParseYamlFile(inventoryPath)
+		nodesInK8s, _ := getNodesInK8s(req.Cluster)
+
+		for _, node := range nodesInK8s {
+			if common.MapGet(inventoryNew, "all.hosts."+node+".kuboardspray_node_action") == "add_node" {
+				common.MapDelete(inventoryNew, "all.hosts."+node+".kuboardspray_node_action")
+				common.MapDelete(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts."+node+".kuboardspray_node_action")
+				common.MapDelete(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_node.hosts."+node+".kuboardspray_node_action")
+				common.MapDelete(inventoryNew, "all.children.target.children.etcd.hosts."+node+".kuboardspray_node_action")
+			}
+		}
+		inventoryNewContent, _ := yaml.Marshal(inventoryNew)
+
+		if err := ioutil.WriteFile(inventoryPath, inventoryNewContent, 0655); err != nil {
+			logrus.Trace(err)
+		}
+
 		return "\n" + message, nil
 	}
 

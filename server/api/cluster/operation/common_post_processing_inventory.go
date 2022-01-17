@@ -11,15 +11,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func contains(arr []string, str string) bool {
-	for _, v := range arr {
-		if v == str {
-			return true
-		}
-	}
-	return false
-}
-
 func PostProcessInventory(clusterName string, action string) (string, error) {
 	inventoryPath := cluster.ClusterInventoryYamlPath(clusterName)
 	inventoryNew, _ := common.ParseYamlFile(inventoryPath)

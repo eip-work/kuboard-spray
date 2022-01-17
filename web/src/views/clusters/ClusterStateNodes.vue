@@ -11,7 +11,7 @@ zh:
 </i18n>
 
 <template>
-  <el-popover placement="bottom-start" :title="$t('title')" :width="320" trigger="click">
+  <el-popover placement="bottom-start" :title="$t('title')" :width="420" trigger="click">
     <template #reference>
       <el-button v-if="state.code === 200" type="success" round icon="el-icon-success">{{$t('nodeCount', { count, etcdCount: state.etcd_members_count })}}</el-button>
       <el-button v-else type="danger" round icon="el-icon-info">{{$t('unreachable')}}</el-button>
@@ -22,14 +22,14 @@ zh:
           <div v-for="(node, name) in state.nodes" :key="'n' + name" class="nodeInfo app_text_mono">
             node: {{name}}
             <template v-for="(addr, index) in node.status.addresses" :key="name + index">
-              <el-tag type="primary" v-if="addr.type === 'InternalIP'">{{addr.address}}</el-tag>
+              <el-tag type="primary" style="margin-left: 20px;" v-if="addr.type === 'InternalIP'">{{addr.address}}</el-tag>
             </template>
           </div>
         </div>
         <div v-if="state.etcd_code === 200">
           <div v-for="(node, name) in state.etcd_members" :key="'n' + name" class="nodeInfo app_text_mono">
             etcd: {{node.name}}
-            <el-tag type="primary" effect="dark" style="margin-left: 20px; float: right;">{{ node.clientURLs && node.clientURLs.length > 0 ? node.clientURLs[0] : '' }}</el-tag>
+            <el-tag type="primary" effect="dark" style="margin-left: 20px;">{{ node.clientURLs && node.clientURLs.length > 0 ? node.clientURLs[0] : '' }}</el-tag>
           </div>
         </div>
         <el-alert v-else type="error" :closable="false" :title="$t('unreachable')" effect="dark" show-icon>

@@ -116,7 +116,7 @@ func AddNode(c *gin.Context) {
 				if req.ExcludeNodes != "" {
 					nodesToAdd += "," + req.ExcludeNodes
 				}
-				result = []string{"-i", execute_dir + "/inventory.yaml", playbook, "--fork", strconv.Itoa(req.Fork), "--limit", nodesToAdd}
+				result = []string{"-i", execute_dir + "/inventory.yaml", playbook, "--fork", strconv.Itoa(req.Fork), "--limit", nodesToAdd, "-e", "etcd_retries=15"}
 			}
 			if req.VVV {
 				result = append(result, "-vvv")

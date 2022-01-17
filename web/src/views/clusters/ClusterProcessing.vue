@@ -283,12 +283,13 @@ export default {
               // 至少有一个被添加的节点在线
               let temp = ''
               for (let node in this.cluster.inventory.all.hosts) {
-                if (this.cluster.inventory.all.hosts[node].kuboardspray_node_action === 'add_node' && this.pingpong[node] && this.pingpong[node].status === 'SUCCESS') {
-                  temp += node + ','
-                }
-                if (this.cluster.inventory.all.children.target.vars.http_proxy || this.cluster.inventory.all.children.target.vars.https_proxy) {
-                  if (this.pingpong[node] && this.pingpong[node].status !== 'SUCCESS') {
-                    return callback('All nodes must be online, currently, we cannot reach node ' + node)
+                if (this.pingpong[node] && this.pingpong[node].status === 'SUCCESS') {
+                  if (this.action === 'add_node') {
+                    if (this.cluster.inventory.all.hosts[node].kuboardspray_node_action === 'add_node') {
+                      temp += node + ','
+                    }
+                  } else if (this.action === 'install_cluster') {
+                    temp += node + ','
                   }
                 }
               }

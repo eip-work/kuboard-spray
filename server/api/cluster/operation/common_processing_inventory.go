@@ -13,8 +13,8 @@ func resourcePackagePathForInventory(inventory map[string]interface{}) string {
 	return constants.GET_DATA_RESOURCE_DIR() + "/" + common.MapGet(inventory, "all.hosts.localhost.kuboardspray_resource_package").(string) + "/content"
 }
 
-func updateResourcePackageVarsToInventory(clusterName string, discoveredInterpreterPython map[string]string) (map[string]interface{}, map[string]interface{}, error) {
-	inventoryPath := cluster.ClusterInventoryYamlPath(clusterName)
+func updateResourcePackageVarsToInventory(req InstallClusterRequest) (map[string]interface{}, map[string]interface{}, error) {
+	inventoryPath := cluster.ClusterInventoryYamlPath(req.Cluster)
 	inventory, err := common.ParseYamlFile(inventoryPath)
 	if err != nil {
 		return nil, nil, err
@@ -26,8 +26,10 @@ func updateResourcePackageVarsToInventory(clusterName string, discoveredInterpre
 		return nil, nil, err
 	}
 
+	common.MapSet(inventory, "all.vars.kuboardspray_no_log", !req.Verbose)
+
 	// 设置 discovered_interpreter_python
-	for k, v := range discoveredInterpreterPython {
+	for k, v := range req.DiscoveredInterpreterPython {
 		common.MapSet(inventory, "all.hosts."+k+".ansible_python_interpreter", v)
 	}
 
@@ -133,7 +135,7 @@ func updateResourcePackageVarsToInventory(clusterName string, discoveredInterpre
 	common.MapSet(inventory, "all.vars.download_always_pull", false)
 	common.MapSet(inventory, "all.vars.download_cache_dir", resourcePackagePath+"/kubespray_cache")
 	// common.MapSet(inventory, "all.vars.ansible_ssh_common_args", "-o StrictHostKeyChecking=no")
-	common.MapSet(inventory, "all.vars.kuboardspray_cluster_dir", constants.GET_DATA_CLUSTER_DIR()+"/"+clusterName)
+	common.MapSet(inventory, "all.vars.kuboardspray_cluster_dir", constants.GET_DATA_CLUSTER_DIR()+"/"+req.Cluster)
 	common.MapSet(inventory, "all.children.target.vars.disable_service_firewall", true)
 	common.MapSet(inventory, "all.children.target.vars.ansible_python_interpreter", "auto")
 

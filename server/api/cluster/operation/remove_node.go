@@ -30,12 +30,11 @@ func RemoveNode(c *gin.Context) {
 	c.ShouldBindUri(&req)
 	c.ShouldBindJSON(&req)
 
-	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.Cluster, req.DiscoveredInterpreterPython)
+	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.InstallClusterRequest)
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to process inventory", err)
 		return
 	}
-	common.MapSet(inventory, "all.vars.kuboardspray_no_log", !req.Verbose)
 
 	// 找出各类待删除的节点
 	all_nodes_to_remove := strings.Split(req.NodesToRemove, ",")

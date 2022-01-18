@@ -24,12 +24,11 @@ func AddNode(c *gin.Context) {
 	c.ShouldBindUri(&req)
 	c.ShouldBindJSON(&req)
 
-	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.Cluster, req.DiscoveredInterpreterPython)
+	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.InstallClusterRequest)
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to process inventory", err)
 		return
 	}
-	common.MapSet(inventory, "all.vars.kuboardspray_no_log", !req.Verbose)
 
 	// 判断待添加节点是否有控制节点或者 etcd 节点
 	nodes_to_add := strings.Split(req.NodesToAdd, ",")

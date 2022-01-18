@@ -18,13 +18,11 @@ func SyncEtcdConfigActions(c *gin.Context) {
 	c.ShouldBindUri(&req)
 	c.ShouldBindJSON(&req)
 
-	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.Cluster, req.DiscoveredInterpreterPython)
+	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req)
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to process inventory", err)
 		return
 	}
-
-	common.MapSet(inventory, "all.vars.kuboardspray_no_log", !req.Verbose)
 
 	postExec := func(status command.ExecuteExitStatus) (string, error) {
 		success := status.Success

@@ -9,6 +9,8 @@ en:
   requiresAtLeastOneRole: Requires at least one role
   pendingDelete: Pending Delete.
   pendingDeleteAction: Click Execute button to do the actural deletion.
+  pendingAdd: Pending Add.
+  pendingAddAction: Clieck Execute button to do the actural addition.
 zh:
   sshcommon: SSH 连接参数（适用范围：节点 {nodeName}）
   etcd: "ETCD 参数（适用范围：节点 {nodeName}）"
@@ -19,6 +21,8 @@ zh:
   requiresAtLeastOneRole: 至少需要一个角色
   pendingDelete: 等待删除
   pendingDeleteAction: 点击控制栏的 “节点待删除” 按钮，执行删除操作
+  pendingAdd: 等待添加
+  pendingAddAction: 点击控制栏的 “安装/设置集群” 或 “添加节点” 按钮，执行添加操作
 </i18n>
 
 <template>
@@ -41,6 +45,17 @@ zh:
     </el-alert>
     <el-alert v-if="pendingDelete" :title="$t('pendingDelete')" type="error" :closable="false" effect="dark" class="app_margin_bottom" show-icon>
       {{$t('pendingDeleteAction')}}
+      <el-link href="https://kuboard-spray.cn/guide/maintain/add-replace-node.html" target="blank" style="margin-left: 20px; color: white;">
+        <i class="el-icon-link" style="margin-right: 5px;"></i>
+        {{$t('msg.help')}}
+      </el-link>
+    </el-alert>
+    <el-alert v-if="pendingAdd" :title="$t('pendingAdd')" type="warning" :closable="false" effect="dark" class="app_margin_bottom" show-icon>
+      {{$t('pendingAddAction')}}
+      <el-link href="https://kuboard-spray.cn/guide/maintain/add-replace-node.html" target="blank" style="margin-left: 20px; color: white;">
+        <i class="el-icon-link" style="margin-right: 5px;"></i>
+        {{$t('msg.help')}}
+      </el-link>
     </el-alert>
     <StateNode v-if="nodes[nodeName]" :cluster="cluster" :nodeName="nodeName" :nodes="nodes"></StateNode>
     <SshParamsNode :cluster="cluster" :nodes="nodes" v-if="inventory.all.hosts[nodeName]"
@@ -137,6 +152,12 @@ export default {
     },
     pendingDelete () {
       if (this.inventory.all.hosts[this.nodeName] && this.inventory.all.hosts[this.nodeName].kuboardspray_node_action === 'remove_node') {
+        return true
+      }
+      return false
+    },
+    pendingAdd () {
+      if (this.inventory.all.hosts[this.nodeName] && this.inventory.all.hosts[this.nodeName].kuboardspray_node_action === 'add_node') {
         return true
       }
       return false

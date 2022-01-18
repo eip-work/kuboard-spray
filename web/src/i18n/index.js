@@ -47,6 +47,7 @@ const messages = {
       status: 'Status',
       confirmToCancel: "Modifications will be lost to proceed, do you confirm ?",
       operations: 'Operations',
+      help: 'Help',
     },
     upgrade: {
       ignoreThisVersion: 'Ignore this version.',
@@ -94,6 +95,7 @@ const messages = {
       status: '状 态',
       confirmToCancel: '将丢失已修改内容，确认取消编辑？',
       operations: '操 作',
+      help: '帮 助',
     },
     upgrade: {
       ignoreThisVersion: '忽略这个版本',

@@ -14,11 +14,12 @@ import (
 )
 
 type InstallClusterRequest struct {
-	Cluster      string `uri:"cluster" binding:"required"`
-	Fork         int    `json:"fork"`
-	Verbose      bool   `json:"verbose"`
-	VVV          bool   `json:"vvv"`
-	ExcludeNodes string `json:"nodes_to_exclude"`
+	Cluster                     string            `uri:"cluster" binding:"required"`
+	Fork                        int               `json:"fork"`
+	Verbose                     bool              `json:"verbose"`
+	VVV                         bool              `json:"vvv"`
+	ExcludeNodes                string            `json:"nodes_to_exclude"`
+	DiscoveredInterpreterPython map[string]string `json:"discovered_interpreter_python"`
 }
 
 func InstallCluster(c *gin.Context) {
@@ -27,7 +28,7 @@ func InstallCluster(c *gin.Context) {
 	c.ShouldBindUri(&req)
 	c.ShouldBindJSON(&req)
 
-	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.Cluster)
+	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.Cluster, req.DiscoveredInterpreterPython)
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to process inventory", err)
 		return

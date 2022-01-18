@@ -508,6 +508,17 @@ export default {
               vvv: this.form.vvv,
               fork: this.form.fork,
             }
+            let discovered_interpreter_python = {}
+            for (let node in this.pingpong) {
+              let msg = this.pingpong[node].message
+              if (msg) {
+                let pong = JSON.parse(msg)
+                if (pong && pong.ansible_facts && pong.ansible_facts.discovered_interpreter_python) {
+                  discovered_interpreter_python[node] = pong.ansible_facts.discovered_interpreter_python
+                }
+              }
+            }
+            req.discovered_interpreter_python = discovered_interpreter_python
             if (this.nodesToExclude.length > 0) {
               let temp = ''
               for (let node of this.nodesToExclude) {

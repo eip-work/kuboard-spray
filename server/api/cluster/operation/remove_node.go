@@ -30,7 +30,7 @@ func RemoveNode(c *gin.Context) {
 	c.ShouldBindUri(&req)
 	c.ShouldBindJSON(&req)
 
-	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.Cluster)
+	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.Cluster, req.DiscoveredInterpreterPython)
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to process inventory", err)
 		return

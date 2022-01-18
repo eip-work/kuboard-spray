@@ -13,7 +13,7 @@ func resourcePackagePathForInventory(inventory map[string]interface{}) string {
 	return constants.GET_DATA_RESOURCE_DIR() + "/" + common.MapGet(inventory, "all.hosts.localhost.kuboardspray_resource_package").(string) + "/content"
 }
 
-func updateResourcePackageVarsToInventory(clusterName string) (map[string]interface{}, map[string]interface{}, error) {
+func updateResourcePackageVarsToInventory(clusterName string, discoveredInterpreterPython map[string]string) (map[string]interface{}, map[string]interface{}, error) {
 	inventoryPath := cluster.ClusterInventoryYamlPath(clusterName)
 	inventory, err := common.ParseYamlFile(inventoryPath)
 	if err != nil {
@@ -24,6 +24,11 @@ func updateResourcePackageVarsToInventory(clusterName string) (map[string]interf
 	resourcePackage, err := common.ParseYamlFile(resourcePackagePath + "/package.yaml")
 	if err != nil {
 		return nil, nil, err
+	}
+
+	// 设置 discovered_interpreter_python
+	for k, v := range discoveredInterpreterPython {
+		common.MapSet(inventory, "all.hosts."+k+".ansible_python_interpreter", v)
 	}
 
 	// >>>> 设置资源包相关参数

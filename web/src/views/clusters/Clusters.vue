@@ -107,6 +107,7 @@ export default {
 <style scoped lang="scss">
 .cluster {
   margin-right: 10px;
+  margin-bottom: 10px;
   width: 200px;
   border-radius: 6px;
   cursor: pointer;

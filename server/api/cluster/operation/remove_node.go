@@ -43,7 +43,7 @@ func RemoveNode(c *gin.Context) {
 	etcd_member_to_remove := []string{}
 
 	for _, node := range all_nodes_to_remove {
-		if common.MapGet(inventory, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts") != nil {
+		if common.MapGet(inventory, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts."+node) != nil {
 			control_plane_to_remove = append(control_plane_to_remove, node)
 		}
 		if common.MapGet(inventory, "all.children.target.children.etcd.hosts."+node) != nil {

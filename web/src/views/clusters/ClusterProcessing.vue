@@ -39,6 +39,7 @@ en:
   sync_etcd_address_desc: "Member list of etcd cluster changed, this task is going to update --etcd-servers param in /etc/kubernetes/manifests/kube-apiserver.yaml on all the remaining kube_control_plane nodes, to match the latest etcd member list."
   sync_nginx_config: "Update apiserver list in loadbalancer"
   sync_nginx_config_desc: "Control_plane list in k8s cluster changed, this task is going to update 'upstream kube_apiserver' block in /etc/nginx/nginx.conf on all the kube_node nodes."
+  finishAddRemoveActionFirst: "Please finish/cancel {action} action on node {node} first."
 
   add_nodes_desc: You are going to add the following nodes into the cluster.
 
@@ -83,6 +84,7 @@ zh:
   sync_etcd_address_desc: "ETCD 集群的成员列表已经发生变化，此操作将更新剩余控制节点上 /etc/kubernetes/manifests/kube-apiserver.yaml 文件中 --etcd-servers 的参数，以符合匹配最新的 etcd 成员列表。"
   sync_nginx_config: "更新负载均衡中 apiserver 列表"
   sync_nginx_config_desc: "集群中控制节点的列表发生变化，此操作将更新所有工作节点上 /etc/nginx/nginx.conf 文件中 upstream kube_apiserver 的列表"
+  finishAddRemoveActionFirst: "请先完成或取消节点 {node} 的 {action} 操作"
 
   add_nodes_desc: 将要添加以下节点
 
@@ -199,16 +201,25 @@ zh:
           </div>
         </div>
 
-        <!-- 同步配置的参数 -->
+        <!-- 同步负载均衡配置的参数 -->
         <div v-if="action === 'sync_nginx_config'" style="margin-top: 10px;">
           <div class="form_description" style="margin-bottom: 10px;">
             {{ $t('sync_nginx_config_desc') }}
           </div>
         </div>
 
+        <!-- 同步 apiserver 中 etcd 访问地址 -->
         <div v-if="action === 'sync_etcd_address'" style="margin-top: 10px;">
           <div class="form_description" style="margin-bottom: 10px;">
             {{ $t('sync_etcd_address_desc') }}
+          </div>
+          <div>
+            <template v-for="(item, key) in cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts" :key="'kcp' + key">
+              <el-tag v-if="pingpong[key] && pingpong[key].status === 'SUCCESS'" style="margin-right: 10px; margin-bottom: 10px;" effect="dark"
+                :type="cluster.inventory.all.hosts[key].kuboardspray_node_action === undefined ? 'primary' : 'warning'">
+                <span class="app_text_mono">{{key}}</span>
+              </el-tag>
+            </template>
           </div>
         </div>
       </el-form-item>
@@ -336,6 +347,23 @@ export default {
                 if (this.cluster.inventory.all.children.target.children.etcd.hosts[node] !== undefined && this.form.remove_node.nodes_to_remove.length > 1) {
                   return callback(this.$t('removeOneEtcdNodeOnce'))
                 }
+              }
+            } else if (this.action === 'sync_etcd_address') {
+
+              // 所有控制节点必须在线
+              let controlPlaneCount = 0
+              for (let controlPlane in this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts) {
+                if (this.pingpong[controlPlane] === undefined || this.pingpong[controlPlane].status !== 'SUCCESS') {
+                  return callback(this.$t('requiresAllControlNodeOnline', { node: controlPlane }))
+                }
+                // 所有控制节点必须都已经完成添加/删除操作
+                if (this.cluster.inventory.all.hosts[controlPlane].kuboardspray_node_action !== undefined) {
+                  return callback(this.$t('finishAddRemoveActionFirst', { node: controlPlane, action: this.cluster.inventory.all.hosts[controlPlane].kuboardspray_node_action }))
+                }
+                controlPlaneCount ++
+              }
+              if (controlPlaneCount === 0) {
+                return callback(this.$t('requireAtLeastOneControlPlane'))
               }
             }
             return callback()
@@ -549,6 +577,7 @@ export default {
   font-size: 12px;
   // color: var(--el-text-color-placeholder);
   color: #aaa;
+  max-width: 700px;
 
 }
 </style>

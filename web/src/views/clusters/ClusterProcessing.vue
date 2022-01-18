@@ -35,13 +35,12 @@ en:
   requiresOddEtcdCount: Etcd count should be an odd number.
   requiresAllEtcdNodeOnline: "All Etcd nodes must be online, currently, we cannot reach node {node}"
   requiresKubeNodeCount: Requires at lease one kube_node.
-  kuboardspray_etcd_max_count: Requires {count} active ETCD nodes.
-  kuboardspray_etcd_max_count_desc: Please make sure there are {count} ETCD nodes, and count of ETCD nodes is an odd number, or you are imposed with highavailability risks.
-  sync_etcd_config: "Sync etcd config"
-  sync_etcd_config_mandatory: "You can not operate the cluster before you finished the task of sync etcd config to kube_control_plane and etcd nodes."
-  sync_nginx_config: "Sync config"
-  sync_nginx_config_desc: "It's required to update apiserver's loadbalancer on kube_node, when kube_control_plane node is removed."
-  update_apiserver_loadbalancer: update apiserver loadbalancer on kube_node
+  sync_etcd_address: "Update apiserver's --etcd-servers param"
+  sync_etcd_address_desc: "Member list of etcd cluster changed, this task is going to update --etcd-servers param in /etc/kubernetes/manifests/kube-apiserver.yaml on all the remaining kube_control_plane nodes, to match the latest etcd member list."
+  sync_nginx_config: "Update apiserver list in loadbalancer"
+  sync_nginx_config_desc: "Control_plane list in k8s cluster changed, this task is going to update 'upstream kube_apiserver' block in /etc/nginx/nginx.conf on all the kube_node nodes."
+
+  add_nodes_desc: You are going to add the following nodes into the cluster.
 
   newResourcePackageRequired: This resource package does not support the operation, please choose a new one.
 zh:
@@ -80,13 +79,12 @@ zh:
   requiresOddEtcdCount: ETCD 节点的数量必须为奇数
   requiresAllEtcdNodeOnline: "所有 ETCD 节点必须在线，当前 {node} 不在线"
   requiresKubeNodeCount: 至少要有一个在线的工作节点
-  kuboardspray_etcd_max_count: 需要 {count} 个有效的 ETCD 节点
-  kuboardspray_etcd_max_count_desc: 请添加 ETCD 节点，确保有 {count} 个有效的 ETCD 节点，并且 ETCD 节点数为奇数，以避免高可用风险。
-  sync_etcd_config: "同步 ETCD 配置"
-  sync_etcd_config_mandatory: "完成 ETCD 配置同步之前，不能执行任何其他操作"
-  sync_nginx_config: "同步配置"
-  sync_nginx_config_desc: "在删除控制节点后需要更新工作节点上apiserver的反向代理，以使得 kubelet 向 apiserver 发起的请求被均衡地分发到所有的 apiserver。"
-  update_apiserver_loadbalancer: "同步apsierver的负载均衡"
+  sync_etcd_address: "更新 apiserver 中 etcd 连接参数"
+  sync_etcd_address_desc: "ETCD 集群的成员列表已经发生变化，此操作将更新剩余控制节点上 /etc/kubernetes/manifests/kube-apiserver.yaml 文件中 --etcd-servers 的参数，以符合匹配最新的 etcd 成员列表。"
+  sync_nginx_config: "更新负载均衡中 apiserver 列表"
+  sync_nginx_config_desc: "集群中控制节点的列表发生变化，此操作将更新所有工作节点上 /etc/nginx/nginx.conf 文件中 upstream kube_apiserver 的列表"
+
+  add_nodes_desc: 将要添加以下节点
 
 
   newResourcePackageRequired: 当前资源包不支持此操作，请使用新的资源包
@@ -127,9 +125,9 @@ zh:
           <el-radio-button :disabled="!cluster.inventory.all.hosts.localhost.kuboardspray_sync_nginx_config" label="sync_nginx_config">
             {{ $t('sync_nginx_config') }}
           </el-radio-button>
-          <!-- <el-radio-button :disabled="!cluster.inventory.all.hosts.localhost.kuboardspray_sync_etcd_config" label="sync_etcd_config">
-            {{ $t('sync_etcd_config') }}
-          </el-radio-button> -->
+          <el-radio-button :disabled="!cluster.inventory.all.hosts.localhost.kuboardspray_sync_etcd_address" label="sync_etcd_address">
+            {{ $t('sync_etcd_address') }}
+          </el-radio-button>
         </el-radio-group>
 
         <!-- 安装集群的参数 -->
@@ -144,9 +142,9 @@ zh:
 
         <!-- 添加节点的参数 -->
         <div v-if="action === 'add_node'">
-          <el-alert class="form_description" v-if="etcdInDanger" type="error" :closable="false">
-            {{ $t('kuboardspray_etcd_max_count_desc', { count: cluster.inventory.all.hosts.localhost.kuboardspray_etcd_max_count }) }}
-          </el-alert>
+          <div class="form_description">
+            {{ $t('add_nodes_desc') }}
+          </div>
           <template v-for="(item, key) in pendingAddNodes" :key="'h' + key">
             <el-tag v-if="pingpong[item.name] && pingpong[item.name].status === 'SUCCESS'" style="margin-top: 10px; margin-right: 10px;" :disabled="pingpong[item.name].status !== 'SUCCESS'" :label="item.name">
               <span class="app_text_mono" style="font-size: 14px;">{{item.name}}</span>
@@ -208,8 +206,10 @@ zh:
           </div>
         </div>
 
-        <div v-if="action === 'sync_etcd_config'" style="margin-top: 10px;">
-          <el-alert type="warning" effect="light" :title="$t('sync_etcd_config_mandatory')" :closable="false"></el-alert>
+        <div v-if="action === 'sync_etcd_address'" style="margin-top: 10px;">
+          <div class="form_description" style="margin-bottom: 10px;">
+            {{ $t('sync_etcd_address_desc') }}
+          </div>
         </div>
       </el-form-item>
       <el-form-item :label="$t('nodesToExclude')" class="app_margin_top" v-if="nodesToExclude.length > 0">
@@ -376,23 +376,11 @@ export default {
     },
     action: {
       get () {
-        // if (this.cluster.inventory.all.hosts.localhost.kuboardspray_sync_etcd_config) {
-        //   return 'sync_etcd_config'
-        // }
         return this.form.action
       },
       set (v) { this.form.action = v }
     },
-    etcdInDanger () {
-      if (this.cluster.state) {
-        return this.cluster.inventory.all.hosts.localhost.kuboardspray_etcd_max_count > this.cluster.state.etcd_members_count
-      }
-      return false
-    },
     title () {
-      if (this.action === 'add_node' && this.etcdInDanger) {
-        return this.$t('kuboardspray_etcd_max_count', { count: this.cluster.inventory.all.hosts.localhost.kuboardspray_etcd_max_count })
-      }
       return this.$t(this.action, { count: this.pendingAddNodes.length || this.pendingRemoveNodes.length })
     },
     hosts () {
@@ -461,8 +449,8 @@ export default {
         count = 50
       }
       this.form.fork = count
-      if (this.cluster.inventory.all.hosts.localhost.kuboardspray_sync_etcd_config) {
-        this.form.action = 'sync_etcd_config'
+      if (this.cluster.inventory.all.hosts.localhost.kuboardspray_sync_etcd_address) {
+        this.form.action = 'sync_etcd_address'
       } else if (this.cluster.inventory.all.hosts.localhost.kuboardspray_sync_nginx_config) {
         this.form.action = 'sync_nginx_config'
       } else if (this.etcdInDanger) {
@@ -530,8 +518,8 @@ export default {
               req.drain_retry_delay_seconds = this.form.remove_node.drain_retry_delay_seconds + ''
             } else if (this.action === 'sync_nginx_config') {
               console.log('sync_nginx_config')
-            } else if (this.action === 'sync_etcd_config') {
-              console.log('sync_etcd_config')
+            } else if (this.action === 'sync_etcd_address') {
+              console.log('sync_etcd_address')
             }
             console.log(req)
             this.kuboardSprayApi.post(`/clusters/${this.name}/${this.action}`, req).then(resp => {

@@ -63,33 +63,36 @@ func RemoveNode(c *gin.Context) {
 
 		message := "\n"
 		if countRemoved == len(all_nodes_to_remove) {
+			// 所有节点添加成功
 			message += "\033[32m[ " + strconv.Itoa(len(all_nodes_to_remove)) + " nodes are already removed, please release the machine." + " ]\033[0m \n"
 			message += "\033[32m[ " + strconv.Itoa(len(all_nodes_to_remove)) + " 节点已从 Kubernetes 集群中删除，请释放该资源" + " ]\033[0m \n"
 
 			message = newFunction(etcd_member_to_remove, membersInEtcd, message)
 		} else if countRemoved > 0 {
+			// 部分节点添加成功
 			message += "\033[33m[ Intended to remove " + strconv.Itoa(len(all_nodes_to_remove)) + " nodes, and " + strconv.Itoa(countRemoved) + " of them are removed successfully." + " ]\033[0m \n"
 			message += "\033[33m[ 计划删除 " + strconv.Itoa(len(all_nodes_to_remove)) + " 个节点，其中 " + strconv.Itoa(countRemoved) + " 个节点删除成功。" + " ]\033[0m \n"
 
 			message = newFunction(etcd_member_to_remove, membersInEtcd, message)
 		} else {
+			// 添加节点失败
 			message += "\033[31m\033[01m\033[05m[ " + "Failed to remove node. Please review the logs and fix the problem." + " ]\033[0m \n"
 			message += "\033[31m\033[01m\033[05m[ " + "删除节点失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + " ]\033[0m \n"
 		}
 
 		if len(arraySubtract(control_plane_to_remove, nodesInK8s)) > 0 {
-			message += "\n\033[31m\033[01m\033[05m[ " + "Apiserver list changed, it's required to update all nginx proxy in kube_nodes." + " ]\033[0m \n"
-			message += "\033[31m\033[01m\033[05m[ " + "Apiserver 列表发生变化，请在集群页面更新所有工作节点的 nginx proxy 配置." + " ]\033[0m \n"
+			// 有控制节点被删除
+			message += "\n\033[31m\033[01m\033[05m[ " + "Apiserver list changed, it's required to \"Update apiserver list in loadbalancer\"." + " ]\033[0m \n"
+			message += "\033[31m\033[01m\033[05m[ " + "Apiserver 列表发生变化，请在集群页面执行操作 \"更新负载均衡中 apiserver 列表\"." + " ]\033[0m \n"
 
 			common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_nginx_config", true)
 		}
 		removedEtcdMembers := arraySubtract(etcd_member_to_remove, membersInEtcd)
 		if len(removedEtcdMembers) > 0 {
+			// 有 ETCD 节点被删除
 			message += "\n\033[31m\033[01m\033[05m[ " + strconv.Itoa(len(removedEtcdMembers)) + " etcd members are removed, it's important for you to update --etcd-servers param in /etc/kubernetes/manifests/kube-apiserver.yaml" + " ]\033[0m \n"
-			message += "\033[31m\033[01m\033[05m[ " + strconv.Itoa(len(removedEtcdMembers)) + " etcd 成员被删除，请手动修改剩余控制节点上 /etc/kubernetes/manifests/kube-apiserver.yaml 文件中的 --etcd-servers 参数" + " ]\033[0m \n"
-			message += "\033[31m\033[01m\033[05m[ https://kuboard-spray.cn/guide/maintain/add-replace-node.html#etcd-servers ]\033[0m \n"
-
-			common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_etcd_config", true)
+			message += "\033[31m\033[01m\033[05m[ " + strconv.Itoa(len(removedEtcdMembers)) + " etcd 成员被删除，请返回集群管理界面，执行操作 \"更新 apiserver 中 etcd 连接参数\"" + " ]\033[0m \n"
+			common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_etcd_address", true)
 		}
 
 		for _, key := range arraySubtract(all_nodes_to_remove, nodesInK8s) {

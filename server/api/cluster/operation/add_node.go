@@ -84,8 +84,9 @@ func AddNode(c *gin.Context) {
 		}
 		if addedControlePlane {
 			common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_nginx_config", true)
-			message += "\033[31m\033[01m\033[05m[ " + "Apiserver list changed, it's required to update all nginx proxy in kube_nodes." + " ]\033[0m \n"
-			message += "\033[31m\033[01m\033[05m[ " + "Apiserver 列表发生变化，请在集群页面更新所有工作节点的 nginx proxy 配置." + " ]\033[0m \n"
+			common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_etcd_address", false)
+			message += "\033[31m\033[01m\033[05m[ " + "Apiserver list changed, it's required to \"Update apiserver list in loadbalancer\"." + " ]\033[0m \n"
+			message += "\033[31m\033[01m\033[05m[ " + "Apiserver 列表发生变化，请在集群页面执行操作 \"更新负载均衡中 apiserver 列表\"." + " ]\033[0m \n"
 		}
 		inventoryNewContent, _ := yaml.Marshal(inventoryNew)
 

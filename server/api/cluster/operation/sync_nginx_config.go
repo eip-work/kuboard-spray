@@ -1,12 +1,16 @@
 package operation
 
 import (
+	"io/ioutil"
 	"net/http"
 	"strconv"
 
+	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v3"
 )
 
 func SyncNginxConfigActions(c *gin.Context) {
@@ -26,12 +30,19 @@ func SyncNginxConfigActions(c *gin.Context) {
 		success := status.Success
 		var message string
 		if success {
-			message = "\033[32m[ " + "Completed sync config tasks." + " ]\033[0m \n"
-			message += "\033[32m[ " + "已完成同步集群配置的任务，您可以继续其他操作。" + " ]\033[0m \n"
-			PostProcessInventory(req.Cluster, "sync_nginx_config")
+			message = "\033[32m[ " + "Completed task \"Update apiserver list in loadbalancer\"" + " ]\033[0m \n"
+			message += "\033[32m[ " + "已完成 \"更新负载均衡中 apiserver 列表\" 的任务，您可以继续其他操作。" + " ]\033[0m \n"
+
+			inventoryPath := cluster.ClusterInventoryYamlPath(req.Cluster)
+			inventoryNew, _ := common.ParseYamlFile(inventoryPath)
+			common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_nginx_config", false)
+			inventoryNewContent, _ := yaml.Marshal(inventoryNew)
+			if err := ioutil.WriteFile(inventoryPath, inventoryNewContent, 0655); err != nil {
+				logrus.Trace(err)
+			}
 		} else {
-			message = "\033[31m\033[01m\033[05m[ " + "Failed to synchronize config to nodes. Please review the logs and fix the problem." + " ]\033[0m \n"
-			message += "\033[31m\033[01m\033[05m[ " + "同步集群配置失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + " ]\033[0m \n"
+			message = "\033[31m\033[01m\033[05m[ " + "Failed to do \"Update apiserver list in loadbalancer\". Please review the logs and fix the problem." + " ]\033[0m \n"
+			message += "\033[31m\033[01m\033[05m[ " + "\"更新负载均衡中 apiserver 列表\" 失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + " ]\033[0m \n"
 		}
 
 		return "\n" + message, nil

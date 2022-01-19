@@ -44,7 +44,7 @@ zh:
             </div>
           </el-card>
         </div>
-        <el-button type="primary" size="large" icon="el-icon-plus" @click="$refs.create.show()">{{$t('addCluster')}}</el-button>
+        <el-button style="margin-bottom: 10px;" type="primary" size="large" icon="el-icon-plus" @click="$refs.create.show()">{{$t('addCluster')}}</el-button>
       </div>
     </el-card>
     <CreateCluster ref="create"></CreateCluster>

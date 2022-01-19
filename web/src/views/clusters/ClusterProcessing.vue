@@ -41,6 +41,8 @@ en:
   sync_nginx_config_desc: "Control_plane list in k8s cluster changed, this task is going to update 'upstream kube_apiserver' block in /etc/nginx/nginx.conf on all the kube_node nodes."
   finishAddRemoveActionFirst: "Please finish/cancel {action} action on node {node} first."
 
+  re_install_cluster: "This is going to repeat the installation steps on the following nodes, generally speaking, you don't need to do this."
+
   add_nodes_desc: You are going to add the following nodes into the cluster.
 
   newResourcePackageRequired: This resource package does not support the operation, please choose a new one.
@@ -85,6 +87,8 @@ zh:
   sync_nginx_config: "更新负载均衡中 apiserver 列表"
   sync_nginx_config_desc: "集群中控制节点的列表发生变化，此操作将更新所有工作节点上 /etc/nginx/nginx.conf 文件中 upstream kube_apiserver 的列表"
   finishAddRemoveActionFirst: "请先完成或取消节点 {node} 的 {action} 操作"
+
+  re_install_cluster: 此操作将在如下节点上重复执行一次集群安装的动作，通常您不需要这么做。
 
   add_nodes_desc: 将要添加以下节点
 
@@ -134,6 +138,7 @@ zh:
 
         <!-- 安装集群的参数 -->
         <div v-if="action === 'install_cluster'">
+          <el-alert v-if="isClusterInstalled" type="warning" :title="$t('install_cluster')" :closable="false">{{$t('re_install_cluster')}}</el-alert>
           <div class="form_description">{{ $t('nodesToIncludeDesc') }}</div>
           <template v-for="(item, key) in hosts" :key="'h' + key">
             <el-tag v-if="pingpong[key] && pingpong[key].status === 'SUCCESS'" style="margin-bottom: 10px; margin-right: 10px;" effect="dark">

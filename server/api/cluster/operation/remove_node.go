@@ -79,7 +79,7 @@ func RemoveNode(c *gin.Context) {
 			message += "\033[31m\033[01m\033[05m[ " + "删除节点失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + " ]\033[0m \n"
 		}
 
-		if len(arraySubtract(control_plane_to_remove, nodesInK8s)) < len(control_plane_to_remove) {
+		if len(arraySubtract(control_plane_to_remove, nodesInK8s)) > 0 {
 			// 有控制节点被删除
 			message += "\n\033[31m\033[01m\033[05m[ " + "Apiserver list changed, it's required to \"Update apiserver list in loadbalancer\"." + " ]\033[0m \n"
 			message += "\033[31m\033[01m\033[05m[ " + "Apiserver 列表发生变化，请在集群页面执行操作 \"更新负载均衡中 apiserver 列表\"." + " ]\033[0m \n"

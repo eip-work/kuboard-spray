@@ -73,7 +73,7 @@ zh:
 import mixin from '../../mixins/mixin.js'
 import Plan from './plan/Plan.vue'
 import yaml from 'js-yaml'
-import ClusterProcessing from './ClusterProcessing.vue'
+import ClusterProcessing from './operation/ClusterProcessing.vue'
 import Access from './access/Access.vue'
 import { computed } from 'vue'
 import ClusterStateNodes from './ClusterStateNodes.vue'

@@ -62,7 +62,7 @@ func SyncEtcdConfigActions(c *gin.Context) {
 				"-e", "ignore_assert_errors=true",
 			}
 			if req.ExcludeNodes != "" {
-				result = append(result, "--limit ", req.ExcludeNodes)
+				result = append(result, "--limit", req.ExcludeNodes)
 			}
 			if req.VVV {
 				result = append(result, "-vvv")

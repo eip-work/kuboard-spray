@@ -46,6 +46,7 @@ func setupRouter() *gin.Engine {
 	api.POST("/clusters/:cluster/state/ping", state.Ping)
 	api.GET("/clusters/:cluster/state/nodes", state.GetNodes)
 	api.GET("/clusters/:cluster/state/etcd_members", state.GetEtcdNodes)
+	api.GET("/clusters/:cluster/state/addons", state.CheckAddonStatus)
 
 	api.GET("/execute/:owner_type/:owner_name/tail/:pid/:file", command.TailFile)
 	api.DELETE("/execute/:owner_type/:owner_name/kill/:pid", command.ExecuteKill)

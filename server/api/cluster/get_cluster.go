@@ -5,7 +5,6 @@ import (
 
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
-	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
 )
 
@@ -38,8 +37,4 @@ func GetCluster(c *gin.Context) {
 			"name":      req.Cluster,
 		},
 	})
-}
-
-func ClusterInventoryYamlPath(cluster string) string {
-	return constants.GET_DATA_CLUSTER_DIR() + "/" + cluster + "/inventory.yaml"
 }

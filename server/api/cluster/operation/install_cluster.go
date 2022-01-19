@@ -84,7 +84,7 @@ func InstallCluster(c *gin.Context) {
 			}
 			return result
 		},
-		Dir:      resourcePackagePathForInventory(inventory),
+		Dir:      cluster.ResourcePackagePathForInventory(inventory),
 		Type:     "install_cluster",
 		PreExec:  func(execute_dir string) error { return common.SaveYamlFile(execute_dir+"/inventory.yaml", inventory) },
 		PostExec: postExec,

@@ -9,17 +9,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func resourcePackagePathForInventory(inventory map[string]interface{}) string {
-	return constants.GET_DATA_RESOURCE_DIR() + "/" + common.MapGet(inventory, "all.hosts.localhost.kuboardspray_resource_package").(string) + "/content"
-}
-
 func updateResourcePackageVarsToInventory(req InstallClusterRequest) (map[string]interface{}, map[string]interface{}, error) {
 	inventoryPath := cluster.ClusterInventoryYamlPath(req.Cluster)
 	inventory, err := common.ParseYamlFile(inventoryPath)
 	if err != nil {
 		return nil, nil, err
 	}
-	resourcePackagePath := resourcePackagePathForInventory(inventory)
+	resourcePackagePath := cluster.ResourcePackagePathForInventory(inventory)
 
 	resourcePackage, err := common.ParseYamlFile(resourcePackagePath + "/package.yaml")
 	if err != nil {

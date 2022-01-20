@@ -69,6 +69,19 @@ func AddNode(c *gin.Context) {
 		inventoryPath := cluster.ClusterInventoryYamlPath(req.Cluster)
 		inventoryNew, _ := common.ParseYamlFile(inventoryPath)
 
+		addedEtcd := false
+		membersInEtcd, _ := getMembersInEtcd(req.Cluster)
+		for _, v := range etcdHosts {
+			etcdHost := v.(map[string]interface{})
+			if etcdHost["kuboardspray_node_action"] == "add_node" && contains(membersInEtcd, etcdHost["etcd_member_name"].(string)) {
+				addedEtcd = true
+			}
+		}
+		if addedEtcd {
+			message += "\n\033[32m[ Etcd node list changed, all --etcd-servers in /etc/kubernetes/manifests/kube-apiserver.yaml on control_planes are already refreshed." + " ]\033[0m \n"
+			message += "\033[32m[ Etcd 节点列表发生变化，所有控制节点上 /etc/kubernetes/manifests/kube-apiserver.yaml 文件中的参数 --etcd-servers 已更新。 ]\033[0m \n"
+		}
+
 		addedControlePlane := false
 		for _, node := range nodesInK8s {
 			if common.MapGet(inventoryNew, "all.hosts."+node+".kuboardspray_node_action") == "add_node" {
@@ -87,6 +100,7 @@ func AddNode(c *gin.Context) {
 			message += "\n\033[31m\033[01m\033[05m[ " + "Apiserver list changed, it's required to \"Update apiserver list in loadbalancer\"." + " ]\033[0m \n"
 			message += "\033[31m\033[01m\033[05m[ " + "Apiserver 列表发生变化，请在集群页面执行操作 \"更新负载均衡中 apiserver 列表\"." + " ]\033[0m \n"
 		}
+
 		inventoryNewContent, _ := yaml.Marshal(inventoryNew)
 
 		if err := ioutil.WriteFile(inventoryPath, inventoryNewContent, 0655); err != nil {

@@ -187,30 +187,36 @@ export default {
       this.refresh()
     },
     async refresh() {
+      console.log('refresh cluster.')
       this.percentage = 10
-      await this.kuboardSprayApi.get(`/clusters/${this.name}`).then(resp => {
-        this.cluster = resp.data.data
+      let _this = this
+      await this.kuboardSprayApi.get(`/clusters/${this.name}`).then(async function (resp) {
+        _this.cluster = resp.data.data
         // this.cluster.processing = true
-        if (this.cluster.history.success_tasks.length > 0) {
-          this.currentTab = 'access'
+        if (_this.cluster.history.success_tasks.length > 0) {
+          _this.currentTab = 'access'
         } else {
-          this.currentTab = 'plan'
+          _this.currentTab = 'plan'
         }
-        this.originalInventoryYaml = yaml.dump(this.cluster.inventory)
-        this.percentage = 30
-        this.loadResourcePackage()
+        _this.originalInventoryYaml = yaml.dump(_this.cluster.inventory)
+        _this.percentage = 30
+        await _this.loadResourcePackage()
+        _this.percentage = 40
         setTimeout(() => {
-          if (this.$refs.plan) {
-            this.$refs.plan.ping()
+          if (_this.$refs.plan) {
+            _this.$refs.plan.ping()
           }
         }, 200)
-        if (this.isClusterInstalled) {
-          this.loadStateNodes()
+        if (_this.isClusterInstalled) {
+          await _this.loadStateNodes()
+          _this.percentage = 100
+        } else {
+          _this.percentage = 100
         }
       }).catch(e => {
-        console.log(e.response)
+        _this.percentage = 100
+        console.log(e)
       })
-      this.percentage = 100
     },
     async loadStateNodes() {
       let temp = { nodes: {}, code: 0, etcd_members: {}, etcd_code: 0 }
@@ -271,7 +277,6 @@ export default {
           console.log(e)
         })
       }
-      this.percentage += 20
     },
     save () {
       this.$refs.plan.validate(flag => {

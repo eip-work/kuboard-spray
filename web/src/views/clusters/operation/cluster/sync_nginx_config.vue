@@ -2,9 +2,11 @@
 en:
   title: "Update apiserver list in loadbalancer"
   sync_nginx_config_desc: "Control_plane list in k8s cluster changed, this task is going to update 'upstream kube_apiserver' block in /etc/nginx/nginx.conf on all the kube_node nodes."
+  exclude_pending_add_nodes: "Exclude the following pending to add nodes."
 zh:
   title: "更新负载均衡中 apiserver 列表"
   sync_nginx_config_desc: "集群中控制节点的列表发生变化，此操作将更新所有工作节点上 /etc/nginx/nginx.conf 文件中 upstream kube_apiserver 的列表"
+  exclude_pending_add_nodes: "排除以下待添加节点"
 </i18n>
 
 <template>
@@ -14,10 +16,19 @@ zh:
     </div>
     <template v-for="(item, key) in cluster.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts" :key="'node' + key">
       <el-tag v-if="pingpong[key] && pingpong[key].status === 'SUCCESS'
+          && cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[key] === undefined
           && cluster.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts[key] !== undefined
           && cluster.inventory.all.hosts[key].kuboardspray_node_action !== 'add_node'" 
           style="margin-right: 10px; margin-bottom: 10px;" effect="dark" type="primary">
         <span class="app_text_mono">{{key}}</span>
+      </el-tag>
+    </template>
+    <div class="form_description" style="margin-bottom: 10px;">
+      {{ $t('exclude_pending_add_nodes') }}
+    </div>
+    <template v-for="(item, key) in excludeNodes" :key="'node' + key">
+      <el-tag style="margin-right: 10px; margin-bottom: 10px;" effect="dark" type="error">
+        <span class="app_text_mono">{{item}}</span>
       </el-tag>
     </template>
   </el-form-item>
@@ -45,6 +56,16 @@ export default {
   },
   inject: ['isClusterInstalled', 'isClusterOnline', 'pendingRemoveNodes', 'pendingAddNodes'],
   computed: {
+    excludeNodes () {
+      let result = []
+      for (let key in this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts) {
+        if (this.cluster.inventory.all.hosts[key].kuboardspray_node_action === 'add_node'
+           && this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[key] === undefined) {
+          result.push(key)
+        }
+      }
+      return result
+    }
   },
   components: { },
   mounted () {

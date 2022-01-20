@@ -15,8 +15,10 @@ en:
   remove_node: "{count} nodes waiting to be removed"
   aboutToRemoveNode: Remove nodes
   aboutToAddNode: Add nodes
-  offlineNodes: Offline nodes.
+  offlineNodes: Offline nodes
   offlineNodesDesc: Exclude the following offline nodes.
+  excludeNodes: Exclude nodes
+  excludeNodesDesc: Exclude the following nodes.
 
   sync_etcd_address: "Update apiserver's --etcd-servers param"
   sync_nginx_config: "Update apiserver list in loadbalancer"
@@ -40,6 +42,8 @@ zh:
   aboutToAddNode: 添加节点
   offlineNodes: 离线节点
   offlineNodesDesc: 排除以下不在线的节点：
+  excludeNodes: 排除节点
+  excludeNodesDesc: 排除以下节点
 
   sync_etcd_address: "更新 apiserver 中 etcd 连接参数"
   sync_nginx_config: "更新负载均衡中 apiserver 列表"
@@ -281,9 +285,16 @@ export default {
               }
             }
             req.discovered_interpreter_python = discovered_interpreter_python
-            if (this.offlineNodes.length > 0) {
+            { // 排除节点
               let temp = ''
+              let excludes = {}
               for (let node of this.offlineNodes) {
+                excludes[node] = true
+              }
+              for (let i in this.$refs.action.excludeNodes) {
+                excludes[this.$refs.action.excludeNodes[i]] = true
+              }
+              for (let node in excludes) {
                 temp += '!' + node + ','
               }
               req.nodes_to_exclude = trimMark(temp)

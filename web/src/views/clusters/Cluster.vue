@@ -86,7 +86,7 @@ export default {
     mode: { type: String, required: false, default: 'view' },
   },
   percentage () {
-    return this.loading ? 10 : 100
+    return this.percentage
   },
   breadcrumb () {
     return [
@@ -99,13 +99,16 @@ export default {
   },
   data () {
     return {
-      loading: false,
+      percentage: 0,
       cluster: undefined,
       originalInventoryYaml: '',
       currentTab: 'plan'
     }
   },
   computed: {
+    loading () {
+      return this.percentage < 100
+    },
     noSaveRequired () {
       if (this.cluster === undefined) {
         return true
@@ -184,7 +187,7 @@ export default {
       this.refresh()
     },
     async refresh() {
-      this.loading = true
+      this.percentage = 10
       await this.kuboardSprayApi.get(`/clusters/${this.name}`).then(resp => {
         this.cluster = resp.data.data
         // this.cluster.processing = true
@@ -194,6 +197,7 @@ export default {
           this.currentTab = 'plan'
         }
         this.originalInventoryYaml = yaml.dump(this.cluster.inventory)
+        this.percentage = 30
         this.loadResourcePackage()
         setTimeout(() => {
           if (this.$refs.plan) {
@@ -206,7 +210,7 @@ export default {
       }).catch(e => {
         console.log(e.response)
       })
-      this.loading = false
+      this.percentage = 100
     },
     async loadStateNodes() {
       let temp = { nodes: {}, code: 0, etcd_members: {}, etcd_code: 0 }
@@ -225,6 +229,7 @@ export default {
         temp.code = 500
         temp.msg = e.response.data.message
       })
+      this.percentage += 20
       await this.kuboardSprayApi.get(`/clusters/${this.name}/state/etcd_members`).then(resp => {
         if (resp.data.data.stdout_obj && resp.data.data.stdout_obj.members) {
           temp.etcd_code = 200
@@ -244,6 +249,16 @@ export default {
         temp.etcd_code = 500
         temp.etcd_msg = e.response.data.message
       })
+      this.percentage += 20
+      await this.kuboardSprayApi.get(`/clusters/${this.name}/state/addons`).then(resp => {
+        temp.addon_code = 200
+        temp.addons = resp.data.data
+      }).catch(e => {
+        temp.addon_code = 500
+        temp.addons = {}
+        console.error(e)
+      })
+      this.percentage += 20
       this.cluster.state = temp
     },
     async loadResourcePackage () {
@@ -256,6 +271,7 @@ export default {
           console.log(e)
         })
       }
+      this.percentage += 20
     },
     save () {
       this.$refs.plan.validate(flag => {

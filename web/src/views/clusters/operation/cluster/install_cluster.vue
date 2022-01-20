@@ -38,7 +38,7 @@ zh:
         </el-tag>
       </template>
     </el-form-item>
-    <el-form-item :label="$t('skip_downloads')">
+    <el-form-item :label="$t('skip_downloads')" v-if="isClusterInstalled">
       <el-switch v-model="formRef.install_cluster.skip_downloads"></el-switch>
     </el-form-item>
   </el-form-item>

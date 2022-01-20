@@ -10,9 +10,10 @@ zh:
 </i18n>
 
 <template>
-  <ConfigSection v-model:enabled="enabled" :label="$t('label')" :description="$t('obj.addon', {name: this.$t('description')})" anti-freeze>
+  <AddonSection v-model:enabled="enabled" :label="$t('label')" :description="$t('obj.addon', {name: this.$t('description')})" anti-freeze help-link="https://kuboard-spray.cn"
+    :cluster="cluster" addonName="netchecker">
     <template #more>{{$t('addon_function')}}</template>
-    <FieldString :holder="vars" fieldName="netcheck_namespace" :prop="prop"></FieldString>
+    <FieldString :holder="vars" fieldName="netcheck_namespace" :prop="prop" :rules="namespaceRules"></FieldString>
     <FieldNumber :holder="vars" fieldName="netchecker_port" :prop="prop">
     </FieldNumber>
     <FieldNumber :holder="vars" fieldName="agent_report_interval" :prop="prop">
@@ -20,17 +21,31 @@ zh:
         {{ $t('unit.second') }}
       </template>
     </FieldNumber>
-  </ConfigSection>
+  </AddonSection>
 </template>
 
 <script>
+import AddonSection from '../AddonSection.vue'
+
 export default {
   props: {
     cluster: { type: Object, required: true },
   },
   data() {
     return {
-
+      namespaceRules: [
+        { 
+          validator (rule, value, callback) {
+            let reg = new RegExp("^[a-z0-9]([-a-z0-9]*[a-z0-9])?$")
+            if (!reg.test(value)) {
+              return callback('[a-z0-9]([-a-z0-9]*[a-z0-9])?')
+            }
+            //a lowercase RFC 1123 label must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name',  or '123-abc', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?')
+            return callback()
+          },
+          trigger: 'blur'
+        }
+      ]
     }
   },
   computed: {
@@ -50,7 +65,7 @@ export default {
       }
     }
   },
-  components: { },
+  components: { AddonSection },
   mounted () {
   },
   methods: {

@@ -241,3 +241,7 @@ a {
 .kuboard-spray-upgrade-notification {
   width: 400px;
 }
+
+.app_white_link.el-link {
+  color: white;
+}

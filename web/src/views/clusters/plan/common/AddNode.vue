@@ -5,14 +5,14 @@ en:
   nodeRoles: Node Roles
   conflict: Conflict with a existing node {name}.
   removeNodeFirst: Please remove node or cancel removing node first.
-  invalidName: Hostname must consist of lower case alphanumeric characters, '.' or '-', and must start and end with an alphanumeric character
+  invalidName: Hostname must consist of lower case alphanumeric characters, '.' or '-', and must start with an alphanumeric character
 zh:
   addNode: 添加节点
   nodeName: 节点名称
   nodeRoles: 节点角色
   conflict: 与已有节点重名 {name}
   removeNodeFirst: 请先删除或者取消删除节点
-  invalidName: 必须由数字、小写字母、小数点、减号组成，且必须以字母开头，以字母结尾
+  invalidName: 必须由数字、小写字母、小数点、减号组成，且必须以字母开头
 </i18n>
 
 <template>

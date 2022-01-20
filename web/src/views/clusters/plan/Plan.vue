@@ -136,7 +136,7 @@ zh:
             </template>
             <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
-                <ConfigAddons :cluster="cluster"></ConfigAddons>
+                <ConfigAddons :cluster="cluster" :currentTab="currentPropertiesTab"></ConfigAddons>
               </div>
             </el-scrollbar>
           </el-tab-pane>
@@ -205,6 +205,9 @@ export default {
           return 'frozen'
         }
         return this.mode
+      }),
+      currentTab: computed(() => {
+        return this.currentPropertiesTab
       })
     }
   },

@@ -34,12 +34,23 @@ zh:
       </template>
     </template>
     <div>
-      <div :class="expandedRef ? 'config_section_header expanded noselect' : 'config_section_header noselect'" @click="expandedRef = !expandedRef">
-        <el-icon style="vertical-align: middle;" v-if="expandedRef"><arrow-down-bold /></el-icon>
-        <el-icon style="vertical-align: middle;" v-else><arrow-up-bold /></el-icon>
-        <span style="margin-left: 5px">
-          {{ description || label }}
-        </span>
+      <div :class="expandedRef ? 'config_section_header expanded noselect' : 'config_section_header noselect'" @click="expandedRef = !expandedRef" style="display: flex;">
+        <div>
+          <el-icon style="vertical-align: middle;" v-if="expandedRef"><arrow-down-bold /></el-icon>
+          <el-icon style="vertical-align: middle;" v-else><arrow-up-bold /></el-icon>
+        </div>
+        <div style="flex-grow: 1; margin-left: 5px">
+          <slot name="header">
+            <span>
+              {{ description || label }}
+            </span>
+          </slot>
+        </div>
+        <div v-if="helpLink">
+          <el-link :href="helpLink" target="blank" type="warning" icon="el-icon-link" class="app_white_link">
+            {{$t('msg.help')}}
+          </el-link>
+        </div>
       </div>
       <el-collapse-transition>
         <div v-if="expandedRef">
@@ -65,6 +76,7 @@ export default {
     description: { type: String, required: false, default: undefined },
     disabled: { type: Boolean, required: false, default: false },
     antiFreeze: { type: Boolean, required: false, default: false },
+    helpLink: { type: String, required: false, default: undefined },
   },
   data () {
     return {

@@ -125,6 +125,9 @@ const field = {
     kube_network_node_prefix_placeholder: '默认值 24，节点子网掩码位数',
     kubelet_max_pods: '节点容器组数',
     kubelet_max_pods_placeholder: '默认值 110，节点最大容器组数',
+
+    nodelocaldns_ip: 'nodelocaldns_ip',
+    nodelocaldns_ip_placeholder: '默认值 169.254.25.10，缓存 DNS 容器的虚拟 IP'
   }
 }
 

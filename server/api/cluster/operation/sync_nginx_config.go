@@ -14,7 +14,7 @@ import (
 )
 
 func SyncNginxConfigActions(c *gin.Context) {
-	var req InstallClusterRequest
+	var req OperationCommonRequest
 	c.ShouldBindUri(&req)
 	c.ShouldBindJSON(&req)
 

@@ -1,35 +1,46 @@
 <i18n>
 en:
   install_cluster: Install / Setup K8S Cluster
-  requiresAtLeastOneOnlineNode: All nodes pending to add are offline.
+  requiresAtLeastOneOnlineNode: All nodes are offline.
   requiresAllControlNodeOnline: "{node} is offline. Remove it, or bring it back."
   requireAtLeastOneControlPlane: Requires at least one control_plane.
   requiresOddEtcdCount: Etcd count should be an odd number.
   requiresKubeNodeCount: Requires at lease one kube_node.
   requiresAllEtcdNodeOnline: "All Etcd nodes must be online, currently, we cannot reach node {node}"
-  nodesToIncludeDesc: Include the following nodes.
+  nodesToIncludeDesc: Include nodes
   re_install_cluster: "This is going to repeat the installation steps on the following nodes, generally speaking, you don't need to do _this."
+
+  skip_downloads: Skip Downloads
 zh:
   install_cluster: 安装 / 设置集群
-  requiresAtLeastOneOnlineNode: 至少需要一个在线的待添加节点
+  requiresAtLeastOneOnlineNode: 至少需要一个在线的节点
   requiresAllControlNodeOnline: "安装集群或者添加控制节点时，所有控制节点必须在线。请启动 {node} 或者将其移除。"
   requireAtLeastOneControlPlane: 至少需要一个控制节点
   requiresOddEtcdCount: ETCD 节点的数量必须为奇数
   requiresKubeNodeCount: 至少要有一个在线的工作节点
   requiresAllEtcdNodeOnline: "所有 ETCD 节点必须在线，当前 {node} 不在线"
-  nodesToIncludeDesc: 包含以下节点：
+  nodesToIncludeDesc: 包含节点
   re_install_cluster: 此操作将在如下节点上重复执行一次集群安装的动作，通常您不需要这么做。
+
+  skip_downloads: 跳过下载
 </i18n>
 
 <template>
   <el-form-item prop="action" :rules="rules">
-    <el-alert v-if="isClusterInstalled" type="warning" :title="$t('install_cluster')" :closable="false">{{$t('re_install_cluster')}}</el-alert>
-    <div class="form_description">{{ $t('nodesToIncludeDesc') }}</div>
-    <template v-for="(item, key) in hosts" :key="'h' + key">
-      <el-tag v-if="pingpong[key] && pingpong[key].status === 'SUCCESS'" style="margin-bottom: 10px; margin-right: 10px;" effect="dark">
-        <span class="app_text_mono" style="font-size: 14px;">{{key}}</span>
-      </el-tag>
-    </template>
+    <el-alert v-if="isClusterInstalled" type="warning" :title="$t('install_cluster')"
+      class="app_margin_bottom" :closable="false">
+      {{$t('re_install_cluster')}}
+    </el-alert>
+    <el-form-item :label="$t('nodesToIncludeDesc')">
+      <template v-for="(item, key) in hosts" :key="'h' + key">
+        <el-tag v-if="pingpong[key] && pingpong[key].status === 'SUCCESS'" style="margin-bottom: 10px; margin-right: 10px;" effect="dark">
+          <span class="app_text_mono" style="font-size: 14px;">{{key}}</span>
+        </el-tag>
+      </template>
+    </el-form-item>
+    <el-form-item :label="$t('skip_downloads')">
+      <el-switch v-model="formRef.install_cluster.skip_downloads"></el-switch>
+    </el-form-item>
   </el-form-item>
 </template>
 
@@ -55,9 +66,7 @@ export default {
           let temp = ''
           for (let node in _this.cluster.inventory.all.hosts) {
             if (_this.pingpong[node] && _this.pingpong[node].status === 'SUCCESS') {
-              if (_this.cluster.inventory.all.hosts[node].kuboardspray_node_action === 'add_node') {
-                temp += node + ','
-              }
+              temp += node + ','
             }
           }
           if (temp === '') {
@@ -106,9 +115,14 @@ export default {
   },
   inject: ['isClusterInstalled', 'isClusterOnline', 'pendingRemoveNodes', 'pendingAddNodes'],
   computed: {
+    formRef: {
+      get () { return this.form },
+      set () {}
+    }
   },
   components: { },
-  mounted () {
+  beforeMount () {
+    this.formRef.install_cluster = { skip_downloads: this.isClusterInstalled }
   },
   methods: {
     populateRequest() {
@@ -118,7 +132,7 @@ export default {
           temp += node + ','
         }
       }
-      return { nodes: trimMark(temp) }
+      return { nodes: trimMark(temp), skip_downloads: this.form.install_cluster.skip_downloads }
     },
   }
 }

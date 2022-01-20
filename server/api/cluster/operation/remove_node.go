@@ -15,7 +15,7 @@ import (
 )
 
 type RemoveNodeRequest struct {
-	InstallClusterRequest
+	OperationCommonRequest
 	NodesToRemove          string `json:"nodes_to_remove"`
 	ResetNodes             bool   `json:"reset_nodes"`
 	AllowUngracefulRemoval bool   `json:"allow_ungraceful_removal"`
@@ -30,7 +30,7 @@ func RemoveNode(c *gin.Context) {
 	c.ShouldBindUri(&req)
 	c.ShouldBindJSON(&req)
 
-	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.InstallClusterRequest)
+	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.OperationCommonRequest)
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to process inventory", err)
 		return

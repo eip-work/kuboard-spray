@@ -13,7 +13,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type InstallClusterRequest struct {
+type OperationCommonRequest struct {
 	Cluster                     string            `uri:"cluster" binding:"required"`
 	Fork                        int               `json:"fork"`
 	Verbose                     bool              `json:"verbose"`
@@ -22,13 +22,18 @@ type InstallClusterRequest struct {
 	DiscoveredInterpreterPython map[string]string `json:"discovered_interpreter_python"`
 }
 
+type InstallClusterRequest struct {
+	OperationCommonRequest
+	SkipDownloads bool `json:"skip_downloads"`
+}
+
 func InstallCluster(c *gin.Context) {
 
 	var req InstallClusterRequest
 	c.ShouldBindUri(&req)
 	c.ShouldBindJSON(&req)
 
-	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req)
+	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.OperationCommonRequest)
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to process inventory", err)
 		return
@@ -78,6 +83,9 @@ func InstallCluster(c *gin.Context) {
 			result := []string{"-i", execute_dir + "/inventory.yaml", playbook, "--fork", strconv.Itoa(req.Fork)}
 			if req.ExcludeNodes != "" {
 				result = append(result, "--limit", req.ExcludeNodes)
+			}
+			if req.SkipDownloads {
+				result = append(result, "-e", "skip_downloads=true")
 			}
 			if req.VVV {
 				result = append(result, "-vvv")

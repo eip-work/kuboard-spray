@@ -15,7 +15,7 @@ import (
 )
 
 type AddNodeRequest struct {
-	InstallClusterRequest
+	OperationCommonRequest
 	NodesToAdd string `json:"nodes_to_add"`
 }
 
@@ -24,7 +24,7 @@ func AddNode(c *gin.Context) {
 	c.ShouldBindUri(&req)
 	c.ShouldBindJSON(&req)
 
-	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.InstallClusterRequest)
+	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.OperationCommonRequest)
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to process inventory", err)
 		return

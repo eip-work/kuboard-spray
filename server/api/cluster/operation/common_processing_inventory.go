@@ -9,7 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func updateResourcePackageVarsToInventory(req InstallClusterRequest) (map[string]interface{}, map[string]interface{}, error) {
+func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[string]interface{}, map[string]interface{}, error) {
 	inventoryPath := cluster.ClusterInventoryYamlPath(req.Cluster)
 	inventory, err := common.ParseYamlFile(inventoryPath)
 	if err != nil {

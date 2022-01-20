@@ -53,7 +53,7 @@ func SyncNginxConfigActions(c *gin.Context) {
 		Args: func(execute_dir string) []string {
 
 			playbook := common.MapGet(resourcePackage, "data.supported_playbooks.sync_nginx_config").(string)
-			result := []string{"-i", execute_dir + "/inventory.yaml", playbook, "--fork", strconv.Itoa(req.Fork), "--tags", "nginx"}
+			result := []string{"-i", execute_dir + "/inventory.yaml", playbook, "--fork", strconv.Itoa(req.Fork), "--tags", "nginx,bastion"}
 			if req.ExcludeNodes != "" {
 				result = append(result, "--limit", req.ExcludeNodes)
 			}

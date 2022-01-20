@@ -31,6 +31,25 @@ func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[strin
 
 	// >>>> 设置资源包相关参数
 
+	// 设置资源包变量
+	varsPath := map[string]string{
+		"etcd":               "all.children.target.children.etcd.vars",
+		"k8s_cluster":        "all.children.target.children.k8s_cluster.vars",
+		"calico_rr":          "all.children.target.children.calico_rr.vars",
+		"kube_control_plane": "all.children.target.children.k8s_cluster.children.kube_control_plane.vars",
+		"kube_node":          "all.children.target.children.k8s_cluster.children.kube_node.vars",
+		"target":             "all.children.target.vars",
+	}
+	if common.MapGet(resourcePackage, "data.vars") != nil {
+		vars := common.MapGet(resourcePackage, "data.vars").(map[string]interface{})
+		for k, v := range vars {
+			scopedVars := v.(map[string]interface{})
+			for varKey, varValue := range scopedVars {
+				common.MapSet(inventory, varsPath[k]+"."+varKey, varValue)
+			}
+		}
+	}
+
 	// 设置 kubernetes 版本信息
 	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.kube_version", common.MapGet(resourcePackage, "data.kubernetes.kube_version"))
 	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.image_arch", common.MapGet(resourcePackage, "data.kubernetes.image_arch"))

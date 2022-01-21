@@ -53,7 +53,29 @@ func CreateCluster(c *gin.Context) {
 	template := getInventoryTemplate()
 	template = strings.ReplaceAll(template, "KUBOARDSPRAY_RESOURCE_PACKAGE", req.ResourcePackage)
 
-	_, err = inventoryFile.WriteString(template)
+	inventory := map[string]interface{}{}
+	yaml.Unmarshal([]byte(template), inventory)
+
+	resourcePackagePath := constants.GET_DATA_RESOURCE_DIR() + "/" + req.ResourcePackage + "/content"
+	resourcePackage, err := common.ParseYamlFile(resourcePackagePath + "/package.yaml")
+	if err != nil {
+		common.HandleError(c, http.StatusInternalServerError, "cannot parse package.yaml", err)
+		return
+	}
+	addons := common.MapGet(resourcePackage, "data.addon").([]interface{})
+	for _, a := range addons {
+		addon := a.(map[string]interface{})
+		target := addon["target"].(string)
+		if addon["install_by_default"] == true {
+			common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+target, true)
+		} else {
+			common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+target, false)
+		}
+	}
+
+	content, _ := yaml.Marshal(inventory)
+
+	_, err = inventoryFile.WriteString(string(content))
 
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to write inventory file: "+inventoryFilePath, err)

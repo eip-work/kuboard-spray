@@ -13,7 +13,7 @@ zh:
   accessFromControlPlane: 在主节点上使用 kubectl
   accessMethods: 您可以使用多种方式对集群进行管理控制
   controlPlanes: 您可以 ssh 到如下节点中的任意一个，直接执行 kubectl 命令可以管理集群。
-  proposeKuboard: Kuboard 是一款非常值得推荐的 K8S 集群管理界面，请参考 Kuboard 网站，安装改管理界面。
+  proposeKuboard: Kuboard 是一款非常值得推荐的 K8S 集群管理界面，请参考 Kuboard 网站，安装该管理界面。
   switchToPlan: 切换到集群规划页
   etcdAccess: 您可以 ssh 到如下节点中的任意一个，执行以下指令后，可以通过 etcdctl 操作 etcd 集群。通常您并不需要直接操作 etcd。
   requiredToSyncEtcd: 您删除了 ETCD 节点，必须将 ETCD 配置同步到所有控制节点和 ETCD 节点

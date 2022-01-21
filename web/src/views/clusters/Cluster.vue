@@ -18,8 +18,11 @@ zh:
     <ControlBar :title="name">
       <span v-show="cluster && !cluster.history.processing" style="margin-right: 10px;">
         <template v-if="currentTab === 'plan'">
-          <template v-if="mode === 'view' && (isClusterOnline || !isClusterInstalled)">
-            <el-button type="primary" icon="el-icon-edit" @click="$router.replace(`/clusters/${name}?mode=edit`)">{{$t('msg.edit')}}</el-button>
+          <template v-if="mode === 'view'">
+            <el-button type="primary" icon="el-icon-edit" @click="$router.replace(`/clusters/${name}?mode=edit`)" 
+              :loading="isClusterInstalled && !isClusterOnline || loading">
+              {{$t('msg.edit')}}
+            </el-button>
           </template>
           <template v-if="mode === 'edit'">
             <el-popconfirm :confirm-button-text="$t('msg.ok')" :cancel-button-text="$t('msg.cancel')" placement="bottom-start"
@@ -39,7 +42,7 @@ zh:
       <template v-if="cluster && cluster.history.processing">
         <ClusterProcessing v-if="mode === 'view'" :cluster="cluster" :name="name" @refresh="refresh" :loading="loading"></ClusterProcessing>
       </template>
-      <template v-if="cluster && cluster.state">
+      <template v-if="cluster && isClusterInstalled">
         <ClusterStateNodes :cluster="cluster"></ClusterStateNodes>
       </template>
     </ControlBar>
@@ -193,11 +196,12 @@ export default {
       await this.kuboardSprayApi.get(`/clusters/${this.name}`).then(async function (resp) {
         _this.cluster = resp.data.data
         // this.cluster.processing = true
-        if (_this.cluster.history.success_tasks.length > 0) {
-          _this.currentTab = 'access'
-        } else {
-          _this.currentTab = 'plan'
-        }
+        _this.currentTab = 'plan'
+        // if (_this.cluster.history.success_tasks.length > 0) {
+        //   _this.currentTab = 'access'
+        // } else {
+        //   _this.currentTab = 'plan'
+        // }
         _this.originalInventoryYaml = yaml.dump(_this.cluster.inventory)
         _this.percentage = 30
         await _this.loadResourcePackage()
@@ -208,8 +212,8 @@ export default {
           }
         }, 200)
         if (_this.isClusterInstalled) {
-          await _this.loadStateNodes()
           _this.percentage = 100
+          await _this.loadStateNodes()
         } else {
           _this.percentage = 100
         }
@@ -235,7 +239,7 @@ export default {
         temp.code = 500
         temp.msg = e.response.data.message
       })
-      this.percentage += 20
+      // this.percentage += 20
       await this.kuboardSprayApi.get(`/clusters/${this.name}/state/etcd_members`).then(resp => {
         if (resp.data.data.stdout_obj && resp.data.data.stdout_obj.members) {
           temp.etcd_code = 200
@@ -255,7 +259,7 @@ export default {
         temp.etcd_code = 500
         temp.etcd_msg = e.response.data.message
       })
-      this.percentage += 20
+      // this.percentage += 20
       await this.kuboardSprayApi.get(`/clusters/${this.name}/state/addons`).then(resp => {
         temp.addon_code = 200
         temp.addons = resp.data.data
@@ -264,7 +268,7 @@ export default {
         temp.addons = {}
         console.error(e)
       })
-      this.percentage += 20
+      // this.percentage += 20
       this.cluster.state = temp
     },
     async loadResourcePackage () {

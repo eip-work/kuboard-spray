@@ -3,17 +3,19 @@ en:
   title: K8s cluster status
   nodeCount: '{count} nodes, {etcdCount} etcd members in k8s cluster'
   unreachable: Cannot reach cluster
+  loading: Loading
 zh:
   title: K8S 集群状态
-  nodeCount: K8S 集群中已有 {count} 个节点，{etcdCount} 个 ETCD 节点
+  nodeCount: K8S 集群中已有 {count} 个节点，ETCD 集群中已有 {etcdCount} 个成员
   unreachable: 不能访问集群
-
+  loading: 加载中
 </i18n>
 
 <template>
   <el-popover placement="bottom-start" :title="$t('title')" :width="420" trigger="click">
     <template #reference>
-      <el-button v-if="state.code === 200" type="success" round icon="el-icon-success">{{$t('nodeCount', { count, etcdCount: state.etcd_members_count })}}</el-button>
+      <el-button v-if="state.code === undefined" type="success" round icon="el-icon-loading">{{$t('loading')}}</el-button>
+      <el-button v-else-if="state.code === 200" type="success" round icon="el-icon-success">{{$t('nodeCount', { count, etcdCount: state.etcd_members_count })}}</el-button>
       <el-button v-else type="danger" round icon="el-icon-info">{{$t('unreachable')}}</el-button>
     </template>
     <div>

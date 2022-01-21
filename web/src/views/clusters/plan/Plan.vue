@@ -345,6 +345,7 @@ export default {
         } else {
           this.$message.error('不能测试节点是否在线: ' + e)
         }
+        this.pingpong_loading = false
       })
     }
   }

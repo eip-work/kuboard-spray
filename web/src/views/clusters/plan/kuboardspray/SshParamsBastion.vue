@@ -1,23 +1,23 @@
 <i18n>
 en:
-  bastionUsage: KuboardSpray can access Kubernetes Cluster Nodes through bastion. 
+  bastionUsage: KuboardSpray can access Kubernetes Cluster Nodes through bastion.
   addSshKey: Add Private Key
   ansible_host_placeholder: 'KuboardSpray use this ip or hostname to connect to the node.'
   default_value: 'Default: {default_value} (inhirit from value configured in Global Config tab)'
   duplicateIP: "IP address conflict with {node}"
-  description: Access target nodes throguh bastion/jumpserver
+  description: Access target nodes throguh bastion/jumpserver【Cannot work now.】
 zh:
   bastionUsage: KuboardSpray 可以通过跳板机或堡垒机访问将要安装 K8S 集群的目标节点。
   addSshKey: 添加私钥
   ansible_host_placeholder: 'KuboardSpray 连接该主机时所使用的主机名或 IP 地址'
   default_value: '默认值：{default_value} （继承自全局设置标签页中的配置）'
   duplicateIP: "IP 地址不能与其他节点相同：{node}"
-  description: 通过跳板机或者堡垒机访问目标节点
+  description: 通过跳板机或者堡垒机访问目标节点【待完善】
 </i18n>
 
 
 <template>
-  <ConfigSection ref="configSection" v-model:enabled="bastionEnabled" :label="$t('obj.bastion')" :description="$t('description')" anti-freeze>
+  <ConfigSection ref="configSection" v-model:enabled="bastionEnabled" :label="$t('obj.bastion')" :description="$t('description')" anti-freeze disabled>
     <template #more>
       {{ $t('bastionUsage') }}
     </template>
@@ -25,7 +25,8 @@ zh:
       :placeholder="$t('ansible_host_placeholder')" :rules="hostRules"></FieldString>
     <FieldString :holder="holder" fieldName="ansible_port" :prop="`all.hosts.${nodeName}`"
       :placeholder="placeholder('ansible_port')" anti-freeze required></FieldString>
-    <FieldString :holder="holder" fieldName="ansible_user" :placeholder="placeholder('ansible_user')" anti-freeze required></FieldString>
+    <FieldString :holder="holder" fieldName="ansible_user" :prop="`all.hosts.${nodeName}`"
+      :placeholder="placeholder('ansible_user')" anti-freeze required></FieldString>
     <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList" anti-freeze
       :placeholder="placeholder('ansible_ssh_private_key_file')">
       <template #edit>
@@ -34,18 +35,6 @@ zh:
     </FieldSelect>
     <FieldString :holder="holder" fieldName="ansible_password" show-password anti-freeze
       :placeholder="placeholder('ansible_password')"></FieldString>
-    <!-- <FieldCommon :holder="holder" fieldName="ansible_become" anti-freeze>
-      <template #view>
-        <el-switch v-model="ansible_become" disabled></el-switch>
-      </template>
-      <template #edit>
-        <el-switch v-model="ansible_become"></el-switch>
-      </template>
-    </FieldCommon>
-    <template v-if="ansible_become">
-      <FieldString :holder="holder" fieldName="ansible_become_user" :placeholder="placeholder('ansible_become_user')" anti-freeze></FieldString>
-      <FieldString :holder="holder" fieldName="ansible_become_password" :placeholder="placeholder('ansible_become_password')" anti-freeze></FieldString>
-    </template> -->
     <slot></slot>
     <SshAddPrivateKey ref="addPrivateKey" ownerType="cluster" :ownerName="cluster.name"></SshAddPrivateKey>
   </ConfigSection>

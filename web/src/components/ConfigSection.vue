@@ -47,7 +47,7 @@ zh:
           </slot>
         </div>
         <div v-if="helpLink">
-          <el-link :href="helpLink" target="blank" type="warning" icon="el-icon-link" class="app_white_link">
+          <el-link :href="helpLink" target="blank" type="warning" icon="el-icon-link" class="app_white_link" @click.prevent.stop>
             {{$t('msg.help')}}
           </el-link>
         </div>

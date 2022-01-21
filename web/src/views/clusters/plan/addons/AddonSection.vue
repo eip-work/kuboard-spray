@@ -8,10 +8,10 @@ zh:
 </i18n>
 
 <template>
-  <ConfigSection v-model:enabled="enabledRef" :label="label">
+  <ConfigSection v-model:enabled="enabledRef" :label="label" :helpLink="`https://kuboard-spray.cn/guide/addons/${addonName}.html`">
     <template #header>
       {{ label }}
-      <div v-if="cluster && cluster.state && cluster.state.addons && cluster.state.addons[addonName]" style="float: right; margin-right: 20px;">
+      <div v-if="cluster && cluster.state && cluster.state.addons && cluster.state.addons[addonName]" style="float: right; margin-right: 10px;">
         <el-tag v-if="cluster.state.addons[addonName].is_installed" type="success">
           <i class="el-icon-check" style="margin-right: 5px;"></i>
           {{$t('is_installed_true')}}

@@ -10,15 +10,18 @@ zh:
 </i18n>
 
 <template>
-  <ConfigSection v-model:enabled="enabled" :label="$t('label')" :description="$t('obj.addon', {name: this.$t('description')})" anti-freeze>
+  <AddonSection v-model:enabled="enabled" :label="$t('label')" :description="$t('obj.addon', {name: this.$t('description')})" anti-freeze
+    :cluster="cluster" addonName="metrics_server">
     <template #more>
       {{$t('addon_function')}}
     </template>
     <FieldString :holder="vars" :prop="prop" fieldName="metrics_server_metric_resolution" :rules="resolutionRules"></FieldString>
-  </ConfigSection>
+  </AddonSection>
 </template>
 
 <script>
+import AddonSection from '../AddonSection.vue'
+
 export default {
   props: {
     cluster: { type: Object, required: true },
@@ -59,7 +62,7 @@ export default {
       }
     }
   },
-  components: { },
+  components: { AddonSection },
   mounted () {
   },
   methods: {

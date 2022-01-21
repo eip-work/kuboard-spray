@@ -1,16 +1,16 @@
 <i18n>
 en:
   os: Operation System
-  included: Included
-  not_included: Not included
+  install_by_default_true: install by default
+  install_by_default_false: install on selection
   addon: Addons
   network_plugin: Cni plugins
   dependency: Dependencies
   package_content: Package Content
 zh:
   os: 操作系统
-  included: 已包含
-  not_included: 未包含
+  install_by_default_true: 默认安装
+  install_by_default_false: 可选安装
   addon: 可选组件
   network_plugin: 网络插件
   dependency: 依赖组件
@@ -112,13 +112,13 @@ zh:
                 <div style="font-weight: bolder;">{{item.name}}</div>
               </template>
               <div class="app_text_mono">
-                <el-tag type="success" v-if="item.included">{{$t('included')}}</el-tag>
-                <el-tag type="info" v-else>{{$t('not_included')}}</el-tag>
+                <el-tag type="success" v-if="item.install_by_default">{{$t('install_by_default_true')}}</el-tag>
+                <el-tag type="info" v-else>{{$t('install_by_default_false')}}</el-tag>
               </div>
             </el-form-item>
             <div class="package_info">
               <template v-for="(value, key) in item.params" :key="key + 'addon' + index">
-                <el-form-item :label="key" label-width="280px" v-if="value.indexOf('{{') < 0">
+                <el-form-item :label="key" label-width="280px" v-if="typeof value == 'string' && value.indexOf('{{') < 0">
                   <template #label>
                     <div style="font-size: 12px">{{key}}</div>
                   </template>

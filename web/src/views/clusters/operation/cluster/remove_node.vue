@@ -115,7 +115,11 @@ export default {
       set (v) {
         let temp = []
         for (let node of this.pendingRemoveNodes) {
-          if ((this.pingpong[node.name].status === 'SUCCESS') === v) {
+          let online = false
+          if (this.pingpong[node.name]) {
+            online = this.pingpong[node.name].status === 'SUCCESS'
+          }
+          if ((online) === v) {
             temp.push(node.name)
           }
         }

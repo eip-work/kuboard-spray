@@ -3,7 +3,6 @@ package operation
 import (
 	"io/ioutil"
 	"net/http"
-	"strconv"
 
 	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/api/command"
@@ -57,16 +56,10 @@ func SyncEtcdConfigActions(c *gin.Context) {
 			playbook := common.MapGet(resourcePackage, "data.supported_playbooks.sync_etcd_address").(string)
 			result := []string{
 				"-i", execute_dir + "/inventory.yaml", playbook,
-				"--fork", strconv.Itoa(req.Fork),
 				"--limit", "kube_control_plane,etcd",
 				"-e", "ignore_assert_errors=true",
 			}
-			if req.ExcludeNodes != "" {
-				result = append(result, "--limit", req.ExcludeNodes)
-			}
-			if req.VVV {
-				result = append(result, "-vvv")
-			}
+			result = appendCommonParams(result, req, true)
 			return result
 		},
 		Dir:      cluster.ResourcePackagePathForInventory(inventory),

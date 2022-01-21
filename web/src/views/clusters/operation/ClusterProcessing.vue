@@ -1,11 +1,12 @@
 <i18n>
 en:
   verbose: Include task params
-  verbose_true: May include sensitive data in the trace, e.g. path to files, user name, password.
-  verbose_false: Some information is hidden when there is a exception, which makes it more difficult to fix the issue.
-  vvv: vvv
-  vvv_true: includes more information in log
-  vvv_false: usually false
+  verbose_: 
+  verbose_v: May include sensitive data in the trace, e.g. path to files, user name, password.
+  verbose_vvv: includes more information in log, only used in development.
+  v_: Normal
+  v_v: Details
+  v_vvv: More
   fork: ansible fork
   fork_more: Max number of nodes can be operated in the installation.
   control_params: Control params
@@ -26,11 +27,12 @@ en:
   newResourcePackageRequired: This resource package does not support the operation, please choose a new one.
 zh:
   verbose: 显示任务参数
-  verbose_true: 日志中会包含部分敏感信息，例如：文件路径、用户名密码等
-  verbose_false: 部分错误信息不能完整展示，使得出错时排查问题更困难
-  vvv: 显示调试信息
-  vvv_true: 日志中会包含最详细的信息
-  vvv_false: 通常设置为 false
+  verbose_: 正常输出的日志，通常选用此选项
+  verbose_v: 日志中会包含部分敏感信息，例如：文件路径、用户名密码等
+  verbose_vvv: 日志中会包含最详细的信息，通常只在开发阶段使用
+  v_: 正常
+  v_v: 详细
+  v_vvv: 更多
   fork: 并发数量
   fork_more: 安装过程中可以同时操作的目标节点的最大数量。ansible fork.
   control_params: 控制选项
@@ -60,15 +62,15 @@ zh:
       <!-- <div style="height: 10px;"></div> -->
       <el-form-item :label="$t('control_params')">
         <el-form-item :label="$t('verbose')">
-          <el-switch v-model="form.verbose"></el-switch>
-          <span style="width: 350px; margin-left: 110px; color: #aaa; font-size: 12px;">{{$t('verbose_' + form.verbose)}}</span>
+          <el-radio-group v-model="form.verbose">
+            <el-radio-button label="">{{$t('v_')}}</el-radio-button>
+            <el-radio-button label="v">{{$t('v_v')}}</el-radio-button>
+            <el-radio-button label="vvv">{{$t('v_vvv')}}</el-radio-button>
+          </el-radio-group>
+          <span style="width: 350px; margin-left: 20px; color: #aaa; font-size: 12px;">{{$t('verbose_' + form.verbose)}}</span>
         </el-form-item>
-        <el-form-item :label="$t('vvv')">
-          <el-switch v-model="form.vvv"></el-switch>
-          <span style="width: 350px; margin-left: 110px; color: #aaa; font-size: 12px;">{{$t('vvv_' + form.vvv)}}</span>
-        </el-form-item>
-        <el-form-item :label="$t('fork')">
-          <el-input-number v-model="form.fork" :step="2"></el-input-number>
+        <el-form-item :label="$t('fork')" style="margin-top: 10px;">
+          <el-input-number v-model="form.fork" :step="2" style="width: 166px;"></el-input-number>
           <span style="width: 350px; margin-left: 20px; color: #aaa; font-size: 12px;">{{$t('fork_more')}}</span>
         </el-form-item>
       </el-form-item>
@@ -145,8 +147,7 @@ export default {
   data() {
     return {
       form: {
-        verbose: false,
-        vvv: false,
+        verbose: '',
         fork: 5,
         action: '',
         min_resource_package_version: '',
@@ -272,7 +273,6 @@ export default {
           if (flag) {
             let req = {
               verbose: this.form.verbose,
-              vvv: this.form.vvv,
               fork: this.form.fork,
             }
             let discovered_interpreter_python = {}

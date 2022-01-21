@@ -117,10 +117,7 @@ func AddNode(c *gin.Context) {
 		Args: func(execute_dir string) []string {
 			playbook := common.MapGet(resourcePackage, "data.supported_playbooks.add_node").(string)
 			logrus.Trace("add_nodes: ", nodesToAdd)
-			result := []string{"-i", execute_dir + "/inventory.yaml", playbook, "--fork", strconv.Itoa(req.Fork), "-e", "node=" + nodesToAdd}
-			if req.ExcludeNodes != "" {
-				result = append(result, "--limit", req.ExcludeNodes)
-			}
+			result := []string{"-i", execute_dir + "/inventory.yaml", playbook, "-e", "node=" + nodesToAdd}
 			if includesControlPlane || includesEtcd {
 				playbook = common.MapGet(resourcePackage, "data.supported_playbooks.install_cluster").(string)
 				if includesEtcd {
@@ -130,11 +127,9 @@ func AddNode(c *gin.Context) {
 				if req.ExcludeNodes != "" {
 					nodesToAdd += "," + req.ExcludeNodes
 				}
-				result = []string{"-i", execute_dir + "/inventory.yaml", playbook, "--fork", strconv.Itoa(req.Fork), "--limit", nodesToAdd, "-e", "etcd_retries=15"}
+				result = []string{"-i", execute_dir + "/inventory.yaml", playbook, "--limit", nodesToAdd, "-e", "etcd_retries=15"}
 			}
-			if req.VVV {
-				result = append(result, "-vvv")
-			}
+			result = appendCommonParams(result, req.OperationCommonRequest, true)
 			return result
 		},
 		Dir:      cluster.ResourcePackagePathForInventory(inventory),

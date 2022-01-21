@@ -1,6 +1,7 @@
 package operation
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/eip-work/kuboard-spray/api/cluster/state"
@@ -58,4 +59,27 @@ func getMembersInEtcd(clusterName string) ([]string, error) {
 	}
 
 	return result, nil
+}
+
+type OperationCommonRequest struct {
+	Cluster                     string            `uri:"cluster" binding:"required"`
+	Fork                        int               `json:"fork"`
+	Verbose                     string            `json:"verbose"`
+	ExcludeNodes                string            `json:"nodes_to_exclude"`
+	DiscoveredInterpreterPython map[string]string `json:"discovered_interpreter_python"`
+	DownloadsOption             string            `json:"downloads_option"`
+}
+
+func appendCommonParams(result []string, req OperationCommonRequest, skipLimitParam bool) []string {
+	result = append(result, "--fork", strconv.Itoa(req.Fork))
+	if req.ExcludeNodes != "" && !skipLimitParam {
+		result = append(result, "--limit", req.ExcludeNodes)
+	}
+	if req.Verbose == "vvv" {
+		result = append(result, "-vvv")
+	}
+	if req.Verbose == "v" {
+		result = append(result, "-v")
+	}
+	return result
 }

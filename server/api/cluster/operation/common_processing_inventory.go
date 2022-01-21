@@ -22,7 +22,7 @@ func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[strin
 		return nil, nil, err
 	}
 
-	common.MapSet(inventory, "all.vars.kuboardspray_no_log", !req.Verbose)
+	common.MapSet(inventory, "all.vars.kuboardspray_no_log", !(req.Verbose == "v" || req.Verbose == "vvv"))
 
 	// 设置 discovered_interpreter_python
 	for k, v := range req.DiscoveredInterpreterPython {

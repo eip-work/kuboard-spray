@@ -3,7 +3,6 @@ package operation
 import (
 	"io/ioutil"
 	"net/http"
-	"strconv"
 
 	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/api/command"
@@ -12,15 +11,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
-
-type OperationCommonRequest struct {
-	Cluster                     string            `uri:"cluster" binding:"required"`
-	Fork                        int               `json:"fork"`
-	Verbose                     bool              `json:"verbose"`
-	VVV                         bool              `json:"vvv"`
-	ExcludeNodes                string            `json:"nodes_to_exclude"`
-	DiscoveredInterpreterPython map[string]string `json:"discovered_interpreter_python"`
-}
 
 type InstallClusterRequest struct {
 	OperationCommonRequest
@@ -38,7 +28,6 @@ func InstallCluster(c *gin.Context) {
 		common.HandleError(c, http.StatusInternalServerError, "failed to process inventory", err)
 		return
 	}
-	common.MapSet(inventory, "all.vars.kuboardspray_no_log", !req.Verbose)
 
 	postExec := func(status command.ExecuteExitStatus) (string, error) {
 
@@ -80,16 +69,11 @@ func InstallCluster(c *gin.Context) {
 		OwnerName: req.Cluster,
 		Cmd:       "ansible-playbook",
 		Args: func(execute_dir string) []string {
-			result := []string{"-i", execute_dir + "/inventory.yaml", playbook, "--fork", strconv.Itoa(req.Fork)}
-			if req.ExcludeNodes != "" {
-				result = append(result, "--limit", req.ExcludeNodes)
-			}
+			result := []string{"-i", execute_dir + "/inventory.yaml", playbook}
 			if req.SkipDownloads {
 				result = append(result, "-e", "skip_downloads=true")
 			}
-			if req.VVV {
-				result = append(result, "-vvv")
-			}
+			result = appendCommonParams(result, req.OperationCommonRequest, false)
 			return result
 		},
 		Dir:      cluster.ResourcePackagePathForInventory(inventory),

@@ -119,7 +119,6 @@ func RemoveNode(c *gin.Context) {
 		Args: func(execute_dir string) []string {
 			result := []string{
 				"-i", execute_dir + "/inventory.yaml", playbook,
-				"--fork", strconv.Itoa(req.Fork),
 				"-e", "node=" + req.NodesToRemove,
 				"-e", "reset_nodes=" + strconv.FormatBool(req.ResetNodes),
 				"-e", "allow_ungraceful_removal=" + strconv.FormatBool(req.AllowUngracefulRemoval),
@@ -128,9 +127,7 @@ func RemoveNode(c *gin.Context) {
 				"-e", "drain_retries=" + req.DrainOutRetries,
 				"-e", "drain_retry_delay_seconds=" + req.DrainRetryDelaySeconds,
 			}
-			if req.VVV {
-				result = append(result, "-vvv")
-			}
+			result = appendCommonParams(result, req.OperationCommonRequest, false)
 			return result
 		},
 		Dir:      cluster.ResourcePackagePathForInventory(inventory),

@@ -3,7 +3,6 @@ package operation
 import (
 	"io/ioutil"
 	"net/http"
-	"strconv"
 
 	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/api/command"
@@ -53,13 +52,8 @@ func SyncNginxConfigActions(c *gin.Context) {
 		Args: func(execute_dir string) []string {
 
 			playbook := common.MapGet(resourcePackage, "data.supported_playbooks.sync_nginx_config").(string)
-			result := []string{"-i", execute_dir + "/inventory.yaml", playbook, "--fork", strconv.Itoa(req.Fork), "--tags", "nginx,bastion"}
-			if req.ExcludeNodes != "" {
-				result = append(result, "--limit", req.ExcludeNodes)
-			}
-			if req.VVV {
-				result = append(result, "-vvv")
-			}
+			result := []string{"-i", execute_dir + "/inventory.yaml", playbook, "--tags", "nginx,bastion"}
+			result = appendCommonParams(result, req, false)
 			return result
 		},
 		Dir:      cluster.ResourcePackagePathForInventory(inventory),

@@ -6,6 +6,7 @@ en:
   conflict: Conflict with a existing node {name}.
   removeNodeFirst: Please remove node or cancel removing node first.
   invalidName: Hostname must consist of lower case alphanumeric characters, '.' or '-', and must start with an alphanumeric character
+  cannotUseKeyword: Cannot use {keyword} as node name.
 zh:
   addNode: 添加节点
   nodeName: 节点名称
@@ -13,6 +14,7 @@ zh:
   conflict: 与已有节点重名 {name}
   removeNodeFirst: 请先删除或者取消删除节点
   invalidName: 必须由数字、小写字母、小数点、减号组成，且必须以字母开头
+  cannotUseKeyword: 不能使用关键字 {keyword} 作为节点名称
 </i18n>
 
 <template>
@@ -62,12 +64,16 @@ export default {
         { required: true, message: 'Required', trigger: 'blur' },
         {
           validator: (rule, value, callback) => {
+            let keywords = ['bastion', 'target', 'kube_node', 'kube_control_plane', 'etcd', 'calico_rr', 'k8s_cluster', 'localhost', 'all']
+            if (keywords.indexOf(value)) {
+              return callback(this.$t('cannotUseKeyword', { keyword: value }))
+            }
             if (this.inventory.all.hosts[value] !== undefined) {
               return callback(this.$t('conflict', {name: value}))
             }
             if (!/^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/.test(value)) {
               return callback(this.$t('invalidName'))
-            } 
+            }
             callback()
           },
           trigger: 'blur',

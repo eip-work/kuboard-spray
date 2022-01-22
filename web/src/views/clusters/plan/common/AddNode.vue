@@ -65,7 +65,7 @@ export default {
         {
           validator: (rule, value, callback) => {
             let keywords = ['bastion', 'target', 'kube_node', 'kube_control_plane', 'etcd', 'calico_rr', 'k8s_cluster', 'localhost', 'all']
-            if (keywords.indexOf(value)) {
+            if (keywords.indexOf(value) > 0) {
               return callback(this.$t('cannotUseKeyword', { keyword: value }))
             }
             if (this.inventory.all.hosts[value] !== undefined) {

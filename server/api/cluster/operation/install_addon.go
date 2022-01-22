@@ -19,6 +19,7 @@ func InstallAddon(c *gin.Context) {
 	var req InstallAddonRequest
 	c.ShouldBindUri(&req)
 	c.ShouldBindJSON(&req)
+	req.Operation = "install_addon"
 
 	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.OperationCommonRequest)
 	if err != nil {
@@ -68,7 +69,8 @@ func InstallAddon(c *gin.Context) {
 		Args: func(execute_dir string) []string {
 			result := []string{"-i", execute_dir + "/inventory.yaml", playbook}
 
-			installTags := addon["install_addon_tags"].([]interface{})
+			lifecycle := addon["lifecycle"].(map[string]interface{})
+			installTags := lifecycle["install_addon_tags"].([]interface{})
 			tags := ""
 			for _, t := range installTags {
 				tags += t.(string) + ","
@@ -76,11 +78,20 @@ func InstallAddon(c *gin.Context) {
 			tags = strings.Trim(tags, ",")
 
 			result = append(result, "--tags", tags)
+
+			downloads := lifecycle["downloads"].([]interface{})
+			download_addon := "["
+			for _, d := range downloads {
+				download_addon += "\"" + d.(string) + "\","
+			}
+			download_addon = strings.Trim(download_addon, ",")
+			download_addon += "]"
+			result = append(result, "--extra-vars", "{\"kuboardspray_download_addon\":"+download_addon+"}")
 			result = appendCommonParams(result, req.OperationCommonRequest, false)
 			return result
 		},
 		Dir:      cluster.ResourcePackagePathForInventory(inventory),
-		Type:     "install_addon",
+		Type:     req.Operation,
 		PreExec:  func(execute_dir string) error { return common.SaveYamlFile(execute_dir+"/inventory.yaml", inventory) },
 		PostExec: postExec,
 	}

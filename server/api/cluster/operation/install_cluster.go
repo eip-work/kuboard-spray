@@ -22,6 +22,7 @@ func InstallCluster(c *gin.Context) {
 	var req InstallClusterRequest
 	c.ShouldBindUri(&req)
 	c.ShouldBindJSON(&req)
+	req.Operation = "install_cluster"
 
 	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.OperationCommonRequest)
 	if err != nil {
@@ -77,7 +78,7 @@ func InstallCluster(c *gin.Context) {
 			return result
 		},
 		Dir:      cluster.ResourcePackagePathForInventory(inventory),
-		Type:     "install_cluster",
+		Type:     req.Operation,
 		PreExec:  func(execute_dir string) error { return common.SaveYamlFile(execute_dir+"/inventory.yaml", inventory) },
 		PostExec: postExec,
 	}

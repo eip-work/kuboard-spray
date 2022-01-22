@@ -23,6 +23,7 @@ func AddNode(c *gin.Context) {
 	var req AddNodeRequest
 	c.ShouldBindUri(&req)
 	c.ShouldBindJSON(&req)
+	req.Operation = "add_node"
 
 	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.OperationCommonRequest)
 	if err != nil {
@@ -133,7 +134,7 @@ func AddNode(c *gin.Context) {
 			return result
 		},
 		Dir:      cluster.ResourcePackagePathForInventory(inventory),
-		Type:     "add_node",
+		Type:     req.Operation,
 		PreExec:  func(execute_dir string) error { return common.SaveYamlFile(execute_dir+"/inventory.yaml", inventory) },
 		PostExec: postExec,
 	}

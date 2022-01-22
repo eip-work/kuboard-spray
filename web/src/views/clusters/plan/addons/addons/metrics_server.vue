@@ -11,7 +11,7 @@ zh:
 
 <template>
   <AddonSection v-model:enabled="enabled" :label="$t('label')" :description="$t('obj.addon', {name: this.$t('description')})"
-    :cluster="cluster" addonName="metrics_server">
+    :cluster="cluster" addonName="metrics_server" @refresh="$emit('refresh')">
     <template #more>
       {{$t('addon_function')}}
     </template>

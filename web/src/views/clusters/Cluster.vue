@@ -51,7 +51,7 @@ zh:
     </el-card>
     <el-tabs type="border-card" v-show="!loading" v-model="currentTab">
       <el-tab-pane :label="$t('plan')" name="plan">
-        <Plan v-if="cluster" ref="plan" :cluster="cluster" :mode="mode"></Plan>
+        <Plan v-if="cluster" ref="plan" :cluster="cluster" :mode="mode" @refresh="refresh"></Plan>
       </el-tab-pane>
       <el-tab-pane :label="$t('access')" name="access" :disabled="disableNonePlanTab">
         <Access v-if="cluster && cluster.history.success_tasks.length > 0" ref="access" :cluster="cluster" :loading="loading" @switch="currentTab = $event"></Access>

@@ -66,10 +66,13 @@ func CreateCluster(c *gin.Context) {
 	for _, a := range addons {
 		addon := a.(map[string]interface{})
 		target := addon["target"].(string)
-		if addon["install_by_default"] == true {
-			common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+target, true)
-		} else {
-			common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+target, false)
+		if addon["lifecycle"] != nil {
+			lifecycle := addon["lifecycle"].(map[string]interface{})
+			if lifecycle["install_by_default"] == true {
+				common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+target, true)
+			} else {
+				common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+target, false)
+			}
 		}
 	}
 

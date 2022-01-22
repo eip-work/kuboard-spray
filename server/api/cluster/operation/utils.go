@@ -68,10 +68,12 @@ type OperationCommonRequest struct {
 	ExcludeNodes                string            `json:"nodes_to_exclude"`
 	DiscoveredInterpreterPython map[string]string `json:"discovered_interpreter_python"`
 	DownloadsOption             string            `json:"downloads_option"`
+	Operation                   string
 }
 
 func appendCommonParams(result []string, req OperationCommonRequest, skipLimitParam bool) []string {
 	result = append(result, "--fork", strconv.Itoa(req.Fork))
+	result = append(result, "-e", "kuboardspray_operation="+req.Operation)
 	if req.ExcludeNodes != "" && !skipLimitParam {
 		result = append(result, "--limit", req.ExcludeNodes)
 	}

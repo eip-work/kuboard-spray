@@ -48,8 +48,8 @@ zh:
           <i class="el-icon-close" style="margin-right: 5px;"></i>
           {{$t('is_installed_false')}}
         </el-tag>
-        <ExecuteTask v-if="showExecute" :history="cluster.history" placement="top-end"
-          :disabled="cluster.resourcePackage.data.supported_playbooks[form.action] === undefined || addonInResourcePackage[form.action + '_tags'] === undefined"
+        <ExecuteTask v-if="showExecute" :history="cluster.history" placement="left"
+          :disabled="cluster.resourcePackage.data.supported_playbooks[form.action] === undefined || addonInResourcePackage.lifecycle == undefined || addonInResourcePackage.lifecycle[form.action + '_tags'] === undefined"
           :title="$t(form.action, {label})" :startTask="applyPlan" @refresh="$emit('refresh')" @visibleChange="onVisibleChange">
           <template #reference>
             <el-button v-if="addonState.is_installed" icon="el-icon-remove" type="danger" plain>{{$t('uninstall')}}</el-button>
@@ -132,6 +132,9 @@ export default {
       return undefined
     },
     showExecute () {
+      if (this.cluster && this.cluster.history && this.cluster.history.processing) {
+        return false
+      }
       if (this.editMode === 'view' && this.isClusterInstalled && this.isClusterOnline) {
         return this.addonState.intend_to_install !== this.addonState.is_installed
       }

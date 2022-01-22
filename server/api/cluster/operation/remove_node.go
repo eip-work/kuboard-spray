@@ -29,6 +29,7 @@ func RemoveNode(c *gin.Context) {
 	var req RemoveNodeRequest
 	c.ShouldBindUri(&req)
 	c.ShouldBindJSON(&req)
+	req.Operation = "remove_node"
 
 	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.OperationCommonRequest)
 	if err != nil {
@@ -131,7 +132,7 @@ func RemoveNode(c *gin.Context) {
 			return result
 		},
 		Dir:      cluster.ResourcePackagePathForInventory(inventory),
-		Type:     "remove_node",
+		Type:     req.Operation,
 		PreExec:  func(execute_dir string) error { return common.SaveYamlFile(execute_dir+"/inventory.yaml", inventory) },
 		PostExec: postExec,
 	}

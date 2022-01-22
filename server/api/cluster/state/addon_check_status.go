@@ -52,7 +52,11 @@ func CheckAddonStatus(c *gin.Context) {
 			}
 			continue
 		}
-		if addon["check"] == nil {
+		var lifecycle map[string]interface{}
+		if addon["lifecycle"] != nil {
+			lifecycle = addon["lifecycle"].(map[string]interface{})
+		}
+		if lifecycle["check"] == nil {
 			result[addonName] = AddonStatus{
 				Name:            addonName,
 				IntendToInstall: true,
@@ -61,7 +65,7 @@ func CheckAddonStatus(c *gin.Context) {
 			}
 			continue
 		}
-		checker := addon["check"].(map[string]interface{})
+		checker := lifecycle["check"].(map[string]interface{})
 		shell := checker["shell"].(string)
 		keyword := checker["keyword"].(string)
 		out, err := ExecuteShellOnControlPlane(request.ClusterName, shell+" || true")

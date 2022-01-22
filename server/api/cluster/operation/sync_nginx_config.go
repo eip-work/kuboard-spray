@@ -16,6 +16,7 @@ func SyncNginxConfigActions(c *gin.Context) {
 	var req OperationCommonRequest
 	c.ShouldBindUri(&req)
 	c.ShouldBindJSON(&req)
+	req.Operation = "sync_nginx_config"
 
 	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req)
 	if err != nil {
@@ -57,7 +58,7 @@ func SyncNginxConfigActions(c *gin.Context) {
 			return result
 		},
 		Dir:      cluster.ResourcePackagePathForInventory(inventory),
-		Type:     "sync_nginx_config",
+		Type:     req.Operation,
 		PreExec:  func(execute_dir string) error { return common.SaveYamlFile(execute_dir+"/inventory.yaml", inventory) },
 		PostExec: postExec,
 	}

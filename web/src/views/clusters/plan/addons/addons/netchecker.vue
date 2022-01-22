@@ -11,7 +11,7 @@ zh:
 
 <template>
   <AddonSection v-model:enabled="enabled" :label="$t('label')" :description="$t('obj.addon', {name: this.$t('description')})"
-    :cluster="cluster" addonName="netchecker">
+    :cluster="cluster" addonName="netchecker" @refresh="$emit('refresh')">
     <template #more>{{$t('addon_function')}}</template>
     <FieldString :holder="vars" fieldName="netcheck_namespace" :prop="prop" :rules="namespaceRules"></FieldString>
     <FieldNumber :holder="vars" fieldName="netchecker_port" :prop="prop">

@@ -112,7 +112,7 @@ zh:
                 <div style="font-weight: bolder;">{{item.name}}</div>
               </template>
               <div class="app_text_mono">
-                <el-tag type="success" v-if="item.install_by_default">{{$t('install_by_default_true')}}</el-tag>
+                <el-tag type="success" v-if="item.lifecycle && item.lifecycle.install_by_default">{{$t('install_by_default_true')}}</el-tag>
                 <el-tag type="info" v-else>{{$t('install_by_default_false')}}</el-tag>
               </div>
             </el-form-item>

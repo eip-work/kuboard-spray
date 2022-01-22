@@ -10,7 +10,7 @@ zh:
 </i18n>
 
 <template>
-  <AddonSection v-model:enabled="enabled" :label="$t('label')" :description="$t('obj.addon', {name: this.$t('description')})" anti-freeze
+  <AddonSection v-model:enabled="enabled" :label="$t('label')" :description="$t('obj.addon', {name: this.$t('description')})"
     :cluster="cluster" addonName="metrics_server">
     <template #more>
       {{$t('addon_function')}}

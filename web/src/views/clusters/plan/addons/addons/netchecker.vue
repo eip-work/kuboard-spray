@@ -10,7 +10,7 @@ zh:
 </i18n>
 
 <template>
-  <AddonSection v-model:enabled="enabled" :label="$t('label')" :description="$t('obj.addon', {name: this.$t('description')})" anti-freeze
+  <AddonSection v-model:enabled="enabled" :label="$t('label')" :description="$t('obj.addon', {name: this.$t('description')})"
     :cluster="cluster" addonName="netchecker">
     <template #more>{{$t('addon_function')}}</template>
     <FieldString :holder="vars" fieldName="netcheck_namespace" :prop="prop" :rules="namespaceRules"></FieldString>

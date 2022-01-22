@@ -49,9 +49,9 @@ zh:
     </el-dialog>
   </div>
   <template v-else-if="!loading">
-    <el-popover v-if="!(finished && hideOnSuccess) && !history.processing" v-model:visible="showConfirm" placement="bottom-start" width="420" trigger="manual">
+    <el-popover v-if="!(finished && hideOnSuccess) && !history.processing" v-model:visible="showConfirm" :placement="placement" width="420" trigger="manual" :disabled="disabled">
       <template #reference>
-        <el-button type="warning" icon="el-icon-lightning" @click="showConfirm = !showConfirm">{{ title || $t('apply')}}</el-button>
+        <el-button type="warning" icon="el-icon-lightning" @click="showConfirm = !showConfirm" @click.prevent.stop :disabled="disabled">{{ title || $t('apply')}}</el-button>
       </template>
       <el-form @submit.prevent.stop label-position="left" label-width="120px">
         <!-- <div style="height: 10px;"></div> -->
@@ -97,6 +97,8 @@ export default {
     label: { type: String, required: false, default: undefined },
     title: { type: String, required: false, default: undefined },
     hideOnSuccess: { type: Boolean, required: false, default: false },
+    placement: { type: String, required: false, default: 'bottom-start' },
+    disabled: { type: Boolean, required: false, default: false },
   },
   data() {
     return {
@@ -173,7 +175,7 @@ export default {
         }
       }).catch(e => {
         let msg = e
-        if (e.response && e.response.data && e.response.data.message) {
+        if (e && e.response && e.response.data && e.response.data.message) {
           msg = e.response.data.message
         }
         this.$message.error('failed to start task: ' + msg)

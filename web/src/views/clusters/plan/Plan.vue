@@ -136,7 +136,7 @@ zh:
             </template>
             <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
-                <ConfigAddons :cluster="cluster" :currentTab="currentPropertiesTab"></ConfigAddons>
+                <ConfigAddons :cluster="cluster" :currentTab="currentPropertiesTab" :pingpong="pingpong"></ConfigAddons>
               </div>
             </el-scrollbar>
           </el-tab-pane>

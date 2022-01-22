@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/eip-work/kuboard-spray/api/cluster"
+	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
@@ -47,7 +47,7 @@ type PingPongItem struct {
 }
 
 func PingPong(clusterName string, nodes string) (*PingPongResult, error) {
-	inventoryYamlPath := cluster.ClusterInventoryYamlPath(clusterName)
+	inventoryYamlPath := cluster_common.ClusterInventoryYamlPath(clusterName)
 
 	cmd := command.Run{
 		Cmd: "ansible",

@@ -8,6 +8,7 @@ en:
   switchToPlan: Swith to cluster plan view.
   etcdAccess: SSH connect to any of the following nodes, and use etcdctl command to administrate the etcd cluster.
   requiredToSyncEtcd: You removed a etcd node, and it's a must to sync etcd config to all kube_control_plane and etcd nodes.
+  yourcommand: Execute your command starting from here.
 zh:
   getKubeconfig: 获取 kubeconfig 文件
   accessFromControlPlane: 在主节点上使用 kubectl
@@ -17,6 +18,7 @@ zh:
   switchToPlan: 切换到集群规划页
   etcdAccess: 您可以 ssh 到如下节点中的任意一个，执行以下指令后，可以通过 etcdctl 操作 etcd 集群。通常您并不需要直接操作 etcd。
   requiredToSyncEtcd: 您删除了 ETCD 节点，必须将 ETCD 配置同步到所有控制节点和 ETCD 节点
+  yourcommand: 此处开始，执行您想要执行的 etcdctl 命令
 </i18n>
 
 
@@ -69,7 +71,7 @@ zh:
         </template>
         <div class="app_margin_bottom"></div>
         <CopyToClipBoard :value="etcdSsh"></CopyToClipBoard>
-        <Codemirror class="app_margin_top" v-model:value="etcdSsh" :options="etcdCmOptions"></Codemirror>
+        <Codemirror v-if="showEtcdSsh" class="app_margin_top" v-model:value="etcdSsh" :options="etcdCmOptions"></Codemirror>
       </div>
     </div>
   </el-scrollbar>
@@ -116,7 +118,8 @@ export default {
         indentUnit: 2,
         foldGutter: true,
         styleActiveLine: true,
-      }
+      },
+      showEtcdSsh: false,
     }
   },
   computed: {
@@ -127,7 +130,7 @@ export ETCDCTL_CERT=/etc/ssl/etcd/ssl/admin-$(hostname).pem
 export ETCDCTL_KEY=/etc/ssl/etcd/ssl/admin-$(hostname)-key.pem
 export ETCDCTL_CACERT=/etc/ssl/etcd/ssl/ca.pem
 etcdctl member list
-# 此处开始，执行您想要执行的 etcdctl 命令
+# ${this.$t('yourcommand')}
 `
       },
       set () {}
@@ -135,6 +138,9 @@ etcdctl member list
   },
   components: { Codemirror },
   mounted () {
+    setTimeout(() => {
+      this.showEtcdSsh = true
+    }, 300)
   },
   watch: {
     loading (newValue) {

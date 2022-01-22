@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/eip-work/kuboard-spray/api/cluster"
+	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
@@ -15,7 +16,7 @@ func GetKubeConfig(c *gin.Context) {
 	var req cluster.GetClusterRequest
 	c.ShouldBindUri(&req)
 
-	inventoryYamlPath := cluster.ClusterInventoryYamlPath(req.Cluster)
+	inventoryYamlPath := cluster_common.ClusterInventoryYamlPath(req.Cluster)
 
 	cmd := command.Run{
 		Cmd: "ansible",

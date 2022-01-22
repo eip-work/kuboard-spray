@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/eip-work/kuboard-spray/api/cluster"
+	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
@@ -54,7 +54,7 @@ func RemoveNode(c *gin.Context) {
 
 	postExec := func(status command.ExecuteExitStatus) (string, error) {
 
-		inventoryPath := cluster.ClusterInventoryYamlPath(req.Cluster)
+		inventoryPath := cluster_common.ClusterInventoryYamlPath(req.Cluster)
 		inventoryNew, _ := common.ParseYamlFile(inventoryPath)
 		nodesInK8s, _ := getNodesInK8s(req.Cluster)
 		membersInEtcd, _ := getMembersInEtcd(req.Cluster)
@@ -131,7 +131,7 @@ func RemoveNode(c *gin.Context) {
 			result = appendCommonParams(result, req.OperationCommonRequest, false)
 			return result
 		},
-		Dir:      cluster.ResourcePackagePathForInventory(inventory),
+		Dir:      cluster_common.ResourcePackagePathForInventory(inventory),
 		Type:     req.Operation,
 		PreExec:  func(execute_dir string) error { return common.SaveYamlFile(execute_dir+"/inventory.yaml", inventory) },
 		PostExec: postExec,

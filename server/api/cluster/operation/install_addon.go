@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/eip-work/kuboard-spray/api/cluster"
+	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
@@ -90,7 +90,7 @@ func InstallAddon(c *gin.Context) {
 			result = appendCommonParams(result, req.OperationCommonRequest, false)
 			return result
 		},
-		Dir:      cluster.ResourcePackagePathForInventory(inventory),
+		Dir:      cluster_common.ResourcePackagePathForInventory(inventory),
 		Type:     req.Operation,
 		PreExec:  func(execute_dir string) error { return common.SaveYamlFile(execute_dir+"/inventory.yaml", inventory) },
 		PostExec: postExec,

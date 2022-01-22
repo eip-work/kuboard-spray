@@ -1,4 +1,4 @@
-package cluster
+package cluster_common
 
 import (
 	"github.com/eip-work/kuboard-spray/common"

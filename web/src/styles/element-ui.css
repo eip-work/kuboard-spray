@@ -245,3 +245,10 @@ a {
 .app_white_link.el-link {
   color: white;
 }
+
+.app_description {
+  background-color: #f4f4f5;
+  padding: 10px 20px 10px 20px;
+  font-size: 13px;
+  color: var(--el-text-color-secondary);
+}

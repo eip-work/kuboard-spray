@@ -1,9 +1,8 @@
-package state
+package cluster_common
 
 import (
 	"errors"
 
-	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
@@ -11,7 +10,7 @@ import (
 )
 
 func ExecuteShellOnETCD(clusterName string, shellCommand string) (*command.AnsibleStdout, error) {
-	inventoryYamlPath := cluster.ClusterInventoryYamlPath(clusterName)
+	inventoryYamlPath := ClusterInventoryYamlPath(clusterName)
 
 	inventory, err := common.ParseYamlFile(inventoryYamlPath)
 	if err != nil {

@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/eip-work/kuboard-spray/api/cluster/state"
+	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,7 +18,7 @@ func contains(arr []string, str string) bool {
 }
 
 func getNodesInK8s(clusterName string) ([]string, error) {
-	kubectlResult, err := state.ExecuteShellOnControlPlane(clusterName, "kubectl get nodes -o jsonpath=\"{.items[*].metadata.name}\"")
+	kubectlResult, err := cluster_common.ExecuteShellOnControlPlane(clusterName, "kubectl get nodes -o jsonpath=\"{.items[*].metadata.name}\"")
 
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func arraySubtract(array1, array2 []string) []string {
 
 func getMembersInEtcd(clusterName string) ([]string, error) {
 	result := []string{}
-	temp, err := state.ExecuteShellOnETCD(clusterName, "etcdctl member list --write-out=json")
+	temp, err := cluster_common.ExecuteShellOnETCD(clusterName, "etcdctl member list --write-out=json")
 	if err != nil {
 		return nil, err
 	}

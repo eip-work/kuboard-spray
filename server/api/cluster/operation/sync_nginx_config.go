@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/eip-work/kuboard-spray/api/cluster"
+	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
@@ -31,7 +31,7 @@ func SyncNginxConfigActions(c *gin.Context) {
 			message = "\033[32m[ " + "Completed task \"Update apiserver list in loadbalancer\"" + " ]\033[0m \n"
 			message += "\033[32m[ " + "已完成 \"更新负载均衡中 apiserver 列表\" 的任务，您可以继续其他操作。" + " ]\033[0m \n"
 
-			inventoryPath := cluster.ClusterInventoryYamlPath(req.Cluster)
+			inventoryPath := cluster_common.ClusterInventoryYamlPath(req.Cluster)
 			inventoryNew, _ := common.ParseYamlFile(inventoryPath)
 			common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_nginx_config", false)
 			inventoryNewContent, _ := yaml.Marshal(inventoryNew)
@@ -57,7 +57,7 @@ func SyncNginxConfigActions(c *gin.Context) {
 			result = appendCommonParams(result, req, false)
 			return result
 		},
-		Dir:      cluster.ResourcePackagePathForInventory(inventory),
+		Dir:      cluster_common.ResourcePackagePathForInventory(inventory),
 		Type:     req.Operation,
 		PreExec:  func(execute_dir string) error { return common.SaveYamlFile(execute_dir+"/inventory.yaml", inventory) },
 		PostExec: postExec,

@@ -3,19 +3,19 @@ package operation
 import (
 	"strings"
 
-	"github.com/eip-work/kuboard-spray/api/cluster"
+	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/sirupsen/logrus"
 )
 
 func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[string]interface{}, map[string]interface{}, error) {
-	inventoryPath := cluster.ClusterInventoryYamlPath(req.Cluster)
+	inventoryPath := cluster_common.ClusterInventoryYamlPath(req.Cluster)
 	inventory, err := common.ParseYamlFile(inventoryPath)
 	if err != nil {
 		return nil, nil, err
 	}
-	resourcePackagePath := cluster.ResourcePackagePathForInventory(inventory)
+	resourcePackagePath := cluster_common.ResourcePackagePathForInventory(inventory)
 
 	resourcePackage, err := common.ParseYamlFile(resourcePackagePath + "/package.yaml")
 	if err != nil {

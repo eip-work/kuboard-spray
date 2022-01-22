@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/eip-work/kuboard-spray/api/cluster"
+	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
@@ -42,7 +42,7 @@ func InstallCluster(c *gin.Context) {
 			message += "\033[31m\033[01m\033[05m[" + "集群安装失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + "]\033[0m \n"
 		}
 
-		inventoryPath := cluster.ClusterInventoryYamlPath(req.Cluster)
+		inventoryPath := cluster_common.ClusterInventoryYamlPath(req.Cluster)
 		inventoryNew, _ := common.ParseYamlFile(inventoryPath)
 		nodesInK8s, _ := getNodesInK8s(req.Cluster)
 
@@ -77,7 +77,7 @@ func InstallCluster(c *gin.Context) {
 			result = appendCommonParams(result, req.OperationCommonRequest, false)
 			return result
 		},
-		Dir:      cluster.ResourcePackagePathForInventory(inventory),
+		Dir:      cluster_common.ResourcePackagePathForInventory(inventory),
 		Type:     req.Operation,
 		PreExec:  func(execute_dir string) error { return common.SaveYamlFile(execute_dir+"/inventory.yaml", inventory) },
 		PostExec: postExec,

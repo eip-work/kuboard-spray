@@ -6,6 +6,7 @@ import (
 
 	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/api/cluster/cluster_access"
+	"github.com/eip-work/kuboard-spray/api/cluster/health_check"
 	"github.com/eip-work/kuboard-spray/api/cluster/operation"
 	"github.com/eip-work/kuboard-spray/api/cluster/state"
 	"github.com/eip-work/kuboard-spray/api/command"
@@ -48,6 +49,9 @@ func setupRouter() *gin.Engine {
 	api.GET("/clusters/:cluster/state/nodes", state.GetNodes)
 	api.GET("/clusters/:cluster/state/etcd_members", state.GetEtcdNodes)
 	api.GET("/clusters/:cluster/state/addons", state.CheckAddonStatus)
+
+	api.GET("/clusters/:cluster/health_check/connectivity_check", health_check.CheckConnectivity)
+	api.GET("/clusters/:cluster/health_check/details", health_check.CheckConnectivityDetails)
 
 	api.GET("/execute/:owner_type/:owner_name/tail/:pid/:file", command.TailFile)
 	api.DELETE("/execute/:owner_type/:owner_name/kill/:pid", command.ExecuteKill)

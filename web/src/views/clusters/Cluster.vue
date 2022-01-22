@@ -54,11 +54,11 @@ zh:
         <Plan v-if="cluster" ref="plan" :cluster="cluster" :mode="mode" @refresh="refresh"></Plan>
       </el-tab-pane>
       <el-tab-pane :label="$t('access')" name="access" :disabled="disableNonePlanTab">
-        <Access v-if="cluster && cluster.history.success_tasks.length > 0 && currentTab == 'access'" ref="access" 
+        <Access v-if="isClusterInstalled && isClusterOnline && currentTab == 'access'" ref="access" 
           :cluster="cluster" :loading="loading" @switch="currentTab = $event"></Access>
       </el-tab-pane>
-      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" label="健康检查">
-        <el-alert>检查集群当前的状况与集群安装计划的匹配情况，正在建设...</el-alert>
+      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" label="健康检查" name="health_check">
+        <ClusterHealthCheck v-if="isClusterInstalled && isClusterOnline && currentTab == 'health_check'" :cluster="cluster"></ClusterHealthCheck>
       </el-tab-pane>
       <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" label="备份/恢复">
         <el-alert>对 etcd 及 control-plane 做备份及恢复，正在建设...</el-alert>      
@@ -75,13 +75,14 @@ zh:
 
 <script>
 import mixin from '../../mixins/mixin.js'
-import Plan from './plan/Plan.vue'
 import yaml from 'js-yaml'
 import ClusterProcessing from './operation/ClusterProcessing.vue'
 import Access from './access/Access.vue'
 import { computed } from 'vue'
 import ClusterStateNodes from './ClusterStateNodes.vue'
 import clone from 'clone'
+import Plan from './plan/Plan.vue'
+import ClusterHealthCheck from './health_check/ClusterHealthCheck.vue'
 
 export default {
   mixins: [mixin],
@@ -153,7 +154,7 @@ export default {
       }),
     }
   },
-  components: { Plan, ClusterProcessing, Access, ClusterStateNodes },
+  components: { Plan, ClusterProcessing, Access, ClusterStateNodes, ClusterHealthCheck },
   watch: {
     'cluster.inventory.all.hosts.localhost.kuboardspray_resource_package': function() {
       this.loadResourcePackage()

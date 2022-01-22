@@ -3,6 +3,7 @@ package state
 import (
 	"net/http"
 
+	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
 )
@@ -16,7 +17,7 @@ func GetNodes(c *gin.Context) {
 	var request GetNodesRequest
 	c.ShouldBindUri(&request)
 
-	result, err := ExecuteShellOnControlPlane(request.ClusterName, "kubectl get nodes -o json")
+	result, err := cluster_common.ExecuteShellOnControlPlane(request.ClusterName, "kubectl get nodes -o json")
 
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed", err)

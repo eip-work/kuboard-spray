@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/eip-work/kuboard-spray/api/cluster"
+	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
 )
@@ -24,13 +24,13 @@ func CheckAddonStatus(c *gin.Context) {
 
 	result := map[string]AddonStatus{}
 
-	inventoryPath := cluster.ClusterInventoryYamlPath(request.ClusterName)
+	inventoryPath := cluster_common.ClusterInventoryYamlPath(request.ClusterName)
 	inventory, err := common.ParseYamlFile(inventoryPath)
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to parse inventory", err)
 		return
 	}
-	resourcePackagePath := cluster.ResourcePackagePathForInventory(inventory)
+	resourcePackagePath := cluster_common.ResourcePackagePathForInventory(inventory)
 
 	resourcePackage, err := common.ParseYamlFile(resourcePackagePath + "/package.yaml")
 	if err != nil {
@@ -68,7 +68,7 @@ func CheckAddonStatus(c *gin.Context) {
 		checker := lifecycle["check"].(map[string]interface{})
 		shell := checker["shell"].(string)
 		keyword := checker["keyword"].(string)
-		out, err := ExecuteShellOnControlPlane(request.ClusterName, shell+" || true")
+		out, err := cluster_common.ExecuteShellOnControlPlane(request.ClusterName, shell+" || true")
 		if err != nil {
 			result[addonName] = AddonStatus{
 				Name:            addonName,

@@ -3,6 +3,7 @@ package cluster
 import (
 	"net/http"
 
+	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
@@ -16,9 +17,9 @@ func GetCluster(c *gin.Context) {
 	var req GetClusterRequest
 	c.ShouldBindUri(&req)
 
-	inventory, err := common.ParseYamlFile(ClusterInventoryYamlPath(req.Cluster))
+	inventory, err := common.ParseYamlFile(cluster_common.ClusterInventoryYamlPath(req.Cluster))
 	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "cannot parse file: "+ClusterInventoryYamlPath(req.Cluster), err)
+		common.HandleError(c, http.StatusInternalServerError, "cannot parse file: "+cluster_common.ClusterInventoryYamlPath(req.Cluster), err)
 		return
 	}
 

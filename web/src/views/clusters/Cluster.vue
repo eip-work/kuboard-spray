@@ -54,7 +54,8 @@ zh:
         <Plan v-if="cluster" ref="plan" :cluster="cluster" :mode="mode" @refresh="refresh"></Plan>
       </el-tab-pane>
       <el-tab-pane :label="$t('access')" name="access" :disabled="disableNonePlanTab">
-        <Access v-if="cluster && cluster.history.success_tasks.length > 0" ref="access" :cluster="cluster" :loading="loading" @switch="currentTab = $event"></Access>
+        <Access v-if="cluster && cluster.history.success_tasks.length > 0 && currentTab == 'access'" ref="access" 
+          :cluster="cluster" :loading="loading" @switch="currentTab = $event"></Access>
       </el-tab-pane>
       <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" label="健康检查">
         <el-alert>检查集群当前的状况与集群安装计划的匹配情况，正在建设...</el-alert>

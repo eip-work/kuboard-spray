@@ -1,5 +1,5 @@
 # Use imutable image tags rather than mutable tags (like ubuntu:18.04)
-FROM ubuntu:bionic-20200807
+FROM ubuntu:focal-20220105
 
 ADD .docker/sources.list /etc/apt/sources.list
 ADD .docker/pip.conf /root/.pip/pip.conf
@@ -25,7 +25,7 @@ RUN apt-get update -y \
 #     && apt-get update -y && apt-get install --no-install-recommends -y docker-ce \
 #     && rm -rf /var/lib/apt/lists/*
 
-RUN curl -o docker-ce-cli.deb https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/dists/bionic/pool/stable/amd64/docker-ce-cli_20.10.9~3-0~ubuntu-bionic_amd64.deb \
+RUN curl -o docker-ce-cli.deb https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/dists/focal/pool/stable/amd64/docker-ce-cli_20.10.12~3-0~ubuntu-focal_amd64.deb \
     && dpkg -i docker-ce-cli.deb \
     && rm -rf docker-ce-cli.deb
 
@@ -49,6 +49,7 @@ RUN /usr/bin/python3 -m pip install --no-cache-dir pip -U \
 ENV KUBOARD_SPRAY_WEB_DIR="/kuboard-spray/ui"
 ENV KUBOARD_SPRAY_PORT=":80"
 ENV GIN_MODE=release
+ENV KUBOARD_SPRAY_LOGRUS_LEVEL="info"
 
 COPY ./server/ansible-script ansible-script
 COPY ./server/kuboard-spray kuboard-spray

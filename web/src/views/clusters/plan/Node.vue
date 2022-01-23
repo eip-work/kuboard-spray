@@ -49,7 +49,6 @@ export default {
     cluster: { type: Object, required: true },
     active: { type: Boolean, required: false, default: false },
     hideDeleteButton: { type: Boolean, required: false, default: false },
-    nodes: { type: Object, required: false, default: () => {return {}} },
     pingpong: { type: Object, required: false, default: () => {return {}} },
     pingpong_loading: { type: Boolean, required: false, default: false },
   },
@@ -64,6 +63,29 @@ export default {
         return this.inventory.all.hosts[this.name].kuboardspray_node_action
       }
       return undefined
+    },
+    nodes () {
+      if (this.cluster && this.cluster.state) {
+        return this.cluster.state.nodes
+      }
+      return {}
+    },
+    etcdMemberNodes () {
+      let result = {}
+      if (this.cluster && this.cluster.state && this.cluster.state.etcd_members) {
+        for (let key in this.cluster.state.etcd_members) {
+          let etcdHosts = this.inventory.all.children.target.children.etcd.hosts
+          for (let node in etcdHosts) {
+            if (etcdHosts[node].etcd_member_name == key) {
+              result[node] = {
+                node: etcdHosts[node],
+                etcd: this.cluster.state.etcd_members[key]
+              }
+            }
+          }
+        }
+      }
+      return result
     },
     nodeClass () {
       let result = 'node'
@@ -126,7 +148,7 @@ export default {
         this.$message.error(this.$t('addNodeFirst'))
         return
       }
-      if (this.nodes[this.name]) {
+      if (this.nodes[this.name] || this.etcdMemberNodes[this.name]) {
         this.inventory.all.hosts[this.name].kuboardspray_node_action = 'remove_node'
         if (this.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[this.name]) {
           this.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[this.name].kuboardspray_node_action = 'remove_node'

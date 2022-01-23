@@ -36,7 +36,9 @@ func ListClusters(c *gin.Context) {
 
 	data := []string{}
 	for _, file := range files {
-		data = append(data, file.Name())
+		if file.IsDir() && file.Name()[0:1] != "." {
+			data = append(data, file.Name())
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{

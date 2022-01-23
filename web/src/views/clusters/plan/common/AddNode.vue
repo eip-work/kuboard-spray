@@ -5,7 +5,7 @@ en:
   nodeRoles: Node Roles
   conflict: Conflict with a existing node {name}.
   removeNodeFirst: Please remove node or cancel removing node first.
-  invalidName: Hostname must consist of lower case alphanumeric characters, '.' or '-', and must start with an alphanumeric character
+  invalidName: Hostname must consist of lower case alphanumeric characters or '-', and must start with an alphanumeric character
   cannotUseKeyword: Cannot use {keyword} as node name.
 zh:
   addNode: 添加节点
@@ -13,7 +13,7 @@ zh:
   nodeRoles: 节点角色
   conflict: 与已有节点重名 {name}
   removeNodeFirst: 请先删除或者取消删除节点
-  invalidName: 必须由数字、小写字母、小数点、减号组成，且必须以字母开头
+  invalidName: 必须由小写字母、数字、减号组成，且必须以字母开头，以字母/数字结尾
   cannotUseKeyword: 不能使用关键字 {keyword} 作为节点名称
 </i18n>
 
@@ -71,7 +71,7 @@ export default {
             if (this.inventory.all.hosts[value] !== undefined) {
               return callback(this.$t('conflict', {name: value}))
             }
-            if (!/^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/.test(value)) {
+            if (!/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(value)) {
               return callback(this.$t('invalidName'))
             }
             callback()

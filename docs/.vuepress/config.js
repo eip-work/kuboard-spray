@@ -2,6 +2,10 @@ module.exports = {
   configureWebpack: (config, isServer) => {
   },
 
+  markdown: {
+    lineNumbers: true
+  },
+
   // 站点配置
   lang: 'zh-CN',
   title: 'Kuboard Spray',
@@ -35,6 +39,7 @@ module.exports = {
         link: 'https://kuboard.cn',
       },
     ],
+    sidebarDepth: 2,
     sidebar: {
       '/': [
         {
@@ -65,6 +70,15 @@ module.exports = {
           children: [
             '/guide/network-plugin/calico.md',
             '/guide/network-plugin/flannel.md',
+          ],
+        },
+        {
+          title: '可选组件',
+          children: [
+            '/guide/addons/install_addon.md',
+            '/guide/addons/nodelocaldns.md',
+            '/guide/addons/netchecker.md',
+            '/guide/addons/metrics_server.md',
           ],
         },
         '/support/change-log/v1.md',

@@ -28,6 +28,7 @@ func SyncNginxConfigActions(c *gin.Context) {
 		success := status.Success
 		var message string
 		if success {
+			message += "\n"
 			message = "\033[32m[ " + "Completed task \"Update apiserver list in loadbalancer\"" + " ]\033[0m \n"
 			message += "\033[32m[ " + "已完成 \"更新负载均衡中 apiserver 列表\" 的任务，您可以继续其他操作。" + " ]\033[0m \n"
 
@@ -39,6 +40,7 @@ func SyncNginxConfigActions(c *gin.Context) {
 				logrus.Trace(err)
 			}
 		} else {
+			message += "\n"
 			message = "\033[31m\033[01m\033[05m[ " + "Failed to do \"Update apiserver list in loadbalancer\". Please review the logs and fix the problem." + " ]\033[0m \n"
 			message += "\033[31m\033[01m\033[05m[ " + "\"更新负载均衡中 apiserver 列表\" 失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + " ]\033[0m \n"
 		}

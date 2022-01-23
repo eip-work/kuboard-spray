@@ -34,17 +34,25 @@ func AddNode(c *gin.Context) {
 	// 判断待添加节点是否有控制节点或者 etcd 节点
 	nodes_to_add := strings.Split(req.NodesToAdd, ",")
 	nodesToAdd := ""
-	includesControlPlane := false
-	includesEtcd := false
+
 	controlPlaneHosts := common.MapGet(inventory, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts").(map[string]interface{})
+	kubeNodeHosts := common.MapGet(inventory, "all.children.target.children.k8s_cluster.children.kube_node.hosts").(map[string]interface{})
 	etcdHosts := common.MapGet(inventory, "all.children.target.children.etcd.hosts").(map[string]interface{})
+
+	kube_nodes_to_add := []string{}
+	kube_control_planes_to_add := []string{}
+	etcd_members_to_add := []string{}
 	for _, key := range nodes_to_add {
 		nodesToAdd += key + ","
 		if controlPlaneHosts[key] != nil {
-			includesControlPlane = true
+			kube_control_planes_to_add = append(kube_control_planes_to_add, key)
+		}
+		if kubeNodeHosts[key] != nil {
+			kube_nodes_to_add = append(kube_nodes_to_add, key)
 		}
 		if etcdHosts[key] != nil {
-			includesEtcd = true
+			etcd := etcdHosts[key].(map[string]interface{})
+			etcd_members_to_add = append(etcd_members_to_add, etcd["etcd_member_name"].(string))
 		}
 	}
 	nodesToAdd = strings.Trim(nodesToAdd, ",")
@@ -54,52 +62,85 @@ func AddNode(c *gin.Context) {
 		var message string
 
 		nodesInK8s, _ := getNodesInK8s(req.Cluster)
-		countAdded := len(nodes_to_add) - len(arraySubtract(nodes_to_add, nodesInK8s))
-
-		if len(arraySubtract(nodes_to_add, nodesInK8s)) == 0 {
-			message += "\033[32m[ " + strconv.Itoa(countAdded) + " nodes are already added to cluster, please release the machine." + " ]\033[0m \n"
-			message += "\033[32m[ " + strconv.Itoa(countAdded) + " 个节点已添加到 Kubernetes 集群，请返回集群详情页查看。" + " ]\033[0m \n"
-		} else if countAdded > 0 {
-			message += "\033[33m[ Intended to add " + strconv.Itoa(len(nodes_to_add)) + " nodes, and " + strconv.Itoa(countAdded) + " of them are added successfully." + " ]\033[0m \n"
-			message += "\033[33m[ 计划添加 " + strconv.Itoa(len(nodes_to_add)) + " 个节点，其中 " + strconv.Itoa(countAdded) + " 个节点添加成功。" + " ]\033[0m \n"
-		} else {
-			message += "\033[31m\033[01m\033[05m[" + "Failed to add node. Please review the logs and fix the problem." + "]\033[0m \n"
-			message += "\033[31m\033[01m\033[05m[" + "添加节点失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + "]\033[0m \n"
-		}
+		membersInEtcd, _ := getMembersInEtcd(req.Cluster)
+		countAddedKubeNode := len(kube_nodes_to_add) - len(arraySubtract(kube_nodes_to_add, nodesInK8s))
+		countAddedKubeControlPlane := len(kube_control_planes_to_add) - len(arraySubtract(kube_control_planes_to_add, nodesInK8s))
+		countAddedEtcdMembers := len(etcd_members_to_add) - len(arraySubtract(etcd_members_to_add, membersInEtcd))
 
 		inventoryPath := cluster_common.ClusterInventoryYamlPath(req.Cluster)
 		inventoryNew, _ := common.ParseYamlFile(inventoryPath)
 
-		addedEtcd := false
-		membersInEtcd, _ := getMembersInEtcd(req.Cluster)
-		for _, v := range etcdHosts {
-			etcdHost := v.(map[string]interface{})
-			if etcdHost["kuboardspray_node_action"] == "add_node" && contains(membersInEtcd, etcdHost["etcd_member_name"].(string)) {
-				addedEtcd = true
+		if countAddedKubeControlPlane > 0 {
+			if countAddedKubeControlPlane == len(kube_control_planes_to_add) {
+				message += "\n"
+				message += "\033[32m[ " + strconv.Itoa(countAddedKubeControlPlane) + " kube_control_planes are already added to the cluster." + " ]\033[0m \n"
+				message += "\033[32m[ " + strconv.Itoa(countAddedKubeControlPlane) + " 个控制节点已添加到 Kubernetes 集群，请返回集群详情页查看。" + " ]\033[0m \n"
+			} else {
+				message += "\n"
+				message += "\033[33m[ Intended to add " + strconv.Itoa(len(kube_control_planes_to_add)) + " kube_control_planes, and " + strconv.Itoa(countAddedKubeControlPlane) + " of them are added successfully." + " ]\033[0m \n"
+				message += "\033[33m[ 计划添加 " + strconv.Itoa(len(kube_control_planes_to_add)) + " 个控制节点，其中 " + strconv.Itoa(countAddedKubeControlPlane) + " 个节点添加成功。" + " ]\033[0m \n"
 			}
-		}
-		if addedEtcd {
-			message += "\n\033[32m[ Etcd node list changed, all --etcd-servers in /etc/kubernetes/manifests/kube-apiserver.yaml on control_planes are already refreshed." + " ]\033[0m \n"
-			message += "\033[32m[ Etcd 节点列表发生变化，所有控制节点上 /etc/kubernetes/manifests/kube-apiserver.yaml 文件中的参数 --etcd-servers 已更新。 ]\033[0m \n"
+			common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_nginx_config", true)
+			common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_etcd_address", false)
+			message += "\n"
+			message += "\033[31m\033[01m\033[05m[ " + "Apiserver list changed, it's required to \"Update apiserver list in loadbalancer\"." + " ]\033[0m \n"
+			message += "\033[31m\033[01m\033[05m[ " + "Apiserver 列表发生变化，请在集群页面执行操作 \"更新负载均衡中 apiserver 列表\"." + " ]\033[0m \n"
 		}
 
-		addedControlePlane := false
+		if countAddedKubeNode > 0 {
+			if countAddedKubeNode == len(kube_nodes_to_add) {
+				message += "\n"
+				message += "\033[32m[ " + strconv.Itoa(countAddedKubeNode) + " kube_nodes are already added to the cluster." + " ]\033[0m \n"
+				message += "\033[32m[ " + strconv.Itoa(countAddedKubeNode) + " 个工作节点已添加到 Kubernetes 集群，请返回集群详情页查看。" + " ]\033[0m \n"
+			} else {
+				message += "\n"
+				message += "\033[33m[ Intended to add " + strconv.Itoa(len(kube_nodes_to_add)) + " kube_nodes, and " + strconv.Itoa(countAddedKubeNode) + " of them are added successfully." + " ]\033[0m \n"
+				message += "\033[33m[ 计划添加 " + strconv.Itoa(len(kube_nodes_to_add)) + " 个工作节点，其中 " + strconv.Itoa(countAddedKubeNode) + " 个节点添加成功。" + " ]\033[0m \n"
+			}
+		}
+
+		if countAddedEtcdMembers > 0 {
+			if countAddedEtcdMembers == len(etcd_members_to_add) {
+				message += "\n"
+				message += "\033[32m[ " + strconv.Itoa(countAddedEtcdMembers) + " etcd members are already added to the cluster." + " ]\033[0m \n"
+				message += "\033[32m[ " + strconv.Itoa(countAddedEtcdMembers) + " 个 etcd 成员已添加到 etcd 集群，请返回集群详情页查看。" + " ]\033[0m \n"
+			} else {
+				message += "\n"
+				message += "\033[33m[ Intended to add " + strconv.Itoa(len(etcd_members_to_add)) + " etcd members, and " + strconv.Itoa(countAddedEtcdMembers) + " of them are added successfully." + " ]\033[0m \n"
+				message += "\033[33m[ 计划添加 " + strconv.Itoa(len(etcd_members_to_add)) + " 个 etcd 成员，其中 " + strconv.Itoa(countAddedEtcdMembers) + " 个成员添加成功。" + " ]\033[0m \n"
+			}
+			message += "\n"
+			message += "\033[32m[ Etcd member list changed, all --etcd-servers in /etc/kubernetes/manifests/kube-apiserver.yaml on control_planes are already refreshed." + " ]\033[0m \n"
+			message += "\033[32m[ Etcd 成员列表发生变化，所有控制节点上 /etc/kubernetes/manifests/kube-apiserver.yaml 文件中的参数 --etcd-servers 已更新。 ]\033[0m \n"
+		}
+
+		if countAddedKubeNode == 0 && countAddedKubeControlPlane == 0 && countAddedEtcdMembers == 0 {
+			message += "\n"
+			message += "\033[31m\033[01m\033[05m[" + "Failed to add node. Please review the logs and fix the problem." + "]\033[0m \n"
+			message += "\033[31m\033[01m\033[05m[" + "添加节点失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + "]\033[0m \n"
+		}
+
 		for _, node := range nodesInK8s {
 			if common.MapGet(inventoryNew, "all.hosts."+node+".kuboardspray_node_action") == "add_node" {
-				if common.MapGet(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts."+node) != nil {
-					addedControlePlane = true
-				}
 				common.MapDelete(inventoryNew, "all.hosts."+node+".kuboardspray_node_action")
 				common.MapDelete(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts."+node+".kuboardspray_node_action")
 				common.MapDelete(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_node.hosts."+node+".kuboardspray_node_action")
 				common.MapDelete(inventoryNew, "all.children.target.children.etcd.hosts."+node+".kuboardspray_node_action")
 			}
 		}
-		if addedControlePlane {
-			common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_nginx_config", true)
-			common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_etcd_address", false)
-			message += "\n\033[31m\033[01m\033[05m[ " + "Apiserver list changed, it's required to \"Update apiserver list in loadbalancer\"." + " ]\033[0m \n"
-			message += "\033[31m\033[01m\033[05m[ " + "Apiserver 列表发生变化，请在集群页面执行操作 \"更新负载均衡中 apiserver 列表\"." + " ]\033[0m \n"
+
+		for _, member := range membersInEtcd {
+			for etcdNodeName, n := range etcdHosts {
+				etcdHost := n.(map[string]interface{})
+				if etcdHost["etcd_member_name"] == member {
+					if common.MapGet(inventoryNew, "all.hosts."+etcdNodeName+".kuboardspray_node_action") == "add_node" {
+						common.MapDelete(inventoryNew, "all.hosts."+etcdNodeName+".kuboardspray_node_action")
+						common.MapDelete(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts."+etcdNodeName+".kuboardspray_node_action")
+						common.MapDelete(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_node.hosts."+etcdNodeName+".kuboardspray_node_action")
+						common.MapDelete(inventoryNew, "all.children.target.children.etcd.hosts."+etcdNodeName+".kuboardspray_node_action")
+					}
+				}
+			}
 		}
 
 		inventoryNewContent, _ := yaml.Marshal(inventoryNew)
@@ -119,9 +160,9 @@ func AddNode(c *gin.Context) {
 			playbook := common.MapGet(resourcePackage, "data.supported_playbooks.add_node").(string)
 			logrus.Trace("add_nodes: ", nodesToAdd)
 			result := []string{"-i", execute_dir + "/inventory.yaml", playbook, "-e", "node=" + nodesToAdd}
-			if includesControlPlane || includesEtcd {
+			if len(kube_control_planes_to_add) > 0 || len(etcd_members_to_add) > 0 {
 				playbook = common.MapGet(resourcePackage, "data.supported_playbooks.install_cluster").(string)
-				if includesEtcd {
+				if len(etcd_members_to_add) > 0 {
 					nodesToAdd = "etcd," + nodesToAdd
 				}
 				nodesToAdd = "kube_control_plane," + nodesToAdd

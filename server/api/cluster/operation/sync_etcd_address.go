@@ -28,6 +28,7 @@ func SyncEtcdConfigActions(c *gin.Context) {
 		success := status.Success
 		var message string
 		if success {
+			message += "\n"
 			message = "\033[32m[ " + "Completed task \"Update apiserver's --etcd-servers param\"." + " ]\033[0m \n"
 			message += "\033[32m[ " + "已完成 \"更新 apiserver 中 etcd 连接参数\"的任务，您可以继续其他操作。" + " ]\033[0m \n"
 
@@ -41,6 +42,7 @@ func SyncEtcdConfigActions(c *gin.Context) {
 				logrus.Trace(err)
 			}
 		} else {
+			message += "\n"
 			message = "\033[31m\033[01m\033[05m[ " + "Failed to \"Update apiserver's --etcd-servers param\" on kube_node. Please review the logs and fix the problem." + " ]\033[0m \n"
 			message += "\033[31m\033[01m\033[05m[ " + "\"更新 apiserver 中 etcd 连接参数\" 失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + " ]\033[0m \n"
 		}

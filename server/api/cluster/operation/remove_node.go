@@ -40,11 +40,15 @@ func RemoveNode(c *gin.Context) {
 	// 找出各类待删除的节点
 	all_nodes_to_remove := strings.Split(req.NodesToRemove, ",")
 	control_plane_to_remove := []string{}
+	kube_node_to_remove := []string{}
 	etcd_member_to_remove := []string{}
 
 	for _, node := range all_nodes_to_remove {
 		if common.MapGet(inventory, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts."+node) != nil {
 			control_plane_to_remove = append(control_plane_to_remove, node)
+		}
+		if common.MapGet(inventory, "all.children.target.children.k8s_cluster.children.kube_node.hosts."+node) != nil {
+			kube_node_to_remove = append(kube_node_to_remove, node)
 		}
 		if common.MapGet(inventory, "all.children.target.children.etcd.hosts."+node) != nil {
 			etcd_member := common.MapGet(inventory, "all.children.target.children.etcd.hosts."+node+".etcd_member_name").(string)
@@ -59,42 +63,71 @@ func RemoveNode(c *gin.Context) {
 		nodesInK8s, _ := getNodesInK8s(req.Cluster)
 		membersInEtcd, _ := getMembersInEtcd(req.Cluster)
 
-		countRemoved := len(arraySubtract(all_nodes_to_remove, nodesInK8s))
+		countRemovedControlPlane := len(arraySubtract(control_plane_to_remove, nodesInK8s))
+		countRemovedKubeNode := len(arraySubtract(kube_node_to_remove, nodesInK8s))
+		countRemovedEtcdMember := len(arraySubtract(etcd_member_to_remove, membersInEtcd))
 
-		message := "\n"
-		if countRemoved == len(all_nodes_to_remove) {
-			// 所有节点添加成功
-			message += "\033[32m[ " + strconv.Itoa(len(all_nodes_to_remove)) + " nodes are already removed, please release the machine." + " ]\033[0m \n"
-			message += "\033[32m[ " + strconv.Itoa(len(all_nodes_to_remove)) + " 节点已从 Kubernetes 集群中删除，请释放该资源" + " ]\033[0m \n"
+		message := ""
 
-			message = newFunction(etcd_member_to_remove, membersInEtcd, message)
-		} else if countRemoved > 0 {
-			// 部分节点添加成功
-			message += "\033[33m[ Intended to remove " + strconv.Itoa(len(all_nodes_to_remove)) + " nodes, and " + strconv.Itoa(countRemoved) + " of them are removed successfully." + " ]\033[0m \n"
-			message += "\033[33m[ 计划删除 " + strconv.Itoa(len(all_nodes_to_remove)) + " 个节点，其中 " + strconv.Itoa(countRemoved) + " 个节点删除成功。" + " ]\033[0m \n"
+		if countRemovedKubeNode > 0 {
+			if countRemovedKubeNode == len(kube_node_to_remove) {
+				// 所有节点删除成功
+				message += "\n"
+				message += "\033[32m[ " + strconv.Itoa(countRemovedKubeNode) + " kube_nodes are already removed, please release the machine." + " ]\033[0m \n"
+				message += "\033[32m[ " + strconv.Itoa(countRemovedKubeNode) + " 个工作节点已从 Kubernetes 集群中删除，请释放该资源" + " ]\033[0m \n"
+			} else {
+				// 部分节点删除成功
+				message += "\n"
+				message += "\033[33m[ Intended to remove " + strconv.Itoa(len(kube_node_to_remove)) + " kube_nodes, and " + strconv.Itoa(countRemovedKubeNode) + " of them are removed successfully." + " ]\033[0m \n"
+				message += "\033[33m[ 计划删除 " + strconv.Itoa(len(kube_node_to_remove)) + " 个工作节点，其中 " + strconv.Itoa(countRemovedKubeNode) + " 个工作节点删除成功。" + " ]\033[0m \n"
+			}
+		}
 
-			message = newFunction(etcd_member_to_remove, membersInEtcd, message)
-		} else {
-			// 添加节点失败
+		if countRemovedControlPlane > 0 {
+			if countRemovedControlPlane == len(control_plane_to_remove) {
+				// 所有节点删除成功
+				message += "\n"
+				message += "\033[32m[ " + strconv.Itoa(countRemovedControlPlane) + " kube_control_planes are already removed, please release the machine." + " ]\033[0m \n"
+				message += "\033[32m[ " + strconv.Itoa(countRemovedControlPlane) + " 个控制节点已从 Kubernetes 集群中删除，请释放该资源" + " ]\033[0m \n"
+			} else {
+				// 部分节点删除成功
+				message += "\n"
+				message += "\033[33m[ Intended to remove " + strconv.Itoa(len(control_plane_to_remove)) + " kube_control_planes, and " + strconv.Itoa(countRemovedControlPlane) + " of them are removed successfully." + " ]\033[0m \n"
+				message += "\033[33m[ 计划删除 " + strconv.Itoa(len(control_plane_to_remove)) + " 个控制节点，其中 " + strconv.Itoa(countRemovedControlPlane) + " 个控制节点删除成功。" + " ]\033[0m \n"
+			}
+
+			message += "\n"
+			message += "\033[31m\033[01m\033[05m[ " + "Apiserver list changed, it's required to \"Update apiserver list in loadbalancer\"." + " ]\033[0m \n"
+			message += "\033[31m\033[01m\033[05m[ " + "Apiserver 列表发生变化，请在集群页面执行操作 \"更新负载均衡中 apiserver 列表\"." + " ]\033[0m \n"
+			common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_nginx_config", true)
+		}
+
+		if countRemovedEtcdMember > 0 {
+			if countRemovedEtcdMember == len(etcd_member_to_remove) {
+				// 所有节点删除成功
+				message += "\n"
+				message += "\033[32m[ " + strconv.Itoa(countRemovedEtcdMember) + " etcd members are already removed, please release the machine." + " ]\033[0m \n"
+				message += "\033[32m[ " + strconv.Itoa(countRemovedEtcdMember) + " 个 etcd 成员已从 Kubernetes 集群中删除，请释放该资源" + " ]\033[0m \n"
+			} else {
+				// 部分节点删除成功
+				message += "\n"
+				message += "\033[33m[ Intended to remove " + strconv.Itoa(len(etcd_member_to_remove)) + " etcd members, and " + strconv.Itoa(countRemovedEtcdMember) + " of them are removed successfully." + " ]\033[0m \n"
+				message += "\033[33m[ 计划删除 " + strconv.Itoa(len(etcd_member_to_remove)) + " 个 etcd 成员，其中 " + strconv.Itoa(countRemovedEtcdMember) + " 个 etcd 成员删除成功。" + " ]\033[0m \n"
+			}
+			message += "\n"
+			message += "\033[31m\033[01m\033[05m[ " + strconv.Itoa(countRemovedEtcdMember) + " etcd members are removed, it's important for you to update --etcd-servers param in /etc/kubernetes/manifests/kube-apiserver.yaml" + " ]\033[0m \n"
+			message += "\033[31m\033[01m\033[05m[ " + strconv.Itoa(countRemovedEtcdMember) + " etcd 成员被删除，请返回集群管理界面，执行操作 \"更新 apiserver 中 etcd 连接参数\"" + " ]\033[0m \n"
+			common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_etcd_address", true)
+		}
+
+		if countRemovedControlPlane == 0 && countRemovedEtcdMember == 0 && countRemovedKubeNode == 0 {
+			// 删除节点失败
+			message += "\n"
 			message += "\033[31m\033[01m\033[05m[ " + "Failed to remove node. Please review the logs and fix the problem." + " ]\033[0m \n"
 			message += "\033[31m\033[01m\033[05m[ " + "删除节点失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + " ]\033[0m \n"
 		}
 
-		if len(arraySubtract(control_plane_to_remove, nodesInK8s)) > 0 {
-			// 有控制节点被删除
-			message += "\n\033[31m\033[01m\033[05m[ " + "Apiserver list changed, it's required to \"Update apiserver list in loadbalancer\"." + " ]\033[0m \n"
-			message += "\033[31m\033[01m\033[05m[ " + "Apiserver 列表发生变化，请在集群页面执行操作 \"更新负载均衡中 apiserver 列表\"." + " ]\033[0m \n"
-
-			common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_nginx_config", true)
-		}
-		removedEtcdMembers := arraySubtract(etcd_member_to_remove, membersInEtcd)
-		if len(removedEtcdMembers) > 0 {
-			// 有 ETCD 节点被删除
-			message += "\n\033[31m\033[01m\033[05m[ " + strconv.Itoa(len(removedEtcdMembers)) + " etcd members are removed, it's important for you to update --etcd-servers param in /etc/kubernetes/manifests/kube-apiserver.yaml" + " ]\033[0m \n"
-			message += "\033[31m\033[01m\033[05m[ " + strconv.Itoa(len(removedEtcdMembers)) + " etcd 成员被删除，请返回集群管理界面，执行操作 \"更新 apiserver 中 etcd 连接参数\"" + " ]\033[0m \n"
-			common.MapSet(inventoryNew, "all.hosts.localhost.kuboardspray_sync_etcd_address", true)
-		}
-
+		// FIXME 如果删除的节点是独立的 etcd 节点，此处会出错
 		for _, key := range arraySubtract(all_nodes_to_remove, nodesInK8s) {
 			common.MapDelete(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts."+key)
 			common.MapDelete(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_node.hosts."+key)
@@ -150,13 +183,4 @@ func RemoveNode(c *gin.Context) {
 		},
 	})
 
-}
-
-func newFunction(etcd_member_to_remove []string, membersInEtcd []string, message string) string {
-	removedEtcdMembers := arraySubtract(etcd_member_to_remove, membersInEtcd)
-	if len(removedEtcdMembers) != len(etcd_member_to_remove) {
-		message += "\n\033[31m\033[01m\033[05m[ " + strconv.Itoa(len(etcd_member_to_remove)) + " etcd member should be removed, but only " + strconv.Itoa(len(removedEtcdMembers)) + " are removed, please verify and fix, or the cluster may misfunction." + " ]\033[0m \n"
-		message += "\n\033[31m\033[01m\033[05m[ " + strconv.Itoa(len(etcd_member_to_remove)) + " 个 etcd 成员应该被删除，但是只有 " + strconv.Itoa(len(removedEtcdMembers)) + " 个删除成功，请检查 etcd 的状态并修复，否则集群可能出现不可预知的故障。" + " ]\033[0m \n"
-	}
-	return message
 }

@@ -52,6 +52,10 @@ func AddNode(c *gin.Context) {
 		}
 		if etcdHosts[key] != nil {
 			etcd := etcdHosts[key].(map[string]interface{})
+			if etcd["etcd_member_name"] == nil {
+				common.HandleError(c, http.StatusInternalServerError, "node "+key+"'s etcd_member_name field cannot be empty.", nil)
+				return
+			}
 			etcd_members_to_add = append(etcd_members_to_add, etcd["etcd_member_name"].(string))
 		}
 	}

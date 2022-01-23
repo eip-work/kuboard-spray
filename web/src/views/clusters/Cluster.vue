@@ -5,12 +5,20 @@ en:
   plan: Cluster Plan
   access: Access Cluster
   node: Nodes Maintainance
+  health_check: Health Check
+  backup: Backup/Restore
+  csi_scan: CSI Scan
+  upgrade: Upgrade Check
 zh:
   clusterList: 集群列表
   cluster: 集群
   access: 访问集群
   plan: 集群规划
   nodes: 节点维护
+  health_check: 状态检查
+  backup: 备份/恢复
+  csi_scan: CIS扫描
+  upgrade: 升级包检测
 </i18n>
 
 <template>
@@ -57,16 +65,16 @@ zh:
         <Access v-if="isClusterInstalled && isClusterOnline && currentTab == 'access'" ref="access" 
           :cluster="cluster" :loading="loading" @switch="currentTab = $event"></Access>
       </el-tab-pane>
-      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" label="健康检查" name="health_check">
+      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('health_check')" name="health_check">
         <ClusterHealthCheck v-if="isClusterInstalled && isClusterOnline && currentTab == 'health_check'" :cluster="cluster"></ClusterHealthCheck>
       </el-tab-pane>
-      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" label="备份/恢复">
+      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('backup')">
         <el-alert>对 etcd 及 control-plane 做备份及恢复，正在建设...</el-alert>      
       </el-tab-pane>
-      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" label="CIS扫描">
+      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('csi_scan')">
         <el-alert>CIS 扫描，正在建设...</el-alert>
       </el-tab-pane>
-      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" label="升级包检测">
+      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('upgrade')">
         <el-alert>检测 kuboard-spray 升级资源包，正在建设...</el-alert>
       </el-tab-pane>
     </el-tabs>

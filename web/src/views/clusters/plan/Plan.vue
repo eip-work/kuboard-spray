@@ -208,7 +208,7 @@ export default {
       }),
       currentTab: computed(() => {
         return this.currentPropertiesTab
-      })
+      }),
     }
   },
   computed: {

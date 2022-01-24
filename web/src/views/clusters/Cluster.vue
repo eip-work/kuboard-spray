@@ -160,6 +160,24 @@ export default {
       pendingAddNodes: computed(() => {
         return this.pendingNodes('add_node')
       }),
+      onlineNodes: computed(() => {
+        let result = {}
+        if (this.cluster && this.cluster.state) {
+          for (let key in this.cluster.state.nodes) {
+            result[key] = { k8s_node: this.cluster.state.nodes[key] }
+          }
+          for (let key in this.cluster.state.etcd_members) {
+            for (let nodeName in this.cluster.inventory.all.children.target.children.etcd.hosts) {
+              let etcdNode = this.cluster.inventory.all.children.target.children.etcd.hosts[nodeName]
+              if (etcdNode.etcd_member_name === key) {
+                result[nodeName] = result[nodeName] || {}
+                result[nodeName].etcd_member = this.cluster.state.etcd_members[key]
+              }
+            }
+          }
+        }
+        return result
+      }),
     }
   },
   components: { Plan, ClusterProcessing, Access, ClusterStateNodes, ClusterHealthCheck },

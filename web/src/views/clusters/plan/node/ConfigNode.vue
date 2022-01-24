@@ -57,8 +57,8 @@ zh:
         {{$t('msg.help')}}
       </el-link>
     </el-alert>
-    <StateNode v-if="nodes[nodeName]" :cluster="cluster" :nodeName="nodeName" :nodes="nodes"></StateNode>
-    <SshParamsNode :cluster="cluster" :nodes="nodes" v-if="inventory.all.hosts[nodeName]"
+    <StateNode v-if="onlineNodes[nodeName]" :cluster="cluster" :nodeName="nodeName"></StateNode>
+    <SshParamsNode :cluster="cluster" v-if="inventory.all.hosts[nodeName]"
       :holder="inventory.all.hosts[nodeName]" :prop="`all.hosts.${nodeName}`" :clusterName="cluster.name" :nodeName="nodeName" :description="$t('sshcommon', {nodeName: nodeName})">
       <NodeFact ref="nodeFact" class="app_margin_bottom" v-if="inventory.all.hosts[nodeName]"
         :form="$refs.form"
@@ -95,7 +95,7 @@ zh:
     </ConfigSection>
     <ConfigSection v-if="enabledEtcd" v-model:enabled="enabledEtcd" label="ETCD" :description="$t('etcd', {nodeName: nodeName})" disabled anti-freeze>
       <FieldString :holder="inventory.all.children.target.children.etcd.hosts[nodeName]" fieldName="etcd_member_name" :rules="etcd_member_name_rules" 
-        :anti-freeze="nodes[nodeName] === undefined || inventory.all.hosts[nodeName].kuboardspray_node_action === 'add_node'"
+        :anti-freeze="onlineNodes[nodeName] === undefined"
         :prop="`all.children.target.children.etcd.hosts.${nodeName}`" required></FieldString>
     </ConfigSection>
   </el-form>
@@ -111,7 +111,6 @@ export default {
   props: {
     cluster: { type: Object, required: true },
     nodeName: { type: String, required: true },
-    nodes: { type: Object, required: false, default: () => {return {}} },
     pingpong: { type: Object, required: false, default: () => {return {}} },
     pingpongLoading: { type: Boolean, required: false, default: false },
   },
@@ -134,7 +133,7 @@ export default {
       ]
     }
   },
-  inject: ['editMode'],
+  inject: ['editMode', 'onlineNodes'],
   computed: {
     pingpongType () {
       if (this.pingpong[this.nodeName]) {

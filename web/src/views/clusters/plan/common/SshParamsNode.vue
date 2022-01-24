@@ -14,7 +14,7 @@ zh:
 
 <template>
   <ConfigSection ref="configSection" v-model:enabled="enableSsh" label="SSH" :description="description" disabled anti-freeze>
-    <FieldString :holder="holder" fieldName="ansible_host" :prop="`all.hosts.${nodeName}`" :anti-freeze="nodes[nodeName] === undefined"
+    <FieldString :holder="holder" fieldName="ansible_host" :prop="`all.hosts.${nodeName}`" :anti-freeze="onlineNodes[nodeName] === undefined"
       :placeholder="$t('ansible_host_placeholder')" :rules="hostRules"></FieldString>
     <FieldString :holder="holder" fieldName="ansible_port" :prop="`all.hosts.${nodeName}`"
       :placeholder="placeholder('ansible_port')" anti-freeze
@@ -55,7 +55,6 @@ export default {
     holder: { type: Object, required: true },
     prop: { type: String, required: true },
     description: { type: String, required: true },
-    nodes: { type: Object, required: true },
   },
   data() {
     return {
@@ -75,6 +74,7 @@ export default {
       ]
     }
   },
+  inject: ['onlineNodes', 'isClusterInstalled'],
   computed: {
     enableSsh: {
       get () {
@@ -103,13 +103,13 @@ export default {
   watch: {
     nodeName (newValue) {
       // 如果节点已存在，则折叠 ssh 配置参数
-      this.$refs.configSection.expand(this.nodes[newValue] == undefined)
+      this.$refs.configSection.expand(this.onlineNodes[newValue] == undefined)
     }
   },
   components: { SshAddPrivateKey },
   mounted () {
     setTimeout(() => {
-      this.$refs.configSection.expand(this.nodes[this.nodeName] == undefined)
+      this.$refs.configSection.expand(this.onlineNodes[this.nodeName] == undefined)
     }, 200)
   },
   methods: {

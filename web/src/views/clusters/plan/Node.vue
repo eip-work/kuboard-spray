@@ -17,7 +17,7 @@ zh:
       <el-button v-if="cluster.type === 'gap'" type="primary" circle icon="el-icon-document-checked" :loading="pingpong_loading"></el-button>
       <el-button v-else-if="pendingAction === 'remove_node'" type="danger" circle icon="el-icon-delete" :loading="pingpong_loading"></el-button>
       <el-button v-else-if="pendingAction === 'add_node'" type="warning" circle icon="el-icon-plus" :loading="pingpong_loading"></el-button>
-      <el-button v-else type="success" circle :plain="nodes[name] === undefined" icon="el-icon-check" :loading="pingpong_loading"></el-button>
+      <el-button v-else type="success" circle :plain="onlineNodes[name] === undefined" icon="el-icon-check" :loading="pingpong_loading"></el-button>
     </div>
     <div class="delete_button" v-if="!hideDeleteButton && editMode !== 'view'">
       <el-button v-if="pendingAction === 'remove_node'" icon="el-icon-check" type="success" circle @click="cancelDelete"></el-button>
@@ -52,7 +52,7 @@ export default {
     pingpong: { type: Object, required: false, default: () => {return {}} },
     pingpong_loading: { type: Boolean, required: false, default: false },
   },
-  inject: ['editMode', 'isClusterInstalled', 'isClusterOnline', 'pendingAddNodes'],
+  inject: ['editMode', 'isClusterInstalled', 'isClusterOnline', 'pendingAddNodes', 'onlineNodes'],
   computed: {
     inventory: {
       get () { return this.cluster.inventory },
@@ -64,35 +64,12 @@ export default {
       }
       return undefined
     },
-    nodes () {
-      if (this.cluster && this.cluster.state) {
-        return this.cluster.state.nodes
-      }
-      return {}
-    },
-    etcdMemberNodes () {
-      let result = {}
-      if (this.cluster && this.cluster.state && this.cluster.state.etcd_members) {
-        for (let key in this.cluster.state.etcd_members) {
-          let etcdHosts = this.inventory.all.children.target.children.etcd.hosts
-          for (let node in etcdHosts) {
-            if (etcdHosts[node].etcd_member_name == key) {
-              result[node] = {
-                node: etcdHosts[node],
-                etcd: this.cluster.state.etcd_members[key]
-              }
-            }
-          }
-        }
-      }
-      return result
-    },
     nodeClass () {
       let result = 'node'
       if (this.active) {
         result += ' active'
       }
-      if (this.nodes[this.name]) {
+      if (this.onlineNodes[this.name]) {
         result += ' online'
       }
       if (this.pendingAction === 'remove_node') {
@@ -144,11 +121,11 @@ export default {
         this.$message.error(this.$t('noRemoveOffline'))
         return
       }
-      if (this.pendingAddNodes.length > 0 && this.nodes[this.name] !== undefined) {
+      if (this.pendingAddNodes.length > 0 && this.onlineNodes[this.name] !== undefined) {
         this.$message.error(this.$t('addNodeFirst'))
         return
       }
-      if (this.nodes[this.name] || this.etcdMemberNodes[this.name]) {
+      if (this.onlineNodes[this.name]) {
         this.inventory.all.hosts[this.name].kuboardspray_node_action = 'remove_node'
         if (this.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[this.name]) {
           this.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[this.name].kuboardspray_node_action = 'remove_node'

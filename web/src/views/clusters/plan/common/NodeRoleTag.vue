@@ -1,10 +1,12 @@
 <template>
-  <div :class="(enabled ? 'role noselect selected ' : 'role noselect ') + role" @click="click">
-    <el-icon style="vertical-align: middle; margin-top: -3px;">
+  <div :class="(enabled ? 'role noselect selected ' : 'role noselect ') + role" @click="click" :style="readOnly ? 'cursor: inherit;' : ''">
+    <el-icon style="vertical-align: middle; margin-top: -3px; margin-right: 5px;">
       <circle-check v-if="enabled"/>
       <circle-close v-else/>
     </el-icon>
-    {{$t('node.' + role)}}
+    <slot>
+      {{$t('node.' + role)}}
+    </slot>
   </div>
 </template>
 
@@ -15,6 +17,7 @@ export default {
   props: {
     enabled: { type: Boolean, required: true },
     role: { type: String, required: true },
+    readOnly: { type: Boolean, required: false, default: false },
   },
   data() {
     return {
@@ -46,6 +49,7 @@ export default {
   border-radius: 5px;
   cursor: pointer;
   color: $--color-text-secondary;
+  text-align: center;
 }
 .role:hover {
   opacity: 0.8;

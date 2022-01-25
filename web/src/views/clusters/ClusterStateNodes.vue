@@ -27,8 +27,8 @@ zh:
             </div>
             <div style="flex-grow: 1;">
               <template v-if="node.k8s_node">
-                <el-tag type="primary" effect="dark" style="margin-left: 10px;" v-if="node.k8s_node.metadata.labels['node-role.kubernetes.io/control-plane'] !== undefined">控制节点</el-tag>
-                <el-tag type="success" effect="dark" style="margin-left: 10px;" v-if="isKubeNode(name)">工作节点</el-tag>
+                <el-tag type="primary" effect="dark" style="margin-left: 10px;" v-if="node.k8s_node.metadata.labels['node-role.kubernetes.io/control-plane'] !== undefined">{{$t('node.kube_control_plane')}}</el-tag>
+                <el-tag type="success" effect="dark" style="margin-left: 10px;" v-if="isKubeNode(name)">{{$t('node.kube_node')}}</el-tag>
               </template>
               <template v-if="node.etcd_member">
                 <el-tag type="warning" effect="dark" style="margin-left: 10px;">{{node.etcd_member.name}}</el-tag>
@@ -81,13 +81,6 @@ export default {
   mounted () {
   },
   methods: {
-    etcdMember (nodeName) {
-      let host = this.cluster.inventory.all.children.target.children.etcd.hosts[nodeName]
-      if (host) {
-        return host.etcd_member_name
-      }
-      return undefined
-    },
     isKubeNode (nodeName) {
       let node = this.onlineNodes[nodeName]
       if (node !== undefined && node.k8s_node !== undefined) {

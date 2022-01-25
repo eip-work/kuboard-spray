@@ -7,7 +7,9 @@
         :placeholder="compute_placeholder"></el-input>
     </template>
     <template #view>
-      {{ showPassword && hidePassword ? value.replace(/.?/g, '*') : value }}
+      <span v-if="value">
+        {{ showPassword && hidePassword ? value.replace(/.?/g, '*') : value }}
+      </span>
       <el-button v-if="showPassword" type="text" icon="el-icon-view" @click="hidePassword = !hidePassword"></el-button>
     </template>
   </FieldCommon>

@@ -51,16 +51,16 @@ zh:
               <template #title>
                 <span class="package_title">{{$t('network')}}</span>
               </template>
-              <div class="package_info">
-                <NodeFactField :holder="fact.ansible_facts.ansible_default_ipv4" fieldName="type"></NodeFactField>
-                <NodeFactField :holder="fact.ansible_facts.ansible_default_ipv4" fieldName="interface"></NodeFactField>
-                <NodeFactField :holder="fact.ansible_facts.ansible_default_ipv4" fieldName="address"></NodeFactField>
-                <NodeFactField :holder="fact.ansible_facts.ansible_default_ipv4" fieldName="network"></NodeFactField>
-                <NodeFactField :holder="fact.ansible_facts.ansible_default_ipv4" fieldName="gateway"></NodeFactField>
-                <NodeFactField :holder="fact.ansible_facts.ansible_default_ipv4" fieldName="broadcast"></NodeFactField>
-                <NodeFactField :holder="fact.ansible_facts.ansible_default_ipv4" fieldName="netmask"></NodeFactField>
-                <NodeFactField :holder="fact.ansible_facts.ansible_default_ipv4" fieldName="macaddress"></NodeFactField>
-                <NodeFactField :holder="fact.ansible_facts.ansible_default_ipv4" fieldName="mtu"></NodeFactField>
+              <div class="package_info" v-if="preferredIpV4">
+                <NodeFactField :holder="preferredIpV4" fieldName="type"></NodeFactField>
+                <NodeFactField :holder="preferredIpV4" fieldName="device"></NodeFactField>
+                <NodeFactField :holder="preferredIpV4.ipv4" fieldName="address"></NodeFactField>
+                <NodeFactField :holder="preferredIpV4.ipv4" fieldName="network"></NodeFactField>
+                <!-- <NodeFactField :holder="preferredIpV4" fieldName="gateway"></NodeFactField> -->
+                <NodeFactField :holder="preferredIpV4.ipv4" fieldName="broadcast"></NodeFactField>
+                <NodeFactField :holder="preferredIpV4.ipv4" fieldName="netmask"></NodeFactField>
+                <NodeFactField :holder="preferredIpV4" fieldName="macaddress"></NodeFactField>
+                <NodeFactField :holder="preferredIpV4" fieldName="mtu"></NodeFactField>
               </div>
             </el-collapse-item>
             <el-collapse-item name="3">
@@ -98,7 +98,7 @@ export default {
   props: [
     'node_owner_type', 'node_owner', 'node_name',
     'ansible_host', 'ansible_port', 'ansible_user', 'ansible_password', 'ansible_ssh_private_key_file',
-    'ansible_become', 'ansible_become_user', 'ansible_become_password', 'form'
+    'ansible_become', 'ansible_become_user', 'ansible_become_password', 'form', 'ip'
   ],
   data() {
     return {
@@ -108,6 +108,18 @@ export default {
     }
   },
   computed: {
+    preferredIpV4 () {
+      if (this.fact) {
+        let defaultIp = this.ip || this.ansible_host
+        for (let key in this.fact.ansible_facts) {
+          let temp = this.fact.ansible_facts[key]
+          if (temp.ipv4 && temp.ipv4.address == defaultIp) {
+            return temp
+          }
+        }
+      }
+      return undefined
+    }
   },
   components: { NodeFactField },
   mounted () {

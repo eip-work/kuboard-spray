@@ -4,18 +4,26 @@ en:
   ansible_host_placeholder: 'KuboardSpray use this ip or hostname to connect to the node.'
   default_value: 'Default: {default_value} (inhirit from value configured in Global Config tab)'
   duplicateIP: "IP address conflict with {node}"
+  ip: Bind to IP
+  longTimeLoading: Loading... cost about 20-30s
 zh:
   addSshKey: 添加私钥
   ansible_host_placeholder: 'KuboardSpray 连接该主机时所使用的主机名或 IP 地址'
   default_value: '默认值：{default_value} （继承自全局设置标签页中的配置）'
   duplicateIP: "IP 地址不能与其他节点相同：{node}"
+  ip: 绑定到 IP
+  longTimeLoading: 加载中... 可能需要 20-30 秒
+  ipDescription: kubernetes 使用的地址有可能与 kuboard-spray 访问该机器时所使用的地址不同，此处指定 kubernetes 所使用的地址（必须为内网地址）
 </i18n>
 
 
 <template>
   <ConfigSection ref="configSection" v-model:enabled="enableSsh" label="SSH" :description="description" disabled anti-freeze>
-    <FieldString :holder="holder" fieldName="ansible_host" :prop="`all.hosts.${nodeName}`" :anti-freeze="onlineNodes[nodeName] === undefined"
-      :placeholder="$t('ansible_host_placeholder')" :rules="hostRules"></FieldString>
+    <FieldCommon :holder="holder" fieldName="ansible_host" :prop="`all.hosts.${nodeName}`" :anti-freeze="onlineNodes[nodeName] === undefined" :rules="hostRules">
+      <template #edit>
+        <el-input v-model.trim="ansible_host" :placeholder="$t('ansible_host_placeholder')"></el-input>
+      </template>
+    </FieldCommon>
     <FieldString :holder="holder" fieldName="ansible_port" :prop="`all.hosts.${nodeName}`"
       :placeholder="placeholder('ansible_port')" anti-freeze
       :required="!cluster.inventory.all.children.target.vars.ansible_port"></FieldString>
@@ -40,6 +48,20 @@ zh:
       <FieldString :holder="holder" fieldName="ansible_become_user" :placeholder="placeholder('ansible_become_user')" anti-freeze></FieldString>
       <FieldString :holder="holder" fieldName="ansible_become_password" :placeholder="placeholder('ansible_become_password')" anti-freeze></FieldString>
     </template>
+    <FieldCommon :holder="holder" fieldName="ip" :prop="`all.hosts.${nodeName}`" :anti-freeze="onlineNodes[nodeName] === undefined" :label="$t('ip')"
+      :placeholder="$t('ansible_host_placeholder')">
+      <template #edit>
+        <el-select v-model="holderRef.ip" style="width: 100%;" :loading="optionIpsLoading" @visible-change="loadOptionIps" :loading-text="$t('longTimeLoading')">
+          <el-option v-for="item in optionIps" :key="item" :value="item">
+            <span class="app_text_mono">{{ item }}</span>
+          </el-option>
+        </el-select>
+        <div style="font-size: 12px; color: #666; line-height: 20px; margin-top: 2px;">{{ $t('ipDescription') }}</div>
+      </template>
+      <template #view>
+        <span class="app_text_mono">{{ holderRef.ip || ansible_host }}</span>
+      </template>
+    </FieldCommon>
     <slot></slot>
     <SshAddPrivateKey ref="addPrivateKey" ownerType="cluster" :ownerName="cluster.name"></SshAddPrivateKey>
   </ConfigSection>
@@ -71,11 +93,22 @@ export default {
           },
           trigger: 'blur'
         },
-      ]
+      ],
+      optionIps: [],
+      optionIpsLoading: false,
     }
   },
   inject: ['onlineNodes', 'isClusterInstalled'],
   computed: {
+    ansible_host: {
+      get () {
+        return this.holderRef.ansible_host
+      },
+      set (v) {
+        this.holderRef.ansible_host = v
+        this.holderRef.ip = v
+      }
+    },
     enableSsh: {
       get () {
         return true
@@ -85,7 +118,7 @@ export default {
       }
     },
     holderRef: {
-      get () {return this.holder},
+      get () {return this.holder || {}},
       set () {}
     },
     ansible_become: {
@@ -134,6 +167,43 @@ export default {
       })
       return result
     },
+    async loadOptionIps (flag) {
+      if (flag) {
+        this.optionIpsLoading = true
+        let vars = this.cluster.inventory.all.children.target.vars
+        let req = {
+          from_cache: false,
+          ansible_host: this.ansible_host,
+          ansible_port: this.holder.ansible_port || vars.ansible_port,
+          ansible_user: this.holder.ansible_user || vars.ansible_user,
+          ansible_password: this.holder.ansible_password || vars.ansible_password,
+          ansible_ssh_private_key_file: this.holder.ansible_ssh_private_key_file || vars.ansible_ssh_private_key_file,
+          ansible_become: this.holder.ansible_become || vars.ansible_become,
+          ansible_become_user: this.holder.ansible_become_user || vars.ansible_become_user,
+          ansible_become_password: this.holder.ansible_become_password || vars.ansible_become_password,
+          gather_subset: '!all,!min,network',
+          filter: 'ansible_all_ipv4_addresses',
+        }
+        await this.kuboardSprayApi.post(`/facts/cluster/${this.cluster.name}/${this.nodeName}`, req).then(resp => {
+          if (resp.data.ansible_facts) {
+            this.optionIps = resp.data.ansible_facts.ansible_all_ipv4_addresses
+          } else {
+            this.$message.error(resp.data.msg)
+          }
+        }).catch(e => {
+          let msg = '' + e
+          if (e.response) {
+            if (e.response.status !== 417) {
+              if (e.response && e.response.data && e.response.data.message){
+                msg = e.response.data.message
+              }
+            }
+          }
+          this.$message.error(msg)
+        })
+        this.optionIpsLoading = false
+      }
+    }
   }
 }
 </script>

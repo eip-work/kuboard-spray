@@ -28,6 +28,8 @@ type GetNodeFactRequest struct {
 	Become         bool   `json:"ansible_become"`
 	BecomeUser     string `json:"ansible_become_user"`
 	BecomePassword string `json:"ansible_become_password"`
+	GatherSubset   string `json:"gather_subset"`
+	Filter         string `json:"filter"`
 }
 
 func GetNodeFacts(c *gin.Context) {
@@ -101,9 +103,17 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 
 	defer os.Remove(inventoryPath)
 
+	args := []string{req.Node, "-m", "setup", "-i", inventoryPath}
+	if req.GatherSubset != "" {
+		args = append(args, "-a", "gather_subset="+req.GatherSubset)
+	}
+	if req.Filter != "" {
+		args = append(args, "-a", "filter="+req.Filter)
+	}
+
 	run := command.Run{
 		Cmd:  "ansible",
-		Args: []string{req.Node, "-m", "setup", "-i", inventoryPath},
+		Args: args,
 		Env:  []string{"ANSIBLE_CONFIG=" + constants.GET_ADHOC_CFG_PATH()},
 		// Timeout: 5,
 		// Dir:  dir + "/ansible-script",

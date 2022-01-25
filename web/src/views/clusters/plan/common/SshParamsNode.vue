@@ -5,6 +5,7 @@ en:
   default_value: 'Default: {default_value} (inhirit from value configured in Global Config tab)'
   duplicateIP: "IP address conflict with {node}"
   ip: Bind to IP
+  ip_placeholder: 'Default: {default_value} (inhirit from value ansible_host)'
   longTimeLoading: Loading... cost about 20-30s
 zh:
   addSshKey: 添加私钥
@@ -12,6 +13,7 @@ zh:
   default_value: '默认值：{default_value} （继承自全局设置标签页中的配置）'
   duplicateIP: "IP 地址不能与其他节点相同：{node}"
   ip: 绑定到 IP
+  ip_placeholder: '默认值：{default_value} （默认与主机 IP 相同）'
   longTimeLoading: 加载中... 可能需要 20-30 秒
   ipDescription: kubernetes 使用的地址有可能与 kuboard-spray 访问该机器时所使用的地址不同，此处指定 kubernetes 所使用的地址（必须为内网地址）
 </i18n>
@@ -49,7 +51,7 @@ zh:
       <FieldString :holder="holder" fieldName="ansible_become_password" :placeholder="placeholder('ansible_become_password')" anti-freeze></FieldString>
     </template>
     <FieldCommon :holder="holder" fieldName="ip" :prop="`all.hosts.${nodeName}`" :anti-freeze="onlineNodes[nodeName] === undefined" :label="$t('ip')"
-      :placeholder="$t('ansible_host_placeholder')">
+      :placeholder="$t('ip_placeholder', { default_value: holder.ansible_host})">
       <template #edit>
         <el-select v-model="holderRef.ip" style="width: 100%;" :loading="optionIpsLoading" @visible-change="loadOptionIps" :loading-text="$t('longTimeLoading')">
           <el-option v-for="item in optionIps" :key="item" :value="item">

@@ -49,8 +49,8 @@ zh:
           {{$t('is_installed_false')}}
         </el-tag>
         <ExecuteTask v-if="showExecute" :history="cluster.history" placement="left"
-          :disabled="cluster.resourcePackage.data.supported_playbooks[form.action] === undefined || addonInResourcePackage.lifecycle == undefined || addonInResourcePackage.lifecycle[form.action + '_tags'] === undefined"
-          :title="$t(form.action, {label})" :startTask="applyPlan" @refresh="$emit('refresh')" @visibleChange="onVisibleChange">
+          :disabled="executeDisabled"
+          :title="$t(action, {label})" :startTask="applyPlan" @refresh="$emit('refresh')" @visibleChange="onVisibleChange">
           <template #reference>
             <el-button v-if="addonState.is_installed" icon="el-icon-remove" type="danger" plain>{{$t('uninstall')}}</el-button>
             <el-button v-else icon="el-icon-download" type="warning" plain>{{$t('install')}}</el-button>
@@ -136,9 +136,14 @@ export default {
         return false
       }
       if (this.editMode === 'view' && this.isClusterInstalled && this.isClusterOnline) {
-        return this.addonState.intend_to_install !== this.addonState.is_installed
+        return this.addonState.intend_to_install
       }
       return false
+    },
+    executeDisabled () {
+      return this.cluster.resourcePackage.data.supported_playbooks[this.action] === undefined 
+        || this.addonInResourcePackage.lifecycle == undefined
+        || this.addonInResourcePackage.lifecycle[this.action + '_tags'] === undefined
     },
     enabledRef: {
       get () { return this.enabled },
@@ -152,6 +157,12 @@ export default {
         return false
       }
       return true
+    },
+    action () {
+      if (this.cluster.state && this.addonState) {
+        return this.addonState.is_installed ? 'remove_addon' : 'install_addon'
+      }
+      return ''
     }
   },
   components: { ExecuteTask },
@@ -161,7 +172,7 @@ export default {
   methods: {
     onVisibleChange (v) {
       if (v && this.cluster.state && this.addonState) {
-        this.form.action = this.addonState.is_installed ? 'remove_addon' : 'install_addon'
+        this.action = this.addonState.is_installed ? 'remove_addon' : 'install_addon'
       }
     },
     async applyPlan () {
@@ -185,7 +196,7 @@ export default {
             }
             req.discovered_interpreter_python = discovered_interpreter_python
             console.log(req)
-            this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/${this.form.action}`, req).then(resp => {
+            this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/${this.action}`, req).then(resp => {
               let pid = resp.data.data.pid
               resolve(pid)
             }).catch(e => {

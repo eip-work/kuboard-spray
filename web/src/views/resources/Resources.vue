@@ -198,7 +198,7 @@ export default {
   },
   methods: {
     meetVersionRequirement(item) {
-      return compareVersions(window.KuboardSpray.version.version, item.kuboard_spray_version.min) >= 0
+      return compareVersions(window.KuboardSpray.version.trimed, item.kuboard_spray_version.min) >= 0
     },
     async refresh () {
       this.importedPackageMap = {}

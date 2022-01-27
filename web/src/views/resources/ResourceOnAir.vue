@@ -73,7 +73,7 @@ export default {
       if (this.resourcePackage === undefined) {
         return false
       }
-      return compareVersions(window.KuboardSpray.version.version, this.resourcePackage.metadata.kuboard_spray_version.min) >= 0
+      return compareVersions(window.KuboardSpray.version.trimed, this.resourcePackage.metadata.kuboard_spray_version.min) >= 0
     },
   },
   components: { ResourceDetails, ResourceDownload },

@@ -38,6 +38,8 @@ import Codemirror from "codemirror-editor-vue3"
 import "codemirror/theme/darcula.css"
 import "codemirror/mode/yaml/yaml.js"
 import yaml from 'js-yaml'
+import clone from 'clone'
+import compareVersions from 'compare-versions'
 
 export default {
   props: {
@@ -66,6 +68,34 @@ export default {
       }
       return true
     },
+    resourcePackage () {
+      if (this.content) {
+        try {
+          return yaml.load(this.content)
+        } catch (e) {
+          this.$message.error(e)
+        }
+      }
+      return undefined
+    },
+    meetVersionRequirement() {
+      if (this.resourcePackage === undefined) {
+        return false
+      }
+      if (this.resourcePackage.metadata && this.resourcePackage.metadata.kuboard_spray_version && this.resourcePackage.metadata.kuboard_spray_version.min) {
+        return compareVersions(window.KuboardSpray.version.trimed, this.resourcePackage.metadata.kuboard_spray_version.min) >= 0
+      }
+      return false
+    },
+    meetArch() {
+      if (this.resourcePackage === undefined) {
+        return false
+      }
+      if (this.resourcePackage.data && this.resourcePackage.data.kubernetes && this.resourcePackage.data.kubernetes.image_arch) {
+        return window.KuboardSpray.version.arch ==  this.resourcePackage.data.kubernetes.image_arch
+      }
+      return false
+    },
     compute_dialogVisible: {
       get () { return this.dialogVisible },
       set (v) {
@@ -87,7 +117,7 @@ export default {
   },
   methods: {
     downloadOffline () {
-      let req = yaml.load(this.content)
+      let req = clone(this.resourcePackage)
       if (!req.downloadFrom) {
         this.$message.error('缺少 downloadFrom 字段，请正确复制文件内容')
         return
@@ -102,6 +132,14 @@ export default {
       }
       if (!req.metadata.version) {
         this.$message.error('缺少 metadata.version 字段，请正确复制文件内容')
+        return
+      }
+      if (!this.meetVersionRequirement) {
+        this.$message.error('KuboardSpray 最低版本要求为：' + this.resourcePackage.metadata.kuboard_spray_version.min + '，当前版本为：' + window.KuboardSpray.version.version)
+        return
+      }
+      if (!this.meetArch) {
+        this.$message.error('当前 KuboardSpray 只能导入 ' + window.KuboardSpray.version.arch + ' 格式的资源包')
         return
       }
       let request = {

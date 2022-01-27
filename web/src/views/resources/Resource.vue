@@ -34,7 +34,7 @@ zh:
     </ControlBar>
     <el-card>
       <el-skeleton v-if="loading"></el-skeleton>
-      <ResourceDetails v-else-if="resource" :resourcePackage="resource.package" expandAll></ResourceDetails>
+      <ResourceDetails v-else-if="resource" :releaseNote="releaseNote" :resourcePackage="resource.package" expandAll></ResourceDetails>
     </el-card>
   </div>
 </template>
@@ -65,6 +65,7 @@ export default {
   data() {
     return {
       resource: undefined,
+      releaseNote: undefined,
       loading: false,
     }
   },
@@ -88,6 +89,11 @@ export default {
         this.loading = false
       }).catch(e => {
         this.loading = false
+        console.log(e)
+      })
+      this.kuboardSprayApi.get(`/resources/${this.name}/release_note`).then(resp => {
+        this.releaseNote = resp.data.data.release_note
+      }).catch(e => {
         console.log(e)
       })
     },

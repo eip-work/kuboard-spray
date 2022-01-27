@@ -31,7 +31,7 @@ zh:
     </div>
     <el-card>
       <el-skeleton v-if="loading" animated></el-skeleton>
-      <ResourceDetails v-else-if="resourcePackage" :resourcePackage="resourcePackage" expandAll></ResourceDetails>
+      <ResourceDetails v-else-if="resourcePackage" :releaseNote="releaseNote" :resourcePackage="resourcePackage" expandAll></ResourceDetails>
     </el-card>
   </div>
 </template>
@@ -65,6 +65,7 @@ export default {
   data() {
     return {
       resourcePackage: undefined,
+      releaseNote: undefined,
       loading: false,
     }
   },
@@ -88,6 +89,11 @@ export default {
       }).catch(e => {
         console.log(e)
         this.$message.error('离线环境')
+      })
+      await axios.get(`https://addons.kuboard.cn/v-kuboard-spray/${this.name}/release.md?nocache=${new Date().getTime()}`).then(resp => {
+        this.releaseNote = resp.data
+      }).catch(e => {
+        console.log(e)
       })
       this.loading = false
     },

@@ -14,6 +14,7 @@ en:
   import_status: Import status
   import_status_true: True
   import_status_false: False
+  minVersionRequired: Min version required to kuboardspray
 zh:
   title: 资源包列表
   resourceDescription1: Kuboard 提供一组经过预先测试验证的资源包列表，可以帮助您快速完成集群安装
@@ -29,6 +30,7 @@ zh:
   import_status: 导入状态
   import_status_true: 已导入
   import_status_false: 未导入
+  minVersionRequired: KuboardSpray最低版本要求
 </i18n>
 
 <template>
@@ -106,10 +108,14 @@ zh:
                   {{ $t('import_status_true') }}
                 </el-tag>
               </template>
-              <el-tag v-else type="warning" effect="dark">
+              <el-tag v-else-if="meetVersionRequirement(scope.row)" type="warning" effect="dark">
                 <i class="el-icon-circle-close"></i>
                 {{ $t('import_status_false') }}
               </el-tag>
+              <template v-else>
+                <el-tag type="error" effect="dark">{{ $t('minVersionRequired') }}</el-tag>
+                <el-tag type="error" class="app_text_mono">{{scope.row.kuboard_spray_version.min}}</el-tag>
+              </template>
             </template>
             <i class="el-icon-loading" v-else></i>
           </template>
@@ -123,7 +129,7 @@ zh:
               </template>
               <template v-else>
                 <el-button type="primary" plain icon="el-icon-view" @click="$router.push(`/settings/resources/${scope.row.version}/on_air`)">{{ $t('msg.view') }}</el-button>
-                <el-button type="primary" icon="el-icon-download" @click="$router.push(`/settings/resources/${scope.row.version}/on_air`)">{{ $t('import') }}</el-button>
+                <el-button type="primary" v-if="meetVersionRequirement(scope.row)" icon="el-icon-download" @click="$router.push(`/settings/resources/${scope.row.version}/on_air`)">{{ $t('import') }}</el-button>
               </template>
             </template>
           </template>
@@ -139,6 +145,7 @@ import mixin from '../../mixins/mixin.js'
 import axios from 'axios'
 import yaml from 'js-yaml'
 import ResourcesCreateOffline from './ResourcesCreateOffline.vue'
+import compareVersions from 'compare-versions'
 
 export default {
   mixins: [mixin],
@@ -190,7 +197,9 @@ export default {
     this.refresh()
   },
   methods: {
-
+    meetVersionRequirement(item) {
+      return compareVersions(window.KuboardSpray.version.version, item.kuboard_spray_version.min) >= 0
+    },
     async refresh () {
       this.importedPackageMap = {}
       this.packageMap = {}

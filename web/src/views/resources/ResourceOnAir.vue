@@ -3,16 +3,24 @@ en:
   resourceList: Resources List
   online: 'On Air '
   download: Download
+  minVersionRequired: Min version required to kuboardspray
 zh:
   resourceList: 资源包列表
   online: 未下载
   download: 下 载
+  minVersionRequired: KuboardSpray最低版本要求
 </i18n>
 
 <template>
   <div>
     <ControlBar :title="name">
-      <ResourceDownload v-if="resourcePackage" action="download" :resource="{package: resourcePackage, history:{task_type: 'resource', task_name: name, processing: false, success_tasks: []}}"></ResourceDownload>
+      <template v-if="resourcePackage">
+        <ResourceDownload  v-if="meetVersionRequirement" action="download" :resource="{package: resourcePackage, history:{task_type: 'resource', task_name: name, processing: false, success_tasks: []}}"></ResourceDownload>
+        <template v-else>
+          <el-tag type="error" effect="dark">{{ $t('minVersionRequired') }}</el-tag>
+          <el-tag type="error" class="app_text_mono">{{resourcePackage.metadata.kuboard_spray_version.min}}</el-tag>
+        </template>
+      </template>
     </ControlBar>
     <div class="app_block_title">
       {{ $t('obj.resource') }}
@@ -34,6 +42,7 @@ import ResourceDetails from './details/ResourceDetails.vue'
 import axios from 'axios'
 import yaml from 'js-yaml'
 import ResourceDownload from './ResourceDownload.vue'
+import compareVersions from 'compare-versions'
 
 export default {
   mixins: [mixin],
@@ -60,6 +69,12 @@ export default {
     }
   },
   computed: {
+    meetVersionRequirement() {
+      if (this.resourcePackage === undefined) {
+        return false
+      }
+      return compareVersions(window.KuboardSpray.version.version, this.resourcePackage.metadata.kuboard_spray_version.min) >= 0
+    },
   },
   components: { ResourceDetails, ResourceDownload },
   mounted () {

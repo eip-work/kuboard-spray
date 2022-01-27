@@ -42,31 +42,31 @@ func RemoveAddon(c *gin.Context) {
 			message += "\n"
 			message = "\033[32m[ " + "Addon " + req.AddonName + " has been removed successfully." + " ]\033[0m \n"
 			message += "\033[32m[ " + "已成功卸载可选组件 " + req.AddonName + "。" + " ]\033[0m \n"
+
+			inventoryPath := cluster_common.ClusterInventoryYamlPath(req.Cluster)
+			inventoryNew, _ := common.ParseYamlFile(inventoryPath)
+
+			addons := common.MapGet(resourcePackage, "data.addon").([]interface{})
+			target := ""
+			for _, a := range addons {
+				addon := a.(map[string]interface{})
+				if addon["name"] == req.AddonName {
+					target = addon["target"].(string)
+					break
+				}
+			}
+			if target != "" {
+				common.MapSet(inventoryNew, "all.children.target.children.k8s_cluster.vars."+target, false)
+
+				inventoryNewContent, _ := yaml.Marshal(inventoryNew)
+				if err := ioutil.WriteFile(inventoryPath, inventoryNewContent, 0655); err != nil {
+					logrus.Trace(err)
+				}
+			}
 		} else {
 			message += "\n"
 			message = "\033[31m\033[01m\033[05m[" + "Failed to remove addon " + req.AddonName + "." + "]\033[0m \n"
 			message += "\033[31m\033[01m\033[05m[" + "卸载可选组件 " + req.AddonName + " 失败，请回顾错误提示，修正问题后重新尝试。" + "]\033[0m \n"
-		}
-
-		inventoryPath := cluster_common.ClusterInventoryYamlPath(req.Cluster)
-		inventoryNew, _ := common.ParseYamlFile(inventoryPath)
-
-		addons := common.MapGet(resourcePackage, "data.addon").([]interface{})
-		target := ""
-		for _, a := range addons {
-			addon := a.(map[string]interface{})
-			if addon["name"] == req.AddonName {
-				target = addon["target"].(string)
-				break
-			}
-		}
-		if target != "" {
-			common.MapSet(inventoryNew, "all.children.target.children.k8s_cluster.vars."+target, false)
-
-			inventoryNewContent, _ := yaml.Marshal(inventoryNew)
-			if err := ioutil.WriteFile(inventoryPath, inventoryNewContent, 0655); err != nil {
-				logrus.Trace(err)
-			}
 		}
 
 		return "\n" + message, nil

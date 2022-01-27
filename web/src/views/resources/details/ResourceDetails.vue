@@ -9,7 +9,7 @@ zh:
 
 <template>
   <div>
-    <el-tabs v-if="releaseNoteHtml" v-model="activeName" @tab-click="handleClick" type="card">
+    <el-tabs v-if="releaseNoteHtml" v-model="activeName" type="card">
       <el-tab-pane :label="$t('releaseNote')" name="releaseNote">
         <div v-if="releaseNoteHtml" v-html="releaseNoteHtml" class="markdown"></div>
       </el-tab-pane>

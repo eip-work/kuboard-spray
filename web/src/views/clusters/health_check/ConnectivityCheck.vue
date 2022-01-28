@@ -30,6 +30,9 @@ zh:
     <div class="app_block_title">{{ $t('connectivity_check') }}</div>
     <div class="app_description">
       {{ $t('connectivity_check_desc') }}
+      <el-link icon="el-icon-link" href="https://kuboard-spray.cn/guide/addons/netchecker.html" target="_blank" style="margin-left: 20px;">
+        <span style="font-size: 13px;">{{$t('msg.help')}}</span>
+      </el-link>
     </div>
     <div v-if="installed">
       <el-skeleton v-if="loading" animated class="app_margin_top"></el-skeleton>

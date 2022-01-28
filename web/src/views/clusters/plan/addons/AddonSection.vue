@@ -16,6 +16,8 @@ en:
   v_vvv: More
   fork: ansible fork
   fork_more: Max number of nodes can be operated in the installation.
+
+  saveAndInstall: Please fill in params for the addon, save and then execute install task.
 zh:
   is_installed_true: 已安装
   is_installed_false: 未安装
@@ -33,10 +35,12 @@ zh:
   v_vvv: 更多
   fork: 并发数量
   fork_more: 安装过程中可以同时操作的目标节点的最大数量。ansible fork.
+
+  saveAndInstall: 请先填写该可选组件所需的参数，保存后再执行安装动作
 </i18n>
 
 <template>
-  <ConfigSection v-model:enabled="enabledRef" :label="label" :helpLink="`https://kuboard-spray.cn/guide/addons/${addonName}.html`" :anti-freeze="computedAntiFreeze">
+  <ConfigSection ref="configSection" v-model:enabled="enabledRef" :label="label" :helpLink="`https://kuboard-spray.cn/guide/addons/${addonName}.html`" :anti-freeze="computedAntiFreeze">
     <template #header>
       {{ label }}
       <div v-if="cluster && addonState" style="float: right; margin-right: 10px; margin-top: -1px;">
@@ -71,6 +75,7 @@ zh:
             </el-form-item>
           </el-form>
         </ExecuteTask>
+        <el-button v-else-if="isClusterOnline && editMode === 'view'" type="primary" plain icon="el-icon-download" @click="prepareForInstall">{{ $t('install_addon') }}</el-button>
       </div>
     </template>
     <template #more>
@@ -170,6 +175,14 @@ export default {
     this.onVisibleChange(true)
   },
   methods: {
+    prepareForInstall () {
+      this.enabledRef = true
+      this.$router.replace('?mode=edit')
+      setTimeout(() => {
+        this.$refs.configSection.expand(true)
+        this.$message.warning(this.$t('saveAndInstall'))
+      }, 500)
+    },
     onVisibleChange (v) {
       if (v && this.cluster.state && this.addonState) {
         this.action = this.addonState.is_installed ? 'remove_addon' : 'install_addon'

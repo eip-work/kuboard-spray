@@ -14,6 +14,7 @@ import (
 	"github.com/eip-work/kuboard-spray/api/os_mirror"
 	"github.com/eip-work/kuboard-spray/api/private_key"
 	"github.com/eip-work/kuboard-spray/api/resource"
+	"github.com/eip-work/kuboard-spray/api/ssh"
 	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/eip-work/kuboard-spray/log"
 	"github.com/eip-work/kuboard-spray/login"
@@ -58,6 +59,7 @@ func setupRouter() *gin.Engine {
 	api.DELETE("/execute/:owner_type/:owner_name/kill/:pid", command.ExecuteKill)
 
 	api.POST("/facts/:node_owner_type/:node_owner/:node", fact.GetNodeFacts)
+	api.GET("/ssh/:node_owner_type/:node_owner/:node", ssh.ShellWs)
 
 	api.GET("/private-keys/:owner_type/:owner_name", private_key.ListPrivateKey)
 	api.GET("/private-keys/:owner_type/:owner_name/:name", private_key.GetPrivateKey)

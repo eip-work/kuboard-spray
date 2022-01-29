@@ -41,6 +41,11 @@ const constantRouterMap = [
     props: route => ({ ownerType: route.params.ownerType, ownerName: route.params.ownerName, pid: route.params.pid, file: route.params.file })
   },
   {
+    path: '/pty/:ownerType/:ownerName/history/:pid/:file',
+    component: () => import('../views/logs/Ssh.vue'),
+    props: route => ({ ownerType: route.params.ownerType, ownerName: route.params.ownerName, pid: route.params.pid, file: route.params.file })
+  },
+  {
     path: '/settings',
     component: () => import('../components/layout/Layout.vue'),
     children: [

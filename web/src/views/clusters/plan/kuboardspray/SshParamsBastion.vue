@@ -98,7 +98,11 @@ export default {
     holder: {
       handler: function (bastion) {
         if (bastion) {
-          let temp = '-o ProxyCommand="ssh -F /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p -p '
+          let sshPass = ''
+          if (bastion['ansible_password']) {
+            sshPass = `sshpass -p '${bastion['ansible_password']}' `
+          }
+          let temp = `-o ProxyCommand="${sshPass} ssh -F /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p -p `
           temp += bastion["ansible_port"] + " " + bastion["ansible_user"] + "@" + bastion["ansible_host"]
           if (bastion["ansible_ssh_private_key_file"] != undefined) {
             temp += " -i " + bastion["ansible_ssh_private_key_file"]

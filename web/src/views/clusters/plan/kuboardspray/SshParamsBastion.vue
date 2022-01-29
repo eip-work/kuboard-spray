@@ -17,7 +17,7 @@ zh:
 
 
 <template>
-  <ConfigSection ref="configSection" v-model:enabled="bastionEnabled" :label="$t('obj.bastion')" :description="$t('description')" anti-freeze disabled>
+  <ConfigSection ref="configSection" v-model:enabled="bastionEnabled" :label="$t('obj.bastion')" :description="$t('description')" anti-freeze>
     <template #more>
       {{ $t('bastionUsage') }}
     </template>
@@ -64,15 +64,14 @@ export default {
     },
     bastionEnabled: {
       get () {
-        return this.inventory.all.children.target.children.bastion !== undefined
+        return this.inventory.all.hosts.bastion !== undefined
       },
       set (v) {
         if (v) {
           this.inventory.all.hosts.bastion = this.inventory.all.hosts.bastion || {ansible_host: '', ansible_user: ''}
-          this.inventory.all.children.target.children.bastion = {hosts: {bastion: {}}}
         } else {
           delete this.inventory.all.children.target.children.bastion
-          delete this.inventory.all.hosts.bastion
+          delete this.inventory.all.children.target.vars.ansible_ssh_common_args
         }
       }
     },
@@ -95,17 +94,26 @@ export default {
   components: { SshAddPrivateKey },
   mounted () {
   },
+  watch: {
+    holder: {
+      handler: function (bastion) {
+        if (bastion) {
+          let temp = '-o ProxyCommand="ssh -F /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p -p '
+          temp += bastion["ansible_port"] + " " + bastion["ansible_user"] + "@" + bastion["ansible_host"]
+          if (bastion["ansible_ssh_private_key_file"] != undefined) {
+            temp += " -i " + bastion["ansible_ssh_private_key_file"]
+          }
+          temp += '"'
+          this.inventory.all.children.target.vars.ansible_ssh_common_args = temp
+        } else {
+          delete this.inventory.all.children.target.vars.ansible_ssh_common_args
+        }
+      },
+      deep: true,
+    }
+  },
   methods: {
     placeholder(fieldName) {
-      // let default_value = this.cluster.inventory.all.children.target.vars[fieldName]
-      // if (fieldName.indexOf('password') > 0 && default_value) {
-      //   default_value = '******'
-      // }
-      // if (fieldName === 'ansible_ssh_private_key_file') {
-      //   if (default_value && default_value.length > 43) {
-      //     return default_value.slice(43)
-      //   }
-      // }
       return this.$t('field.' + fieldName + '_placeholder')
     },
     async loadSshKeyList () {

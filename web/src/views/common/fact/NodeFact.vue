@@ -98,7 +98,7 @@ export default {
   props: [
     'node_owner_type', 'node_owner', 'node_name',
     'ansible_host', 'ansible_port', 'ansible_user', 'ansible_password', 'ansible_ssh_private_key_file',
-    'ansible_become', 'ansible_become_user', 'ansible_become_password', 'form', 'ip'
+    'ansible_become', 'ansible_become_user', 'ansible_become_password', 'form', 'ip', 'ansible_ssh_common_args',
   ],
   data() {
     return {
@@ -153,6 +153,7 @@ export default {
         ansible_become: this.ansible_become,
         ansible_become_user: this.ansible_become_user,
         ansible_become_password: this.ansible_become_password,
+        ansible_ssh_common_args: this.ansible_ssh_common_args,
       }
       await this.kuboardSprayApi.post(`/facts/${this.node_owner_type}/${this.node_owner}/${this.node_name}`, req).then(resp => {
         if (fromCache) {

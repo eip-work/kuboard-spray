@@ -13,6 +13,7 @@ import (
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type GetNodeFactRequest struct {
@@ -28,6 +29,7 @@ type GetNodeFactRequest struct {
 	Become         bool   `json:"ansible_become"`
 	BecomeUser     string `json:"ansible_become_user"`
 	BecomePassword string `json:"ansible_become_password"`
+	SshCommonArgs  string `json:"ansible_ssh_common_args"`
 	GatherSubset   string `json:"gather_subset"`
 	Filter         string `json:"filter"`
 }
@@ -73,7 +75,7 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 					"ansible_become":               req.Become,
 					"ansible_become_user":          req.BecomeUser,
 					"ansible_become_password":      req.BecomePassword,
-					"ansible_ssh_common_args":      "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5 -o ConnectionAttempts=1",
+					"ansible_ssh_common_args":      "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5 -o ConnectionAttempts=1 " + req.SshCommonArgs,
 					"kuboardspray_cluster_dir":     constants.GET_DATA_DIR() + "/" + req.NodeOwnerType + "/" + req.NodeOwner,
 				},
 			},
@@ -100,6 +102,7 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 	if err != nil {
 		return nil, errors.New("failed to create inventory file " + inventoryPath + err.Error())
 	}
+	logrus.Trace(string(inventoryBytes))
 
 	defer os.Remove(inventoryPath)
 

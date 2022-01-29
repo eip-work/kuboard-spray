@@ -39,6 +39,7 @@ func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[strin
 		"kube_control_plane": "all.children.target.children.k8s_cluster.children.kube_control_plane.vars",
 		"kube_node":          "all.children.target.children.k8s_cluster.children.kube_node.vars",
 		"target":             "all.children.target.vars",
+		"all":                "all.vars",
 	}
 	if common.MapGet(resourcePackage, "data.vars") != nil {
 		vars := common.MapGet(resourcePackage, "data.vars").(map[string]interface{})

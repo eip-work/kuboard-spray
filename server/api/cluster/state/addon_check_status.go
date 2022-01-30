@@ -3,10 +3,12 @@ package state
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type AddonStatus struct {
@@ -16,6 +18,7 @@ type AddonStatus struct {
 	Code            string      `json:"code"`
 	StdOut          string      `json:"stdout"`
 	StdOutObj       interface{} `json:"stdout_obj"`
+	Index           int
 }
 
 func CheckAddonStatus(c *gin.Context) {
@@ -40,6 +43,36 @@ func CheckAddonStatus(c *gin.Context) {
 
 	k8sVars := common.MapGet(inventory, "all.children.target.children.k8s_cluster.vars").(map[string]interface{})
 	addons := common.MapGet(resourcePackage, "data.addon").([]interface{})
+	startTime := time.Now()
+	commands := []string{}
+	count := 0
+	for _, v := range addons {
+		addon := v.(map[string]interface{})
+		addonName := addon["name"].(string)
+		addonTarget := addon["target"].(string)
+		if k8sVars[addonTarget] != true {
+			continue
+		}
+		var lifecycle map[string]interface{}
+		if addon["lifecycle"] != nil {
+			lifecycle = addon["lifecycle"].(map[string]interface{})
+		}
+		if lifecycle["check"] == nil {
+			continue
+		}
+		checker := lifecycle["check"].(map[string]interface{})
+		shell := checker["shell"].(string)
+		commands = append(commands, shell)
+		result[addonName] = AddonStatus{Index: count}
+		count++
+	}
+
+	out, err := cluster_common.ExecuteShellCommandsOnControlPlane(request.ClusterName, commands)
+	if err != nil {
+		common.HandleError(c, http.StatusInternalServerError, "error", err)
+		return
+	}
+
 	for _, v := range addons {
 		addon := v.(map[string]interface{})
 		addonName := addon["name"].(string)
@@ -66,28 +99,20 @@ func CheckAddonStatus(c *gin.Context) {
 			continue
 		}
 		checker := lifecycle["check"].(map[string]interface{})
-		shell := checker["shell"].(string)
+
 		keyword := checker["keyword"].(string)
-		out, err := cluster_common.ExecuteShellOnControlPlane(request.ClusterName, shell+" || true")
-		if err != nil {
-			result[addonName] = AddonStatus{
-				Name:            addonName,
-				IntendToInstall: true,
-				IsInstalled:     false,
-				Code:            "500",
-				StdOut:          err.Error(),
-			}
-			continue
-		}
 		result[addonName] = AddonStatus{
 			Name:            addonName,
 			IntendToInstall: true,
-			IsInstalled:     strings.Contains(out.Stdout, keyword),
+			IsInstalled:     strings.Contains(out.Stdouts[result[addonName].Index], keyword),
 			Code:            out.ReturnCode,
-			StdOut:          out.Stdout,
-			StdOutObj:       out.StdoutObj,
+			StdOut:          out.Stdouts[result[addonName].Index],
+			StdOutObj:       out.StdoutObjs[result[addonName].Index],
 		}
 	}
+
+	duration := time.Now().UnixNano() - startTime.UnixNano()
+	logrus.Trace("duration: ", duration/1000000)
 
 	c.JSON(http.StatusOK, common.KuboardSprayResponse{
 		Code:    http.StatusOK,

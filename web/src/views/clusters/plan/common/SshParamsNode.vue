@@ -183,6 +183,7 @@ export default {
           ansible_become: this.holder.ansible_become || vars.ansible_become,
           ansible_become_user: this.holder.ansible_become_user || vars.ansible_become_user,
           ansible_become_password: this.holder.ansible_become_password || vars.ansible_become_password,
+          ansible_ssh_common_args: vars.ansible_ssh_common_args,
           gather_subset: '!all,!min,network',
           filter: 'ansible_all_ipv4_addresses',
         }

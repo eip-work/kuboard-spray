@@ -2,6 +2,7 @@ package cluster_common
 
 import (
 	"errors"
+	"time"
 
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
@@ -10,6 +11,8 @@ import (
 )
 
 func ExecuteShellOnControlPlane(clusterName string, shellCommand string) (*command.AnsibleStdout, error) {
+	startTime := time.Now()
+
 	inventoryYamlPath := ClusterInventoryYamlPath(clusterName)
 
 	inventory, err := common.ParseYamlFile(inventoryYamlPath)
@@ -37,6 +40,8 @@ func ExecuteShellOnControlPlane(clusterName string, shellCommand string) (*comma
 		}
 		stdout, _, err := cmd.Run()
 		if err != nil {
+			duration := time.Now().UnixNano() - startTime.UnixNano()
+			logrus.Trace("duration: ", duration/1000000)
 			return nil, err
 		}
 		// logrus.Trace(string(stdout), string(stderr))
@@ -44,11 +49,15 @@ func ExecuteShellOnControlPlane(clusterName string, shellCommand string) (*comma
 		result := command.ParseAnsibleStdout(string(stdout))
 
 		if result.Changed == "CHANGED" {
+			duration := time.Now().UnixNano() - startTime.UnixNano()
+			logrus.Trace("duration: ", duration/1000000)
 			return result, nil
 		} else {
 			logrus.Warn("failed on " + key + ". " + result.Stdout)
 			errMsg += "\nfailed on " + key + ". " + result.Stdout
 		}
 	}
+	duration := time.Now().UnixNano() - startTime.UnixNano()
+	logrus.Trace("duration: ", duration/1000000)
 	return nil, errors.New("cannot execute on any of the kube_control_plane \n" + errMsg)
 }

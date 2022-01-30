@@ -102,7 +102,7 @@ export default {
           if (bastion['ansible_password']) {
             sshPass = `sshpass -p '${bastion['ansible_password']}' `
           }
-          let temp = `-o ProxyCommand="${sshPass} ssh -F /dev/null -o ControlPath=~/.ssh/ansible-%%r@%%h:%%p -o ControlMaster=auto -o ControlPersist=30m -o ConnectTimeout=6 -o ConnectionAttempts=1 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p -p `
+          let temp = `-o ProxyCommand="${sshPass} ssh -F /dev/null -o ControlPath=~/.ssh/ansible-%%r@%%h:%%p -o ControlMaster=auto -o ControlPersist=30m -o ConnectTimeout=6 -o ConnectionAttempts=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p -p `
           temp += bastion["ansible_port"] + " " + bastion["ansible_user"] + "@" + bastion["ansible_host"]
           if (bastion["ansible_ssh_private_key_file"] != undefined) {
             temp += " -i " + bastion["ansible_ssh_private_key_file"]

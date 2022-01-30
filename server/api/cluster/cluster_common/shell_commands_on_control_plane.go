@@ -10,7 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func ExecuteShellOnETCD(clusterName string, shellCommand string) (*command.AnsibleStdout, error) {
+func ExecuteShellCommandsOnControlPlane(clusterName string, shellCommands []string) (*AnsibleMultiCommandsStdout, error) {
 	startTime := time.Now()
 
 	inventoryYamlPath := ClusterInventoryYamlPath(clusterName)
@@ -20,27 +20,26 @@ func ExecuteShellOnETCD(clusterName string, shellCommand string) (*command.Ansib
 		return nil, err
 	}
 
-	etcds := common.MapGet(inventory, "all.children.target.children.etcd.hosts").(map[string]interface{})
+	control_planes := common.MapGet(inventory, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts").(map[string]interface{})
 
 	errMsg := ""
-
-	for key := range etcds {
-		logrus.Trace("try on ", key, " : ", shellCommand)
-		str := "export ETCDCTL_API=3 && export ETCDCTL_CERT=/etc/ssl/etcd/ssl/admin-" + key + ".pem && export ETCDCTL_KEY=/etc/ssl/etcd/ssl/admin-" + key + "-key.pem"
-		str += " && export ETCDCTL_CACERT=/etc/ssl/etcd/ssl/ca.pem"
-		str += " && " + shellCommand
+	for key := range control_planes {
+		logrus.Trace("try on ", key, " : ", shellCommands)
+		shell := ""
+		for _, cmd := range shellCommands {
+			shell += "echo " + multi_command_spliter
+			shell += cmd + "\n"
+		}
 		cmd := command.Run{
 			Cmd: "ansible",
 			Args: []string{
 				key,
 				"-m", "shell",
-				"-a", str,
+				"-a", shell,
 				"-i", inventoryYamlPath,
 				"-e", "kuboardspray_cluster_dir=" + constants.GET_DATA_DIR() + "/cluster/" + clusterName,
 			},
-			Env: []string{
-				"ANSIBLE_CONFIG=" + constants.GET_ADHOC_CFG_PATH(),
-			},
+			Env:     []string{"ANSIBLE_CONFIG=" + constants.GET_ADHOC_CFG_PATH()},
 			Timeout: 20,
 			// Dir: resourcePackageDir,
 		}
@@ -50,9 +49,9 @@ func ExecuteShellOnETCD(clusterName string, shellCommand string) (*command.Ansib
 			logrus.Trace("duration: ", duration/1000000)
 			return nil, err
 		}
-		// logrus.Trace(string(stdout), string(stderr))
 
-		result := command.ParseAnsibleStdout(string(stdout))
+		// logrus.Trace(string(stdout))
+		result := ParseAnsibleMultiCommandsStdout(string(stdout))
 
 		if result.Changed == "CHANGED" {
 			duration := time.Now().UnixNano() - startTime.UnixNano()
@@ -65,5 +64,5 @@ func ExecuteShellOnETCD(clusterName string, shellCommand string) (*command.Ansib
 	}
 	duration := time.Now().UnixNano() - startTime.UnixNano()
 	logrus.Trace("duration: ", duration/1000000)
-	return nil, errors.New("cannot execute on any of the etcd \n" + errMsg)
+	return nil, errors.New("cannot execute on any of the kube_control_plane \n" + errMsg)
 }

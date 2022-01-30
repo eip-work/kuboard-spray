@@ -76,6 +76,7 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 					"ansible_become_user":          req.BecomeUser,
 					"ansible_become_password":      req.BecomePassword,
 					"ansible_ssh_common_args":      "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5 -o ConnectionAttempts=1 " + req.SshCommonArgs,
+					"ansible_ssh_pipelining":       true,
 					"kuboardspray_cluster_dir":     constants.GET_DATA_DIR() + "/" + req.NodeOwnerType + "/" + req.NodeOwner,
 				},
 			},

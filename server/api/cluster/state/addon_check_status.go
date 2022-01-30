@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/eip-work/kuboard-spray/api/ansible_rpc"
 	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,7 @@ type AddonStatus struct {
 	Name            string      `json:"addon_name"`
 	IntendToInstall bool        `json:"intend_to_install"`
 	IsInstalled     bool        `json:"is_installed"`
-	Code            string      `json:"code"`
+	Code            int         `json:"code"`
 	StdOut          string      `json:"stdout"`
 	StdOutObj       interface{} `json:"stdout_obj"`
 	Index           int
@@ -61,13 +62,16 @@ func CheckAddonStatus(c *gin.Context) {
 			continue
 		}
 		checker := lifecycle["check"].(map[string]interface{})
-		shell := checker["shell"].(string)
+		shell := checker["shell"].(string) + " || true"
 		commands = append(commands, shell)
 		result[addonName] = AddonStatus{Index: count}
 		count++
 	}
 
-	out, err := cluster_common.ExecuteShellCommandsOnControlPlane(request.ClusterName, commands)
+	out, err := ansible_rpc.ExecuteShellCommands("cluster", request.ClusterName, "kube_control_plane[0]", commands)
+
+	logrus.Trace(out)
+
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "error", err)
 		return
@@ -101,13 +105,15 @@ func CheckAddonStatus(c *gin.Context) {
 		checker := lifecycle["check"].(map[string]interface{})
 
 		keyword := checker["keyword"].(string)
+
+		nodeResult := out.Plays[0].Tasks[0].Hosts["node1"]
+
 		result[addonName] = AddonStatus{
 			Name:            addonName,
 			IntendToInstall: true,
-			IsInstalled:     strings.Contains(out.Stdouts[result[addonName].Index], keyword),
-			Code:            out.ReturnCode,
-			StdOut:          out.Stdouts[result[addonName].Index],
-			StdOutObj:       out.StdoutObjs[result[addonName].Index],
+			IsInstalled:     strings.Contains(nodeResult.StdOut, keyword),
+			Code:            nodeResult.ReturnCode,
+			StdOut:          nodeResult.StdOut,
 		}
 	}
 

@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -51,27 +52,29 @@ func (run *Run) Run() ([]byte, []byte, error) {
 
 	errContent := ""
 	go func() {
+		buf := new(strings.Builder)
 		reader := bufio.NewReader(stderr)
 		for {
-			line, _, err := reader.ReadLine()
+			_, err := io.Copy(buf, reader)
 			if err != nil || io.EOF == err {
 				break
 			}
-			errContent += string(line) + "\n"
 		}
+		errContent = buf.String()
 		logrus.Trace("terminated err reader thread.")
 	}()
 
 	outContent := ""
 	go func() {
+		buf := new(strings.Builder)
 		reader := bufio.NewReader(stdout)
 		for {
-			line, _, err := reader.ReadLine()
+			_, err := io.Copy(buf, reader)
 			if err != nil || io.EOF == err {
 				break
 			}
-			outContent += string(line) + "\n"
 		}
+		outContent = buf.String()
 		logrus.Trace("terminated out reader thread.")
 	}()
 

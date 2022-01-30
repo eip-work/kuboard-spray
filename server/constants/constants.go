@@ -41,3 +41,7 @@ func GET_ANSIBLE_SCRIPT_DIR() string {
 	dir, _ := os.Getwd()
 	return dir + "/ansible-script"
 }
+
+func GetInventoryPath(owner_type, owner_name string) string {
+	return GET_DATA_DIR() + "/" + owner_type + "/" + owner_name + "/inventory.yaml"
+}

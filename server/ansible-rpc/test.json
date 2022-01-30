@@ -1,0 +1,296 @@
+{
+  "custom_stats": {},
+  "global_custom_stats": {},
+  "plays": [
+      {
+          "play": {
+              "duration": {
+                  "end": "2022-01-30T16:04:52.265951Z",
+                  "start": "2022-01-30T16:04:49.055321Z"
+              },
+              "id": "b9f236a4-b610-ed14-3b8d-00000000000d",
+              "name": "test1"
+          },
+          "tasks": [
+              {
+                  "hosts": {
+                      "node1": {
+                          "_ansible_no_log": false,
+                          "action": "shell",
+                          "ansible_facts": {
+                              "discovered_interpreter_python": "/usr/bin/python3"
+                          },
+                          "changed": true,
+                          "cmd": "kubectl get pods -o wide",
+                          "delta": "0:00:00.130510",
+                          "end": "2022-01-30 16:04:51.366687",
+                          "invocation": {
+                              "module_args": {
+                                  "_raw_params": "kubectl get pods -o wide",
+                                  "_uses_shell": true,
+                                  "argv": null,
+                                  "chdir": null,
+                                  "creates": null,
+                                  "executable": null,
+                                  "removes": null,
+                                  "stdin": null,
+                                  "stdin_add_newline": true,
+                                  "strip_empty_ends": true,
+                                  "warn": true
+                              }
+                          },
+                          "msg": "",
+                          "rc": 0,
+                          "start": "2022-01-30 16:04:51.236177",
+                          "stderr": "No resources found in default namespace.",
+                          "stderr_lines": [
+                              "No resources found in default namespace."
+                          ],
+                          "stdout": "",
+                          "stdout_lines": []
+                      },
+                      "node2": {
+                          "_ansible_no_log": false,
+                          "action": "shell",
+                          "ansible_facts": {
+                              "discovered_interpreter_python": "/usr/bin/python3"
+                          },
+                          "changed": true,
+                          "cmd": "kubectl get pods -o wide",
+                          "delta": "0:00:00.061555",
+                          "end": "2022-01-30 16:04:51.254503",
+                          "invocation": {
+                              "module_args": {
+                                  "_raw_params": "kubectl get pods -o wide",
+                                  "_uses_shell": true,
+                                  "argv": null,
+                                  "chdir": null,
+                                  "creates": null,
+                                  "executable": null,
+                                  "removes": null,
+                                  "stdin": null,
+                                  "stdin_add_newline": true,
+                                  "strip_empty_ends": true,
+                                  "warn": true
+                              }
+                          },
+                          "msg": "",
+                          "rc": 0,
+                          "start": "2022-01-30 16:04:51.192948",
+                          "stderr": "No resources found in default namespace.",
+                          "stderr_lines": [
+                              "No resources found in default namespace."
+                          ],
+                          "stdout": "",
+                          "stdout_lines": []
+                      },
+                      "node3": {
+                          "_ansible_no_log": false,
+                          "action": "shell",
+                          "ansible_facts": {
+                              "discovered_interpreter_python": "/usr/bin/python3"
+                          },
+                          "changed": true,
+                          "cmd": "kubectl get pods -o wide",
+                          "delta": "0:00:00.074253",
+                          "end": "2022-01-30 16:04:51.299815",
+                          "invocation": {
+                              "module_args": {
+                                  "_raw_params": "kubectl get pods -o wide",
+                                  "_uses_shell": true,
+                                  "argv": null,
+                                  "chdir": null,
+                                  "creates": null,
+                                  "executable": null,
+                                  "removes": null,
+                                  "stdin": null,
+                                  "stdin_add_newline": true,
+                                  "strip_empty_ends": true,
+                                  "warn": true
+                              }
+                          },
+                          "msg": "",
+                          "rc": 0,
+                          "start": "2022-01-30 16:04:51.225562",
+                          "stderr": "No resources found in default namespace.",
+                          "stderr_lines": [
+                              "No resources found in default namespace."
+                          ],
+                          "stdout": "",
+                          "stdout_lines": []
+                      }
+                  },
+                  "task": {
+                      "duration": {
+                          "end": "2022-01-30T16:04:51.417567Z",
+                          "start": "2022-01-30T16:04:49.071064Z"
+                      },
+                      "id": "b9f236a4-b610-ed14-3b8d-00000000000f",
+                      "name": "abc1"
+                  }
+              },
+              {
+                  "hosts": {
+                      "node1": {
+                          "_ansible_no_log": false,
+                          "action": "shell",
+                          "changed": true,
+                          "cmd": "kubectl get pods -o json",
+                          "delta": "0:00:00.055227",
+                          "end": "2022-01-30 16:04:52.198486",
+                          "invocation": {
+                              "module_args": {
+                                  "_raw_params": "kubectl get pods -o json",
+                                  "_uses_shell": true,
+                                  "argv": null,
+                                  "chdir": null,
+                                  "creates": null,
+                                  "executable": null,
+                                  "removes": null,
+                                  "stdin": null,
+                                  "stdin_add_newline": true,
+                                  "strip_empty_ends": true,
+                                  "warn": true
+                              }
+                          },
+                          "msg": "",
+                          "rc": 0,
+                          "start": "2022-01-30 16:04:52.143259",
+                          "stderr": "",
+                          "stderr_lines": [],
+                          "stdout": "{\n    \"apiVersion\": \"v1\",\n    \"items\": [],\n    \"kind\": \"List\",\n    \"metadata\": {\n        \"resourceVersion\": \"\",\n        \"selfLink\": \"\"\n    }\n}",
+                          "stdout_lines": [
+                              "{",
+                              "    \"apiVersion\": \"v1\",",
+                              "    \"items\": [],",
+                              "    \"kind\": \"List\",",
+                              "    \"metadata\": {",
+                              "        \"resourceVersion\": \"\",",
+                              "        \"selfLink\": \"\"",
+                              "    }",
+                              "}"
+                          ]
+                      },
+                      "node2": {
+                          "_ansible_no_log": false,
+                          "action": "shell",
+                          "changed": true,
+                          "cmd": "kubectl get pods -o json",
+                          "delta": "0:00:00.070860",
+                          "end": "2022-01-30 16:04:52.217086",
+                          "invocation": {
+                              "module_args": {
+                                  "_raw_params": "kubectl get pods -o json",
+                                  "_uses_shell": true,
+                                  "argv": null,
+                                  "chdir": null,
+                                  "creates": null,
+                                  "executable": null,
+                                  "removes": null,
+                                  "stdin": null,
+                                  "stdin_add_newline": true,
+                                  "strip_empty_ends": true,
+                                  "warn": true
+                              }
+                          },
+                          "msg": "",
+                          "rc": 0,
+                          "start": "2022-01-30 16:04:52.146226",
+                          "stderr": "",
+                          "stderr_lines": [],
+                          "stdout": "{\n    \"apiVersion\": \"v1\",\n    \"items\": [],\n    \"kind\": \"List\",\n    \"metadata\": {\n        \"resourceVersion\": \"\",\n        \"selfLink\": \"\"\n    }\n}",
+                          "stdout_lines": [
+                              "{",
+                              "    \"apiVersion\": \"v1\",",
+                              "    \"items\": [],",
+                              "    \"kind\": \"List\",",
+                              "    \"metadata\": {",
+                              "        \"resourceVersion\": \"\",",
+                              "        \"selfLink\": \"\"",
+                              "    }",
+                              "}"
+                          ]
+                      },
+                      "node3": {
+                          "_ansible_no_log": false,
+                          "action": "shell",
+                          "changed": true,
+                          "cmd": "kubectl get pods -o json",
+                          "delta": "0:00:00.067769",
+                          "end": "2022-01-30 16:04:52.229397",
+                          "invocation": {
+                              "module_args": {
+                                  "_raw_params": "kubectl get pods -o json",
+                                  "_uses_shell": true,
+                                  "argv": null,
+                                  "chdir": null,
+                                  "creates": null,
+                                  "executable": null,
+                                  "removes": null,
+                                  "stdin": null,
+                                  "stdin_add_newline": true,
+                                  "strip_empty_ends": true,
+                                  "warn": true
+                              }
+                          },
+                          "msg": "",
+                          "rc": 0,
+                          "start": "2022-01-30 16:04:52.161628",
+                          "stderr": "",
+                          "stderr_lines": [],
+                          "stdout": "{\n    \"apiVersion\": \"v1\",\n    \"items\": [],\n    \"kind\": \"List\",\n    \"metadata\": {\n        \"resourceVersion\": \"\",\n        \"selfLink\": \"\"\n    }\n}",
+                          "stdout_lines": [
+                              "{",
+                              "    \"apiVersion\": \"v1\",",
+                              "    \"items\": [],",
+                              "    \"kind\": \"List\",",
+                              "    \"metadata\": {",
+                              "        \"resourceVersion\": \"\",",
+                              "        \"selfLink\": \"\"",
+                              "    }",
+                              "}"
+                          ]
+                      }
+                  },
+                  "task": {
+                      "duration": {
+                          "end": "2022-01-30T16:04:52.265951Z",
+                          "start": "2022-01-30T16:04:51.420520Z"
+                      },
+                      "id": "b9f236a4-b610-ed14-3b8d-000000000010",
+                      "name": "abc2"
+                  }
+              }
+          ]
+      }
+  ],
+  "stats": {
+      "node1": {
+          "changed": 2,
+          "failures": 0,
+          "ignored": 0,
+          "ok": 2,
+          "rescued": 0,
+          "skipped": 0,
+          "unreachable": 0
+      },
+      "node2": {
+          "changed": 2,
+          "failures": 0,
+          "ignored": 0,
+          "ok": 2,
+          "rescued": 0,
+          "skipped": 0,
+          "unreachable": 0
+      },
+      "node3": {
+          "changed": 2,
+          "failures": 0,
+          "ignored": 0,
+          "ok": 2,
+          "rescued": 0,
+          "skipped": 0,
+          "unreachable": 0
+      }
+  }
+}

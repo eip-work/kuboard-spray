@@ -18,24 +18,32 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+type ShellRequest struct {
+	NodeOwnerType string `uri:"node_owner_type"`
+	NodeOwner     string `uri:"node_owner"`
+	Node          string `uri:"node"`
+}
+
 func ShellWs(c *gin.Context) {
 	var err error
-	msg := c.DefaultQuery("msg", "")
-	cols := c.DefaultQuery("cols", "150")
-	rows := c.DefaultQuery("rows", "35")
+	cols := c.DefaultQuery("cols", "260")
+	rows := c.DefaultQuery("rows", "80")
 	col, _ := strconv.Atoi(cols)
 	row, _ := strconv.Atoi(rows)
-	terminal := Terminal{
+	terminal := TerminalSpec{
 		Columns: uint32(col),
 		Rows:    uint32(row),
 	}
-	sshClient, err := DecodedMsgToSSHClient(msg)
+
+	var shellRequest ShellRequest
+	c.ShouldBindUri(&shellRequest)
+	sshClient, err := NewSSHClient(shellRequest)
 	if err != nil {
-		c.Error(err)
+		common.HandleError(c, http.StatusInternalServerError, "bad status", err)
 		return
 	}
 	logrus.Trace(sshClient)
-	if sshClient.IpAddress == "" || sshClient.Password == "" {
+	if sshClient.Host == "" || sshClient.Password == "" {
 		common.HandleError(c, http.StatusBadRequest, "IP 或 密码为空", nil)
 		return
 	}

@@ -28,6 +28,14 @@ func MapGet(m map[string]interface{}, path string) interface{} {
 	return result
 }
 
+func MapGetString(m map[string]interface{}, path string) string {
+	v := MapGet(m, path)
+	if v != nil {
+		return v.(string)
+	}
+	return ""
+}
+
 func MapSet(m map[string]interface{}, path string, value interface{}) {
 	defer func() {
 		if err := recover(); err != nil {

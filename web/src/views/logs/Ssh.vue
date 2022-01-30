@@ -1,30 +1,26 @@
 <i18n>
 en:
-  "logs": "Logs"
+  "terminal": "terminal"
   "find": "Find"
   "connecting": "Connecting"
   "connected": "Connected"
   "closing": "Closing"
   "closed": "Closed"
   "unknown": "Unknown"
-  "confirmToClearLogs": "You are about to clear the lines displayed, do you confirm ?"
-  "succeedInClear": "Succeed in clear logs."
 zh:
-  "logs": "日志"
+  "terminal": "终端"
   "find": "查 找"
   "connecting": "正在连接"
-  "connected": "日志追踪进行中"
+  "connected": "已连接"
   "closing": "正在关闭"
   "closed": "已断开"
   "unknown": "未知状态"
-  "confirmToClearLogs": "此操作将清空当前显示的日志, 是否继续？"
-  "succeedInClear": "清除日志成功"
 </i18n>
 
 <template>
   <div>
     <div style="background-color: #3a3333; color: #fffeff; font-weight: 500; padding: 8px 20px 8px 20px; line-height: 22px; text-align: center;">
-      {{this.$t('logs')}} - <span class="app_text_mono">{{ownerType}}/{{ownerName}}/{{pid}}</span>
+      {{this.$t('terminal')}} - <span class="app_text_mono">{{ownerType}}/{{ownerName}}/{{nodeName}}</span>
       <span style="float:left;">
         <ChangeFontSize class="button" :terminal="xterm" :fitAddon="fitAddon"></ChangeFontSize>
         <ChangeColor class="button"></ChangeColor>
@@ -34,7 +30,6 @@ zh:
       <span :style="`float: right; font-size: 14px; font-weight: 600; color: ${socketReadyState === 1 ? '#33FF33' : '#FF6600'};`">
         {{ stateStr }}
       </span>
-      <el-tag size="medium" style="float: right; margin-right: 20px;" type="primary">{{ $t('finished') }}</el-tag>
     </div>
     <div id="terminal" :style="`width: 100%; height: calc(100vh - 39px); background-color: black;`"></div>
     <K8sTerminalErrorHint ref="errorHint"/>
@@ -63,10 +58,7 @@ export default {
   props: {
     ownerType: { type: String, required: true },
     ownerName: { type: String, required: true },
-    pid: { type: String, required: true },
-    file: { type: String, required: true },
-    tailLines: { type: Number, required: false, default: 500 },
-    autoTrace: { type: Boolean, required: false, default: true }
+    nodeName: { type: String, required: true },
   },
   data() {
     return {
@@ -83,7 +75,7 @@ export default {
     wsUrl() {
       let wsHost = location.host
       let protocol = location.protocol === 'http:' ? 'ws:' : 'wss:'
-      let str = `${protocol}//${wsHost}${trimSlash(location.pathname)}/api/ssh/cluster/c1/node1`
+      let str = `${protocol}//${wsHost}${trimSlash(location.pathname)}/api/ssh/${this.ownerType}/${this.ownerName}/${this.nodeName}`
       return str
     },
     stateStr() {
@@ -124,9 +116,12 @@ export default {
       })
       this.fitAddon = new FitAddon();
       this.xterm.loadAddon(this.fitAddon);
-      this.socket = new WebSocket(this.wsUrl)
-
       this.xterm.open(document.getElementById('terminal'))
+      _this.fitAddon.fit()
+      console.log('init', this.xterm.cols, this.xterm.rows)
+
+      this.socket = new WebSocket(this.wsUrl + `?cols=${this.xterm.cols}&&rows=${this.xterm.rows}`)
+
       this.xterm.onResize(data => {
         this.ttySize = data
         console.log(data)
@@ -142,13 +137,10 @@ export default {
       })
       this.xterm.onData(data => {
         _this.socket.send('0' + data)
-        console.log('send:', '0' + data)
-        // _this.socket.send(data)
       })
 
 
       this.socket.onmessage = function (event) {
-        // let data = decode(event.data)
         let data = event.data
         _this.xterm.write(data)
       }
@@ -164,7 +156,6 @@ export default {
         _this.socketReadyState = _this.socket.readyState
       }
 
-      // this.xterm.attach(this.socket)
       let interval = setInterval(() => {
         try {
           if (this.socketReadyState === 1) {
@@ -183,7 +174,7 @@ export default {
         this.socketReadyState = this.socket.readyState
       }, 2000)
 
-      document.title = `${this.$t('logs')} - ${this.ownerType} / ${this.ownerName} / ${this.pid}`
+      document.title = `${this.$t('terminal')} - ${this.ownerType} / ${this.ownerName} / ${this.pid}`
     }
   }
 }

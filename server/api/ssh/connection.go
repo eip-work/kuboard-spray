@@ -2,9 +2,9 @@ package ssh
 
 import (
 	"bufio"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"time"
 	"unicode/utf8"
@@ -14,36 +14,48 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-func DecodedMsgToSSHClient(msg string) (SSHClient, error) {
-	client := NewSSHClient()
-	decoded, err := base64.StdEncoding.DecodeString(msg)
-	if err != nil {
-		return client, err
-	}
-	logrus.Trace(decoded)
-	// err = json.Unmarshal(decoded, &client)
-	if err != nil {
-		return client, err
-	}
-	return client, nil
-}
+// func DecodedMsgToSSHClient(msg string) (SSHClient, error) {
+// 	client := NewSSHClient()
+// 	decoded, err := base64.StdEncoding.DecodeString(msg)
+// 	if err != nil {
+// 		return client, err
+// 	}
+// 	logrus.Trace(decoded)
+// 	// err = json.Unmarshal(decoded, &client)
+// 	if err != nil {
+// 		return client, err
+// 	}
+// 	return client, nil
+// }
 
-func (sshClient *SSHClient) GenerateClient() error {
+func dialSsh(node NodeInfo) (*ssh.ClientConfig, error) {
 	var (
 		auth         []ssh.AuthMethod
-		addr         string
 		clientConfig *ssh.ClientConfig
-		client       *ssh.Client
 		config       ssh.Config
-		err          error
 	)
 	auth = make([]ssh.AuthMethod, 0)
-	auth = append(auth, ssh.Password(sshClient.Password))
+	if node.Password != "" {
+		auth = append(auth, ssh.Password(node.Password))
+	}
+	if node.PrivateKeyPath != "" {
+		key, err := ioutil.ReadFile(node.PrivateKeyPath)
+		if err == nil {
+			signer, err := ssh.ParsePrivateKey(key)
+			if err == nil {
+				auth = append(auth, ssh.PublicKeys(signer))
+			} else {
+				logrus.Warning("")
+			}
+		} else {
+			logrus.Warning("cannot read private key: ", err)
+		}
+	}
 	config = ssh.Config{
 		Ciphers: []string{"aes128-ctr", "aes192-ctr", "aes256-ctr", "aes128-gcm@openssh.com", "arcfour256", "arcfour128", "aes128-cbc", "3des-cbc", "aes192-cbc", "aes256-cbc"},
 	}
 	clientConfig = &ssh.ClientConfig{
-		User:    sshClient.Username,
+		User:    node.User,
 		Auth:    auth,
 		Timeout: 5 * time.Second,
 		Config:  config,
@@ -51,15 +63,84 @@ func (sshClient *SSHClient) GenerateClient() error {
 			return nil
 		},
 	}
-	addr = fmt.Sprintf("%s:%d", sshClient.IpAddress, sshClient.Port)
-	if client, err = ssh.Dial("tcp", addr, clientConfig); err != nil {
-		return err
-	}
-	sshClient.Client = client
-	return nil
+
+	return clientConfig, nil
 }
 
-func (sshClient *SSHClient) RequestTerminal(terminal Terminal) *SSHClient {
+// 使用跳板机
+// // connect to the bastion host
+// bClient, err := ssh.Dial("tcp", bastionAddr, config)
+// if err != nil {
+//     log.Fatal(err)
+// }
+// // Dial a connection to the service host, from the bastion
+// conn, err := bClient.Dial("tcp", serviceAddr)
+// if err != nil {
+//     log.Fatal(err)
+// }
+
+// ncc, chans, reqs, err := ssh.NewClientConn(conn, serviceAddr, config)
+// if err != nil {
+//     log.Fatal(err)
+// }
+
+// sClient := ssh.NewClient(ncc, chans, reqs)
+// // sClient is an ssh client connected to the service host, through the bastion host.
+
+func (sshClient *SSHClient) GenerateClient() error {
+
+	var client *ssh.Client
+	var err error
+
+	if sshClient.Bastion != nil {
+		var bastionClient *ssh.Client
+		bClientConfig, err := dialSsh(*sshClient.Bastion)
+		if err != nil {
+			return err
+		}
+		addr := fmt.Sprintf("%s:%d", sshClient.Bastion.Host, sshClient.Bastion.Port)
+		if bastionClient, err = ssh.Dial("tcp", addr, bClientConfig); err != nil {
+			return err
+		}
+
+		addr = fmt.Sprintf("%s:%d", sshClient.Host, sshClient.Port)
+		conn, err := bastionClient.Dial("tcp", addr)
+
+		if err != nil {
+			return err
+		}
+
+		clientConfig, err := dialSsh(sshClient.NodeInfo)
+		if err != nil {
+			return err
+		}
+
+		ncc, chans, reqs, err := ssh.NewClientConn(conn, addr, clientConfig)
+		if err != nil {
+			return err
+		}
+
+		sClient := ssh.NewClient(ncc, chans, reqs)
+
+		logrus.Trace("connected throw bastion.")
+
+		sshClient.Client = sClient
+	}
+
+	clientConfig, err := dialSsh(sshClient.NodeInfo)
+	if err != nil {
+		return err
+	}
+	addr := fmt.Sprintf("%s:%d", sshClient.Host, sshClient.Port)
+	if client, err = ssh.Dial("tcp", addr, clientConfig); err == nil {
+		sshClient.Client = client
+		return nil
+	} else {
+		return err
+	}
+}
+
+func (sshClient *SSHClient) RequestTerminal(terminal TerminalSpec) *SSHClient {
 	session, err := sshClient.Client.NewSession()
 	if err != nil {
 		logrus.Println(err)
@@ -124,14 +205,13 @@ func (sshClient *SSHClient) Connect(ws *websocket.Conn) {
 			if err != nil {
 				return
 			}
-			logrus.Trace(string(p))
 			if string(p[0:1]) == "0" {
 				_, err = sshClient.channel.Write(p[1:])
 				if err != nil {
 					return
 				}
 			} else if string(p[0:1]) == "1" {
-				terminal := Terminal{}
+				terminal := TerminalSpec{}
 				json.Unmarshal(p[1:], &terminal)
 				req := ptyRequestMsg{
 					Term:    "xterm",

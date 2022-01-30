@@ -70,7 +70,7 @@ export default {
         if (v) {
           this.inventory.all.hosts.bastion = this.inventory.all.hosts.bastion || {ansible_host: '', ansible_user: ''}
         } else {
-          delete this.inventory.all.children.target.children.bastion
+          delete this.inventory.all.hosts.bastion
           delete this.inventory.all.children.target.vars.ansible_ssh_common_args
         }
       }
@@ -97,12 +97,12 @@ export default {
   watch: {
     holder: {
       handler: function (bastion) {
-        if (bastion) {
+        if (bastion && bastion.ansible_host) {
           let sshPass = ''
           if (bastion['ansible_password']) {
             sshPass = `sshpass -p '${bastion['ansible_password']}' `
           }
-          let temp = `-o ProxyCommand="${sshPass} ssh -F /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p -p `
+          let temp = `-o ProxyCommand="${sshPass} ssh -F /dev/null -o ControlPath=~/.ssh/ansible-%%r@%%h:%%p -o ControlMaster=auto -o ControlPersist=30m -o ConnectTimeout=6 -o ConnectionAttempts=1 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p -p `
           temp += bastion["ansible_port"] + " " + bastion["ansible_user"] + "@" + bastion["ansible_host"]
           if (bastion["ansible_ssh_private_key_file"] != undefined) {
             temp += " -i " + bastion["ansible_ssh_private_key_file"]

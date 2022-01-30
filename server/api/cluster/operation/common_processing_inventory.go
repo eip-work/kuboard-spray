@@ -155,5 +155,7 @@ func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[strin
 	common.MapSet(inventory, "all.children.target.vars.disable_service_firewall", true)
 	common.MapSet(inventory, "all.children.target.vars.ansible_python_interpreter", "auto")
 
+	common.MapSet(inventory, "all.vars.ansible_ssh_pipelining", true)
+
 	return inventory, resourcePackage, nil
 }

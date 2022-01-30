@@ -313,7 +313,8 @@ func getInventoryTemplate() string {
         container_manager: containerd
         kuboardspray_repo_ubuntu: 'AS_IS'
         kuboardspray_repo_centos: 'AS_IS'
-  vars: {}
+  vars:
+    ansible_ssh_pipelining: true
 
 `
 	return template

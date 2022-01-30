@@ -250,8 +250,13 @@ export default {
         console.log(e)
       })
     },
+    stateNodesLoaded(state) {
+      if (state.code > 0 && state.etcd_code > 0 && state.addon_code > 0) {
+        this.cluster.state = state
+      }
+    },
     async loadStateNodes() {
-      let temp = { nodes: {}, code: 0, etcd_members: {}, etcd_code: 0 }
+      let temp = { nodes: {}, code: 0, etcd_members: {}, etcd_code: 0, addons: {}, addon_code: 0 }
       await this.kuboardSprayApi.get(`/clusters/${this.name}/state/nodes`).then(resp => {
         if (resp.data.data.stdout_obj && resp.data.data.stdout_obj.items) {
           temp.code = 200
@@ -268,7 +273,7 @@ export default {
         temp.msg = e.response.data.message
       })
       // this.percentage += 20
-      await this.kuboardSprayApi.get(`/clusters/${this.name}/state/etcd_members`).then(resp => {
+      this.kuboardSprayApi.get(`/clusters/${this.name}/state/etcd_members`).then(resp => {
         if (resp.data.data.stdout_obj && resp.data.data.stdout_obj.members) {
           temp.etcd_code = 200
           let count = 0
@@ -282,22 +287,26 @@ export default {
           temp.etcd_code = 500
           temp.etcd_msg = resp.data.data.stdout_obj.msg
         }
+        this.stateNodesLoaded(temp)
       }).catch(e => {
         console.log(e)
         temp.etcd_code = 500
         temp.etcd_msg = e.response.data.message
+        this.stateNodesLoaded(temp)
       })
       // this.percentage += 20
-      await this.kuboardSprayApi.get(`/clusters/${this.name}/state/addons`).then(resp => {
+      this.kuboardSprayApi.get(`/clusters/${this.name}/state/addons`).then(resp => {
         temp.addon_code = 200
         temp.addons = resp.data.data
+        this.stateNodesLoaded(temp)
       }).catch(e => {
         temp.addon_code = 500
         temp.addons = {}
         console.error(e)
+        this.stateNodesLoaded(temp)
       })
       // this.percentage += 20
-      this.cluster.state = temp
+      // this.cluster.state = temp
     },
     async loadResourcePackage () {
       this.cluster.resourcePackage = undefined

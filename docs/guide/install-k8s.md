@@ -1,5 +1,6 @@
 ---
 description: KuboardSpray 使用图形界面离线安装 Kubernetes 高可用集群
+sidebarDepth: 1
 meta:
   - name: keywords
     content: Kubernetes安装,K8S安装,kubeadm,Kubernetes 安装,K8S 安装,k8s搭建

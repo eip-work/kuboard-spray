@@ -46,7 +46,7 @@ API-Server 是一个无状态服务，可以通过负载均衡，将请求轮发
 如下图所示：
 ![本地负载均衡](./ha-mode.assets/loadbalancer_localhost.png)
 
-master 节点（控制节点）上的 kubelet / kube-proxy / kube-scheduler / kube-controller-manager 等组件都将直接访问 kube-apiserver 的 `localhost:808` 端口；而非控制节点上的 kubelet / kube-proxy 组件，则将访问该节点 nginx 反向代理的 `localhost:443` 端口，并由 nginx 反向代理进一步将请求轮发到某一个 master 节点（控制节点）上的 kube-apiserver 的 `:6443` 端口。
+master 节点（控制节点）上的 kubelet / kube-proxy / kube-scheduler / kube-controller-manager 等组件都将直接访问 kube-apiserver 的 `localhost:8080` 端口；而非控制节点上的 kubelet / kube-proxy 组件，则将访问该节点 nginx 反向代理的 `localhost:443` 端口，并由 nginx 反向代理进一步将请求轮发到某一个 master 节点（控制节点）上的 kube-apiserver 的 `:6443` 端口。
 
 ::: tip 外置的负载均衡
 

@@ -13,7 +13,7 @@ zh:
       :placeholder="$t('ansible_host_placeholder')"></FieldString>
     <FieldString :holder="holder" fieldName="ansible_port" :prop="prop" anti-freeze></FieldString>
     <FieldString :holder="holder" fieldName="ansible_user" :prop="prop" anti-freeze></FieldString>
-    <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList" anti-freeze>
+    <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList" anti-freeze clearable>
       <template #edit>
         <el-button type="primary" plain style="margin-left: 10px;" icon="el-icon-plus" @click="$refs.addPrivateKey.show()">{{$t('addSshKey')}}</el-button>
       </template>

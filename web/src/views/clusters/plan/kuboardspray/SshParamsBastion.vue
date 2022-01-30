@@ -27,7 +27,7 @@ zh:
       :placeholder="placeholder('ansible_port')" anti-freeze required></FieldString>
     <FieldString :holder="holder" fieldName="ansible_user" :prop="`all.hosts.${nodeName}`"
       :placeholder="placeholder('ansible_user')" anti-freeze required></FieldString>
-    <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList" anti-freeze
+    <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList" anti-freeze clearable
       :placeholder="placeholder('ansible_ssh_private_key_file')">
       <template #edit>
         <el-button type="primary" plain style="margin-left: 10px;" icon="el-icon-plus" @click="$refs.addPrivateKey.show()">{{$t('addSshKey')}}</el-button>

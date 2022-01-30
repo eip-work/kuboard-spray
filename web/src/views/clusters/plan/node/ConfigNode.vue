@@ -1,5 +1,6 @@
 <i18n>
 en:
+  terminal: Open in ssh terminal
   sshcommon: SSH Params (apply to node {nodeName})
   etcd: "ETCD params (scope: node {nodeName})"
   etcd_member_name_required: Please input etcd_member_name
@@ -12,6 +13,7 @@ en:
   pendingAdd: Pending Add.
   pendingAddAction: Clieck Execute button to do the actural addition.
 zh:
+  terminal: 打开 SSH 终端
   sshcommon: SSH 连接参数（适用范围：节点 {nodeName}）
   etcd: "ETCD 参数（适用范围：节点 {nodeName}）"
   etcd_member_name_required: 请填写 ETCD 成员名称
@@ -31,6 +33,7 @@ zh:
       <div v-if="pingpong[nodeName]" class="app_text_mono">
         <span v-if="pingpong[nodeName].status === 'SUCCESS'">
           {{ JSON.parse(pingpong[nodeName].message).ansible_facts }}
+          <el-button @click="openUrlInBlank(`#/ssh/cluster/${cluster.name}/${nodeName}`)" icon="el-icon-monitor" type="primary">{{ $t('terminal')}}</el-button>
         </span>
         <span v-else>
           <div class="app_margin_bottom">

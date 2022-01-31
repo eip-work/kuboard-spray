@@ -211,7 +211,7 @@ export ETCDCTL_CACERT=/etc/ssl/etcd/ssl/ca.pem
         this.socketReadyState = this.socket.readyState
       }, 2000)
 
-      document.title = `${this.$t('terminal')} - ${this.ownerType} / ${this.ownerName} / ${this.pid}`
+      document.title = `${this.$t('terminal')} - ${this.ownerType} / ${this.ownerName}`
     }
   }
 }

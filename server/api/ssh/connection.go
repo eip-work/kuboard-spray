@@ -97,6 +97,7 @@ func (sshClient *SSHClient) GenerateClient() error {
 		logrus.Trace("connected throw bastion.")
 
 		sshClient.Client = sClient
+		return nil
 	}
 
 	clientConfig, err := dialSsh(sshClient.NodeInfo)

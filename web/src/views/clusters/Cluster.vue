@@ -28,7 +28,7 @@ zh:
         <template v-if="currentTab === 'plan'">
           <template v-if="mode === 'view'">
             <el-button type="primary" icon="el-icon-edit" @click="$router.replace(`/clusters/${name}?mode=edit`)" 
-              :loading="loading" :disabled="isClusterInstalled && !isClusterOnline">
+              :loading="loading">
               {{$t('msg.edit')}}
             </el-button>
           </template>

@@ -8,6 +8,7 @@ en:
   ip_placeholder: 'Default: {default_value} (inhirit from value ansible_host)'
   longTimeLoading: Loading... cost about 20-30s
   password_and_bastion: You are using bastion/jumpserver to access the node, if you use password here, it takes longer time to create ssh connection, it would be better to clear the password and provide ssh_private_key.
+  password_in_global: You defined password in global configuration, it's suggested that you clear it.
   speedup: SSH Multiplexing
 zh:
   addSshKey: 添加私钥
@@ -19,6 +20,7 @@ zh:
   longTimeLoading: 加载中... 可能需要 20-30 秒
   ipDescription: kubernetes 使用的地址有可能与 kuboard-spray 访问该机器时所使用的地址不同，此处指定 kubernetes 所使用的地址（必须为内网地址）
   password_and_bastion: 您将使用跳板机访问节点，如果在此处使用密码访问，创建 ssh 连接的时间较长，建议清除密码并提供 “私钥文件”。
+  password_in_global: 您在全局参数中配置了密码，建议清除。
   speedup: 加速执行
 </i18n>
 
@@ -42,9 +44,10 @@ zh:
     </FieldSelect>
     <FieldString :holder="holder" fieldName="ansible_password" show-password anti-freeze clearable
       :placeholder="placeholder('ansible_password')"></FieldString>
-    <el-alert type="warning" :closable="false" v-if="cluster && cluster.inventory.all.hosts.bastion && holder.ansible_password" style="margin-left: 120px; width: calc(100% - 120px);">
+    <el-alert type="warning" :closable="false" v-if="cluster && cluster.inventory.all.hosts.bastion && (holder.ansible_password || cluster.inventory.all.children.target.vars.ansible_password)" style="margin-left: 120px; width: calc(100% - 120px);">
       {{ $t('password_and_bastion') }}
       <el-link target="blank" href="https://kuboard-spray.cn/guide/extra/speedup.html" icon="el-icon-link" style="font-size: 12px; margin-left: 10px;">{{$t('speedup')}}</el-link>
+      <li v-if="cluster && cluster.inventory.all.children.target.vars.ansible_password">{{ $t('password_in_global') }}</li>
     </el-alert>
     <FieldCommon :holder="holder" fieldName="ansible_become" anti-freeze>
       <template #view>

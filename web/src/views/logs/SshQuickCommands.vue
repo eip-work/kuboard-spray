@@ -39,6 +39,9 @@ zh:
 
   crictl_ps: 查看容器组列表
   crictl_images: 查看容器镜像列表
+
+  calico_node_list: Calico 节点列表
+  calico_node_status: Calico 节点状态
 </i18n>
 
 <template>
@@ -48,7 +51,7 @@ zh:
         <el-button style="margin-left: 10px" type="primary">{{ $t('kube_control_plane_cmds') }}</el-button>
       </template>
       <div v-for="(cmds, type) in control_plane_commands" :key="type">
-        <div class="app_block_title">{{type}}</div>
+        <div class="app_text_mono commands_title">{{type}}</div>
         <SshQuickCommand v-model:visible="control_plane_commands_visible" v-for="(command, index) in cmds" :key="type + index" :command="command" :socket="socket"></SshQuickCommand>
       </div>
     </el-popover>
@@ -57,7 +60,7 @@ zh:
         <el-button style="margin-left: 10px" type="warning">{{ $t('etcd_cmds') }}</el-button>
       </template>
       <div v-for="(cmds, type) in etcd_commands" :key="type">
-        <div class="app_block_title">{{type}}</div>
+        <div class="app_text_mono commands_title">{{type}}</div>
         <SshQuickCommand v-model:visible="etcd_commands_visible" v-for="(command, index) in cmds" :key="type + index" :command="command" :socket="socket"></SshQuickCommand>
       </div>
     </el-popover>
@@ -66,7 +69,7 @@ zh:
         <el-button style="margin-left: 10px" type="success">{{ $t('kube_node_cmds') }}</el-button>
       </template>
       <div v-for="(cmds, type) in kube_node_commands" :key="type">
-        <div class="app_block_title">{{type}}</div>
+        <div class="app_text_mono commands_title">{{type}}</div>
         <SshQuickCommand v-model:visible="kube_node_commands_visible" v-for="(command, index) in cmds" :key="type + index" :command="command" :socket="socket"></SshQuickCommand>
       </div>
     </el-popover>
@@ -91,7 +94,7 @@ export default {
   },
   computed: {
     control_plane_commands() {
-      return {
+      let temp = {
         kubectl: [
           { name: this.$t('view_config'), cmd: 'kubectl config view' },
           { name: this.$t('cluster_version'), cmd: 'kubectl version' },
@@ -109,6 +112,8 @@ export default {
           { name: this.$t('crictl_images'), cmd: 'crictl images'},
         ]
       }
+      temp = Object.assign(temp, this.kube_node_commands)
+      return temp
     } ,
     etcd_commands () {
       let statusCmd = 'etcdctl endpoint health'
@@ -129,7 +134,7 @@ export default {
       }
     },
     kube_node_commands() {
-      return {
+      let temp = {
         kubelet: [
           { name: this.$t('kubelet_version'), cmd: 'kubelet version' },
           { name: this.$t('kubelet_status'), cmd: 'systemctl status kubelet' },
@@ -140,6 +145,13 @@ export default {
           { name: this.$t('crictl_images'), cmd: 'crictl images'},
         ]
       }
+      if (this.cluster.inventory.all.children.target.children.k8s_cluster.vars.kube_network_plugin === 'calico') {
+        temp.calicoctl = [
+          { name: this.$t('calico_node_list'), cmd: 'calicoctl get nodes' },
+          { name: this.$t('calico_node_status'), cmd: 'calicoctl node status' },
+        ]
+      }
+      return temp
     }
   },
   components: { SshQuickCommand },
@@ -152,5 +164,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+.commands_title {
+  padding-bottom: 10px;
+  color: var(--el-color-primary);
+  font-weight: bolder;
+  font-size: 15px;
+}
 </style>

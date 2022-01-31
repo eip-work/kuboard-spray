@@ -164,7 +164,7 @@ export default {
   computed: {
     offlineNodes () {
       let result = []
-      if (this.action === 'remove_node' && this.form.remove_node && this.form.remove_node.reset_nodes) {
+      if (this.action === 'remove_node' && this.form.remove_node && !this.form.remove_node.reset_nodes) {
         return result
       }
       for (let key in this.cluster.inventory.all.hosts) {

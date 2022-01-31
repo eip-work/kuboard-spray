@@ -100,7 +100,7 @@ zh:
     </ConfigSection>
     <ConfigSection v-if="enabledEtcd" v-model:enabled="enabledEtcd" label="ETCD" :description="$t('etcd', {nodeName: nodeName})" disabled anti-freeze>
       <FieldString :holder="inventory.all.children.target.children.etcd.hosts[nodeName]" fieldName="etcd_member_name" :rules="etcd_member_name_rules" 
-        :anti-freeze="onlineNodes[nodeName] === undefined"
+        :anti-freeze="onlineNodes[nodeName] === undefined || inventory.all.hosts[nodeName].kuboardspray_node_action === 'add_node'"
         :prop="`all.children.target.children.etcd.hosts.${nodeName}`" required></FieldString>
     </ConfigSection>
   </el-form>

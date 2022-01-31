@@ -17,7 +17,10 @@ zh:
       <el-button v-if="cluster.type === 'gap'" type="primary" circle icon="el-icon-document-checked" :loading="pingpong_loading"></el-button>
       <el-button v-else-if="pendingAction === 'remove_node'" type="danger" circle icon="el-icon-delete" :loading="pingpong_loading"></el-button>
       <el-button v-else-if="pendingAction === 'add_node'" type="warning" circle icon="el-icon-plus" :loading="pingpong_loading"></el-button>
-      <el-button v-else type="success" circle :plain="onlineNodes[name] === undefined" icon="el-icon-check" :loading="pingpong_loading"></el-button>
+      <template v-else-if="k8sNode">
+        <el-button v-if="k8sNodeStatus === 'Ready'" type="success" circle :plain="onlineNodes[name] === undefined" icon="el-icon-check" :loading="pingpong_loading"></el-button>
+        <el-button v-else type="danger" circle :plain="onlineNodes[name] === undefined" icon="el-icon-moon-night" :loading="pingpong_loading"></el-button>
+      </template>
     </div>
     <div class="delete_button" v-if="!hideDeleteButton && editMode !== 'view'">
       <el-button v-if="pendingAction === 'remove_node'" icon="el-icon-check" type="success" circle @click="cancelDelete"></el-button>
@@ -84,6 +87,9 @@ export default {
           result += ' offline_node'
         }
       }
+      if (this.k8sNode && this.k8sNodeStatus === 'Unknown') {
+        result += ' error_node'
+      }
       if (this.cluster.type === 'gap') {
         result += ' gap'
       }
@@ -104,6 +110,23 @@ export default {
         }
       }
       return result
+    },
+    k8sNode () {
+      if (this.cluster.state && this.cluster.state.nodes) {
+        return this.cluster.state.nodes[this.name]
+      }
+      return undefined
+    },
+    k8sNodeStatus () {
+      if (this.k8sNode) {
+        for (let index in this.k8sNode.status.conditions) {
+          let con = this.k8sNode.status.conditions[index]
+          if (con.type === 'Ready' && con.status === "True") {
+            return 'Ready'
+          }
+        }
+      }
+      return 'Unknown'
     }
   },
   mounted () {
@@ -138,8 +161,8 @@ export default {
         delete this.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[this.name]
         delete this.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts[this.name]
         delete this.inventory.all.children.target.children.etcd.hosts[this.name]
+        this.$emit('deleted')
       }
-      this.$emit('deleted')
     },
     cancelDelete () {
       delete this.inventory.all.hosts[this.name].kuboardspray_node_action
@@ -266,6 +289,16 @@ export default {
   }
   .node.gap.active {
     background-color: var(--el-color-primary-light-6) !important;
+  }
+  .node.error_node {
+    border-color: var(--el-color-danger) !important;
+    .role {
+      opacity: 0.5;
+      background-color: var(--el-color-info);
+    }
+  }
+  .node.error_node.active {
+    background-color: var(--el-color-danger-lighter) !important;
   }
 }
 

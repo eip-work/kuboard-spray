@@ -21,7 +21,7 @@ zh:
 
 <template>
   <ConfigSection ref="configSection" v-model:enabled="enableSsh" label="SSH" :description="description" disabled anti-freeze>
-    <FieldCommon :holder="holder" fieldName="ansible_host" :prop="`all.hosts.${nodeName}`" :anti-freeze="onlineNodes[nodeName] === undefined" :rules="hostRules">
+    <FieldCommon :holder="holder" fieldName="ansible_host" :prop="`all.hosts.${nodeName}`" :anti-freeze="onlineNodes[nodeName] === undefined || holder.kuboardspray_node_action === 'add_node'" :rules="hostRules">
       <template #edit>
         <el-input v-model.trim="ansible_host" :placeholder="$t('ansible_host_placeholder')"></el-input>
       </template>

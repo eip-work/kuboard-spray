@@ -33,7 +33,7 @@ zh:
         <el-button type="primary" plain style="margin-left: 10px;" icon="el-icon-plus" @click="$refs.addPrivateKey.show()">{{$t('addSshKey')}}</el-button>
       </template>
     </FieldSelect>
-    <FieldString :holder="holder" fieldName="ansible_password" show-password anti-freeze
+    <FieldString :holder="holder" fieldName="ansible_password" show-password anti-freeze clearable
       :placeholder="placeholder('ansible_password')"></FieldString>
     <slot></slot>
     <SshAddPrivateKey ref="addPrivateKey" ownerType="cluster" :ownerName="cluster.name"></SshAddPrivateKey>
@@ -71,7 +71,7 @@ export default {
           this.inventory.all.hosts.bastion = this.inventory.all.hosts.bastion || {ansible_host: '', ansible_user: ''}
         } else {
           delete this.inventory.all.hosts.bastion
-          this.inventory.all.children.target.vars.ansible_ssh_common_args = `-o ControlPath={{ kuboardspray_cluster_dir }}/ansible-{{ansible_user}}@{{ansible_host}}:{{ansible_port}}`
+          delete this.inventory.all.children.target.vars.ansible_ssh_common_args
         }
       }
     },
@@ -102,15 +102,15 @@ export default {
           if (bastion['ansible_password']) {
             sshPass = `sshpass -p '${bastion['ansible_password']}' `
           }
-          let temp = `-o ControlPath={{ kuboardspray_cluster_dir }}/ansible-{{ansible_user}}@{{ansible_host}}:{{ansible_port}} -o ProxyCommand="${sshPass}ssh -F /dev/null -o ConnectTimeout=10 -o ConnectionAttempts=100 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p -p`
+          let temp = `-o ProxyCommand="${sshPass}ssh -F /dev/null -o ControlMaster=auto -o ControlPersist=30m -o ControlPath={{kuboardspray_cluster_dir}}/ansible-%%r@%%h:%%p -o ConnectTimeout=10 -o ConnectionAttempts=100 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p -p`
           temp += bastion["ansible_port"] + " " + bastion["ansible_user"] + "@" + bastion["ansible_host"]
-          if (bastion["ansible_ssh_private_key_file"] != undefined) {
+          if (bastion["ansible_ssh_private_key_file"]) {
             temp += " -i " + bastion["ansible_ssh_private_key_file"]
           }
           temp += '"'
           this.inventory.all.children.target.vars.ansible_ssh_common_args = temp
         } else {
-          this.inventory.all.children.target.vars.ansible_ssh_common_args = `-o ControlPath={{ kuboardspray_cluster_dir }}/ansible-{{ansible_user}}@{{ansible_host}}:{{ansible_port}}`
+          delete this.inventory.all.children.target.vars.ansible_ssh_common_args
         }
       },
       deep: true,

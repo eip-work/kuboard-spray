@@ -34,6 +34,8 @@ func ModifyCluster(c *gin.Context) {
 		return
 	}
 
+	PopulateKuboardSprayVars(inventory, req.Cluster)
+
 	inventoryYamleBytes, err := yaml.Marshal(inventory)
 
 	if err != nil {

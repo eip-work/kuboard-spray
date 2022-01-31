@@ -45,38 +45,7 @@ func CheckAddonStatus(c *gin.Context) {
 	k8sVars := common.MapGet(inventory, "all.children.target.children.k8s_cluster.vars").(map[string]interface{})
 	addons := common.MapGet(resourcePackage, "data.addon").([]interface{})
 	startTime := time.Now()
-	commands := []string{}
-	count := 0
-	for _, v := range addons {
-		addon := v.(map[string]interface{})
-		addonName := addon["name"].(string)
-		addonTarget := addon["target"].(string)
-		if k8sVars[addonTarget] != true {
-			continue
-		}
-		var lifecycle map[string]interface{}
-		if addon["lifecycle"] != nil {
-			lifecycle = addon["lifecycle"].(map[string]interface{})
-		}
-		if lifecycle["check"] == nil {
-			continue
-		}
-		checker := lifecycle["check"].(map[string]interface{})
-		shell := checker["shell"].(string) + " || true"
-		commands = append(commands, shell)
-		result[addonName] = AddonStatus{Index: count}
-		count++
-	}
-
-	out, err := ansible_rpc.ExecuteShellCommands("cluster", request.ClusterName, "kube_control_plane[0]", commands)
-
-	logrus.Trace(out)
-
-	if err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "error", err)
-		return
-	}
-
+	commands := []ansible_rpc.AnsibleCommandsRequest{}
 	for _, v := range addons {
 		addon := v.(map[string]interface{})
 		addonName := addon["name"].(string)
@@ -103,17 +72,42 @@ func CheckAddonStatus(c *gin.Context) {
 			continue
 		}
 		checker := lifecycle["check"].(map[string]interface{})
+		shell := checker["shell"].(string) + " || true"
+		commands = append(commands, ansible_rpc.AnsibleCommandsRequest{
+			Command: shell,
+			Name:    addonName,
+		})
+	}
 
-		keyword := checker["keyword"].(string)
+	out, err := ansible_rpc.ExecuteShellCommands("cluster", request.ClusterName, "kube_control_plane", commands)
 
-		nodeResult := out.Plays[0].Tasks[0].Hosts["node1"]
+	// logrus.Trace(out)
 
-		result[addonName] = AddonStatus{
-			Name:            addonName,
-			IntendToInstall: true,
-			IsInstalled:     strings.Contains(nodeResult.StdOut, keyword),
-			Code:            nodeResult.ReturnCode,
-			StdOut:          nodeResult.StdOut,
+	if err != nil {
+		common.HandleError(c, http.StatusInternalServerError, "error", err)
+		return
+	}
+
+	if len(out.Plays) > 0 {
+		for _, task := range out.Plays[0].Tasks {
+			keyword := "KEYWORD_NOT_FOUND_YET"
+			for _, v := range addons {
+				addon := v.(map[string]interface{})
+				if addon["name"] == task.Task.Name {
+					keyword = common.MapGet(addon, "lifecycle.check.keyword").(string)
+				}
+			}
+			for _, nodeResult := range task.Hosts {
+				if nodeResult.Changed {
+					result[task.Task.Name] = AddonStatus{
+						Name:            task.Task.Name,
+						IntendToInstall: true,
+						IsInstalled:     strings.Contains(nodeResult.StdOut, keyword),
+						StdOut:          nodeResult.StdOut,
+					}
+					break
+				}
+			}
 		}
 	}
 

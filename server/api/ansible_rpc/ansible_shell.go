@@ -3,7 +3,6 @@ package ansible_rpc
 import (
 	"encoding/json"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/eip-work/kuboard-spray/api/command"
@@ -14,7 +13,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func ExecuteShellCommands(owner_type, owner_name, target string, commands []string) (*AnsibleResult, error) {
+func ExecuteShellCommands(owner_type, owner_name, target string, commands []AnsibleCommandsRequest) (*AnsibleResult, error) {
 
 	startTime := time.Now()
 
@@ -30,10 +29,10 @@ func ExecuteShellCommands(owner_type, owner_name, target string, commands []stri
 	defer os.Remove(tempPlayBookFilePath)
 
 	tasks := []gin.H{}
-	for index, cmd := range commands {
+	for _, cmd := range commands {
 		task := gin.H{
-			"name":  strconv.Itoa(index),
-			"shell": cmd,
+			"name":  cmd.Name,
+			"shell": cmd.Command,
 		}
 		tasks = append(tasks, task)
 	}

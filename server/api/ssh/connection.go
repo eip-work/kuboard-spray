@@ -2,6 +2,7 @@ package ssh
 
 import (
 	"bufio"
+	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -13,20 +14,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh"
 )
-
-// func DecodedMsgToSSHClient(msg string) (SSHClient, error) {
-// 	client := NewSSHClient()
-// 	decoded, err := base64.StdEncoding.DecodeString(msg)
-// 	if err != nil {
-// 		return client, err
-// 	}
-// 	logrus.Trace(decoded)
-// 	// err = json.Unmarshal(decoded, &client)
-// 	if err != nil {
-// 		return client, err
-// 	}
-// 	return client, nil
-// }
 
 func dialSsh(node NodeInfo) (*ssh.ClientConfig, error) {
 	var (
@@ -66,26 +53,6 @@ func dialSsh(node NodeInfo) (*ssh.ClientConfig, error) {
 
 	return clientConfig, nil
 }
-
-// 使用跳板机
-// // connect to the bastion host
-// bClient, err := ssh.Dial("tcp", bastionAddr, config)
-// if err != nil {
-//     log.Fatal(err)
-// }
-// // Dial a connection to the service host, from the bastion
-// conn, err := bClient.Dial("tcp", serviceAddr)
-// if err != nil {
-//     log.Fatal(err)
-// }
-
-// ncc, chans, reqs, err := ssh.NewClientConn(conn, serviceAddr, config)
-// if err != nil {
-//     log.Fatal(err)
-// }
-
-// sClient := ssh.NewClient(ncc, chans, reqs)
-// // sClient is an ssh client connected to the service host, through the bastion host.
 
 func (sshClient *SSHClient) GenerateClient() error {
 
@@ -213,15 +180,11 @@ func (sshClient *SSHClient) Connect(ws *websocket.Conn) {
 			} else if string(p[0:1]) == "1" {
 				terminal := TerminalSpec{}
 				json.Unmarshal(p[1:], &terminal)
-				req := ptyRequestMsg{
-					Term:    "xterm",
-					Columns: terminal.Columns,
-					Rows:    terminal.Rows,
-					Width:   uint32(terminal.Columns * 8),
-					Height:  uint32(terminal.Columns * 8),
-					// Modelist: string(modeList),
-				}
-				ok, err := sshClient.channel.SendRequest("pty-req", true, ssh.Marshal(&req))
+				size := make([]byte, 16)
+				binary.BigEndian.PutUint32(size, uint32(terminal.Columns))
+				binary.BigEndian.PutUint32(size[4:], uint32(terminal.Rows))
+
+				ok, err := sshClient.channel.SendRequest("window-change", false, size)
 				if !ok || err != nil {
 					logrus.Println(ok, err)
 					// return

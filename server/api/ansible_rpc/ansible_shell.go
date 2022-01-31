@@ -56,7 +56,6 @@ func ExecuteShellCommands(owner_type, owner_name, target string, commands []Ansi
 		Args: []string{
 			tempPlayBookFilePath,
 			"-i", inventoryPath,
-			"-e", "kuboardspray_cluster_dir=" + constants.GET_DATA_DIR() + "/" + owner_type + "/" + owner_name,
 		},
 		Env:     []string{"ANSIBLE_CONFIG=./ansible-rpc/ansible.cfg"},
 		Timeout: 20,

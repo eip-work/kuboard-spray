@@ -42,8 +42,8 @@ func ShellWs(c *gin.Context) {
 		common.HandleError(c, http.StatusInternalServerError, "bad status", err)
 		return
 	}
-	logrus.Trace(sshClient)
-	if sshClient.Host == "" || sshClient.Password == "" {
+	logrus.Trace(sshClient, "host[", sshClient.Host, "] password[", sshClient.Password, "] privateKeyPath[", sshClient.PrivateKeyPath, "]")
+	if sshClient.Host == "" || sshClient.Password == "" && sshClient.PrivateKeyPath == "" {
 		common.HandleError(c, http.StatusBadRequest, "IP 或 密码为空", nil)
 		return
 	}

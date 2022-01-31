@@ -6,10 +6,9 @@ import (
 	"io/ioutil"
 
 	"github.com/eip-work/kuboard-spray/constants"
-	"github.com/gin-gonic/gin"
 )
 
-func nodefact_cached(req GetNodeFactRequest) (*gin.H, error) {
+func nodefact_cached(req GetNodeFactRequest) (map[string]interface{}, error) {
 
 	factDir := constants.GET_DATA_DIR() + "/" + req.NodeOwnerType + "/" + req.NodeOwner + "/fact"
 	factPath := factDir + "/" + req.Node + "_" + req.Ip + "_" + req.Port
@@ -19,8 +18,8 @@ func nodefact_cached(req GetNodeFactRequest) (*gin.H, error) {
 		return nil, err
 	}
 
-	fact := &gin.H{}
-	if err := json.Unmarshal(fact_bytes, fact); err != nil {
+	fact := map[string]interface{}{}
+	if err := json.Unmarshal(fact_bytes, &fact); err != nil {
 		return nil, errors.New("Failed to Unmarshal result " + err.Error())
 	}
 	return fact, nil

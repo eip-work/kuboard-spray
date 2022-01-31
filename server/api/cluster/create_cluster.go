@@ -63,7 +63,7 @@ func CreateCluster(c *gin.Context) {
 		return
 	}
 
-	PopulateKuboardSprayVars(inventory, req.Name)
+	common.PopulateKuboardSprayVars(inventory, "cluster", req.Name)
 
 	addons := common.MapGet(resourcePackage, "data.addon").([]interface{})
 	for _, a := range addons {

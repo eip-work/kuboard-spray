@@ -40,7 +40,7 @@ func GetNodeFacts(c *gin.Context) {
 	c.ShouldBindJSON(&req)
 	c.ShouldBindUri(&req)
 
-	var result *gin.H
+	var result map[string]interface{}
 	var err error
 
 	if req.FromCache {
@@ -61,12 +61,12 @@ func GetNodeFacts(c *gin.Context) {
 
 }
 
-func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
+func nodefacts(req GetNodeFactRequest) (map[string]interface{}, error) {
 
-	inventory := gin.H{
-		"all": gin.H{
-			"hosts": gin.H{
-				req.Node: gin.H{
+	inventory := map[string]interface{}{
+		"all": map[string]interface{}{
+			"hosts": map[string]interface{}{
+				req.Node: map[string]interface{}{
 					"ansible_host":                 req.Ip,
 					"ansible_port":                 req.Port,
 					"ansible_user":                 req.User,
@@ -82,6 +82,8 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 			},
 		},
 	}
+
+	common.PopulateKuboardSprayVars(inventory, req.NodeOwnerType, req.NodeOwner)
 
 	inventoryBytes, err := json.Marshal(inventory)
 	if err != nil {
@@ -131,6 +133,7 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 		return nil, errors.New(string(stdout))
 	}
 	if err != nil {
+		logrus.Trace(err)
 		return nil, errors.New("failed to get node facts " + err.Error())
 	}
 
@@ -138,8 +141,9 @@ func nodefacts(req GetNodeFactRequest) (*gin.H, error) {
 
 	ioutil.WriteFile(factPath, stdout, 0666)
 
-	fact := &gin.H{}
-	if err := json.Unmarshal(stdout, fact); err != nil {
+	fact := map[string]interface{}{}
+	if err := json.Unmarshal(stdout, &fact); err != nil {
+		logrus.Trace(stdout)
 		return nil, errors.New("Failed to Unmarshal result " + err.Error())
 	}
 	return fact, nil

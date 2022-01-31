@@ -57,7 +57,6 @@ func PingPong(clusterName string, nodes string) (*PingPongResult, error) {
 			"-i", inventoryYamlPath,
 			"--fork", "100",
 			"--timeout", "20",
-			"-e", "kuboardspray_cluster_dir=" + constants.GET_DATA_DIR() + "/cluster/" + clusterName,
 		},
 		Env:     []string{"ANSIBLE_CONFIG=" + constants.GET_ADHOC_CFG_PATH()},
 		Timeout: 21,

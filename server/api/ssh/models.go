@@ -3,6 +3,7 @@ package ssh
 import (
 	"errors"
 	"strconv"
+	"strings"
 
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
@@ -78,6 +79,7 @@ func populateNodeInfo(inventory map[string]interface{}, node string) *NodeInfo {
 		result.Port = 22
 	}
 	result.PrivateKeyPath = getNodeInfo(inventory, node, "ansible_ssh_private_key_file")
+	result.PrivateKeyPath = strings.ReplaceAll(result.PrivateKeyPath, "{{ kuboardspray_cluster_dir }}", common.MapGetString(inventory, "all.vars.kuboardspray_cluster_dir"))
 	result.Become = getNodeInfoBool(inventory, node, "ansible_become")
 	result.BecomeUser = getNodeInfo(inventory, node, "ansible_become_user")
 	result.BecomePassword = getNodeInfo(inventory, node, "ansible_become_password")

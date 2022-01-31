@@ -22,6 +22,7 @@ func dialSsh(node NodeInfo) (*ssh.ClientConfig, error) {
 		config       ssh.Config
 	)
 	auth = make([]ssh.AuthMethod, 0)
+	logrus.Trace("password", node.Password)
 	if node.Password != "" {
 		auth = append(auth, ssh.Password(node.Password))
 	}
@@ -51,6 +52,8 @@ func dialSsh(node NodeInfo) (*ssh.ClientConfig, error) {
 		},
 	}
 
+	logrus.Trace(clientConfig)
+
 	return clientConfig, nil
 }
 
@@ -69,6 +72,7 @@ func (sshClient *SSHClient) GenerateClient() error {
 		if bastionClient, err = ssh.Dial("tcp", addr, bClientConfig); err != nil {
 			return err
 		}
+		logrus.Trace("dialed ", addr)
 
 		addr = fmt.Sprintf("%s:%d", sshClient.Host, sshClient.Port)
 		conn, err := bastionClient.Dial("tcp", addr)
@@ -82,6 +86,7 @@ func (sshClient *SSHClient) GenerateClient() error {
 			return err
 		}
 
+		logrus.Trace("dialed ", addr)
 		ncc, chans, reqs, err := ssh.NewClientConn(conn, addr, clientConfig)
 		if err != nil {
 			return err

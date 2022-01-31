@@ -31,7 +31,8 @@ zh:
         {{ stateStr }}
       </span>
     </div>
-    <div id="terminal" :style="`width: 100%; height: calc(100vh - 39px); background-color: black;`"></div>
+    <div id="terminal" :style="`width: 100%; height: calc(100vh - 67px); background-color: black;`"></div>
+    <SshQuickCommands :roles="roles" :socket="socket" :cluster="cluster"></SshQuickCommands>
     <K8sTerminalErrorHint ref="errorHint"/>
   </div>
 </template>
@@ -39,12 +40,12 @@ zh:
 <script>
 import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
-// import { AttachAddon } from 'xterm-addon-attach'
 import 'xterm/css/xterm.css'
 import K8sTerminalErrorHint from './K8sTerminalErrorHint'
 import ChangeFontSize from './ChangeFontSize'
 import Find from './Find'
 import ChangeColor from './ChangeColor'
+import SshQuickCommands from './SshQuickCommands.vue'
 // import {encode} from 'js-base64'
 
 function trimSlash(str) {
@@ -69,6 +70,9 @@ export default {
       fontSize: parseInt(localStorage.getItem('terminal-font-size')) || 14,
       isRunning: true,
       dialogVisible: false,
+      roles: undefined,
+      socket: undefined,
+      cluster: undefined,
     }
   },
   computed: {
@@ -91,7 +95,7 @@ export default {
       return this.$t('unknown')
     },
   },
-  components: { K8sTerminalErrorHint, ChangeFontSize, Find, ChangeColor },
+  components: { K8sTerminalErrorHint, ChangeFontSize, Find, ChangeColor, SshQuickCommands },
   mounted() {
     window.addEventListener('resize', this.handleResize)
     this.refresh()
@@ -151,6 +155,39 @@ export default {
       this.socket.onopen = function () {
         _this.fitAddon.fit()
         _this.socketReadyState = _this.socket.readyState
+        _this.kuboardSprayApi.get(`/${_this.ownerType}s/${_this.ownerName}`).then(resp => {
+          let inventory = resp.data.data.inventory
+          _this.cluster = resp.data.data
+          _this.roles = {
+            kube_control_plane: inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[_this.nodeName] !== undefined,
+            etcd: inventory.all.children.target.children.etcd.hosts[_this.nodeName] !== undefined,
+            kube_node: inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts[_this.nodeName] !== undefined,
+          }
+          if (inventory.all.children.target.children.etcd.hosts[_this.nodeName]) {
+            console.log('this is a etcd node.')
+            setTimeout(() => {
+              _this.socket.send('0' + `export ETCDCTL_API=3
+export ETCDCTL_CERT=/etc/ssl/etcd/ssl/admin-$(hostname).pem
+export ETCDCTL_KEY=/etc/ssl/etcd/ssl/admin-$(hostname)-key.pem
+export ETCDCTL_CACERT=/etc/ssl/etcd/ssl/ca.pem
+# 此处开始，执行您想要执行的 etcdctl 命令
+`)
+              if (inventory.all.hosts[_this.nodeName].kuboardspray_node_action === undefined) {
+                _this.socket.send('0etcdctl member list\n')
+                _this.socket.send('0\n')
+              }
+              if (inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[_this.nodeName]) {
+                _this.socket.send('0# 或者 kubectl 命令\n')
+                if (inventory.all.hosts[_this.nodeName].kuboardspray_node_action === undefined) {
+                  _this.socket.send('0kubectl get nodes -o wide\n\n')
+                }
+              }
+              
+            }, 2000)
+          }
+        }).catch(e => {
+          console.log('cannot read inventory', e)
+        })
       }
       this.socket.onclose = function () {
         _this.socketReadyState = _this.socket.readyState

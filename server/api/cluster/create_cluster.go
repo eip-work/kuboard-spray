@@ -62,6 +62,7 @@ func CreateCluster(c *gin.Context) {
 		common.HandleError(c, http.StatusInternalServerError, "cannot parse package.yaml", err)
 		return
 	}
+	common.MapSet(inventory, "all.vars.kuboardspray_cluster_dir", clusterDir)
 	addons := common.MapGet(resourcePackage, "data.addon").([]interface{})
 	for _, a := range addons {
 		addon := a.(map[string]interface{})
@@ -313,6 +314,7 @@ func getInventoryTemplate() string {
         container_manager: containerd
         kuboardspray_repo_ubuntu: 'AS_IS'
         kuboardspray_repo_centos: 'AS_IS'
+        ansible_ssh_common_args: '-o ControlPath={{ kuboardspray_cluster_dir }}/ansible-{{ansible_user}}@{{ansible_host}}:{{ansible_port}}'
   vars:
     ansible_ssh_pipelining: true
 

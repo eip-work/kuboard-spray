@@ -268,6 +268,10 @@ export default {
       }
     },
     async applyPlan () {
+      if (this.pingpong_loading) {
+        this.$message.error('Wait ..')
+        return
+      }
       return new Promise((resolve, reject) => {
         this.$refs.form.validate(flag => {
           if (flag) {

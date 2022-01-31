@@ -7,6 +7,9 @@ en:
   install: Install
   uninstall: Uninstall
 
+  offlineNodes: Offline nodes
+  offlineNodesDesc: Exclude the following offline nodes.
+
   verbose: Include task params
   verbose_: 
   verbose_v: May include sensitive data in the trace, e.g. path to files, user name, password.
@@ -25,6 +28,9 @@ zh:
   remove_addon: 卸载可选组件
   install: 安 装
   uninstall: 卸 载
+
+  offlineNodes: 离线节点
+  offlineNodesDesc: 排除以下不在线的节点：
 
   verbose: 显示任务参数
   verbose_: 正常输出的日志，通常选用此选项
@@ -59,7 +65,10 @@ zh:
             <el-button v-if="addonState.is_installed" icon="el-icon-remove" type="danger" plain>{{$t('uninstall')}}</el-button>
             <el-button v-else icon="el-icon-download" type="warning" plain>{{$t('install')}}</el-button>
           </template>
-          <el-form ref="form" :model="form" @submit.prevent.stop label-position="left" label-width="120px">
+          <div v-if="pingpong_loading" style="display: block; min-width: 420px;">
+            <el-skeleton animated></el-skeleton>
+          </div>
+          <el-form v-else ref="form" :model="form" @submit.prevent.stop label-position="left" label-width="120px">
             <div class="app_block_title">{{label}}</div>
             <el-form-item :label="$t('verbose')">
               <el-radio-group v-model="form.verbose">
@@ -73,9 +82,19 @@ zh:
               <el-input-number v-model="form.fork" :step="2" style="width: 166px;"></el-input-number>
               <div style="width: 350px; margin-left: 0; color: #aaa; font-size: 12px;">{{$t('fork_more')}}</div>
             </el-form-item>
+            <el-form-item :label="$t('offlineNodes')" class="app_margin_top" v-if="offlineNodes.length > 0">
+            <div class="form_description">{{ $t('offlineNodesDesc') }}</div>
+            <template v-for="node in offlineNodes" :key="'exclude' + node">
+              <el-tooltip class="box-item" effect="dark" :content="pingpong[node].message" placement="top-end">
+                <el-tag type="error" effect="dark" style="margin: 0 10px 10px 0;">
+                  <span class="app_text_mono" style="font-size: 14px; margin-right: 10px;">{{ node }}</span> <i class="el-icon-question"></i>
+                </el-tag>
+              </el-tooltip>
+            </template>
+          </el-form-item>
           </el-form>
         </ExecuteTask>
-        <el-button v-else-if="isClusterOnline && editMode === 'view'" type="primary" plain icon="el-icon-download" @click="prepareForInstall">{{ $t('install_addon') }}</el-button>
+        <el-button v-else-if="isClusterOnline && editMode === 'view' && !addonState.is_installed" type="primary" plain icon="el-icon-download" @click="prepareForInstall">{{ $t('install_addon') }}</el-button>
       </div>
     </template>
     <template #more>
@@ -89,6 +108,13 @@ zh:
 import { computed } from 'vue'
 import ExecuteTask from '../../../common/task/ExecuteTask.vue'
 
+function trimMark(str) {
+  if (str[str.length - 1] === ',') {
+    return str.slice(0, str.length - 1)
+  }
+  return str
+}
+
 export default {
   props: {
     enabled: { prop: Boolean, required: true },
@@ -96,7 +122,7 @@ export default {
     cluster: { prop: Object, required: true },
     addonName: { prop: String, required: true },
     antiFreeze: { prop: Boolean, required: false, default: undefined },
-    pingpong: { prop: Object, required: false, default: () => { return {} }},
+    // pingpong: { prop: Object, required: false, default: () => { return {} }}, 
   },
   data() {
     return {
@@ -105,6 +131,8 @@ export default {
         fork: 5,
         action: 'install_addon',
       },
+      pingpong: {},
+      pingpong_loading: true,
     }
   },
   inject: ['editMode', 'isClusterOnline', 'isClusterInstalled'],
@@ -120,6 +148,15 @@ export default {
     }
   },
   computed: {
+    offlineNodes () {
+      let result = []
+      for (let key in this.cluster.inventory.all.hosts) {
+        if (this.pingpong[key] && this.pingpong[key].status !== 'SUCCESS') {
+          result.push(key)
+        }
+      }
+      return result
+    },
     addonInResourcePackage () {
       if (this.cluster.resourcePackage) {
         for (let addon of this.cluster.resourcePackage.data.addon) {
@@ -175,6 +212,22 @@ export default {
     this.onVisibleChange(true)
   },
   methods: {
+    testPingPong (nodes) {
+      this.pingpong = {}
+      this.pingpong_loading = true
+      let req = { nodes: nodes }
+      this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/state/ping`, req).then(resp => {
+        this.pingpong = resp.data.data.items
+        this.pingpong_loading = false
+      }).catch(e => {
+        if (e.response && e.response.data) {
+          this.$message.error('不能测试节点是否在线: ' + e.response.data.message)
+        } else {
+          this.$message.error('不能测试节点是否在线: ' + e)
+        }
+        this.pingpong_loading = false
+      })
+    },
     prepareForInstall () {
       this.enabledRef = true
       this.$router.replace('?mode=edit')
@@ -186,9 +239,14 @@ export default {
     onVisibleChange (v) {
       if (v && this.cluster.state && this.addonState) {
         this.action = this.addonState.is_installed ? 'remove_addon' : 'install_addon'
+        this.testPingPong('target')
       }
     },
     async applyPlan () {
+      if (this.pingpong_loading) {
+        this.$message.error('Wait ..')
+        return
+      }
       return new Promise((resolve, reject) => {
         this.$refs.form.validate(flag => {
           if (flag) {
@@ -208,6 +266,17 @@ export default {
               }
             }
             req.discovered_interpreter_python = discovered_interpreter_python
+            { // 排除节点
+              let temp = ''
+              let excludes = {}
+              for (let node of this.offlineNodes) {
+                excludes[node] = true
+              }
+              for (let node in excludes) {
+                temp += '!' + node + ','
+              }
+              req.nodes_to_exclude = trimMark(temp)
+            }
             console.log(req)
             this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/${this.action}`, req).then(resp => {
               let pid = resp.data.data.pid

@@ -9,6 +9,8 @@ en:
   etcdAccess: SSH connect to any of the following nodes, and use etcdctl command to administrate the etcd cluster.
   requiredToSyncEtcd: You removed a etcd node, and it's a must to sync etcd config to all kube_control_plane and etcd nodes.
   yourcommand: Execute your command starting from here.
+
+  terminal: Open ssh terminal
 zh:
   getKubeconfig: 获取 kubeconfig 文件
   accessFromControlPlane: 在主节点上使用 kubectl
@@ -19,11 +21,13 @@ zh:
   etcdAccess: 您可以 ssh 到如下节点中的任意一个，执行以下指令后，可以通过 etcdctl 操作 etcd 集群。通常您并不需要直接操作 etcd。
   requiredToSyncEtcd: 您删除了 ETCD 节点，必须将 ETCD 配置同步到所有控制节点和 ETCD 节点
   yourcommand: 此处开始，执行您想要执行的 etcdctl 命令
+
+  terminal: 打开 SSH 终端
 </i18n>
 
 
 <template>
-  <el-skeleton v-if="cluster.state === undefined" animated></el-skeleton>
+  <el-skeleton v-if="cluster.state === undefined || cluster.state.code === 0" style="height: calc(100vh - 220px);" animated></el-skeleton>
   <el-scrollbar height="calc(100vh - 220px)" v-else-if="cluster.state.code === 200">
     <!-- <el-alert type="error" effect="dark" class="app_margin_bottom" :title="$t('requiredToSyncEtcd')" :closable="false" show-icon></el-alert> -->
     <el-alert type="info" :title="$t('accessMethods')" :closable="false"></el-alert>
@@ -33,12 +37,13 @@ zh:
       <div class="details">
         <template v-for="(item, key) in cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts" :key="key">
           <div v-if="cluster.state && cluster.state.nodes[key]" class="app_margin_top">
-            <el-tag style="margin-right: 10px;" size="medium">
+            <el-tag class="node_text" size="medium">
               <span class="app_text_mono">{{key}}</span>
             </el-tag>
-            <el-tag effect="dark" size="medium">
+            <el-tag class="node_text" effect="light" size="medium">
               <span class="app_text_mono">{{cluster.inventory.all.hosts[key].ansible_host}}</span>
             </el-tag>
+            <el-button @click="openUrlInBlank(`#/ssh/cluster/${cluster.name}/${key}`)" style="margin-left: 10px;" icon="el-icon-monitor" type="primary">{{ $t('terminal')}}</el-button>
           </div>
         </template>
       </div>
@@ -65,8 +70,11 @@ zh:
       <div class="details">
         <template v-for="(item, key) in cluster.state.etcd_members" :key="'etcd' + key">
           <div style="margin-top: 10px;">
-            <el-tag type="primary" style="margin-right: 10px" size="medium">{{ etcdIp(item) }}</el-tag>
-            <el-tag type="primary" effect="dark" size="medium">{{item.clientURLs && item.clientURLs.length > 0 ? item.clientURLs[0] : ''}}</el-tag>
+            <el-tag class="node_text" type="primary" size="medium">{{ etcdIp(item) }}</el-tag>
+            <el-tag class="node_text" type="primary" effect="light" size="medium">{{item.clientURLs && item.clientURLs.length > 0 ? item.clientURLs[0] : ''}}</el-tag>
+            <template v-for="(etcd, name) in cluster.inventory.all.children.target.children.etcd.hosts" :key="'eb' + name + key">
+              <el-button v-if="etcd.etcd_member_name === key" @click="openUrlInBlank(`#/ssh/cluster/${cluster.name}/${name}`)" icon="el-icon-monitor" type="primary">{{ $t('terminal')}}</el-button>
+            </template>
           </div>
         </template>
         <div class="app_margin_bottom"></div>
@@ -184,5 +192,9 @@ etcdctl member list
 .details {
   background-color: $--color-info-lighter;
   padding: 10px 20px 20px 20px;
+}
+.node_text {
+  margin-right: 10px;
+  min-width: 150px;
 }
 </style>

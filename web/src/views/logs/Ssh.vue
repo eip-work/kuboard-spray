@@ -148,9 +148,12 @@ export default {
         let data = event.data
         _this.xterm.write(data)
       }
-      this.socket.onerror = function (event) {
-        console.log(event)
-        _this.$refs.errorHint.show(_this.wsUrl)
+      this.socket.onerror = function () {
+        setTimeout(() => {
+          if (!_this.socketClosed) {
+            _this.$refs.errorHint.show(_this.wsUrl)
+          }
+        }, 2000)
       }
       this.socket.onopen = function () {
         _this.fitAddon.fit()
@@ -188,9 +191,11 @@ export ETCDCTL_CACERT=/etc/ssl/etcd/ssl/ca.pem
         }).catch(e => {
           console.log('cannot read inventory', e)
         })
+        _this.socketClosed = false
       }
       this.socket.onclose = function () {
         _this.socketReadyState = _this.socket.readyState
+        _this.socketClosed = true
       }
 
       let interval = setInterval(() => {

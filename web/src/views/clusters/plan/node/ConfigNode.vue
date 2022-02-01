@@ -1,6 +1,6 @@
 <i18n>
 en:
-  terminal: Open in ssh terminal
+  terminal: Open ssh terminal
   sshcommon: SSH Params (apply to node {nodeName})
   etcd: "ETCD params (scope: node {nodeName})"
   etcd_member_name_required: Please input etcd_member_name

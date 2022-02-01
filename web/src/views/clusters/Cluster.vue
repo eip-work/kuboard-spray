@@ -55,14 +55,14 @@ zh:
       </template>
     </ControlBar>
     <el-card shadow="none" v-if="loading">
-      <el-skeleton animated :rows="10"></el-skeleton>
+      <el-skeleton animated :rows="10" style="height: calc(100vh - 190px);"></el-skeleton>
     </el-card>
     <el-tabs type="border-card" v-show="!loading" v-model="currentTab">
       <el-tab-pane :label="$t('plan')" name="plan">
         <Plan v-if="cluster" ref="plan" :cluster="cluster" :mode="mode" @refresh="refresh"></Plan>
       </el-tab-pane>
       <el-tab-pane :label="$t('access')" name="access" :disabled="disableNonePlanTab">
-        <Access v-if="isClusterInstalled && isClusterOnline && currentTab == 'access'" ref="access" 
+        <Access v-if="currentTab == 'access'" ref="access" 
           :cluster="cluster" :loading="loading" @switch="currentTab = $event"></Access>
       </el-tab-pane>
       <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('health_check')" name="health_check">

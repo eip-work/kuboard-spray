@@ -195,7 +195,7 @@ export default {
       if (this.antiFreeze !== undefined) {
         return this.antiFreeze
       }
-      if (this.cluster && this.cluster.state && this.addonState.is_installed) {
+      if (this.cluster && this.cluster.state && this.addonState && this.addonState.is_installed) {
         return false
       }
       return true

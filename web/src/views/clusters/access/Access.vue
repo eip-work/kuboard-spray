@@ -115,6 +115,7 @@ export default {
         smartIndent: true, // Smart indent
         indentUnit: 2, // The smart indent unit is 2 spaces in length
         foldGutter: true, // Code folding
+        readOnly: true,
         styleActiveLine: true, // Display the style of the selected row
       },
       etcdCmOptions: {
@@ -125,6 +126,7 @@ export default {
         smartIndent: true,
         indentUnit: 2,
         foldGutter: true,
+        readOnly: true,
         styleActiveLine: true,
       },
       showEtcdSsh: false,

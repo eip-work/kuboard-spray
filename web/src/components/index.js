@@ -9,6 +9,7 @@ import ControlBar from './page/ControlBar.vue'
 import ConfigSection from './ConfigSection.vue'
 import CopyToClipBoard from './clipboard/CopyToClipBoard.vue'
 import ConfirmButton from './page/ConfirmButton.vue'
+import PreviewYaml from './PreviewYaml.vue'
 
 export default {
   install(app) {
@@ -23,5 +24,6 @@ export default {
     app.component('ConfigSection', ConfigSection)
     app.component('CopyToClipBoard', CopyToClipBoard)
     app.component('ConfirmButton', ConfirmButton)
+    app.component('PreviewYaml', PreviewYaml)
   } 
 }

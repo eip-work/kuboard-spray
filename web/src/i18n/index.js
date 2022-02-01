@@ -30,6 +30,7 @@ const messages = {
       k8s_cluster: 'K8s Cluster',
     },
     msg: {
+      preview_yaml: 'Preview Yaml',
       name: 'Name',
       ok: 'OK',
       add: 'Add',
@@ -77,6 +78,7 @@ const messages = {
       k8s_cluster: 'K8s 集群',
     },
     msg: {
+      preview_yaml: '预览 YAML',
       name: '名 称',
       ok: '确 定',
       add: '添 加',

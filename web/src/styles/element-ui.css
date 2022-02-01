@@ -28,6 +28,13 @@
   padding: 0px 8px 3px 8px;
 }
 
+.app_alert_block.el-alert {
+  display: block;
+}
+.app_alert_block.el-alert .el-alert__content {
+  display: block;
+} 
+
 .app_form_mini .el-form-item {
   margin-bottom: 0px !important;
 }

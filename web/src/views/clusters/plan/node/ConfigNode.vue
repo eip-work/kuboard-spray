@@ -29,12 +29,12 @@ zh:
 
 <template>
   <el-form ref="form" :model="inventory" label-width="120px" label-position="left" @submit.enter.prevent>
-    <el-alert v-if="editMode === 'view'" :type="pingpongType" title="PING" :closable="false" class="app_margin_bottom">
+    <el-alert v-if="editMode === 'view'" :type="pingpongType" title="PING" :closable="false" class="app_margin_bottom app_alert_block">
       <div v-if="pingpong[nodeName]" class="app_text_mono">
-        <span v-if="pingpong[nodeName].status === 'SUCCESS'">
+        <div v-if="pingpong[nodeName].status === 'SUCCESS'">
           {{ JSON.parse(pingpong[nodeName].message).ansible_facts }}
-          <el-button @click="openUrlInBlank(`#/ssh/cluster/${cluster.name}/${nodeName}`)" icon="el-icon-monitor" type="primary">{{ $t('terminal')}}</el-button>
-        </span>
+          <el-button style="float: right; margin-right: -8px;" @click="openUrlInBlank(`#/ssh/cluster/${cluster.name}/${nodeName}`)" icon="el-icon-monitor" type="primary">{{ $t('terminal')}}</el-button>
+        </div>
         <span v-else>
           <div class="app_margin_bottom">
             {{ JSON.parse(pingpong[nodeName].message).msg }}

@@ -10,17 +10,13 @@ import (
 )
 
 func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[string]interface{}, map[string]interface{}, error) {
-	inventoryPath := cluster_common.ClusterInventoryYamlPath(req.Cluster)
-	inventory, err := common.ParseYamlFile(inventoryPath)
-	if err != nil {
-		return nil, nil, err
-	}
-	resourcePackagePath := cluster_common.ResourcePackagePathForInventory(inventory)
 
-	resourcePackage, err := common.ParseYamlFile(resourcePackagePath + "/package.yaml")
+	clusterMetadata, err := cluster_common.ClusterMetadataByName(req.Cluster)
 	if err != nil {
 		return nil, nil, err
 	}
+	inventory := clusterMetadata.Inventory
+	resourcePackage := clusterMetadata.ResourcePackage
 
 	common.MapSet(inventory, "all.vars.kuboardspray_no_log", !(req.Verbose == "v" || req.Verbose == "vvv"))
 
@@ -149,7 +145,7 @@ func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[strin
 	common.MapSet(inventory, "all.vars.download_localhost", true)
 	common.MapSet(inventory, "all.vars.download_force_cache", true)
 	common.MapSet(inventory, "all.vars.download_always_pull", false)
-	common.MapSet(inventory, "all.vars.download_cache_dir", resourcePackagePath+"/kubespray_cache")
+	common.MapSet(inventory, "all.vars.download_cache_dir", clusterMetadata.ResourcePackageDir+"/kubespray_cache")
 	common.MapSet(inventory, "all.children.target.vars.disable_service_firewall", true)
 	common.MapSet(inventory, "all.children.target.vars.ansible_python_interpreter", "auto")
 	common.PopulateKuboardSprayVars(inventory, "cluster", req.Cluster)

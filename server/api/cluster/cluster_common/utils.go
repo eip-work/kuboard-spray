@@ -5,7 +5,7 @@ import (
 	"github.com/eip-work/kuboard-spray/constants"
 )
 
-func ResourcePackagePathForInventory(inventory map[string]interface{}) string {
+func ResourcePackageDirForInventory(inventory map[string]interface{}) string {
 	return constants.GET_DATA_RESOURCE_DIR() + "/" + common.MapGet(inventory, "all.hosts.localhost.kuboardspray_resource_package").(string) + "/content"
 }
 

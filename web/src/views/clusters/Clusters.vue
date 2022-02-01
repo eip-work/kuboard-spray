@@ -60,7 +60,7 @@ export default {
   props: {
   },
   percentage () {
-    return 100
+    return this.loading ? 10 : 100
   },
   breadcrumb () {
     return [

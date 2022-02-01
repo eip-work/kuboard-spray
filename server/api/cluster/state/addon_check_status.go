@@ -34,7 +34,7 @@ func CheckAddonStatus(c *gin.Context) {
 		common.HandleError(c, http.StatusInternalServerError, "failed to parse inventory", err)
 		return
 	}
-	resourcePackagePath := cluster_common.ResourcePackagePathForInventory(inventory)
+	resourcePackagePath := cluster_common.ResourcePackageDirForInventory(inventory)
 
 	resourcePackage, err := common.ParseYamlFile(resourcePackagePath + "/package.yaml")
 	if err != nil {

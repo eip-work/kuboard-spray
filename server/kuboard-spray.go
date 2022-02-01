@@ -51,6 +51,7 @@ func setupRouter() *gin.Engine {
 	api.GET("/clusters/:cluster/state/nodes", state.GetNodes)
 	api.GET("/clusters/:cluster/state/etcd_member_health", state.CheckEtcdEndpoints)
 	api.GET("/clusters/:cluster/state/addons", state.CheckAddonStatus)
+	api.GET("/clusters/:cluster/state/version", state.CheckClusterVersion)
 
 	api.GET("/clusters/:cluster/health_check/connectivity_check", health_check.CheckConnectivity)
 	api.GET("/clusters/:cluster/health_check/details", health_check.CheckConnectivityDetails)

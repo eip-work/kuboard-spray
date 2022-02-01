@@ -8,7 +8,7 @@ en:
   health_check: Health Check
   backup: Backup/Restore
   csi_scan: CSI Scan
-  upgrade: Upgrade Check
+  upgrade: Upgrade Cluster
 zh:
   clusterList: 集群列表
   cluster: 集群
@@ -18,7 +18,7 @@ zh:
   health_check: 状态检查
   backup: 备份/恢复
   csi_scan: CIS扫描
-  upgrade: 升级包检测
+  upgrade: 升级集群
 </i18n>
 
 <template>
@@ -74,8 +74,8 @@ zh:
       <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('csi_scan')">
         <el-alert>CIS 扫描，正在建设...</el-alert>
       </el-tab-pane>
-      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('upgrade')">
-        <el-alert>检测 kuboard-spray 升级资源包，正在建设...</el-alert>
+      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('upgrade')" name="upgrade">
+        <Upgrade v-if="currentTab == 'upgrade'" :cluster="cluster"></Upgrade>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -90,6 +90,7 @@ import { computed } from 'vue'
 import ClusterStateNodes from './ClusterStateNodes.vue'
 import clone from 'clone'
 import Plan from './plan/Plan.vue'
+import Upgrade from './upgrade/Upgrade.vue'
 import ClusterHealthCheck from './health_check/ClusterHealthCheck.vue'
 
 export default {
@@ -180,7 +181,7 @@ export default {
       }),
     }
   },
-  components: { Plan, ClusterProcessing, Access, ClusterStateNodes, ClusterHealthCheck },
+  components: { Plan, ClusterProcessing, Access, ClusterStateNodes, ClusterHealthCheck, Upgrade },
   watch: {
     'cluster.inventory.all.hosts.localhost.kuboardspray_resource_package': function() {
       this.loadResourcePackage()

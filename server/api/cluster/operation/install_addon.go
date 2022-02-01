@@ -83,7 +83,7 @@ func InstallAddon(c *gin.Context) {
 			result = appendCommonParams(result, req.OperationCommonRequest, false)
 			return result
 		},
-		Dir:      cluster_common.ResourcePackagePathForInventory(inventory),
+		Dir:      cluster_common.ResourcePackageDirForInventory(inventory),
 		Type:     req.Operation,
 		PreExec:  func(execute_dir string) error { return common.SaveYamlFile(execute_dir+"/inventory.yaml", inventory) },
 		PostExec: postExec,

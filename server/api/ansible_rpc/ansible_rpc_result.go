@@ -22,6 +22,9 @@ type AnsibleResultNode struct {
 	StdErr     string `json:"stderr"`
 	StdOut     string `json:"stdout"`
 	ReturnCode int    `json:"rc"`
+	Skipped    bool   `json:"skipped"`
+	SkipReason string `json:"skip_reason"`
+	Delta      string `json:"delta"`
 }
 
 type AnsibleResultTaskMeta struct {

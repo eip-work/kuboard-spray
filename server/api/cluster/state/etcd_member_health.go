@@ -15,7 +15,7 @@ func CheckEtcdEndpoints(c *gin.Context) {
 	var request GetNodesRequest
 	c.ShouldBindUri(&request)
 
-	cmd := "sh -c 'members=$(etcdctl member list --write-out=json || true) && health=$(etcdctl endpoint health --cluster=true --write-out=json || true) && echo ''{\\\"members\\\":${members},\\\"health\\\":${health}}'''"
+	cmd := "sh -c 'members=$(etcdctl member list --write-out=json || true) && health=$(etcdctl endpoint health --cluster=true --write-out=json || true) && echo ''{\\\"members\\\":${members}\",\"\\\"health\\\":${health}}'''"
 
 	result, err := cluster_common.ExecuteShellOnETCD(request.ClusterName, cmd)
 

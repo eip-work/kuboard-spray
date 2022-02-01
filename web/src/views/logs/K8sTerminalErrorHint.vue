@@ -13,8 +13,7 @@ zh:
   <div style="text-align: left;">
     <el-dialog :title="$t('msg.prompt')" v-model="dialogVisible" width="60%" :before-close="handleClose">
       <p>{{$t('referto')}}</p>
-      <!-- <KuboardHelpLink hideOnDisabled heighlight href="https://kuboard.cn/install/v3/proxy.html" :label="$t('commonProblems')"></KuboardHelpLink> -->
-      <!-- <span>{{message}}</span> -->
+      <el-link href="https://kuboard-spray.cn/guide/extra/websocket.html" target="blank">查看如何配置反向代理</el-link>
     </el-dialog>
   </div>
 </template>

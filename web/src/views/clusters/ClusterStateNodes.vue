@@ -12,34 +12,20 @@ zh:
 </i18n>
 
 <template>
-  <el-popover placement="bottom-start" :title="$t('title')" :width="480" trigger="click">
+  <el-popover placement="bottom-start" :title="$t('title')" :width="600" trigger="click">
     <template #reference>
-      <el-button v-if="state.code === undefined" type="success" round icon="el-icon-loading">{{$t('loading')}}</el-button>
-      <el-button v-else-if="state.code === 200" type="success" round icon="el-icon-success">{{$t('nodeCount', { count, etcdCount: state.etcd_members_count })}}</el-button>
+      <el-button v-if="state.code === undefined" type="info" round icon="el-icon-loading">{{$t('loading')}}</el-button>
+      <template v-else-if="state.code === 200">
+        <el-button v-if="healthy" type="success" round icon="el-icon-success">{{$t('nodeCount', { count, etcdCount: state.etcd_members_count })}}</el-button>
+        <el-button v-else type="warning" round icon="el-icon-success">{{$t('nodeCount', { count, etcdCount: state.etcd_members_count })}}</el-button>
+      </template>
       <el-button v-else type="danger" round icon="el-icon-info">{{$t('unreachable')}}</el-button>
     </template>
     <div>
       <el-scrollbar max-height="45vh">
         <div v-if="state.code === 200 && state.etcd_code === 200">
-          <div v-for="(node, name) in onlineNodes" :key="'n' + name" class="nodeInfo app_text_mono">
-            <div style="min-width: 120px;">
-              {{name}}
-            </div>
-            <div style="flex-grow: 1;">
-              <template v-if="node.k8s_node">
-                <el-tag type="primary" effect="dark" style="margin-left: 10px;" v-if="node.k8s_node.metadata.labels['node-role.kubernetes.io/control-plane'] !== undefined">{{$t('node.kube_control_plane')}}</el-tag>
-                <el-tag type="success" effect="dark" style="margin-left: 10px;" v-if="isKubeNode(name)">{{$t('node.kube_node')}}</el-tag>
-              </template>
-              <template v-if="node.etcd_member">
-                <el-tag type="warning" effect="dark" style="margin-left: 10px;">{{node.etcd_member.name}}</el-tag>
-                <!-- <el-tag type="primary" effect="light" style="margin-left: 20px;">{{ node.etcd_member.clientURLs && node.etcd_member.clientURLs.length > 0 ? node.etcd_member.clientURLs[0] : '' }}</el-tag> -->
-              </template>
-              <template v-if="node.k8s_node">
-                <template v-for="(addr, index) in node.k8s_node.status.addresses" :key="name + index">
-                  <el-tag type="primary" style="float: right;" v-if="addr.type === 'InternalIP'">{{addr.address}}</el-tag>
-                </template>
-              </template>
-            </div>
+          <div v-for="(node, name) in onlineNodes" :key="'n' + name">
+            <ClusterStateNodesItem :node="node" :name="name"></ClusterStateNodesItem>
           </div>
         </div>
         <el-alert v-else type="error" :closable="false" :title="$t('unreachable')" effect="dark" show-icon>
@@ -51,6 +37,8 @@ zh:
 </template>
 
 <script>
+import ClusterStateNodesItem from './ClusterStateNodesItem.vue'
+
 export default {
   props: {
     cluster: { type: Object, required: false, default: () => { return {} } },
@@ -76,34 +64,34 @@ export default {
       }
       return c
     },
-  },
-  components: { },
-  mounted () {
-  },
-  methods: {
-    isKubeNode (nodeName) {
-      let node = this.onlineNodes[nodeName]
-      if (node !== undefined && node.k8s_node !== undefined) {
-        node = node.k8s_node
-        for (let key in node.spec.taints) {
-          let taint = node.spec.taints[key]
-          if (taint.effect === "NoSchedule" && taint.key === "node-role.kubernetes.io/master") {
+    healthy () {
+      for (let k in this.state.etcd_members) {
+        let etcd = this.state.etcd_members[k]
+        if (etcd.health.health !== true) {
+          return false
+        }
+      }
+      for (let k in this.state.nodes) {
+        let node = this.state.nodes[k]
+        for (let condition of node.status.conditions) {
+          if (condition.type === 'Ready' && condition.status !== 'True') {
+            return false
+          }
+          if (condition.type !== 'Ready' && condition.status !== 'False') {
             return false
           }
         }
-        return true
       }
-      return false
+      return true
     }
+  },
+  components: { ClusterStateNodesItem },
+  mounted () {
+  },
+  methods: {
   }
 }
 </script>
 
 <style scoped lang="scss">
-.nodeInfo {
-  padding: 10px 20px;
-  margin-bottom: 10px;
-  background-color: var(--el-color-info-light);
-  display: flex;
-}
 </style>

@@ -273,12 +273,17 @@ export default {
         temp.msg = e.response.data.message
       })
       // this.percentage += 20
-      this.kuboardSprayApi.get(`/clusters/${this.name}/state/etcd_members`).then(resp => {
+      this.kuboardSprayApi.get(`/clusters/${this.name}/state/etcd_member_health`).then(resp => {
         if (resp.data.data.stdout_obj && resp.data.data.stdout_obj.members) {
           temp.etcd_code = 200
           let count = 0
-          for (let item of resp.data.data.stdout_obj.members) {
+          for (let item of resp.data.data.stdout_obj.members.members) {
             temp.etcd_members[item.name] = item
+            for (let health of resp.data.data.stdout_obj.health) {
+              if (item.clientURLs.indexOf(health.endpoint) >=0) {
+                item.health = health
+              }
+            }
             count ++
           }
           temp.etcd_members_count = count

@@ -6,7 +6,7 @@ zh:
 </i18n>
 
 <template>
-  <div :class="klass">
+  <div :class="klass" v-if="klass.indexOf('error') > 0 || !hideSuccess">
     <div class="title" @click="expand = !expand">
       <div style="width: 150px">{{condition.type}}</div>
       <div style="width: 60px">{{condition.status}}</div>
@@ -35,6 +35,7 @@ zh:
 export default {
   props: {
     condition: { type: Object, required: true },
+    hideSuccess: { type: Boolean, required: false, default: false }
   },
   data() {
     return {

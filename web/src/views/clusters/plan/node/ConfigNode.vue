@@ -37,7 +37,9 @@ zh:
         </div>
         <span v-else>
           <div class="app_margin_bottom">
-            {{ JSON.parse(pingpong[nodeName].message).msg }}
+            <div>message: {{ JSON.parse(pingpong[nodeName].message).msg }}</div>
+            <div>stdout : {{ JSON.parse(pingpong[nodeName].message).module_stdout }}</div>
+            <div>stderr : {{ JSON.parse(pingpong[nodeName].message).module_stderr }}</div>
           </div>
           <el-button type="primary" @click="$emit('ping')" :loading="pingpongLoading" icon="el-icon-lightning">PING</el-button>  
         </span>

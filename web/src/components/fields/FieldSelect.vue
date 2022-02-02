@@ -2,7 +2,7 @@
   <FieldCommon :fieldName="fieldName" :holder="holder" :prop="prop" :rules="rules" :required="required" :label="label" :placeholder="placeholder">
     <template #edit>
       <div style="display: flex;">
-        <el-select v-model.trim="obj[fieldName]" style="flex-grow: 1;" :clearable="clearable" :disabled="disabled" :allowCreate="allowCreate" :filterable="filterable"
+        <el-select v-model.trim="value" style="flex-grow: 1;" :clearable="clearable" :disabled="disabled" :allowCreate="allowCreate" :filterable="filterable"
           :placeholder="compute_placeholder" @visible-change="load($event)" :loading="loading">
           <el-option v-for="(item, index) in options" :key="'i' + index" :value="item.value" :label="item.label" :disabled="item.disabled">
             {{item.label}}
@@ -56,7 +56,13 @@ export default {
     },
     value: {
       get () { return this.obj[this.fieldName] },
-      set (v) { this.obj[this.fieldName] = v }
+      set (v) {
+        if (v) {
+          this.obj[this.fieldName] = v
+        } else {
+          delete this.obj[this.fieldName]
+        }
+      }
     },
     compute_display_value () {
       let temp = ''

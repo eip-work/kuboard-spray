@@ -20,11 +20,6 @@ func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[strin
 
 	common.MapSet(inventory, "all.vars.kuboardspray_no_log", !(req.Verbose == "v" || req.Verbose == "vvv"))
 
-	// 设置 discovered_interpreter_python
-	for k, v := range req.DiscoveredInterpreterPython {
-		common.MapSet(inventory, "all.hosts."+k+".ansible_python_interpreter", v)
-	}
-
 	// >>>> 设置资源包相关参数
 
 	// 设置资源包变量
@@ -147,7 +142,6 @@ func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[strin
 	common.MapSet(inventory, "all.vars.download_always_pull", false)
 	common.MapSet(inventory, "all.vars.download_cache_dir", clusterMetadata.ResourcePackageDir+"/kubespray_cache")
 	common.MapSet(inventory, "all.children.target.vars.disable_service_firewall", true)
-	common.MapSet(inventory, "all.children.target.vars.ansible_python_interpreter", "auto")
 	common.PopulateKuboardSprayVars(inventory, "cluster", req.Cluster)
 
 	common.MapSet(inventory, "all.vars.ansible_ssh_pipelining", true)

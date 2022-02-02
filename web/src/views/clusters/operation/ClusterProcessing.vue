@@ -279,17 +279,6 @@ export default {
               verbose: this.form.verbose,
               fork: this.form.fork,
             }
-            let discovered_interpreter_python = {}
-            for (let node in this.pingpong) {
-              let msg = this.pingpong[node].message
-              if (msg) {
-                let pong = JSON.parse(msg)
-                if (pong && pong.ansible_facts && pong.ansible_facts.discovered_interpreter_python) {
-                  discovered_interpreter_python[node] = pong.ansible_facts.discovered_interpreter_python
-                }
-              }
-            }
-            req.discovered_interpreter_python = discovered_interpreter_python
             { // 排除节点
               let temp = ''
               let excludes = {}

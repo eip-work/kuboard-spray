@@ -75,6 +75,7 @@ zh:
         <span class="app_text_mono">{{ holderRef.ip || ansible_host }}</span>
       </template>
     </FieldCommon>
+    <FieldSelect :holder="holder" fieldName="ansible_python_interpreter" anti-freeze clearable :loadOptions="loadPythonInterpreter" :placeholder="placeholder('ansible_python_interpreter')" allow-create filterable></FieldSelect>
     <slot></slot>
     <SshAddPrivateKey ref="addPrivateKey" ownerType="cluster" :ownerName="cluster.name"></SshAddPrivateKey>
   </ConfigSection>
@@ -217,6 +218,15 @@ export default {
         })
         this.optionIpsLoading = false
       }
+    },
+    async loadPythonInterpreter() {
+      let result = [
+        { label: 'auto', value: 'auto' },
+        { label: '/usr/bin/python', value: '/usr/bin/python' },
+        { label: '/usr/bin/python2', value: '/usr/bin/python2' },
+        { label: '/usr/bin/python3', value: '/usr/bin/python3' },
+      ]
+      return result
     }
   }
 }

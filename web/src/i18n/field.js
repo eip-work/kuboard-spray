@@ -63,6 +63,8 @@ const field = {
     ansible_become_password: '切换密码',
     ansible_become_password_placeholder: '切换密码',
 
+    ansible_python_interpreter: 'Python 路径',
+
     container_manager: '容器引擎',
     containerd_insecure_registries: 'HTTP 镜像仓库 insecure registries',
     containerd_use_systemd_cgroup: 'systemd_cgroup',

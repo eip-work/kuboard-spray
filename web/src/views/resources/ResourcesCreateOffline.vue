@@ -10,8 +10,8 @@ zh:
     <div style="text-align: right;">
       <el-button type="primary" icon="el-icon-download" @click="compute_dialogVisible = true">{{$t('createByOffline')}}</el-button>
     </div>
-    <el-dialog v-model="compute_dialogVisible" :title="$t('createByOffline')" width="80%" top="10vh" :close-on-click-modal="false">
-      <div style="height: calc(80vh - 180px);">
+    <el-dialog v-model="compute_dialogVisible" :title="$t('createByOffline')" width="80%" top="5vh" :close-on-click-modal="false">
+      <div style="height: calc(90vh - 180px);">
         <el-alert :closable="false" type="warning" class="app_margin_bottom">
           <div style="line-height: 20px;">
             如果您 KuboardSpray 所在机器不能联网，请从如下链接中的任意一个获取离线导入文件：
@@ -162,7 +162,7 @@ export default {
 <style>
 
 .create_resource_offline_codemirror .CodeMirror {
-  height: calc(80vh - 260px) !important;
+  height: calc(90vh - 260px) !important;
 }
 
 .create_resource_offline_codemirror .CodeMirror-wrap pre.CodeMirror-line, .CodeMirror-wrap pre.CodeMirror-line-like {
@@ -170,7 +170,7 @@ export default {
 }
 
 .create_resource_offline_codemirror .CodeMirror-scroll {
-  height: calc(80vh - 260px) !important;
+  height: calc(90vh - 260px) !important;
   overflow-y: hidden;
   overflow-x: auto;
 }

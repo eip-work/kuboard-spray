@@ -55,7 +55,7 @@ func CheckClusterVersion(c *gin.Context) {
 
 	result := &ansible_rpc.AnsibleResult{}
 	if err := json.Unmarshal(stdout, result); err != nil {
-		common.HandleError(c, http.StatusInternalServerError, "failed to Unmarshal result", err)
+		common.HandleError(c, http.StatusInternalServerError, "failed to Unmarshal result: ["+string(stdout)+"]", err)
 		return
 	}
 

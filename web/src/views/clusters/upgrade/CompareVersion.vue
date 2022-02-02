@@ -6,6 +6,7 @@ en:
   network_plugin: Cni plugins
   dependency: Dependencies
   etcd_cluster: etcd
+  loading: Loading versions installed on nodes
 
 zh:
   versionInResource: 资源包中的版本
@@ -14,38 +15,67 @@ zh:
   network_plugin: 网络插件
   dependency: 依赖组件
   etcd_cluster: etcd
+  loading: 查询节点上已安装的版本
 </i18n>
 
 
 <template>
   <div>
     <el-table :data="tableData" style="width: 100%" row-key="name" :expand-row-keys="expanded" height="calc(100vh - 270px)">
-      <el-table-column fixed prop="name" :label="$t('componentName')" width="210">
+      <el-table-column prop="name" :label="$t('componentName')" width="180" fixed>
+        <template #header>
+          <div class="compare_version_header">
+            <div style="line-height: 51px; text-align: center;">{{ $t('componentName') }}</div>
+          </div>
+        </template>
         <template #default="scope">
           <div class="app_text_mono component_name nowrap">{{ $t(scope.row.name) }}</div>
         </template>
       </el-table-column>
-      <el-table-column fixed prop="version" :label="$t('versionInResource')" width="180">
+      <el-table-column prop="version" :label="$t('versionInResource')" width="120" fixed>
+        <template #header>
+          <div class="compare_version_header">
+            <div style="line-height: 51px;">{{ $t('versionInResource') }}</div>
+          </div>
+          </template>
         <template #default="scope">
           <span class="app_text_mono component_name">{{ scope.row.version }}</span>
         </template>
       </el-table-column>
       <template v-if="version">
-        <el-table-column v-for="(nodeVersion, nodeName) in version" :key="'col' + nodeName">
+        <el-table-column v-for="(nodeVersion, nodeName) in version" :key="'col' + nodeName" min-width="120px">
           <template #header>
-            {{ nodeName }}
-            <el-button>升级</el-button>
+            <div class="compare_version_header">
+              <div class="nowrap">{{ nodeName }}</div>
+              <el-button>升级</el-button>
+            </div>
           </template>
           <template #default="scope">
-            <div class="versionStr">{{ nodeVersion[scope.row.name] ? nodeVersion[scope.row.name].stdout : '' }}</div>
+            <template v-if="nodeVersion[scope.row.name]">
+              <el-tag v-if="nodeVersion[scope.row.name].stdout === scope.row.version" type="success">{{ nodeVersion[scope.row.name].stdout }}</el-tag>
+              <el-tag v-else-if="nodeVersion[scope.row.name].stdout" type="error">{{ nodeVersion[scope.row.name].stdout }}</el-tag>
+            </template>
           </template>
         </el-table-column>
       </template>
+      <el-table-column v-if="version === undefined">
+        <template #header>
+          <div class="compare_version_header" style="line-height: 51px;">
+            <i class="el-icon-loading"></i>
+            <span style="margin-left: 10px;">{{$t('loading')}}</span>
+          </div>
+        </template>
+        <template #default>
+          <i class="el-icon-loading"></i>
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
 
 <script>
+import mixin from './compare_mixin.js'
+
 export default {
   props: {
     cluster: { type: Object, required: true },
@@ -57,72 +87,8 @@ export default {
     }
   },
   computed: {
-    tableData () {
-      let result = []
-      let inv = this.cluster.inventory
-      let res = this.cluster.resourcePackage.data
-      let kube_version = res.kubernetes.kube_version
-      let k8s = {
-        name: 'kubernetes',
-        version: kube_version,
-        children: [
-          { name: 'kubeadm', version: kube_version },
-          { name: 'kubectl', version: kube_version },
-          { name: 'kubelet', version: kube_version },
-        ]
-      }
-      result.push(k8s)
-
-      let containerEngine = { name: 'container_engine', version: undefined, children: [] }
-      for (let ce of res.container_engine) {
-        if (ce.container_manager == inv.all.children.target.vars.container_manager) {
-          if (ce.container_manager === 'docker') {
-            containerEngine.children.push({ name: 'docker', version: ce.params.docker_version })
-            containerEngine.children.push({ name: 'containerd', version: ce.params.docker_containerd_version })
-          } else {
-            containerEngine.children.push({ name: 'containerd', version: ce.params.containerd_version })
-          }
-        }
-      }
-      result.push(containerEngine)
-
-      result.push({ name: 'etcd_cluster', version: undefined, children: [
-        { name: 'etcd', version: res.etcd.etcd_version }
-      ] })
-
-      let networkPlugin = { name: 'network_plugin', children: [] }
-      for (let np of res.network_plugin) {
-        if (np.name === inv.all.children.target.children.k8s_cluster.vars.kube_network_plugin) {
-          for (let param in np.params) {
-            if (param.indexOf('_version') > 0) {
-              networkPlugin.children.push({ name: param.slice(0, param.length - 8), version: np.params[param]})
-            }
-          }
-        }
-      }
-      result.push(networkPlugin)
-      
-      let dependency = { name: 'dependency', children: [] }
-      for (let dep of res.dependency) {
-        dependency.children.push({ name: dep.name, version: dep.version })
-      }
-      result.push(dependency)
-
-      let addon = { name: 'addon', children: [] }
-      for (let add of res.addon) {
-        for (let key in add.params) {
-          if (key.indexOf('_version') > 0) {
-            let v = { name: add.name }
-            v.version = add.params[key]
-            addon.children.push(v)
-          }
-        }
-      }
-      result.push(addon)
-
-      return result
-    },
   },
+  mixins: [mixin],
   components: { },
   mounted () {
   },
@@ -137,10 +103,13 @@ export default {
   font-weight: bolder;
   display: inline-block;
   vertical-align: top;
-  width: 150px;
+  width: 120px;
 }
 .versionStr {
-  white-space: pre-line !important;
+  // white-space: pre-line !important;
   vertical-align: top;
+}
+.compare_version_header {
+  height: 51px;
 }
 </style>

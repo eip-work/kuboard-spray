@@ -47,7 +47,10 @@ zh:
       <el-table v-if="mergedPackageList" :data="mergedPackageList" style="width: 100%">
         <el-table-column prop="version" :label="$t('version')" min-width="100px">
           <template #default="scope">
-            <template v-if="importedPackageMap">
+            <template v-if="hideLink">
+              {{scope.row.version}}
+            </template>
+            <template v-else-if="importedPackageMap">
               <router-link v-if="importedPackageMap[scope.row.version]" :to="`/settings/resources/${scope.row.version}`">
                 <!-- <i class="el-icon-link"></i> -->
                 {{scope.row.version}}
@@ -61,24 +64,24 @@ zh:
         </el-table-column>
         <el-table-column :label="$t('kubespray_version')">
           <template #default="scope">
-            <span v-if="packageMap[scope.row.version]">
-              {{ packageMap[scope.row.version].data.kubespray_version }}
+            <span v-if="packageYaml[scope.row.version]">
+              {{ scope.row.yaml.data.kubespray_version }}
             </span>
             <i class="el-icon-loading" v-else></i>
           </template>
         </el-table-column>
         <el-table-column :label="$t('kube_version')">
           <template #default="scope">
-            <span v-if="packageMap[scope.row.version]">
-              {{ packageMap[scope.row.version].data.kubernetes.kube_version }}
+            <span v-if="scope.row.yaml">
+              {{ scope.row.yaml.data.kubernetes.kube_version }}
             </span>
             <i class="el-icon-loading" v-else></i>
           </template>
         </el-table-column>
         <el-table-column :label="$t('container_engine')">
           <template #default="scope">
-            <template v-if="packageMap[scope.row.version]">
-              <div v-for="(engine, key) in packageMap[scope.row.version].data.container_engine" :key="`c${scope.index}_${key}`">
+            <template v-if="scope.row.yaml">
+              <div v-for="(engine, key) in scope.row.yaml.data.container_engine" :key="`c${scope.index}_${key}`">
                 <el-tag>{{ engine.container_manager }}_{{ engine.params[engine.container_manager + '_version'] }}</el-tag>
               </div>
             </template>
@@ -87,8 +90,8 @@ zh:
         </el-table-column>
         <el-table-column :label="$t('supported_os')">
           <template #default="scope">
-            <template v-if="packageMap[scope.row.version]">
-              <div v-for="(os, key) in packageMap[scope.row.version].metadata.supported_os" :key="`os${scope.index}_${key}`">
+            <template v-if="scope.row.yaml">
+              <div v-for="(os, key) in scope.row.yaml.metadata.supported_os" :key="`os${scope.index}_${key}`">
                 <el-tag>
                   {{ os.distribution }}<span 
                   v-for="(v, i) in os.versions" :key="key + 'v' + i">_{{v}}</span>
@@ -108,32 +111,34 @@ zh:
                   {{ $t('import_status_true') }}
                 </el-tag>
               </template>
-              <el-tag v-else-if="meetVersionRequirement(scope.row)" type="warning" effect="dark">
+              <el-tag v-else-if="scope.row.meetKuboardSprayVersion" type="warning" effect="dark">
                 <i class="el-icon-circle-close"></i>
                 {{ $t('import_status_false') }}
               </el-tag>
-              <template v-else>
+              <template v-else-if="scope.row.yaml">
                 <el-tag type="error" effect="dark">{{ $t('minVersionRequired') }}</el-tag>
-                <el-tag type="error" class="app_text_mono">{{scope.row.kuboard_spray_version.min}}</el-tag>
+                <el-tag type="error" class="app_text_mono">{{scope.row.yaml.metadata.kuboard_spray_version.min}}</el-tag>
               </template>
             </template>
             <i class="el-icon-loading" v-else></i>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('msg.operations')" min-width="120px">
-          <template #default="scope">
-            <template v-if="importedPackageMap">
-              <template v-if="importedPackageMap[scope.row.version]">
-                <el-button type="primary" plain icon="el-icon-view" @click="$router.push(`/settings/resources/${scope.row.version}`)">{{ $t('msg.view') }}</el-button>
-                <el-button type="danger" icon="el-icon-delete" @click="$router.push(`/settings/resources/${scope.row.version}`)">{{ $t('msg.delete') }}</el-button>
-              </template>
-              <template v-else>
-                <el-button type="primary" plain icon="el-icon-view" @click="$router.push(`/settings/resources/${scope.row.version}/on_air`)">{{ $t('msg.view') }}</el-button>
-                <el-button type="primary" v-if="meetVersionRequirement(scope.row)" icon="el-icon-download" @click="$router.push(`/settings/resources/${scope.row.version}/on_air`)">{{ $t('import') }}</el-button>
+        <slot name="columns">
+          <el-table-column :label="$t('msg.operations')" min-width="120px">
+            <template #default="scope">
+              <template v-if="importedPackageMap">
+                <template v-if="importedPackageMap[scope.row.version]">
+                  <el-button type="primary" plain icon="el-icon-view" @click="$router.push(`/settings/resources/${scope.row.version}`)">{{ $t('msg.view') }}</el-button>
+                  <el-button type="danger" icon="el-icon-delete" @click="$router.push(`/settings/resources/${scope.row.version}`)">{{ $t('msg.delete') }}</el-button>
+                </template>
+                <template v-else>
+                  <el-button type="primary" plain icon="el-icon-view" @click="$router.push(`/settings/resources/${scope.row.version}/on_air`)">{{ $t('msg.view') }}</el-button>
+                  <el-button type="primary" v-if="scope.row.meetKuboardSprayVersion" icon="el-icon-download" @click="$router.push(`/settings/resources/${scope.row.version}/on_air`)">{{ $t('import') }}</el-button>
+                </template>
               </template>
             </template>
-          </template>
-        </el-table-column>
+          </el-table-column>
+        </slot>
       </el-table>
     </div>
 
@@ -150,6 +155,7 @@ import compareVersions from 'compare-versions'
 export default {
   mixins: [mixin],
   props: {
+    hideLink: { type: Boolean, required: false, default: false }
   },
   percentage () {
     return 100
@@ -165,8 +171,8 @@ export default {
   data () {
     return {
       availablePackageList: undefined,
-      packageMap: {},
       importedPackageMap: {},
+      packageYaml: {},
     }
   },
   computed: {
@@ -197,12 +203,8 @@ export default {
     this.refresh()
   },
   methods: {
-    meetVersionRequirement(item) {
-      return compareVersions(window.KuboardSpray.version.trimed, item.kuboard_spray_version.min) >= 0
-    },
     async refresh () {
       this.importedPackageMap = {}
-      this.packageMap = {}
       this.availablePackageList = undefined
       await axios.get('https://addons.kuboard.cn/v-kuboard-spray/package-list.yaml?nocache=' + new Date().getTime()).then(resp => {
         this.availablePackageList = yaml.load(resp.data).items
@@ -213,13 +215,19 @@ export default {
       await this.kuboardSprayApi.get(`/resources`).then(resp => {
         for (let i in resp.data.data) {
           this.importedPackageMap[resp.data.data[i]] = true
+          for (let j in this.availablePackageList) {
+            let pkg = this.availablePackageList[j]
+            if (pkg.version === resp.data.data[i]) {
+              pkg.imported = true
+            }
+          }
         }
       }).catch(e => {
         console.log(e)
       })
       for (let i in this.mergedPackageList) {
         let packageVersion = this.mergedPackageList[i]
-        if (packageVersion.isOffline) {
+        if (packageVersion.isOffline || packageVersion.imported) {
           this.loadPackageLocal(packageVersion)
         } else {
           this.loadPackageFromRepository(packageVersion)
@@ -228,18 +236,21 @@ export default {
     },
     loadPackageLocal(packageVersion) {
       this.kuboardSprayApi.get(`/resources/${packageVersion.version}`).then(resp => {
-        this.packageMap[packageVersion.version] = resp.data.data.package
+        this.packageYaml[packageVersion.version] = resp.data.data.package
+        packageVersion.yaml = resp.data.data.package
+        packageVersion.meetKuboardSprayVersion = compareVersions(window.KuboardSpray.version.trimed, packageVersion.yaml.metadata.kuboard_spray_version.min) >= 0
       })
     },
     loadPackageFromRepository (packageVersion) {
       axios.get(`https://addons.kuboard.cn/v-kuboard-spray/${packageVersion.version}/package.yaml?nocache=${new Date().getTime()}`).then(resp => {
         setTimeout(() => {
-          this.packageMap[packageVersion.version] = yaml.load(resp.data)
-          this.packageMap[packageVersion.version].loaded = true
+          let temp = yaml.load(resp.data)
+          this.packageYaml[packageVersion.version] = temp
+          packageVersion.yaml = temp
+          packageVersion.meetKuboardSprayVersion = compareVersions(window.KuboardSpray.version.trimed, packageVersion.yaml.metadata.kuboard_spray_version.min) >= 0
         }, 500)
       }).catch(e => {
         this.$message.error(e + '')
-        this.packageMap[packageVersion.version].loaded = false
       })
     }
   }

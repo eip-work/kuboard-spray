@@ -52,7 +52,7 @@ const constantRouterMap = [
       {
         path: 'resources',
         name: 'Resources',
-        component: () => import('../views/resources/Resources.vue')
+        component: () => import('../views/resources/ResourcesListPage.vue')
       },
       {
         path: 'resources/:name',

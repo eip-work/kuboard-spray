@@ -15,6 +15,7 @@ en:
   import_status_true: True
   import_status_false: False
   minVersionRequired: Min version required to kuboardspray
+  cannot_reach_online_repository: Current browser cannot reach https://kuboard-spray.cn/support
 zh:
   title: 资源包列表
   resourceDescription1: Kuboard 提供一组经过预先测试验证的资源包列表，可以帮助您快速完成集群安装
@@ -31,6 +32,7 @@ zh:
   import_status_true: 已导入
   import_status_false: 未导入
   minVersionRequired: KuboardSpray最低版本要求
+  cannot_reach_online_repository: 当前浏览器不能在线获取可选的资源包列表，请在可以访问外网的浏览器打开地址 https://kuboard-spray.cn/support
 </i18n>
 
 <template>
@@ -42,7 +44,11 @@ zh:
         <li>{{$t('resourceDescription2')}}</li>
       </div>
     </el-alert>
-    <ResourcesCreateOffline class="app_margin_top"></ResourcesCreateOffline>
+    <div style="text-align: right;">
+      <el-link v-if="cannot_reach_online_repository" href="https://kuboard-spray.cn/support" target="blank" type="danger" icon="el-icon-link"
+        style="margin-right: 10px; color: var(--el-color-danger)">{{ $t('cannot_reach_online_repository') }}</el-link>
+      <ResourcesCreateOffline class="app_margin_top"></ResourcesCreateOffline>
+    </div>
     <div class="contentList">
       <el-table v-if="mergedPackageList" :data="mergedPackageList" style="width: 100%">
         <el-table-column prop="version" :label="$t('version')" min-width="100px">
@@ -146,33 +152,21 @@ zh:
 </template>
 
 <script>
-import mixin from '../../mixins/mixin.js'
 import axios from 'axios'
 import yaml from 'js-yaml'
 import ResourcesCreateOffline from './ResourcesCreateOffline.vue'
 import compareVersions from 'compare-versions'
 
 export default {
-  mixins: [mixin],
   props: {
     hideLink: { type: Boolean, required: false, default: false }
-  },
-  percentage () {
-    return 100
-  },
-  breadcrumb () {
-    return [
-      { label: this.$t('title') }
-    ]
-  },
-  refresh () {
-    this.refresh()
   },
   data () {
     return {
       availablePackageList: undefined,
       importedPackageMap: {},
       packageYaml: {},
+      cannot_reach_online_repository: false,
     }
   },
   computed: {
@@ -206,11 +200,13 @@ export default {
     async refresh () {
       this.importedPackageMap = {}
       this.availablePackageList = undefined
+      this.cannot_reach_online_repository = false
       await axios.get('https://addons.kuboard.cn/v-kuboard-spray/package-list.yaml?nocache=' + new Date().getTime()).then(resp => {
         this.availablePackageList = yaml.load(resp.data).items
       }).catch(e => {
         console.log(e)
-        this.$message.error('离线环境')
+        // this.$message.error('离线环境')
+        this.cannot_reach_online_repository = true
       })
       await this.kuboardSprayApi.get(`/resources`).then(resp => {
         for (let i in resp.data.data) {

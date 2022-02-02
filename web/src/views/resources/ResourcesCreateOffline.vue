@@ -6,7 +6,7 @@ zh:
 </i18n>
 
 <template>
-  <div>
+  <div style="display: inline-block; text-align: left;">
     <div style="text-align: right;">
       <el-button type="primary" icon="el-icon-download" @click="compute_dialogVisible = true">{{$t('createByOffline')}}</el-button>
     </div>

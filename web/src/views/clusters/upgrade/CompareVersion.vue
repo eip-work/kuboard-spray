@@ -44,7 +44,7 @@ zh:
         </template>
       </el-table-column>
       <template v-if="version">
-        <el-table-column min-width="80px">
+        <el-table-column min-width="120px" fixed>
           <template #header>
             <div class="compare_version_header">{{ $t('command_for_version') }}</div>
           </template>

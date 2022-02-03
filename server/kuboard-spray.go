@@ -47,8 +47,6 @@ func setupRouter() *gin.Engine {
 	api.POST("/clusters/:cluster/change_resource_package_version", cluster.ChangeResourcePackageVersion)
 	api.POST("/clusters/:cluster/upgrade_cluster", operation.UpgradeCluster)
 
-	api.GET("/clusters/:cluster/get_kubelet_version", operation.TestKubeletVersion)
-
 	api.GET("/clusters/:cluster/access/kubeconfig", cluster_access.GetKubeConfig)
 
 	api.POST("/clusters/:cluster/state/ping", state.Ping)

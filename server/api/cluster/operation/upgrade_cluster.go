@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/eip-work/kuboard-spray/api/ansible_rpc"
-	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
@@ -103,14 +102,6 @@ func UpgradeCluster(c *gin.Context) {
 			"pid": cmd.R_Pid,
 		},
 	})
-}
-
-func TestKubeletVersion(c *gin.Context) {
-	var req cluster.GetClusterRequest
-	c.ShouldBindUri(&req)
-	versions, err := getKubeletVersion(req.Cluster)
-	logrus.Trace(versions, err)
-	c.JSON(http.StatusOK, versions)
 }
 
 func getKubeletVersion(clusterName string) (map[string]string, error) {

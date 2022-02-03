@@ -58,7 +58,7 @@ zh:
           </template>
         </el-table-column>
       </template>
-      <el-table-column v-if="version === undefined">
+      <el-table-column v-if="version === undefined" min-width="180px">
         <template #header>
           <div class="compare_version_header">
             <i class="el-icon-loading"></i>
@@ -94,7 +94,6 @@ export default {
   mixins: [mixin],
   components: { UpgradeTask },
   mounted () {
-    this.kuboardSprayApi.get(`/clusters/${this.cluster.name}/get_kubelet_version`)
   },
   methods: {
     showUpgradeButton(nodeName) {

@@ -203,7 +203,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="css">
 .connectivity_check_code_mirror .CodeMirror {
   height: 380px;
 }

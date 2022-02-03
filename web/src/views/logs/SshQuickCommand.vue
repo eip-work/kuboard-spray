@@ -39,7 +39,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .command_wrapper {
   display: flex;
   margin: 0 0 10px 0;

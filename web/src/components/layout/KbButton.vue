@@ -46,31 +46,27 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .router a {
-  color: $--color-white;
+  color: var(--el-color-white);
   transition: 0.2s;
 }
 .router:hover {
-  color: $--color-primary;
+  color: var(--el-color-primary);
 }
 .kb-button {
   display: inline-block;
   width: 40px;
   height: 40px;
   border-radius: 20px;
-  // background: rgba(#FFF, 0.2);
-  background: $--color-primary;
+  background: var(--el-color-primary);
   vertical-align: middle;
   cursor: pointer;
   transition: 0.2s;
 }
 .kb-button:hover {
-  // background-color: $--color-white;
-  // color: $--color-primary;
-  // background-color: rgba(#FFF, 0.2);
-  background-color: $--color-primary-light-2;
-  color: $--color-white;
+  background-color: var(--el-color-primary-light-2);
+  color: var(--el-color-white);
   text-align: center;
 }
 .kb-content {

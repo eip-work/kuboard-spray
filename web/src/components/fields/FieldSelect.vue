@@ -1,7 +1,7 @@
 <template>
   <FieldCommon :fieldName="fieldName" :holder="holder" :prop="prop" :rules="rules" :required="required" :label="label" :placeholder="placeholder">
     <template #edit>
-      <div style="display: flex;">
+      <div style="display: flex; flex-grow: 1;">
         <el-select v-model.trim="value" style="flex-grow: 1;" :clearable="clearable" :disabled="disabled" :allowCreate="allowCreate" :filterable="filterable"
           :placeholder="compute_placeholder" @visible-change="load($event)" :loading="loading">
           <el-option v-for="(item, index) in options" :key="'i' + index" :value="item.value" :label="item.label" :disabled="item.disabled">
@@ -102,9 +102,9 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .field_placeholder {
-  color: $--color-text-placeholder;
+  color: var(--el-text-color-placeholder);
   font-size: 12px;
 }
 </style>

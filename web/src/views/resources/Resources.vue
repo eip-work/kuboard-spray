@@ -38,7 +38,7 @@ zh:
 <template>
   <div>
     <div class="app_block_title">{{$t('title')}}</div>
-    <el-alert :title="$t('title')" type="default" :closable="false">
+    <el-alert :title="$t('title')" type="info" :closable="false">
       <div class="description">
         <li>{{$t('resourceDescription1')}}</li>
         <li>{{$t('resourceDescription2')}}</li>
@@ -122,8 +122,8 @@ zh:
                 {{ $t('import_status_false') }}
               </el-tag>
               <template v-else-if="scope.row.yaml">
-                <el-tag type="error" effect="dark">{{ $t('minVersionRequired') }}</el-tag>
-                <el-tag type="error" class="app_text_mono">{{scope.row.yaml.metadata.kuboard_spray_version.min}}</el-tag>
+                <el-tag type="danger" effect="dark">{{ $t('minVersionRequired') }}</el-tag>
+                <el-tag type="danger" class="app_text_mono">{{scope.row.yaml.metadata.kuboard_spray_version.min}}</el-tag>
               </template>
             </template>
             <i class="el-icon-loading" v-else></i>
@@ -253,7 +253,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .description {
   line-height: 28px;
 }

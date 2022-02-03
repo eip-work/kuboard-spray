@@ -73,7 +73,7 @@ export default {
 }
 </style>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .package_title {
   font-weight: bolder;
   font-family: Consolas,Menlo,Bitstream Vera Sans Mono,Monaco,"微软雅黑",monospace;

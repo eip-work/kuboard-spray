@@ -126,9 +126,8 @@ export default {
 }
 </style>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .version {
-  // display: inline-block;
   width: 400px;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -137,17 +136,17 @@ export default {
   user-select: none;
   vertical-align: top;
   font-size: 14px;
-  color: $--color-text-regular;
+  color: var(--el-text-color-regular);
   transition: 0.2s;
   line-height: 35px;
 }
 .version:hover {
-  color: $--color-primary-light-5;
+  color: var(--el-color-primary-light-5);
 }
 .version .dot {
   width: 6px;
   height: 6px;
-  background-color: $--color-text-regular;
+  background-color: var(--el-text-color-regular);
   display: inline-block;
   border-radius: 3px;
   margin-right: 8px;
@@ -171,7 +170,7 @@ export default {
   cursor: pointer;
 }
 .dropdown-menu :hover {
-  color: $--color-primary;
+  color: var(--el-color-primary);
 }
 .header {
   height: 72px;
@@ -180,7 +179,6 @@ export default {
   z-index: 1000;
 }
 .header-background {
-  // background:linear-gradient(0deg,#16386E,#1E4A90);
   background: transparent;
 }
 .header-warpper {
@@ -195,7 +193,6 @@ export default {
 .progress {
   width: 100%;
   overflow: hidden;
-  // background-color: white;
 }
 .slot {
   height: 70px;
@@ -205,10 +202,10 @@ export default {
   line-height: 70px;
   background: transparent;
   z-index: 1;
-  color: $--color-white;
+  color: var(--el-color-white);
 }
 .slot-cluster {
-  color: $--color-white;
+  color: var(--el-color-white);
 }
 .header-right {
   padding-right: 10px;
@@ -216,14 +213,14 @@ export default {
   top: 2px;
   right: 0;
   overflow: hidden;
-  color: $--color-white;
+  color: var(--el-color-white);
   line-height: 70px;
   height: 70px;
   text-align: right;
 }
 .logo_label {
   font-size: 12px;
-  color: mix($--color-white, $--color-kuboard-header, 70%);
+  color: mix(var(--el-color-white), var(--el-color-primary), 70%);
 }
 .logo {
   font-size: 16px;
@@ -240,11 +237,11 @@ export default {
   margin-top: 10px;
 }
 .logo:hover {
-  color: $--color-kuboard-header;
+  color: var(--el-color-primary);
   background-color: white;
 }
 .logo:active {
-  color: $--color-primary;
+  color: var(--el-color-primary);
   outline: none;
 }
 .yaml {
@@ -280,7 +277,7 @@ export default {
   width: 75px;
 }
 .settings .button:hover {
-  color: $--color-kuboard-header;
+  color: var(--el-color-primary);
   background-color: white;
 }
 .userInfo {
@@ -293,7 +290,7 @@ export default {
   color: white;
 }
 .userInfo:hover {
-  color: $--color-primary;
+  color: var(--el-color-primary);
 }
 .item {
   line-height: 1;
@@ -301,7 +298,7 @@ export default {
   vertical-align: top;
 }
 .label {
-  color: $--color-text-secondary;
+  color: var(--el-text-color-secondary);
   width: 120px;
   display: inline-block;
   vertical-align: top;
@@ -309,7 +306,7 @@ export default {
   padding: 7px 0;
 }
 .value {
-  color: $--color-text-primary;
+  color: var(--el-text-color-primary);
   width: calc(100% - 150px);
   margin-left: 10px;
   margin-bottom: 10px;

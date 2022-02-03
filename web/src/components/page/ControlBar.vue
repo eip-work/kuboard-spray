@@ -36,23 +36,19 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .app_page_operations_wrapper {
   z-index: 200;
   position: -webkit-sticky;
   position: sticky;
   top: 0px;
   display: flex;
-  // margin-bottom: 10px;
   height: 52px;
   overflow: hidden;
   background-color: #f1f4fa;
-  // border-bottom: 1px dashed #d2dfed;
 }
 
 .app_page_operations {
-  // border: solid 1px $--color-primary-light-6;
-  // background-color: $--color-primary-light-8;
   box-shadow: 0 1px 8px 0 rgba(100, 100, 100, 0.8);
   padding-bottom: 10px;
   margin: auto;

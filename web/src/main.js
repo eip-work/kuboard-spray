@@ -28,7 +28,7 @@ axios.get("./version.json").then(resp => {
   window.KuboardSpray.version.trimed = window.KuboardSpray.version.version.slice(0, window.KuboardSpray.version.version.length - 6)
   window.KuboardSpray.version.arch = window.KuboardSpray.version.version.slice(window.KuboardSpray.version.version.length - 5)
   const app = createApp(App)
-  app.use(ElementPlus, {size: 'mini', locale: zhCn})
+  app.use(ElementPlus, {size: 'small', locale: zhCn, zIndex: 3000})
   app.use(store)
   app.use(router)
   app.use(i18n)

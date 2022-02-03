@@ -82,7 +82,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .user {
   display: inline-block;
   user-select: none;
@@ -90,10 +90,10 @@ export default {
   transition: 0.2s;
   margin-right: 15px;
   vertical-align: top;
-  color: $--color-primary;
+  color: var(--el-color-primary);
 }
 .user:hover {
-  color: $--color-primary-light-3;
+  color: var(--el-color-primary-light-3);
 }
 .user .img {
   font-size: 22px;
@@ -101,8 +101,8 @@ export default {
   width: 30px;
   height: 30px;
   display: inline-block;
-  background-color: rgba($--color-primary, 0.8);
-  color: $--color-white !important;
+  background-color: rgba(var(--el-color-primary), 0.8);
+  color: var(--el-color-white) !important;
   vertical-align: middle;
   text-align: center;
   line-height: 30px;
@@ -121,7 +121,7 @@ export default {
   color: white;
 }
 .userInfo:hover {
-  color: $--color-primary;
+  color: var(--el-color-primary);
 }
 .item {
   line-height: 1;
@@ -129,7 +129,7 @@ export default {
   vertical-align: top;
 }
 .label {
-  color: $--color-text-secondary;
+  color: var(--el-text-color-secondary);
   width: 120px;
   display: inline-block;
   vertical-align: top;
@@ -137,7 +137,7 @@ export default {
   padding: 7px 0;
 }
 .value {
-  color: $--color-text-primary;
+  color: var(--el-text-color-primary);
   width: 200px;
   margin-left: 10px;
   margin-bottom: 10px;
@@ -155,6 +155,6 @@ export default {
   font-weight: 600;
 }
 .clusterName {
-  color: $--color-primary !important;
+  color: var(--el-color-primary) !important;
 }
 </style>

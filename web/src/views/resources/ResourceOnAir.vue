@@ -17,8 +17,8 @@ zh:
       <template v-if="resourcePackage">
         <ResourceDownload  v-if="meetVersionRequirement" action="download" :resource="{package: resourcePackage, history:{task_type: 'resource', task_name: name, processing: false, success_tasks: []}}"></ResourceDownload>
         <template v-else>
-          <el-tag type="error" effect="dark">{{ $t('minVersionRequired') }}</el-tag>
-          <el-tag type="error" class="app_text_mono">{{resourcePackage.metadata.kuboard_spray_version.min}}</el-tag>
+          <el-tag type="danger" effect="dark">{{ $t('minVersionRequired') }}</el-tag>
+          <el-tag type="danger" class="app_text_mono">{{resourcePackage.metadata.kuboard_spray_version.min}}</el-tag>
         </template>
       </template>
     </ControlBar>
@@ -101,6 +101,6 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 
 </style>

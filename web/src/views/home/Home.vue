@@ -12,7 +12,7 @@ zh:
 <template>
   <div>
     <div class="app_block_title">Kuboard Spray</div>
-    <el-alert type="default" title="README" :closable="false">
+    <el-alert type="info" title="README" :closable="false">
       <div style="line-height: 28px;">
         <li>Kuboard Spray 基于 <a href="https://github.com/kubernetes-sigs/kubespray" target="_blank">https://github.com/kubernetes-sigs/kubespray</a> 提供 Kubernetes 集群的离线安装、升级、维护等功能。</li>
         <li>您可以在此找到 Kuboard Spray 的源代码 <a href="https://github.com/eip-work/kuboard-spray" target="_blank">https://github.com/eip-work/kuboard-spray</a></li>
@@ -94,7 +94,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .description {
   font-size: 13px;
   line-height: 20px;

@@ -23,7 +23,7 @@ zh:
     <div>
       <template v-for="(item, key) in cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts" :key="'kcp' + key">
         <el-tag v-if="pingpong[key] && pingpong[key].status === 'SUCCESS'" style="margin-right: 10px; margin-bottom: 10px;" effect="dark"
-          :type="cluster.inventory.all.hosts[key].kuboardspray_node_action === undefined ? 'primary' : 'warning'">
+          :type="cluster.inventory.all.hosts[key].kuboardspray_node_action === undefined ? '' : 'warning'">
           <span class="app_text_mono">{{key}}</span>
         </el-tag>
       </template>
@@ -81,10 +81,9 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .form_description {
   font-size: 12px;
-  // color: var(--el-text-color-placeholder);
   color: #aaa;
   max-width: 700px;
 }

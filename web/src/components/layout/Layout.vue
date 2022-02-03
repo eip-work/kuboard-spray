@@ -73,10 +73,9 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .main {
   padding: 0 0px;
-  // height: calc(100vh - 100px);
   display: flex;
   background-color: #f1f4fa;
 }

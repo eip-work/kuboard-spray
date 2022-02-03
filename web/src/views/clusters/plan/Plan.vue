@@ -352,7 +352,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="css">
 .properties .el-tabs__item.is-active {
   padding-left: 0 20px !important;
   padding-right: 0 20px !important;
@@ -366,31 +366,29 @@ export default {
   .left {
     width: 140px;
     min-height: 300px;
-    // border: solid 1.5px $--color-primary-light-5;
     border-radius: 10px;
     margin-left: 5px;
-    // padding: 10px;
     .horizontalConnection {
       flex-grow: 1;
       width: calc(100% - 30px);
       height: 20px;
       border-bottom-left-radius: 5px;
-      border-bottom: dashed 2px $--color-primary;
-      border-left: dashed 2px $--color-primary;
+      border-bottom: dashed 2px var(--el-color-primary);
+      border-left: dashed 2px var(--el-color-primary);
       margin-left: 60px;
       margin-bottom: 23px;
       margin-right: -40px;
     }
     .verticalConnection {
       margin-left: 60px;
-      border-left: dashed 2px $--color-primary;
+      border-left: dashed 2px var(--el-color-primary);
       height: 40px;
     }
   }
   .right {
     flex-grow: 1;
     min-height: 300px;
-    border: solid 1.5px $--color-primary-light-5;
+    border: solid 1.5px var(--el-color-primary-light-5);
     border-radius: 10px;
     margin-left: 30px;
     padding: 10px;
@@ -399,7 +397,7 @@ export default {
       flex-wrap: wrap;
       padding-bottom: 10px;
       margin-bottom: 10px;
-      border-bottom: dotted 1.5px $--color-primary-light-5;
+      border-bottom: dotted 1.5px var(--el-color-primary-light-5);
     }
     .workers {
       display: flex;

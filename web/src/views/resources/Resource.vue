@@ -20,7 +20,7 @@ zh:
           <i class="el-icon-cloudy"></i>
           {{$t('loaded')}}
         </el-tag>
-        <el-tag v-else type="error" effect="dark" style="margin-right: 20px;">
+        <el-tag v-else type="danger" effect="dark" style="margin-right: 20px;">
           <i class="el-icon-cloudy"></i>
           {{$t('not_load')}}
         </el-tag>
@@ -109,6 +109,6 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 
 </style>

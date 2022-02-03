@@ -85,14 +85,14 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .item_in_array {
   display: flex;
   margin: 5px;
   padding: 3px 12px 3px 20px;
   border-radius: 50px;
-  border: solid 1px $--color-primary-light-6;
-  background-color: $--color-primary-light-9;
+  border: solid 1px var(--el-color-primary-light-6);
+  background-color: var(--el-color-primary-light-9);
   height: 28px;
 }
 .view_item_in_array {
@@ -100,7 +100,7 @@ export default {
   margin: 5px;
   padding: 0px 12px 0px 12px;
   border-radius: 50px;
-  border: solid 1px $--color-primary-light-8;
+  border: solid 1px var(--el-color-primary-light-8);
   background-color: white;
   height: 28px;
 }

@@ -86,7 +86,7 @@ zh:
             <div class="form_description">{{ $t('offlineNodesDesc') }}</div>
             <template v-for="node in offlineNodes" :key="'exclude' + node">
               <el-tooltip class="box-item" effect="dark" :content="pingpong[node].message" placement="top-end">
-                <el-tag type="error" effect="dark" style="margin: 0 10px 10px 0;">
+                <el-tag type="danger" effect="dark" style="margin: 0 10px 10px 0;">
                   <span class="app_text_mono" style="font-size: 14px; margin-right: 10px;">{{ node }}</span> <i class="el-icon-question"></i>
                 </el-tag>
               </el-tooltip>
@@ -294,6 +294,6 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 
 </style>

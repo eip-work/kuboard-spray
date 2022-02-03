@@ -34,7 +34,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .bread-crumb {
   height: 70px;
   line-height: 70px;
@@ -48,27 +48,27 @@ export default {
   opacity: 0.6;
   font-size: 13px;
   line-height: 22px;
-  color: $--color-text-placeholder;
+  color: var(--el-text-color-placeholder);
   transition: 0.5s;
 }
 .bread-crumb:hover .kind {
   opacity: 1;
 }
 .label {
-  color: $--color-primary;
+  color: var(--el-color-primary);
   font-weight: bold;
   font-size: 14px;
-  border-bottom: dashed 1px $--color-primary;
+  border-bottom: dashed 1px var(--el-color-primary);
 }
 .isLeaf {
-  color: $--color-primary;
+  color: var(--el-color-primary);
   font-weight: bold;
   font-size: 14px;
   border-bottom: none;
 }
 .icon {
   margin: 0 5px;
-  color: $--color-primary-light-5;
+  color: var(--el-color-primary-light-5);
   font-weight: 800;
 }
 </style>

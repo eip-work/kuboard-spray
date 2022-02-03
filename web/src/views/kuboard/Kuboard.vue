@@ -46,7 +46,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .description {
   font-size: 13px;
   padding: 20px;

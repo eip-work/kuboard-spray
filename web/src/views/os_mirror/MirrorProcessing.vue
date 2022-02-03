@@ -71,10 +71,10 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .confirmText {
   font-size: 15px;
-  color: $--color-danger;
+  color: var(--el-color-danger);
   font-weight: bold;
 }
 </style>

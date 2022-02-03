@@ -55,9 +55,9 @@ zh:
               <el-input v-else v-model.trim="mirror_url" :placeholder="$t('url_placeholder')"></el-input>
             </el-form-item>
             <el-form-item :label="$t('msg.status')">
-              <el-tag v-if="os_mirror.status.status === 'created'" type="primary">{{$t('created')}}</el-tag>
+              <el-tag v-if="os_mirror.status.status === 'created'" type="">{{$t('created')}}</el-tag>
               <el-tag v-if="os_mirror.status.status === 'success'" type="success" effect="dark">{{$t('success')}}</el-tag>
-              <el-tag v-if="os_mirror.status.status === 'failed'" type="error" effect="dark">{{$t('failed')}}</el-tag>
+              <el-tag v-if="os_mirror.status.status === 'failed'" type="danger" effect="dark">{{$t('failed')}}</el-tag>
             </el-form-item>
           </div>
         </el-card>
@@ -184,6 +184,6 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 
 </style>

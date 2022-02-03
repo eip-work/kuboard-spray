@@ -33,7 +33,11 @@
 }
 .app_alert_block.el-alert .el-alert__content {
   display: block;
-} 
+}
+
+.el-form-item .el-form-item {
+  margin-bottom: 18px;
+}
 
 .app_form_mini .el-form-item {
   margin-bottom: 0px !important;
@@ -264,4 +268,8 @@ pre {
   font-family: Consolas,Menlo,Bitstream Vera Sans Mono,Monaco,"微软雅黑",monospace;
   word-spacing: normal;
   white-space: pre-wrap;
+}
+
+.el-table__header-wrapper th {
+  background-color: var(--el-color-primary-light-8) !important;
 }

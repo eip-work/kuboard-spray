@@ -37,22 +37,26 @@ zh:
         </template>
         <div class="package_info">
           <el-form-item :label="$t('os')">
-            <template v-for="(item, key) in resourcePackage.metadata.supported_os" :key="'os' + key">
-              <div>
-                <el-tag effect="dark">{{item.distribution}}</el-tag>
-                <el-tag style="margin-left: 10px;" v-for="(version, i) in item.versions" :key="'v' + key + '' + i">{{version}}</el-tag>
-              </div>
-            </template>
+            <div>
+              <template v-for="(item, key) in resourcePackage.metadata.supported_os" :key="'os' + key">
+                <div>
+                  <el-tag effect="dark">{{item.distribution}}</el-tag>
+                  <el-tag style="margin-left: 10px;" v-for="(version, i) in item.versions" :key="'v' + key + '' + i">{{version}}</el-tag>
+                </div>
+              </template>
+            </div>
           </el-form-item>
           <PackageContentField :holder="resourcePackage.data.kubernetes" fieldName="image_arch"></PackageContentField>
           <PackageContentField :holder="resourcePackage.data.kubernetes" fieldName="gcr_image_repo"></PackageContentField>
           <PackageContentField :holder="resourcePackage.data.kubernetes" fieldName="kube_image_repo"></PackageContentField>
           <PackageContentField :holder="resourcePackage.data.kubernetes" fieldName="kube_version"></PackageContentField>
           <el-form-item label="container_manager">
-            <div v-for="(engine, index) in resourcePackage.data.container_engine" :key="'ce' + index">
-              <el-tag>
-                <span class="app_text_mono">{{engine.container_manager}}_{{engine.params.containerd_version || engine.params.docker_version}}</span>
-              </el-tag>
+            <div>
+              <div v-for="(engine, index) in resourcePackage.data.container_engine" :key="'ce' + index">
+                <el-tag>
+                  <span class="app_text_mono">{{engine.container_manager}}_{{engine.params.containerd_version || engine.params.docker_version}}</span>
+                </el-tag>
+              </div>
             </div>
           </el-form-item>
         </div>
@@ -64,8 +68,10 @@ zh:
         <div class="package_info">
           <PackageContentField :holder="resourcePackage.data.etcd" fieldName="etcd_version"></PackageContentField>
           <el-form-item :label="$t('field.etcd_deployment_type')">
-            <div v-for="(item, key) in resourcePackage.data.etcd.etcd_deployment_type" :key="'k' + key">
-              <el-tag>{{$t('field.etcd_deployment_type-' +item)}}</el-tag>
+            <div>
+              <div v-for="(item, key) in resourcePackage.data.etcd.etcd_deployment_type" :key="'k' + key">
+                <el-tag>{{$t('field.etcd_deployment_type-' +item)}}</el-tag>
+              </div>
             </div>
           </el-form-item>
         </div>
@@ -159,7 +165,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .package_title {
   font-weight: bolder;
   font-family: Consolas,Menlo,Bitstream Vera Sans Mono,Monaco,"微软雅黑",monospace;

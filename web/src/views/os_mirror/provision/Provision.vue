@@ -70,7 +70,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="css">
 .provision_node_fact .package_title {
   padding: 0 20px;
 }
@@ -79,9 +79,9 @@ export default {
 }
 </style>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .ssh_content {
   padding: 20px;
-  background-color: $--color-primary-light-9;
+  background-color: var(--el-color-primary-light-9);
 }
 </style>

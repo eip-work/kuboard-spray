@@ -37,10 +37,10 @@ zh:
       <div class="details">
         <template v-for="(item, key) in cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts" :key="key">
           <div v-if="cluster.state && cluster.state.nodes[key]" class="app_margin_top">
-            <el-tag class="node_text" size="medium">
+            <el-tag class="node_text" size="default">
               <span class="app_text_mono">{{key}}</span>
             </el-tag>
-            <el-tag class="node_text" effect="light" size="medium">
+            <el-tag class="node_text" effect="light" size="default">
               <span class="app_text_mono">{{cluster.inventory.all.hosts[key].ansible_host}}</span>
             </el-tag>
             <el-button @click="openUrlInBlank(`#/ssh/cluster/${cluster.name}/${key}`)" style="margin-left: 10px;" icon="el-icon-monitor" type="primary">{{ $t('terminal')}}</el-button>
@@ -70,8 +70,8 @@ zh:
       <div class="details">
         <template v-for="(item, key) in cluster.state.etcd_members" :key="'etcd' + key">
           <div style="margin-top: 10px;">
-            <el-tag class="node_text" type="primary" size="medium">{{ etcdIp(item) }}</el-tag>
-            <el-tag class="node_text" type="primary" effect="light" size="medium">{{item.clientURLs && item.clientURLs.length > 0 ? item.clientURLs[0] : ''}}</el-tag>
+            <el-tag class="node_text" type="" size="default">{{ etcdIp(item) }}</el-tag>
+            <el-tag class="node_text" type="" effect="light" size="default">{{item.clientURLs && item.clientURLs.length > 0 ? item.clientURLs[0] : ''}}</el-tag>
             <template v-for="(etcd, name) in cluster.inventory.all.children.target.children.etcd.hosts" :key="'eb' + name + key">
               <el-button v-if="etcd.etcd_member_name === key" @click="openUrlInBlank(`#/ssh/cluster/${cluster.name}/${name}`)" icon="el-icon-monitor" type="primary">{{ $t('terminal')}}</el-button>
             </template>
@@ -186,13 +186,13 @@ etcdctl member list
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .access_details {
   padding-left: 40px;
   margin-bottom: 20px;
 }
 .details {
-  background-color: $--color-info-lighter;
+  background-color: var(--el-color-info)-lighter;
   padding: 10px 20px 20px 20px;
 }
 .node_text {

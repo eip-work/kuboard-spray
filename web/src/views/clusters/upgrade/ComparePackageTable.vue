@@ -135,10 +135,10 @@ export default {
           return 'success'
         }
         if (temp === 0) {
-          return 'primary'
+          return ''
         }
         if (temp < 0) {
-          return 'error'
+          return 'danger'
         }
       }
       return undefined
@@ -147,7 +147,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .component_name {
   font-weight: bolder;
   display: inline-block;
@@ -155,7 +155,6 @@ export default {
   width: 120px;
 }
 .versionStr {
-  // white-space: pre-line !important;
   vertical-align: top;
 }
 .compare_version_header {

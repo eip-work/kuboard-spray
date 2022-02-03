@@ -17,7 +17,7 @@ zh:
       {{$t('obj.cluster')}}
     </div>
     <div class="app_margin_bottom">
-      <el-alert :closable="false" title="集群管理" type="default">
+      <el-alert :closable="false" title="集群管理" type="info">
         <div style="line-height: 20px;">
           您可以：
           <li>制定新的集群安装计划</li>
@@ -44,7 +44,7 @@ zh:
             </div>
           </el-card>
         </div>
-        <el-button style="margin-bottom: 10px;" type="primary" size="large" icon="el-icon-plus" @click="$refs.create.show()">{{$t('addCluster')}}</el-button>
+        <el-button class="cluster" style="margin-bottom: 10px;" type="primary" size="large" icon="el-icon-plus" @click="$refs.create.show()">{{$t('addCluster')}}</el-button>
       </div>
     </el-card>
     <CreateCluster ref="create"></CreateCluster>
@@ -108,6 +108,7 @@ export default {
 .cluster {
   margin-right: 10px;
   margin-bottom: 10px;
+  height: 60px;
   width: 200px;
   border-radius: 6px;
   cursor: pointer;
@@ -121,7 +122,7 @@ export default {
   }
 }
 .cluster:hover {
-  border-color: $--color-primary;
+  border-color: var(--el-color-primary);
 }
 .cluster:hover .deleteButton {
   overflow: visible;

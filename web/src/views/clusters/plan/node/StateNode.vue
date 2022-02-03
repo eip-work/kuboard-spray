@@ -107,7 +107,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .info {
   background-color: var(--el-background-color-base);
   margin-bottom: 10px;

@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { CircleCheck, CircleClose } from '@element-plus/icons'
+import { CircleCheck, CircleClose } from '@element-plus/icons-vue'
 
 export default {
   props: {
@@ -40,7 +40,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .role {
   color: white;
   margin-right: 10px;
@@ -48,7 +48,7 @@ export default {
   width: 100px;
   border-radius: 5px;
   cursor: pointer;
-  color: $--color-text-secondary;
+  color: var(--el-text-color-secondary);
   text-align: center;
 }
 .role:hover {
@@ -59,21 +59,21 @@ export default {
   font-weight: bold;
 }
 .etcd {
-  background-color: $--color-warning-lighter;
+  background-color: var(--el-color-warning-lighter);
 }
 .etcd.selected {
-  background-color: $--color-warning;
+  background-color: var(--el-color-warning);
 }
 .kube_control_plane {
-  background-color: $--color-primary-light-9;
+  background-color: var(--el-color-primary-light-9);
 }
 .kube_control_plane.selected {
-  background-color: $--color-primary;
+  background-color: var(--el-color-primary);
 }
 .kube_node {
-  background-color: $--color-success-lighter;
+  background-color: var(--el-color-success-lighter);
 }
 .kube_node.selected {
-  background-color: $--color-success;
+  background-color: var(--el-color-success);
 }
 </style>

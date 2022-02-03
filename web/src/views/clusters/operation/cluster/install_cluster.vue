@@ -138,10 +138,9 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .form_description {
   font-size: 12px;
-  // color: var(--el-text-color-placeholder);
   color: #aaa;
   max-width: 700px;
 }

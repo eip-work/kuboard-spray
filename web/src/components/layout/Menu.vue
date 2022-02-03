@@ -31,7 +31,7 @@ zh:
           <span>{{$t('clusters')}}</span>
         </template>
       </el-menu-item>
-      <el-submenu index="2">
+      <el-sub-menu index="2">
         <template #title>
           <i class="el-icon-setting"></i>
           <span>{{$t('settings')}}</span>
@@ -45,7 +45,7 @@ zh:
         <el-menu-item index="2-3" :route="`/settings/kuboard`">
           {{$t('kuboard')}}
         </el-menu-item>
-      </el-submenu>
+      </el-sub-menu>
 
     </el-menu>
     <div class="menu-toggler" @click="toggle">
@@ -133,13 +133,12 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="css">
 @import "./menu.scss";
 
 .kuboard_global_menu {
   
   text-align: left;
-  // width: 180px;
   background-color: rgb(244, 244, 245);
   padding: 10px 0 0 0;
   vertical-align: top;

@@ -119,7 +119,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .version_no {
   font-weight: bolder;
   font-size: 14px;

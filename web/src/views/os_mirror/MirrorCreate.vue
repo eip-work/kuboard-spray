@@ -191,10 +191,10 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .create_kind {
   padding: 10px;
-  background-color: $--color-primary-light-9;
+  background-color: var(--el-color-primary-light-9);
   margin-top: 10px;
 }
 .dialog-footer {

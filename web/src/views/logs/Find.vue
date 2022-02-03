@@ -155,7 +155,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="css" scoped>
 .tip {
   vertical-align: middle;
   display: inline-block;
@@ -172,16 +172,16 @@ export default {
 .icon {
   width: 16px;
   height: 16px;
-  color: $--color-info;
-  border: 1px solid $--color-info;
+  color: var(--el-color-info);
+  border: 1px solid var(--el-color-info);
   padding: 2px;
 }
 .icon.selected {
-  filter: drop-shadow($--color-primary 80px 0);
+  filter: drop-shadow(var(--el-color-primary) 80px 0);
   transform: translateX(-80px);
 }
 .icon.selected-hit {
-  filter: drop-shadow($--color-success 80px 0);
+  filter: drop-shadow(var(--el-color-success) 80px 0);
   transform: translateX(-80px);
 }
 

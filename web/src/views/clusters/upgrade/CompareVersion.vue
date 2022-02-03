@@ -50,9 +50,7 @@ zh:
           </template>
           <template #default="scope">
             <el-tooltip trigger="click" v-if="firstNode && firstNode[scope.row.name]" placement="top" width="420">
-              <template>
-                <el-button icon="el-icon-finished">{{$t('command_for_version')}}</el-button>
-              </template>
+              <el-button icon="el-icon-finished">{{$t('command_for_version')}}</el-button>
               <template #content>
                 <pre style="margin: 0 10px;">{{ firstNode[scope.row.name].cmd }}</pre>
               </template>
@@ -69,7 +67,7 @@ zh:
           <template #default="scope">
             <template v-if="nodeVersion[scope.row.name]">
               <el-tag v-if="nodeVersion[scope.row.name].stdout === scope.row.version" type="success">{{ nodeVersion[scope.row.name].stdout }}</el-tag>
-              <el-tag v-else-if="nodeVersion[scope.row.name].stdout" type="error">{{ nodeVersion[scope.row.name].stdout }}</el-tag>
+              <el-tag v-else-if="nodeVersion[scope.row.name].stdout" type="danger">{{ nodeVersion[scope.row.name].stdout }}</el-tag>
             </template>
           </template>
         </el-table-column>
@@ -130,7 +128,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .component_name {
   font-weight: bolder;
   display: inline-block;
@@ -138,11 +136,9 @@ export default {
   width: 120px;
 }
 .versionStr {
-  // white-space: pre-line !important;
   vertical-align: top;
 }
 .compare_version_header {
-  // height: 51px;
   text-align: left;
 }
 </style>

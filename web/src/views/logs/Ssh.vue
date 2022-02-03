@@ -222,7 +222,7 @@ export ETCDCTL_CACERT=/etc/ssl/etcd/ssl/ca.pem
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="css" scoped>
 .button {
   font-weight: 500;
   display: inline-block;

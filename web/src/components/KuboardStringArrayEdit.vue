@@ -18,7 +18,7 @@
       </el-form-item>
     </template>
     <div class="arrayItem" :style="`width: ${width}; flex-grow: ${flexGrow}; cursor: pointer; border-style: dashed;`" @click="addItem">
-      <el-button type="text" icon="el-icon-plus" size="mini">{{addButtonText || '添 加'}}</el-button>
+      <el-button type="text" icon="el-icon-plus" size="default">{{addButtonText || '添 加'}}</el-button>
     </div>
   </div>
 </template>
@@ -67,13 +67,13 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .arrayItem {
   margin: 5px;
   padding: 3px 12px 3px 20px;
   border-radius: 50px;
-  border: solid 1px $--color-primary-light-6;
-  background-color: $--color-primary-light-9;
+  border: solid 1px var(--el-color-primary-light-6);
+  background-color: var(--el-color-primary-light-9);
   height: 28px;
 }
 </style>

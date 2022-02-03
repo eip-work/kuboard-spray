@@ -42,11 +42,10 @@ module.exports = {
     },
     css: {
       extract: false,
-      loaderOptions: {
-        scss: {
-          additionalData: `@import "~@/styles/theme-variables.scss";`
-          // prependData: fs.readFileSync('src/styles/theme-variables.scss', 'utf-8')
-        }
-      }
+      // loaderOptions: {
+      //   scss: {
+      //     additionalData: `@import "~@/styles/theme-variables.scss";`
+      //   }
+      // }
     }
   }

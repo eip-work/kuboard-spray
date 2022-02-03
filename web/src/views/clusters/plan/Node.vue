@@ -189,7 +189,7 @@ export default {
     display: none;
   }
   .node {
-    border: solid 1px $--border-color-light;
+    border: solid 1px var(--el-border-color-light);
     border-radius: 5px;
     width: 120px;
     margin: 5px;
@@ -199,59 +199,59 @@ export default {
     .role {
       font-size: 12px;
       margin-top: 5px;
-      color: $--color-text-primary;
+      color: var(--el-text-color-primary);
       padding: 5px 10px;
       border-radius: 5px;
       width: calc(100% - 20px);
       text-align: center;
     }
     .kube_control_plane {
-      background-color: $--color-primary-light-9;
+      background-color: var(--el-color-primary-light-9);
     }
     .kube_node {
-      background-color: $--color-success-lighter;
+      background-color: var(--el-color-success-lighter);
     }
     .etcd {
-      background-color: $--color-warning-lighter;
+      background-color: var(--el-color-warning-lighter);
     }
   }
   .node:hover {
-    border-color: $--color-primary;
-    background-color: $--color-primary-light-9;
+    border-color: var(--el-color-primary);
+    background-color: var(--el-color-primary-light-9);
     .role {
       color: white;
     }
     .kube_control_plane {
-      background-color: $--color-primary;
+      background-color: var(--el-color-primary);
     }
     .kube_node {
-      background-color: $--color-success;
+      background-color: var(--el-color-success);
     }
     .etcd {
-      background-color: $--color-warning;
+      background-color: var(--el-color-warning);
     }
   }
   .node.active {
-    border-color: $--color-warning;
-    background-color: $--color-warning-lighter;
+    border-color: var(--el-color-warning);
+    background-color: var(--el-color-warning-lighter);
     .role {
       color: white;
     }
     .kube_control_plane {
-      background-color: $--color-primary;
+      background-color: var(--el-color-primary);
     }
     .kube_node {
-      background-color: $--color-success;
+      background-color: var(--el-color-success);
     }
     .etcd {
-      background-color: $--color-warning;
+      background-color: var(--el-color-warning);
     }
   }
   .node.online {
-    border-color: $--color-success;
+    border-color: var(--el-color-success);
   }
   .node.online.active {
-    background-color: $--color-success-lighter;
+    background-color: var(--el-color-success-lighter);
   }
   .node.delete_node {
     text-decoration-line: line-through;

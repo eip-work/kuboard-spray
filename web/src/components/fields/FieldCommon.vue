@@ -140,9 +140,9 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .field_placeholder {
-  color: $--color-text-placeholder;
+  color: var(--el-text-color-placeholder);
   font-size: 12px;
 }
 </style>

@@ -75,7 +75,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="css">
 .preview_yaml_code_mirror {
   height: calc(90vh - 150px);
 }

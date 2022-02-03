@@ -24,8 +24,8 @@ zh:
             {{ $t('clear2') }}
           </p>
           <div style="text-align: right; margin: 0">
-            <el-button size="mini" type="info" plain @click="confirm(false)" icon="el-icon-close">取 消</el-button>
-            <el-button type="primary" size="mini" @click="confirm(true)" icon="el-icon-check">确 定</el-button>
+            <el-button size="default" type="info" plain @click="confirm(false)" icon="el-icon-close">取 消</el-button>
+            <el-button type="primary" size="default" @click="confirm(true)" icon="el-icon-check">确 定</el-button>
           </div>
           <template #reference>
             <div></div>
@@ -33,11 +33,11 @@ zh:
         </el-popover>
       </template>
     </template>
-    <div>
+    <div style="flex-grow: 1;">
       <div :class="expandedRef ? 'config_section_header expanded noselect' : 'config_section_header noselect'" @click="expandedRef = !expandedRef" style="display: flex;">
         <div>
-          <el-icon style="vertical-align: middle;" v-if="expandedRef"><arrow-down-bold /></el-icon>
-          <el-icon style="vertical-align: middle;" v-else><arrow-up-bold /></el-icon>
+          <el-icon style="vertical-align: middle;" v-if="expandedRef"><icon-arrow-down-bold /></el-icon>
+          <el-icon style="vertical-align: middle;" v-else><icon-arrow-up-bold /></el-icon>
         </div>
         <div style="flex-grow: 1; margin-left: 5px">
           <slot name="header">
@@ -67,8 +67,6 @@ zh:
 </template>
 
 <script>
-import { ArrowDownBold, ArrowUpBold } from '@element-plus/icons'
-
 export default {
   props: {
     enabled: { type: Boolean, required: true },
@@ -120,7 +118,7 @@ export default {
       }
     }
   },
-  components: { ArrowDownBold, ArrowUpBold },
+  components: {},
   mounted () {
   },
   methods: {
@@ -146,13 +144,13 @@ export default {
 }
 </style>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .enableButton {
   font-size: 13px;
 }
 .config_section_header {
-  background-color: $--color-primary-light-5;
-  border: solid 1px $--color-primary-light-5;
+  background-color: var(--el-color-primary-light-5);
+  border: solid 1px var(--el-color-primary-light-5);
   color: white;
   height: 26px;
   padding: 0 15px;
@@ -160,13 +158,13 @@ export default {
   font-size: 13px;
 }
 .config_section_header.expanded {
-  background-color: $--color-primary-light-2;
+  background-color: var(--el-color-primary-light-2);
 }
 .config_section_content {
   padding: 10px 15px 0 15px;
   margin-bottom: 10px;
   background-color: white;
-  border: solid 1px $--color-primary-light-9;
+  border: solid 1px var(--el-color-primary-light-9);
   border-top: none;
 }
 .viewLabel {
@@ -175,8 +173,8 @@ export default {
 .config_section_more {
   font-size: 13px;
   padding: 2px 15px;
-  border-left: solid 1px $--color-primary-light-9;
-  border-right: solid 1px $--color-primary-light-9;
+  border-left: solid 1px var(--el-color-primary-light-9);
+  border-right: solid 1px var(--el-color-primary-light-9);
   background-color: var(--el-background-color-base);
   color: var(--el-color-info);
 }

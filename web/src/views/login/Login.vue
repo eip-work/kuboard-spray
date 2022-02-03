@@ -89,7 +89,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 
 .form-header {
   font-size: 24px;

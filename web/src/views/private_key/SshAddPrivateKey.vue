@@ -34,7 +34,7 @@ zh:
         <template v-else>
           <el-tag v-for="(item, index) in keyFiles" :key="'file' + index"
             @close="deleteSshKey(item)"
-            size="medium" style="margin-top: 10px; margin-right: 10px;" closable>
+            size="default" style="margin-top: 10px; margin-right: 10px;" closable>
             {{item}}
           </el-tag>
         </template>
@@ -184,19 +184,19 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .uploadSection {
   margin-top: 20px;
-  border: 1px solid $--border-color-light;
+  border: 1px solid var(--el-border-color-light);
   border-radius: 10px;
   padding: 20px;
 }
 .step {
-  border: solid 1px $--color-warning;
+  border: solid 1px var(--el-color-warning);
   border-radius: 30px;
   width: 28px;
   height: 28px;
-  background-color: $--color-warning;
+  background-color: var(--el-color-warning);
   color: white;
   display: inline-block;
   text-align: center;

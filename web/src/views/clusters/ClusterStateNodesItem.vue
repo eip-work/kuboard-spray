@@ -11,7 +11,7 @@
       </div>
       <div style="flex-grow: 1;">
         <template v-if="node.k8s_node">
-          <el-tag type="primary" effect="dark" style="margin-left: 10px;" v-if="node.k8s_node.metadata.labels['node-role.kubernetes.io/control-plane'] !== undefined">{{$t('node.kube_control_plane')}}</el-tag>
+          <el-tag type="" effect="dark" style="margin-left: 10px;" v-if="node.k8s_node.metadata.labels['node-role.kubernetes.io/control-plane'] !== undefined">{{$t('node.kube_control_plane')}}</el-tag>
           <el-tag type="success" effect="dark" style="margin-left: 10px;" v-if="isKubeNode">{{$t('node.kube_node')}}</el-tag>
         </template>
         <template v-if="node.etcd_member">
@@ -22,7 +22,7 @@
         </template>
         <template v-if="node.k8s_node">
           <template v-for="(addr, index) in node.k8s_node.status.addresses" :key="name + index">
-            <el-tag type="primary" style="float: right;" v-if="addr.type === 'InternalIP'">{{addr.address}}</el-tag>
+            <el-tag type="" style="float: right;" v-if="addr.type === 'InternalIP'">{{addr.address}}</el-tag>
           </template>
         </template>
       </div>
@@ -76,7 +76,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .nodeInfo {
   padding: 10px 20px;
   margin-bottom: 10px;

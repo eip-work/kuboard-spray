@@ -22,7 +22,7 @@ zh:
 <template>
   <div>
     <div class="app_block_title">{{$t('titleRepo')}}</div>
-    <el-alert :title="$t('titleRepo')" type="default" :closable="false">
+    <el-alert :title="$t('titleRepo')" type="info" :closable="false">
       <div class="description">
         <li>{{$t('repoDescription1')}}</li>
         <li>{{$t('repoDescription2')}}</li>
@@ -30,13 +30,13 @@ zh:
     </el-alert>
 
     <div class="contentList">
-      <el-card shadow="none" style="min-height: 234px;">
+      <!-- <el-card shadow="none" style="min-height: 234px;"> -->
         <el-skeleton v-if="loading" :rows="5" animated />
         <div v-else>
           <div style="text-align: right;" class="app_margin_bottom">
             <el-button type="primary" icon="el-icon-plus" @click="$refs.create.show()">{{$t('addMirror')}}</el-button>
           </div>
-          <el-table :data="mirrors" style="width: 100%;">
+          <el-table v-if="mirrors" :data="mirrors" style="width: 100%;">
             <el-table-column prop="name" :label="$t('msg.name')">
               <template #default="scope">
                 <router-link :to="`/settings/mirrors/${scope.row.name}`">
@@ -76,7 +76,7 @@ zh:
             </el-card>
           </div> -->
         </div>
-      </el-card>
+      <!-- </el-card> -->
     </div>
     <MirrorCreate ref="create"></MirrorCreate>
   </div>
@@ -93,7 +93,7 @@ export default {
   data () {
     return {
       loading: false,
-      mirrors: [],
+      mirrors: undefined,
     }
   },
   refresh () {
@@ -116,7 +116,7 @@ export default {
   methods: {
     async refresh () {
       this.loading = true
-      this.mirrors = []
+      this.mirrors = undefined
       await this.kuboardSprayApi.get('/mirrors').then(resp => {
         let temp = []
         for (let i in resp.data.data) {
@@ -173,7 +173,7 @@ export default {
   }
 }
 .mirror:hover {
-  border-color: $--color-primary;
+  border-color: var(--el-color-primary);
 }
 .mirror:hover .deleteButton {
   overflow: visible;

@@ -301,9 +301,9 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
 .placeholder {
   font-size: 12px;
-  color: $--color-text-secondary;
+  color: var(--el-text-color-secondary);
 }
 </style>

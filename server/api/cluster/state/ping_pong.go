@@ -57,6 +57,7 @@ func PingPong(clusterName string, nodes string) (*PingPongResult, error) {
 			"-i", inventoryYamlPath,
 			"--fork", "100",
 			"--timeout", "20",
+			"-e", "kuboardspray_ssh_args='-o ConnectionAttempts=1 -o ConnectTimeout=6 -o UserKnownHostsFile=/dev/null -F /dev/null'",
 		},
 		Env:     []string{"ANSIBLE_CONFIG=" + constants.GET_ADHOC_CFG_PATH()},
 		Timeout: 21,

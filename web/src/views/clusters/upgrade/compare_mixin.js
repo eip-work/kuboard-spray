@@ -11,6 +11,7 @@ const mixin = {
           { name: 'kube-apiserver', version: kube_version },
           { name: 'kubectl', version: kube_version },
           { name: 'kubelet', version: kube_version },
+          { name: 'kubeproxy', version: kube_version },
           { name: 'kubeadm', version: kube_version },
         ]
       }

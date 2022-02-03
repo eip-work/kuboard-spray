@@ -7,7 +7,7 @@ en:
   dependency: Dependencies
   etcd_cluster: etcd
   loading: Loading versions installed on nodes
-
+  command_for_version: Command
 zh:
   versionInResource: 资源包中的版本
   componentName: 组件名称
@@ -16,6 +16,7 @@ zh:
   dependency: 依赖组件
   etcd_cluster: etcd
   loading: 查询节点上已安装的版本
+  command_for_version: 查询命令
 </i18n>
 
 
@@ -43,6 +44,21 @@ zh:
         </template>
       </el-table-column>
       <template v-if="version">
+        <el-table-column min-width="80px">
+          <template #header>
+            <div class="compare_version_header">{{ $t('command_for_version') }}</div>
+          </template>
+          <template #default="scope">
+            <el-tooltip trigger="click" v-if="firstNode && firstNode[scope.row.name]" placement="top" width="420">
+              <template>
+                <el-button icon="el-icon-finished">{{$t('command_for_version')}}</el-button>
+              </template>
+              <template #content>
+                <pre style="margin: 0 10px;">{{ firstNode[scope.row.name].cmd }}</pre>
+              </template>
+            </el-tooltip>
+          </template>
+        </el-table-column>
         <el-table-column v-for="(nodeVersion, nodeName) in version" :key="'col' + nodeName" min-width="120px">
           <template #header>
             <div class="compare_version_header">
@@ -89,7 +105,14 @@ export default {
     }
   },
   computed: {
-    
+    firstNode() {
+      if (this.version) {
+        for (let key in this.version) {
+          return this.version[key]
+        }
+      }
+      return undefined
+    }
   },
   mixins: [mixin],
   components: { UpgradeTask },

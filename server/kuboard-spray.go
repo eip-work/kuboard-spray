@@ -44,6 +44,10 @@ func setupRouter() *gin.Engine {
 	api.POST("/clusters/:cluster/sync_etcd_address", operation.SyncEtcdConfigActions)
 	api.POST("/clusters/:cluster/install_addon", operation.InstallAddon)
 	api.POST("/clusters/:cluster/remove_addon", operation.RemoveAddon)
+	api.POST("/clusters/:cluster/change_resource_package_version", cluster.ChangeResourcePackageVersion)
+	api.POST("/clusters/:cluster/upgrade_cluster", operation.UpgradeCluster)
+
+	api.GET("/clusters/:cluster/get_kubelet_version", operation.TestKubeletVersion)
 
 	api.GET("/clusters/:cluster/access/kubeconfig", cluster_access.GetKubeConfig)
 

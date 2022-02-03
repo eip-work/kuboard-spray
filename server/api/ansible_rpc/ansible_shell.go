@@ -49,6 +49,7 @@ func ExecuteShellCommands(owner_type, owner_name, target string, commands []Ansi
 		return nil, err
 	}
 
+	logrus.Trace(string(playbookStr))
 	playbookFile.Write(playbookStr)
 
 	cmd := command.Run{
@@ -62,7 +63,7 @@ func ExecuteShellCommands(owner_type, owner_name, target string, commands []Ansi
 		// Dir: resourcePackageDir,
 	}
 
-	stdout, _, err := cmd.Run()
+	stdout, stderr, err := cmd.Run()
 	if err != nil {
 		duration := time.Now().UnixNano() - startTime.UnixNano()
 		logrus.Trace("duration: ", duration/1000000)
@@ -71,7 +72,10 @@ func ExecuteShellCommands(owner_type, owner_name, target string, commands []Ansi
 
 	result := &AnsibleResult{}
 	if err := json.Unmarshal(stdout, result); err != nil {
-		logrus.Trace("ERROR: ", err)
+		logrus.Trace("Failed to pase stdout, ERROR:", err)
+		logrus.Trace("stdout:", string(stdout))
+		logrus.Trace("stderr:", string(stderr))
+		return nil, err
 	}
 
 	return result, nil

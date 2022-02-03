@@ -75,7 +75,10 @@ zh:
         <el-alert>CIS 扫描，正在建设...</el-alert>
       </el-tab-pane>
       <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('upgrade')" name="upgrade">
-        <Upgrade v-if="currentTab == 'upgrade'" :cluster="cluster"></Upgrade>
+        <template  v-if="currentTab == 'upgrade'">
+          <el-skeleton v-if="loading"></el-skeleton>
+          <Upgrade v-else :cluster="cluster"></Upgrade>
+        </template>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -224,14 +227,13 @@ export default {
       let _this = this
       await this.kuboardSprayApi.get(`/clusters/${this.name}`).then(async function (resp) {
         _this.cluster = resp.data.data
-        // this.cluster.processing = true
-        _this.currentTab = 'plan'
-        // if (_this.cluster.history.success_tasks.length > 0) {
-        //   _this.currentTab = 'access'
-        // } else {
-        //   _this.currentTab = 'plan'
-        // }
         _this.originalInventoryYaml = yaml.dump(_this.cluster.inventory)
+        for (let key in _this.cluster.inventory.all.hosts) {
+          if (_this.cluster.inventory.all.hosts[key].kuboardspray_node_action === 'upgrade_node') {
+            _this.currentTab = 'upgrade'
+            break
+          }
+        }
         _this.percentage = 30
         await _this.loadResourcePackage()
         _this.percentage = 40

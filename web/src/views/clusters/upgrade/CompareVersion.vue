@@ -25,7 +25,7 @@ zh:
       <el-table-column prop="name" :label="$t('componentName')" width="180" fixed>
         <template #header>
           <div class="compare_version_header">
-            <div style="line-height: 51px; text-align: center;">{{ $t('componentName') }}</div>
+            <div style="text-align: center;">{{ $t('componentName') }}</div>
           </div>
         </template>
         <template #default="scope">
@@ -35,7 +35,7 @@ zh:
       <el-table-column prop="version" :label="$t('versionInResource')" width="120" fixed>
         <template #header>
           <div class="compare_version_header">
-            <div style="line-height: 51px;">{{ $t('versionInResource') }}</div>
+            <div>{{ $t('versionInResource') }}</div>
           </div>
           </template>
         <template #default="scope">
@@ -46,8 +46,8 @@ zh:
         <el-table-column v-for="(nodeVersion, nodeName) in version" :key="'col' + nodeName" min-width="120px">
           <template #header>
             <div class="compare_version_header">
-              <div class="nowrap">{{ nodeName }}</div>
-              <el-button>升级</el-button>
+              <UpgradeTask v-if="showUpgradeButton(nodeName)" :cluster="cluster" :nodeName="nodeName" :controlPlanePendingUpgrade="false"></UpgradeTask>
+              <div v-else class="nowrap">{{ nodeName }}</div>
             </div>
           </template>
           <template #default="scope">
@@ -60,7 +60,7 @@ zh:
       </template>
       <el-table-column v-if="version === undefined">
         <template #header>
-          <div class="compare_version_header" style="line-height: 51px;">
+          <div class="compare_version_header">
             <i class="el-icon-loading"></i>
             <span style="margin-left: 10px;">{{$t('loading')}}</span>
           </div>
@@ -75,11 +75,13 @@ zh:
 
 <script>
 import mixin from './compare_mixin.js'
+import UpgradeTask from './UpgradeTask.vue'
 
 export default {
   props: {
     cluster: { type: Object, required: true },
     version: { type: Object, required: false, default: undefined },
+    controlPlanePendingUpgrade: { type: Boolean, required: false, default: true },
   },
   data() {
     return {
@@ -87,13 +89,21 @@ export default {
     }
   },
   computed: {
+    
   },
   mixins: [mixin],
-  components: { },
+  components: { UpgradeTask },
   mounted () {
+    this.kuboardSprayApi.get(`/clusters/${this.cluster.name}/get_kubelet_version`)
   },
   methods: {
-
+    showUpgradeButton(nodeName) {
+      if (this.controlPlanePendingUpgrade) {
+        return false
+      }
+      let host = this.cluster.inventory.all.hosts[nodeName]
+      return (host.kuboardspray_node_action === 'upgrade_node')
+    }
   }
 }
 </script>
@@ -110,6 +120,7 @@ export default {
   vertical-align: top;
 }
 .compare_version_header {
-  height: 51px;
+  // height: 51px;
+  text-align: left;
 }
 </style>

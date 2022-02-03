@@ -85,6 +85,7 @@ func CreateCluster(c *gin.Context) {
 
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to write inventory file: "+inventoryFilePath, err)
+		return
 	}
 
 	data := gin.H{}

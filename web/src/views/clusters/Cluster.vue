@@ -77,7 +77,7 @@ zh:
       <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('upgrade')" name="upgrade">
         <template  v-if="currentTab == 'upgrade'">
           <el-skeleton v-if="loading"></el-skeleton>
-          <Upgrade v-else :cluster="cluster"></Upgrade>
+          <Upgrade v-else :cluster="cluster" @refresh="refresh"></Upgrade>
         </template>
       </el-tab-pane>
     </el-tabs>

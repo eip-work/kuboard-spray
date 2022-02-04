@@ -77,7 +77,7 @@ zh:
             <span v-if="packageYaml[scope.row.version]">
               {{ scope.row.yaml.data.kubespray_version }}
             </span>
-            <el-icon v-else :size="12" style="width: 12px; height: 12px; vertical-align: middle;">
+            <el-icon v-else :size="12" style="width: 12px; height: 12px; vertical-align: middle;" class="is-loading">
               <el-icon-loading></el-icon-loading>
             </el-icon>
           </template>
@@ -87,7 +87,7 @@ zh:
             <span v-if="scope.row.yaml">
               {{ scope.row.yaml.data.kubernetes.kube_version }}
             </span>
-            <el-icon v-else :size="12" style="width: 12px; height: 12px; vertical-align: middle;">
+            <el-icon v-else :size="12" style="width: 12px; height: 12px; vertical-align: middle;" class="is-loading">
               <el-icon-loading></el-icon-loading>
             </el-icon>
           </template>
@@ -99,7 +99,7 @@ zh:
                 <el-tag>{{ engine.container_manager }}_{{ engine.params[engine.container_manager + '_version'] }}</el-tag>
               </div>
             </template>
-            <el-icon v-else :size="12" style="width: 12px; height: 12px; vertical-align: middle;">
+            <el-icon v-else :size="12" style="width: 12px; height: 12px; vertical-align: middle;" class="is-loading">
               <el-icon-loading></el-icon-loading>
             </el-icon>
           </template>
@@ -114,7 +114,7 @@ zh:
                 </el-tag>
               </div>
             </template>
-            <el-icon v-else :size="12" style="width: 12px; height: 12px; vertical-align: middle;">
+            <el-icon v-else :size="12" style="width: 12px; height: 12px; vertical-align: middle;" class="is-loading">
               <el-icon-loading></el-icon-loading>
             </el-icon>
           </template>
@@ -142,7 +142,7 @@ zh:
                 <el-tag type="danger" class="app_text_mono">{{scope.row.yaml.metadata.kuboard_spray_version.min}}</el-tag>
               </template>
             </template>
-            <el-icon v-else :size="12" style="width: 12px; height: 12px; vertical-align: middle;">
+            <el-icon v-else :size="12" style="width: 12px; height: 12px; vertical-align: middle;" class="is-loading">
               <el-icon-loading></el-icon-loading>
             </el-icon>
           </template>

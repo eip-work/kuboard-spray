@@ -6,20 +6,19 @@ zh:
 </i18n>
 
 <template>
-  <el-popover v-model:visible="showConfirm" :placement="placement" :width="width" trigger="click">
+  <el-popover v-model:visible="showConfirm" :placement="placement" :width="width" trigger="mannual">
     <template #reference>
       <el-button v-if="buttonText === ''" :style="buttonStyle" :type="type" :circle="circle" :icon="icon" @click="showConfirm = true" :plain="plain"></el-button>
       <el-button v-else :style="buttonStyle" :type="type" :circle="circle" :icon="icon" @click="showConfirm = true" :plain="plain">{{ buttonText || text }}</el-button>
     </template>
-    <slot>
-      <el-alert :type="alertType[type]" effect="dark" :title="text" :icon="icon" :closable="false">
-        <span>{{message}}</span>
-      </el-alert>
-      <div style="text-align: right; margin-top: 20px;">
-        <el-button @click="showConfirm = false" type="info" plain icon="el-icon-close">{{ $t('msg.cancel') }}</el-button>
-        <el-button @click="confirm" icon="el-icon-check" :type="type">{{ $t('continue', {text}) }}</el-button>
-      </div>
-    </slot>
+    <el-alert :type="alertType[type]" effect="light" :title="text" :icon="icon" :closable="false">
+      <span>{{message}}</span>
+    </el-alert>
+    <slot></slot>
+    <div style="text-align: right; margin-top: 20px;">
+      <el-button @click="showConfirm = false" type="info" plain icon="el-icon-close">{{ $t('msg.cancel') }}</el-button>
+      <el-button @click="confirm" icon="el-icon-check" :type="type">{{ $t('continue', {text}) }}</el-button>
+    </div>
   </el-popover>
 </template>
 

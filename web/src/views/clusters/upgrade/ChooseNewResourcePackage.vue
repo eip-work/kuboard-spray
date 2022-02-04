@@ -4,7 +4,9 @@ en:
   currentVersion: Currently selected
   cannot_down_grade: K8S version in the package is lower
   switchToTargetVersion: Replace with this version
+  switchToTargetVersionDesc: Component version in this resource package are the same with the currently installed one, but ansible script are different. You don't need to perform a cluster upgrade by selecting this resource package.
   upgradeToTargetVersion: Upgrade to this version
+  upgradeToTargetVersionDesc: After select this resource package you need to perform a cluster upgrade to keep with the latest version.
   cannotUpgradeToTargetVersion: Cannot upgrade to this version
   downloadFirstCanUpgrade: Can upgrade, go download
   downloadFirstCanReplace: Can replace, go download
@@ -15,7 +17,9 @@ zh:
   currentVersion: 当前版本
   cannot_down_grade: 资源包中K8S版本过低
   switchToTargetVersion: 用此版本替代
+  switchToTargetVersionDesc: 此资源包中的组件版本与当前已安装版本相同，但是 ansible 脚本有所不同，替换后，不需要对集群执行升级操作。
   upgradeToTargetVersion: 升级到此版本
+  upgradeToTargetVersionDesc: 选择此版本后，您需要执行集群升级动作，以更新集群的版本。
   cannotUpgradeToTargetVersion: 不能升级到此版本
   downloadFirstCanUpgrade: 可升级，去下载
   downloadFirstCanReplace: 可替代，去下载
@@ -48,14 +52,20 @@ zh:
                       @click="$router.push(`/settings/resources/${scope.row.version}/on_air`)">
                       {{ $t('downloadFirstCanReplace') }}
                     </el-button>
-                    <el-button type="primary" icon="el-icon-right" v-else @click="changeToVersion('replace', scope.row.version)">{{ $t('switchToTargetVersion') }}</el-button>
+                    <confirm-button v-else type="warning" icon="el-icon-right" :text="$t('switchToTargetVersion')"
+                      :message="$t('switchToTargetVersionDesc')"
+                      @confirm="changeToVersion('replace', scope.row.version)">
+                    </confirm-button>
                   </template>
                   <template v-else-if="canUpgradeTo(scope.row)">
                     <el-button type="primary" icon="el-icon-download" v-if="!scope.row.isOffline && !scope.row.imported"
                       @click="$router.push(`/settings/resources/${scope.row.version}/on_air`)">
                       {{ $t('downloadFirstCanUpgrade') }}
                     </el-button>
-                    <el-button type="primary" icon="el-icon-upload" v-else @click="changeToVersion('upgrade', scope.row.version)">{{ $t('upgradeToTargetVersion') }}</el-button>
+                    <confirm-button v-else type="warning" icon="el-icon-right" :text="$t('upgradeToTargetVersion')"
+                      :message="$t('upgradeToTargetVersionDesc')"
+                      @confirm="changeToVersion('upgrade', scope.row.version)">
+                    </confirm-button>
                   </template>
                   <el-button v-else type="info" disabled icon="el-icon-circle-close">{{ $t('cannotUpgradeToTargetVersion') }}</el-button>
                 </template>

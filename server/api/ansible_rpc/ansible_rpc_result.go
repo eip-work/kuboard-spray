@@ -16,15 +16,17 @@ type AnsibleResultTask struct {
 }
 
 type AnsibleResultNode struct {
-	Action     string `json:"action"`
-	Changed    bool   `json:"changed"`
-	Cmd        string `json:"cmd"`
-	StdErr     string `json:"stderr"`
-	StdOut     string `json:"stdout"`
-	ReturnCode int    `json:"rc"`
-	Skipped    bool   `json:"skipped"`
-	SkipReason string `json:"skip_reason"`
-	Delta      string `json:"delta"`
+	Action      string `json:"action"`
+	Changed     bool   `json:"changed"`
+	Cmd         string `json:"cmd"`
+	StdErr      string `json:"stderr"`
+	StdOut      string `json:"stdout"`
+	ReturnCode  int    `json:"rc"`
+	Skipped     bool   `json:"skipped"`
+	SkipReason  string `json:"skip_reason"`
+	Delta       string `json:"delta"`
+	UnReachable bool   `json:"unreachable"`
+	Msg         string `json:"msg"`
 }
 
 type AnsibleResultTaskMeta struct {

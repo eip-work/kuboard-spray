@@ -39,13 +39,14 @@ func CheckClusterVersion(c *gin.Context) {
 		Args: []string{
 			cluster.ResourcePackageDir + "/" + playbook,
 			"-i", cluster.InventoryPath,
+			"-e", "kuboardspray_ssh_args='-o ConnectionAttempts=1 -o ConnectTimeout=6 -o UserKnownHostsFile=/dev/null -F /dev/null'",
 		},
 		Env:     []string{"ANSIBLE_CONFIG=./ansible.cfg"},
 		Timeout: 20,
 		Dir:     "./ansible-rpc",
 	}
 
-	stdout, _, err := cmd.Run()
+	stdout, stderr, err := cmd.Run()
 	if err != nil {
 		duration := time.Now().UnixNano() - startTime.UnixNano()
 		logrus.Trace("duration: ", duration/1000000)
@@ -53,9 +54,12 @@ func CheckClusterVersion(c *gin.Context) {
 		return
 	}
 
+	// logrus.Trace("stdout: ", string(stdout), "\nstderr: ", string(stderr))
+
 	result := &ansible_rpc.AnsibleResult{}
 	if err := json.Unmarshal(stdout, result); err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to Unmarshal result: ["+string(stdout)+"]", err)
+		logrus.Trace("stdout: ", string(stdout), "\nstderr: ", string(stderr))
 		return
 	}
 

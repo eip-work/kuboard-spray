@@ -20,7 +20,7 @@ func ExecuteShellCommands(owner_type, owner_name, target string, commands []Ansi
 	inventoryPath := constants.GetInventoryPath(owner_type, owner_name)
 
 	tempPlayBookFilePath := "./temp_play_" + owner_type + "_" + owner_name + common.RandomString(10) + ".yaml"
-	playbookFile, err := os.OpenFile(tempPlayBookFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+	playbookFile, err := os.OpenFile(tempPlayBookFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0655)
 	if err != nil {
 		return nil, err
 	}
@@ -57,6 +57,7 @@ func ExecuteShellCommands(owner_type, owner_name, target string, commands []Ansi
 		Args: []string{
 			tempPlayBookFilePath,
 			"-i", inventoryPath,
+			"-e", "kuboardspray_ssh_args='-o ConnectionAttempts=1 -o ConnectTimeout=6 -o UserKnownHostsFile=/dev/null -F /dev/null'",
 		},
 		Env:     []string{"ANSIBLE_CONFIG=./ansible-rpc/ansible.cfg"},
 		Timeout: 20,

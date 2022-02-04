@@ -66,7 +66,14 @@ zh:
           </template>
           <template #default="scope">
             <template v-if="nodeVersion[scope.row.name]">
-              <el-tag v-if="nodeVersion[scope.row.name].stdout === scope.row.version" type="success">{{ nodeVersion[scope.row.name].stdout }}</el-tag>
+              <el-tag v-if="nodeVersion[scope.row.name].skipped" type="info">skipped</el-tag>
+              <el-tooltip v-else-if="nodeVersion[scope.row.name].unreachable" trigger="hover" placement="top" width="420">
+                <el-tag type="error" effect="dark" style="cursor: pointer">unreachable</el-tag>
+                <template #content>
+                  <pre style="margin: 0 10px; width: 450px;">{{ nodeVersion[scope.row.name].msg }}</pre>
+                </template>
+              </el-tooltip>
+              <el-tag v-else-if="nodeVersion[scope.row.name].stdout === scope.row.version" type="success">{{ nodeVersion[scope.row.name].stdout }}</el-tag>
               <el-tag v-else-if="nodeVersion[scope.row.name].stdout" type="danger">{{ nodeVersion[scope.row.name].stdout }}</el-tag>
             </template>
           </template>
@@ -75,14 +82,14 @@ zh:
       <el-table-column v-if="version === undefined" min-width="180px">
         <template #header>
           <div class="compare_version_header">
-            <el-icon style="vertical-align: middle;">
+            <el-icon style="vertical-align: middle;" class="is-loading">
               <el-icon-loading></el-icon-loading>
             </el-icon>
             <span style="margin-left: 10px;">{{$t('loading')}}</span>
           </div>
         </template>
         <template #default>
-          <el-icon>
+          <el-icon class="is-loading">
             <el-icon-loading></el-icon-loading>
           </el-icon>
         </template>

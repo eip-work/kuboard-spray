@@ -3,6 +3,7 @@ package operation
 import (
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/eip-work/kuboard-spray/api/ansible_rpc"
@@ -34,19 +35,7 @@ func UpgradeCluster(c *gin.Context) {
 
 	postExec := func(status command.ExecuteExitStatus) (string, error) {
 
-		success := status.Success
 		var message string
-		if success {
-			message += "\n"
-			message = "\033[32m[ " + "Succeeded in upgrading nodes: " + req.Nodes + ". ]\033[0m \n"
-			message += "\033[32m[ " + "节点 " + req.Nodes + " 升级成功 ]\033[0m \n"
-		} else {
-			message += "\n"
-			message = "\033[31m\033[01m\033[05m[" + "Failed to upgrade. Please review the logs and fix the problem." + "]\033[0m \n"
-			message += "\033[31m\033[01m\033[05m[" + "集群升级失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + "]\033[0m \n"
-		}
-
-		clusterMetadata, _ := cluster_common.ClusterMetadataByName(req.Cluster)
 
 		kubeletVersions, err := getKubeletVersion(req.Cluster)
 		if err != nil {
@@ -55,18 +44,36 @@ func UpgradeCluster(c *gin.Context) {
 			return "\n" + message, nil
 		}
 
+		clusterMetadata, _ := cluster_common.ClusterMetadataByName(req.Cluster)
+
 		newVersion := common.MapGetString(clusterMetadata.ResourcePackage, "data.kubernetes.kube_version")
 		logrus.Trace("newVersion:", newVersion)
+		upgradedNodes := ""
+		count := 0
 		for node, version := range kubeletVersions {
 			logrus.Trace("node:", node, " version:", version)
 			if newVersion == version {
 				common.MapDelete(clusterMetadata.Inventory, "all.hosts."+node+".kuboardspray_node_action")
+				upgradedNodes += node + ","
+				count++
 			}
 		}
+		upgradedNodes = strings.Trim(upgradedNodes, ",")
+
 		inventoryNewContent, _ := yaml.Marshal(clusterMetadata.Inventory)
 
 		if err := ioutil.WriteFile(clusterMetadata.InventoryPath, inventoryNewContent, 0655); err != nil {
 			logrus.Trace(err)
+		}
+
+		if count > 0 {
+			message += "\n"
+			message = "\033[32m[ " + "Succeeded in upgrading " + strconv.Itoa(count) + " nodes: " + upgradedNodes + ". ]\033[0m \n"
+			message += "\033[32m[ 成功升级了 " + strconv.Itoa(count) + " 个节点: " + upgradedNodes + " ]\033[0m \n"
+		} else {
+			message += "\n"
+			message = "\033[31m\033[01m\033[05m[" + "Failed to upgrade. Please review the logs and fix the problem." + "]\033[0m \n"
+			message += "\033[31m\033[01m\033[05m[" + "集群升级失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + "]\033[0m \n"
 		}
 
 		return "\n" + message, nil

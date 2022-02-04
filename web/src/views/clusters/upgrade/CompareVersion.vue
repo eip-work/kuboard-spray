@@ -68,13 +68,14 @@ zh:
             <template v-if="nodeVersion[scope.row.name]">
               <el-tag v-if="nodeVersion[scope.row.name].skipped" type="info">skipped</el-tag>
               <el-tooltip v-else-if="nodeVersion[scope.row.name].unreachable" trigger="hover" placement="top" width="420">
-                <el-tag type="error" effect="dark" style="cursor: pointer">unreachable</el-tag>
+                <el-tag type="danger" effect="dark" style="cursor: pointer">unreachable</el-tag>
                 <template #content>
                   <pre style="margin: 0 10px; width: 450px;">{{ nodeVersion[scope.row.name].msg }}</pre>
                 </template>
               </el-tooltip>
               <el-tag v-else-if="nodeVersion[scope.row.name].stdout === scope.row.version" type="success">{{ nodeVersion[scope.row.name].stdout }}</el-tag>
               <el-tag v-else-if="nodeVersion[scope.row.name].stdout" type="danger">{{ nodeVersion[scope.row.name].stdout }}</el-tag>
+              <el-tag v-else type="info">empty</el-tag>
             </template>
           </template>
         </el-table-column>
@@ -129,6 +130,9 @@ export default {
   },
   methods: {
     showUpgradeButton(nodeName) {
+      if (this.cluster.history.processing) {
+        return false
+      }
       if (this.controlPlanePendingUpgrade) {
         return false
       }

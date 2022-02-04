@@ -21,17 +21,19 @@ zh:
         <el-form-item :label="$t('resourceVersion')">
           <div class="app_text_mono version_no">
             <span style="margin-right: 20px;">{{ resource.metadata.version }}</span>
-            <UpgradeTask v-if="pendingUpgrade" :cluster="cluster" :controlPlanePendingUpgrade="controlPlanePendingUpgrade"></UpgradeTask>
-            <template v-else>
-              <el-button type="danger" icon="el-icon-upload" @click="$refs.choose.show()" style="margin-left: 20px;">{{$t('chooseNewResourcePackage')}}</el-button>
-              <template v-if="cluster.inventory.all.hosts.localhost.kuboardspray_resource_package_previous">
-                <el-popover placement="top-start" :title="$t('finished_upgrade_title')" :width="320" trigger="hover">
-                  <template #reference>
-                    <el-button type="success" round icon="el-icon-circle-check">{{ $t('finished_upgrade_title') }}</el-button>
-                  </template>
-                  <div>{{$t('finished_upgrade')}}</div>
-                  <div class="app_text_mono">{{cluster.inventory.all.hosts.localhost.kuboardspray_resource_package_previous}}</div>
-                </el-popover>
+            <template v-if="!cluster.history.processing">
+              <UpgradeTask v-if="pendingUpgrade" :cluster="cluster" :controlPlanePendingUpgrade="controlPlanePendingUpgrade" @refresh="$emit('refresh')"></UpgradeTask>
+              <template v-else>
+                <el-button type="danger" icon="el-icon-upload" @click="$refs.choose.show()" style="margin-left: 20px;">{{$t('chooseNewResourcePackage')}}</el-button>
+                <template v-if="cluster.inventory.all.hosts.localhost.kuboardspray_resource_package_previous">
+                  <el-popover placement="top-start" :title="$t('finished_upgrade_title')" :width="320" trigger="hover">
+                    <template #reference>
+                      <el-button type="success" round icon="el-icon-circle-check">{{ $t('finished_upgrade_title') }}</el-button>
+                    </template>
+                    <div>{{$t('finished_upgrade')}}</div>
+                    <div class="app_text_mono">{{cluster.inventory.all.hosts.localhost.kuboardspray_resource_package_previous}}</div>
+                  </el-popover>
+                </template>
               </template>
             </template>
           </div>

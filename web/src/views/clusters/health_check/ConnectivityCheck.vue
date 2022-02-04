@@ -175,7 +175,7 @@ export default {
           let namespace = this.cluster.inventory.all.children.target.children.k8s_cluster.vars.netcheck_namespace || 'default'
           this.kuboardSprayApi.get(`/clusters/${this.cluster.name}/health_check/details?namespace=${namespace}&&pod=${newValue.pod}&&type=${newValue.type}`).then(resp => {
             console.log(resp.data.data)
-            this.connectivityLogs = resp.data.data.stdout
+            this.connectivityLogs = resp.data.data.stdout || resp.data.data.stderr
             this.connectivityLogsLoading = false
           }).catch(e => {
             this.connectivityLogsLoading = false
@@ -201,6 +201,7 @@ export default {
       this.errorMsg = undefined
       await this.kuboardSprayApi.get(`/clusters/${this.cluster.name}/health_check/connectivity_check`).then(resp => {
         console.log(resp.data)
+        resp.data.data.stdout_obj = JSON.parse(resp.data.data.stdout)
         this.connectivityCheck = resp.data.data
       }).catch(e => {
         this.errorMsg = e

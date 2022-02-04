@@ -40,8 +40,15 @@ func ExecuteShellCommands(owner_type, owner_name, target string, commands []Ansi
 	playbook := gin.H{
 		"name":         "temp_play",
 		"gather_facts": false,
+		"strategy":     "free",
 		"hosts":        target,
 		"tasks":        tasks,
+		"environment": gin.H{
+			"ETCDCTL_API":    "3",
+			"ETCDCTL_CERT":   "/etc/ssl/etcd/ssl/admin-{{inventory_hostname}}.pem",
+			"ETCDCTL_KEY":    "/etc/ssl/etcd/ssl/admin-{{inventory_hostname}}-key.pem",
+			"ETCDCTL_CACERT": "/etc/ssl/etcd/ssl/ca.pem",
+		},
 	}
 
 	playbookStr, err := yaml.Marshal([]gin.H{playbook})
@@ -57,11 +64,11 @@ func ExecuteShellCommands(owner_type, owner_name, target string, commands []Ansi
 		Args: []string{
 			tempPlayBookFilePath,
 			"-i", inventoryPath,
-			"-e", "kuboardspray_ssh_args='-o ConnectionAttempts=1 -o ConnectTimeout=6 -o UserKnownHostsFile=/dev/null -F /dev/null'",
+			"-f", "200",
+			"-e", "kuboardspray_ssh_args='-o ConnectionAttempts=1 -o UserKnownHostsFile=/dev/null -F /dev/null'",
 		},
 		Env:     []string{"ANSIBLE_CONFIG=./ansible-rpc/ansible.cfg"},
 		Timeout: 20,
-		// Dir: resourcePackageDir,
 	}
 
 	stdout, stderr, err := cmd.Run()

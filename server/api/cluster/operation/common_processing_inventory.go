@@ -85,7 +85,7 @@ func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[strin
 		common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+field, version)
 	}
 
-	// 设置网络插件信息  FIXME 调整 package.yaml 的格式
+	// 设置网络插件信息
 	np := common.MapGet(inventory, "all.children.target.children.k8s_cluster.vars.kube_network_plugin").(string)
 	var np_dependency map[string]interface{}
 	network_plugins := common.MapGet(resourcePackage, "data.network_plugin").([]interface{})

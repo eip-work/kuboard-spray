@@ -72,7 +72,7 @@ export default {
       if (this.active) {
         result += ' active'
       }
-      if (this.onlineNodes[this.name] && this.onlineNodes[this.name].status === 'SUCCESS') {
+      if (this.onlineNodes[this.name] && this.onlineNodes[this.name].ping === 'pong') {
         result += ' online_node'
       }
       if (this.pendingAction === 'remove_node') {
@@ -81,7 +81,7 @@ export default {
       if (this.name !== 'localhost' && this.name !== 'bastion') {
         if (this.pingpong[this.name] === undefined) {
           result += ' unknown_status'
-        } else if (this.pingpong[this.name].status === 'SUCCESS') {
+        } else if (this.pingpong[this.name].ping === 'pong') {
           result += ' online_node'
         } else {
           result += ' offline_node'

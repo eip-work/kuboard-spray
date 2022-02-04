@@ -14,7 +14,10 @@ en:
   offlineNodes: Offline nodes
   offlineNodesDesc: Exclude the following offline nodes.
 
-  upgrade_cluster: Upgrade Cluster
+  download: Distribute installation binaries
+  download_desc: In the process of upgrading, we are going to change image version in some daemonsets, it would be the best if we distribute all required binaries and container images before we do the cactual upgrading.
+
+  upgrade_cluster: "Upgrade cluster"
   upgrade_kube_node: Upgrade kube_nodes
   upgrade_kube_node_desc: Please select nodes to upgrade in this task run.
   upgrade_node_by_name: Upgrade {nodeName}
@@ -37,13 +40,16 @@ zh:
   offlineNodes: 离线节点
   offlineNodesDesc: 排除以下不在线的节点：
 
+  download: 分发安装包
+  download_desc: 升级过程中，将会改变一些 daemonset 的版本（例如：kube-proxy, calico-node 等），如果不事先分发这些镜像到所有各个节点，将导致升级过程中，部分节点可能因为缺少对应版本的镜像而出现问题。
+
   upgrade_cluster: 升级集群
   upgrade_kube_node: 升级多个工作节点
   upgrade_kube_node_desc: 请选择本次任务中要升级的节点
   upgrade_node_by_name: 升级 {nodeName}
   upgrade_node_by_name_desc: 一次只升级一个节点
 
-  upgrade_all_nodes: 一次升级所有节点
+  upgrade_all_nodes: 升级所有节点
   upgrade_all_nodes_desc: 一次性升级所有节点，如果当前有工作负载正在运行，将造成服务中断
   upgrade_master_nodes: 升级控制节点和 ETCD 节点
   upgrade_master_nodes_desc: 先升级控制节点和 ETCD 节点，然后再逐个排空、升级工作节点，避免造成服务中断
@@ -73,13 +79,16 @@ zh:
         <el-form-item :label="$t('operation')" prop="action" style="margin-top: 10px;">
           <el-radio-group v-model="form.action" class="app_margin_bottom">
             <template v-if="nodeName === undefined">
-              <el-radio-button label="upgrade_all_nodes" :disabled="!controlPlanePendingUpgrade">
+              <el-radio-button label="download" :disabled="!requireDownload">
+                {{ $t('download') }}
+              </el-radio-button>
+              <el-radio-button label="upgrade_all_nodes" :disabled="requireDownload || !controlPlanePendingUpgrade">
                 {{ $t('upgrade_all_nodes') }}
               </el-radio-button>
-              <el-radio-button label="upgrade_master_nodes" :disabled="!controlPlanePendingUpgrade">
+              <el-radio-button label="upgrade_master_nodes" :disabled="requireDownload || !controlPlanePendingUpgrade">
                 {{ $t('upgrade_master_nodes') }}
               </el-radio-button>
-              <el-radio-button label="upgrade_kube_node" :disabled="controlPlanePendingUpgrade">{{$t('upgrade_kube_node')}}</el-radio-button>
+              <el-radio-button label="upgrade_kube_node" :disabled="requireDownload || controlPlanePendingUpgrade">{{$t('upgrade_kube_node')}}</el-radio-button>
             </template>
             <el-radio-button v-else label="upgrade_node_by_name">{{$t('upgrade_node_by_name', {nodeName})}}</el-radio-button>
           </el-radio-group>
@@ -157,16 +166,28 @@ export default {
     title () {
       if (this.nodeName) {
         return this.$t('upgrade_node_by_name', { nodeName: this.nodeName })
-      } else if (this.controlPlanePendingUpgrade) {
-        return this.$t('upgrade_cluster')
-      } else {
-        return this.$t('upgrade_kube_node')
       }
+      return this.$t('upgrade_cluster') + ' : ' + this.$t(this.form.action)
+    },
+    requireDownload () {
+      for (let hostName in this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts) {
+        let host = this.cluster.inventory.all.hosts[hostName]
+        if (host.kuboardspray_require_download) {
+          return true
+        }
+      }
+      return false
+    },
+    requireDownloadForNode () {
+      if (this.nodeName) {
+        return this.cluster.inventory.all.hosts[this.nodeName] === true
+      }
+      return false
     },
     offlineNodes () {
       let result = []
       for (let key in this.cluster.inventory.all.hosts) {
-        if (this.pingpong[key] && this.pingpong[key].status !== 'SUCCESS') {
+        if (this.pingpong[key] && this.pingpong[key].ping !== 'pong') {
           result.push(key)
         }
       }
@@ -175,19 +196,26 @@ export default {
   },
   components: { ExecuteTask },
   mounted () {
+    this.setAction()
   },
   methods: {
     onVisibleChange(flag) {
       if (flag) {
-        if (!this.controlPlanePendingUpgrade) {
-          if (this.nodeName === undefined) {
-            this.form.action = 'upgrade_kube_node'
-          } else {
-            this.form.action = 'upgrade_node_by_name'
-          }
-        }
+        this.setAction()
         this.form.kube_nodes_to_upgrade = []
         this.testPingPong('target')
+      }
+    },
+    setAction () {
+      if (!this.controlPlanePendingUpgrade) {
+        if (this.nodeName === undefined) {
+          this.form.action = 'upgrade_kube_node'
+        } else {
+          this.form.action = 'upgrade_node_by_name'
+        }
+      }
+      if (this.requireDownload) {
+        this.form.action = 'download'
       }
     },
     testPingPong (nodes) {

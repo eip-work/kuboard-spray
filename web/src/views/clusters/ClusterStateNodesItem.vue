@@ -76,7 +76,7 @@ export default {
 }
 </script>
 
-<style scoped lang="css">
+<style scoped lang="scss">
 .nodeInfo {
   padding: 10px 20px;
   margin-bottom: 10px;
@@ -84,7 +84,7 @@ export default {
   .etcd_error {
     font-size: 12px;
     padding: 2px 10px;
-    background-color: var(--el-color-danger);
+    background-color: var(--el-color-warning);
     margin-top: 10px;
     color: var(--el-color-white);
     margin-left: 130px;

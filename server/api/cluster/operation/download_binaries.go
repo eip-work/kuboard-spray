@@ -3,10 +3,7 @@ package operation
 import (
 	"io/ioutil"
 	"net/http"
-	"strconv"
-	"strings"
 
-	"github.com/eip-work/kuboard-spray/api/ansible_rpc"
 	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
@@ -15,19 +12,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type UpgradeClusterRequest struct {
-	OperationCommonRequest
-	Nodes string `json:"nodes"`
-}
+func DownloadBinaries(c *gin.Context) {
 
-func UpgradeCluster(c *gin.Context) {
-
-	var req UpgradeClusterRequest
+	var req OperationCommonRequest
 	c.ShouldBindUri(&req)
 	c.ShouldBindJSON(&req)
-	req.Operation = "upgrade_cluster"
+	req.Operation = "download_binaries"
 
-	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.OperationCommonRequest)
+	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req)
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to process inventory", err)
 		return
@@ -58,7 +50,7 @@ func UpgradeCluster(c *gin.Context) {
 				count++
 			}
 		}
-		upgradedNodes = strings.Trim(upgradedNodes, ",")
+		// upgradedNodes = strings.Trim(upgradedNodes, ",")
 
 		inventoryNewContent, _ := yaml.Marshal(clusterMetadata.Inventory)
 
@@ -66,15 +58,15 @@ func UpgradeCluster(c *gin.Context) {
 			logrus.Trace(err)
 		}
 
-		if count > 0 {
-			message += "\n"
-			message = "\033[32m[ " + "Succeeded in upgrading " + strconv.Itoa(count) + " nodes: " + upgradedNodes + ". ]\033[0m \n"
-			message += "\033[32m[ 成功升级了 " + strconv.Itoa(count) + " 个节点: " + upgradedNodes + " ]\033[0m \n"
-		} else {
-			message += "\n"
-			message = "\033[31m\033[01m\033[05m[" + "Failed to upgrade. Please review the logs and fix the problem." + "]\033[0m \n"
-			message += "\033[31m\033[01m\033[05m[" + "集群升级失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + "]\033[0m \n"
-		}
+		// if count > 0 {
+		// 	message += "\n"
+		// 	message = "\033[32m[ " + "Succeeded in upgrading " + strconv.Itoa(count) + " nodes: " + upgradedNodes + ". ]\033[0m \n"
+		// 	message += "\033[32m[ 成功升级了 " + strconv.Itoa(count) + " 个节点: " + upgradedNodes + " ]\033[0m \n"
+		// } else {
+		// 	message += "\n"
+		// 	message = "\033[31m\033[01m\033[05m[" + "Failed to upgrade. Please review the logs and fix the problem." + "]\033[0m \n"
+		// 	message += "\033[31m\033[01m\033[05m[" + "集群升级失败，请回顾日志，找到错误信息，并解决问题后，再次尝试。" + "]\033[0m \n"
+		// }
 
 		return "\n" + message, nil
 	}
@@ -87,8 +79,9 @@ func UpgradeCluster(c *gin.Context) {
 		Cmd:       "ansible-playbook",
 		Args: func(execute_dir string) []string {
 			result := []string{"-i", execute_dir + "/inventory.yaml", playbook}
-			result = appendCommonParams(result, req.OperationCommonRequest, true)
-			result = append(result, "--limit", req.Nodes)
+			result = appendCommonParams(result, req, false)
+			result = append(result, "--tags", "download")
+			result = append(result, "-skip-tags", "upgrade")
 			return result
 		},
 		Dir:      cluster_common.ResourcePackageDirForInventory(inventory),
@@ -109,35 +102,4 @@ func UpgradeCluster(c *gin.Context) {
 			"pid": cmd.R_Pid,
 		},
 	})
-}
-
-func getKubeletVersion(clusterName string) (map[string]string, error) {
-	cmd := "kubectl get nodes -o go-template --template=\"{{ '{{' }}range.items{{'}}'}}{{ '{{' }}.metadata.name{{'}}'}} {{ '{{' }}.status.nodeInfo.kubeletVersion{{'}}'}},{{ '{{' }}end{{'}}'}}\""
-
-	req := []ansible_rpc.AnsibleCommandsRequest{}
-	req = append(req, ansible_rpc.AnsibleCommandsRequest{
-		Name:    "getKubeletVersion",
-		Command: cmd,
-	})
-
-	ansibleResult, err := ansible_rpc.ExecuteShellCommandsAbortOnFirstSuccess("cluster", clusterName, "kube_control_plane[0]", req)
-	if err != nil {
-		return nil, err
-	}
-
-	stdout := ansibleResult[0].StdOut
-	logrus.Trace(stdout)
-	lines := strings.Split(stdout, ",")
-
-	result := map[string]string{}
-	for _, line := range lines {
-		if line != "" {
-			s := strings.Split(line, " ")
-			result[s[0]] = s[1]
-		}
-	}
-
-	logrus.Trace(result)
-
-	return result, nil
 }

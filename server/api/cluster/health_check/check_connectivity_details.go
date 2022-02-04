@@ -3,7 +3,7 @@ package health_check
 import (
 	"net/http"
 
-	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
+	"github.com/eip-work/kuboard-spray/api/ansible_rpc"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
 )
@@ -30,17 +30,20 @@ func CheckConnectivityDetails(c *gin.Context) {
 	} else { // podDetails
 		shell = "kubectl get pods -n " + request.Namespace + " " + request.Pod + " -o yaml"
 	}
-	result, err := cluster_common.ExecuteShellOnControlPlane(request.ClusterName, shell)
 
+	shellReq := ansible_rpc.AnsibleCommandsRequest{
+		Name:    "shell",
+		Command: shell,
+	}
+	shellResult, err := ansible_rpc.ExecuteShellCommandsAbortOnFirstSuccess("cluster", request.ClusterName, "kube_control_plane[0]", []ansible_rpc.AnsibleCommandsRequest{shellReq})
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed", err)
 		return
 	}
-	result.Stdout = "[root@" + result.NodeName + "]~$ " + shell + "\n\n" + result.Stdout
 
 	c.JSON(http.StatusOK, common.KuboardSprayResponse{
 		Code:    http.StatusOK,
 		Message: "success",
-		Data:    result,
+		Data:    shellResult[0],
 	})
 }

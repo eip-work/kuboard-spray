@@ -158,7 +158,7 @@ export default {
     offlineNodes () {
       let result = []
       for (let key in this.cluster.inventory.all.hosts) {
-        if (this.pingpong[key] && this.pingpong[key].status !== 'SUCCESS') {
+        if (this.pingpong[key] && this.pingpong[key].ping !== 'pong') {
           result.push(key)
         }
       }

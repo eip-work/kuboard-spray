@@ -35,6 +35,7 @@ func ChangeResourcePackageVersion(c *gin.Context) {
 			}
 			if hostName != "localhost" && hostName != "bastion" {
 				common.MapSet(metadata.Inventory, "all.hosts."+hostName+".kuboardspray_node_action", "upgrade_node")
+				common.MapSet(metadata.Inventory, "all.hosts."+hostName+".kuboardspray_require_download", true)
 			}
 		}
 	}

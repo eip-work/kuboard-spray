@@ -16,17 +16,21 @@ type AnsibleResultTask struct {
 }
 
 type AnsibleResultNode struct {
-	Action      string `json:"action"`
-	Changed     bool   `json:"changed"`
-	Cmd         string `json:"cmd"`
-	StdErr      string `json:"stderr"`
-	StdOut      string `json:"stdout"`
-	ReturnCode  int    `json:"rc"`
-	Skipped     bool   `json:"skipped"`
-	SkipReason  string `json:"skip_reason"`
-	Delta       string `json:"delta"`
-	UnReachable bool   `json:"unreachable"`
-	Msg         string `json:"msg"`
+	Action            string                 `json:"action"`
+	Changed           bool                   `json:"changed"`
+	Cmd               string                 `json:"cmd"`
+	StdErr            string                 `json:"stderr"`
+	StdOut            string                 `json:"stdout"`
+	StdOutObj         interface{}            `json:"stdout_obj"`
+	ReturnCode        int                    `json:"rc"`
+	Skipped           bool                   `json:"skipped"`
+	SkipReason        string                 `json:"skip_reason"`
+	Delta             string                 `json:"delta"`
+	UnReachable       bool                   `json:"unreachable"`
+	Msg               string                 `json:"msg"`
+	AnsibleFacts      map[string]interface{} `json:"ansible_facts,omitempty"`
+	InventoryHostName string                 `json:"ansible_inventory_hostname,omitempty"`
+	Ping              string                 `json:"ping,omitempty"`
 }
 
 type AnsibleResultTaskMeta struct {

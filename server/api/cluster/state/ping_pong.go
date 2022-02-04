@@ -2,14 +2,11 @@ package state
 
 import (
 	"net/http"
-	"strings"
 
+	"github.com/eip-work/kuboard-spray/api/ansible_rpc"
 	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
-	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
-	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 )
 
 type PingPongRequest struct {
@@ -41,56 +38,33 @@ type PingPongResult struct {
 }
 
 type PingPongItem struct {
-	NodeName string `json:"node_name"`
-	Status   string `json:"status"`
-	Message  string `json:"message"`
+	NodeName    string `json:"node_name"`
+	Ping        string `json:"ping"`
+	UnReachable bool   `json:"unreachable"`
+	Message     string `json:"message"`
 }
 
 func PingPong(clusterName string, nodes string) (*PingPongResult, error) {
 	inventoryYamlPath := cluster_common.ClusterInventoryYamlPath(clusterName)
 
-	cmd := command.Run{
-		Cmd: "ansible",
-		Args: []string{
-			nodes,
-			"-m", "ping",
-			"-i", inventoryYamlPath,
-			"--fork", "100",
-			"--timeout", "20",
-			"-e", "kuboardspray_ssh_args='-o ConnectionAttempts=1 -o ConnectTimeout=6 -o UserKnownHostsFile=/dev/null -F /dev/null'",
-		},
-		Env:     []string{"ANSIBLE_CONFIG=" + constants.GET_ADHOC_CFG_PATH()},
-		Timeout: 21,
-		// Dir: resourcePackageDir,
-	}
-	stdout, stderr, err := cmd.Run()
+	args := []string{nodes, "-m", "ping"}
+	results, err := ansible_rpc.ExecuteAdhocCommandWithInventory(inventoryYamlPath, args)
 	if err != nil {
 		return nil, err
 	}
-	logrus.Trace(string(stdout), string(stderr))
 
 	result := PingPongResult{
 		Items: make(map[string]PingPongItem),
 	}
 
-	splited := strings.Split(string(stdout), "\n}\n")
-	for _, str := range splited {
-		temp := str + "\n}"
-
-		if !strings.Contains(temp, " => ") {
-			break
+	for _, temp := range results {
+		item := PingPongItem{
+			NodeName:    temp.InventoryHostName,
+			Ping:        temp.Ping,
+			UnReachable: temp.UnReachable,
+			Message:     temp.Msg,
 		}
-
-		tempSplited := strings.Split(temp, " => ")
-
-		var item PingPongItem
-		firstLineSplited := strings.Split(tempSplited[0], " | ")
-		item.NodeName = strings.Trim(firstLineSplited[0], " ")
-		item.Status = strings.Trim(firstLineSplited[1], " ")
-		item.Message = tempSplited[1]
-
 		result.Items[item.NodeName] = item
 	}
-
 	return &result, nil
 }

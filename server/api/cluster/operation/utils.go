@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
+	"github.com/eip-work/kuboard-spray/api/ansible_rpc"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,13 +18,18 @@ func contains(arr []string, str string) bool {
 }
 
 func getNodesInK8s(clusterName string) ([]string, error) {
-	kubectlResult, err := cluster_common.ExecuteShellOnControlPlane(clusterName, "kubectl get nodes -o jsonpath=\"{.items[*].metadata.name}\"")
+
+	shellReq := ansible_rpc.AnsibleCommandsRequest{
+		Name:    "shell",
+		Command: `{{'kubectl get nodes -o jsonpath="{.items[*].metadata.name}"'}}`,
+	}
+	shellResult, err := ansible_rpc.ExecuteShellCommandsAbortOnFirstSuccess("cluster", clusterName, "kube_control_plane[0]", []ansible_rpc.AnsibleCommandsRequest{shellReq})
 
 	if err != nil {
 		return nil, err
 	}
 
-	nodeStr := strings.Trim(kubectlResult.Stdout, "\n")
+	nodeStr := strings.Trim(shellResult[0].StdOut, "\n")
 
 	nodesInK8s := strings.Split(nodeStr, " ")
 	logrus.Trace("Nodes in kubernetes: ", nodesInK8s)
@@ -43,11 +48,17 @@ func arraySubtract(array1, array2 []string) []string {
 
 func getMembersInEtcd(clusterName string) ([]string, error) {
 	result := []string{}
-	temp, err := cluster_common.ExecuteShellOnETCD(clusterName, "etcdctl member list --write-out=json")
+
+	shellReq := ansible_rpc.AnsibleCommandsRequest{
+		Name:    "nodes",
+		Command: `etcdctl member list --write-out=json`,
+	}
+	shellResult, err := ansible_rpc.ExecuteShellCommandsAbortOnFirstSuccess("cluster", clusterName, "etcd[0]", []ansible_rpc.AnsibleCommandsRequest{shellReq})
+
 	if err != nil {
 		return nil, err
 	}
-	for _, member := range temp.StdoutObj["members"].([]interface{}) {
+	for _, member := range shellResult[0].StdOutObj.(map[string]interface{})["members"].([]interface{}) {
 		memberObj := member.(map[string]interface{})
 		logrus.Trace("etcd member:", memberObj)
 		if memberObj["name"] == nil {
@@ -71,7 +82,7 @@ type OperationCommonRequest struct {
 }
 
 func appendCommonParams(result []string, req OperationCommonRequest, skipLimitParam bool) []string {
-	result = append(result, "--fork", strconv.Itoa(req.Fork))
+	result = append(result, "--forks", strconv.Itoa(req.Fork))
 	result = append(result, "-e", "kuboardspray_operation="+req.Operation)
 	if req.ExcludeNodes != "" && !skipLimitParam {
 		result = append(result, "--limit", req.ExcludeNodes)

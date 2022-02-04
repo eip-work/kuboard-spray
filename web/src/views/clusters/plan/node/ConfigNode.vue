@@ -29,17 +29,18 @@ zh:
 
 <template>
   <el-form ref="form" :model="inventory" label-width="120px" label-position="left" @submit.enter.prevent>
-    <el-alert v-if="editMode === 'view'" :type="pingpongType" title="PING" :closable="false" class="app_margin_bottom app_alert_block">
+    <el-alert v-if="editMode === 'view'" :type="pingpongType" :closable="false" class="app_margin_bottom app_alert_block">
+      <template #title>
+        <span class="app_text_mono">PING : {{nodeName}}</span>
+      </template>
       <div v-if="pingpong[nodeName]" class="app_text_mono">
-        <div v-if="pingpong[nodeName].status === 'SUCCESS'">
-          {{ JSON.parse(pingpong[nodeName].message).ansible_facts }}
+        <div v-if="pingpong[nodeName].unreachable === false">
+          {{ pingpong[nodeName].ping }}
           <el-button style="float: right; margin-right: -8px;" @click="openUrlInBlank(`#/ssh/cluster/${cluster.name}/${nodeName}`)" icon="el-icon-monitor" type="primary">{{ $t('terminal')}}</el-button>
         </div>
         <span v-else>
           <div class="app_margin_bottom">
-            <div>message: {{ JSON.parse(pingpong[nodeName].message).msg }}</div>
-            <div>stdout : {{ JSON.parse(pingpong[nodeName].message).module_stdout }}</div>
-            <div>stderr : {{ JSON.parse(pingpong[nodeName].message).module_stderr }}</div>
+            <pre>{{ pingpong[nodeName].message }}</pre>
           </div>
           <el-button type="primary" @click="$emit('ping')" :loading="pingpongLoading" icon="el-icon-lightning">PING</el-button>  
         </span>
@@ -82,6 +83,7 @@ zh:
         :ansible_become="inventory.all.hosts[nodeName].ansible_become || inventory.all.children.target.vars.ansible_become"
         :ansible_become_user="inventory.all.hosts[nodeName].ansible_become_user || inventory.all.children.target.vars.ansible_become_user"
         :ansible_become_password="inventory.all.hosts[nodeName].ansible_become_password || inventory.all.children.target.vars.ansible_host"
+        :ansible_python_interpreter="inventory.all.hosts[nodeName].ansible_python_interpreter || inventory.all.children.target.vars.ansible_python_interpreter"
         :ip="inventory.all.hosts[nodeName].ip"
         :ansible_ssh_common_args="inventory.all.children.target.vars.ansible_ssh_common_args"
       ></NodeFact>
@@ -148,7 +150,7 @@ export default {
   computed: {
     pingpongType () {
       if (this.pingpong[this.nodeName]) {
-        return this.pingpong[this.nodeName].status === 'SUCCESS' ? 'success' : 'error'
+        return this.pingpong[this.nodeName].unreachable ? 'error' : 'success'
       }
       return 'info'
     },
@@ -272,7 +274,7 @@ export default {
 }
 </script>
 
-<style scoped lang="css">
+<style scoped lang="scss">
 .roles {
   display: flex;
   flex-wrap: wrap;

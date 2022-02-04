@@ -3,13 +3,11 @@ package cluster_access
 import (
 	"net/http"
 
+	"github.com/eip-work/kuboard-spray/api/ansible_rpc"
 	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
-	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
-	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 )
 
 func GetKubeConfig(c *gin.Context) {
@@ -18,29 +16,16 @@ func GetKubeConfig(c *gin.Context) {
 
 	inventoryYamlPath := cluster_common.ClusterInventoryYamlPath(req.Cluster)
 
-	cmd := command.Run{
-		Cmd: "ansible",
-		Args: []string{
-			"kube_control_plane[0]",
-			"-m", "shell",
-			"-a", "cat /root/.kube/config",
-			"-i", inventoryYamlPath,
-		},
-		Env: []string{"ANSIBLE_CONFIG=" + constants.GET_ADHOC_CFG_PATH()},
-		// Dir: resourcePackageDir,
-	}
-	stdout, stderr, err := cmd.Run()
+	args := []string{"kube_control_plane[0]", "-m", "shell", "-a", "cat /root/.kube/config"}
+	result, err := ansible_rpc.ExecuteAdhocCommandWithInventory(inventoryYamlPath, args)
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "cannot fetch kubeconfig", err)
 		return
 	}
-	logrus.Trace(string(stdout), string(stderr))
-
-	result := command.ParseAnsibleStdout(string(stdout))
 
 	c.JSON(http.StatusOK, common.KuboardSprayResponse{
 		Code:    http.StatusOK,
 		Message: "success",
-		Data:    result,
+		Data:    result[0],
 	})
 }

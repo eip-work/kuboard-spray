@@ -44,7 +44,7 @@ zh:
       {{ $t('not_support_cluster_version') }}
     </el-alert>
     <el-alert v-else-if="errMsg" type="error" :closable="false">
-      {{errMsg}}
+      <pre>{{errMsg}}</pre>
     </el-alert>
     <CompareVersion v-else :cluster="cluster" :version="version" :controlPlanePendingUpgrade="controlPlanePendingUpgrade"></CompareVersion>
     <ChooseNewResourcePackage ref="choose" :cluster="cluster" @refresh="$emit('refresh')"></ChooseNewResourcePackage>

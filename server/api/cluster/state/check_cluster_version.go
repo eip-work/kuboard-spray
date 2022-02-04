@@ -39,7 +39,9 @@ func CheckClusterVersion(c *gin.Context) {
 		Args: []string{
 			cluster.ResourcePackageDir + "/" + playbook,
 			"-i", cluster.InventoryPath,
-			"-e", "kuboardspray_ssh_args='-o ConnectionAttempts=1 -o ConnectTimeout=6 -o UserKnownHostsFile=/dev/null -F /dev/null'",
+			"--forks", "200",
+			"--timeout", "3",
+			"-e", "kuboardspray_ssh_args='-o ConnectionAttempts=1 -o UserKnownHostsFile=/dev/null -F /dev/null'",
 		},
 		Env:     []string{"ANSIBLE_CONFIG=./ansible.cfg"},
 		Timeout: 20,
@@ -47,9 +49,9 @@ func CheckClusterVersion(c *gin.Context) {
 	}
 
 	stdout, stderr, err := cmd.Run()
+	duration := time.Now().UnixNano() - startTime.UnixNano()
+	logrus.Trace("duration: ", duration/1000000)
 	if err != nil {
-		duration := time.Now().UnixNano() - startTime.UnixNano()
-		logrus.Trace("duration: ", duration/1000000)
 		common.HandleError(c, http.StatusInternalServerError, "failed to run", err)
 		return
 	}
@@ -60,6 +62,7 @@ func CheckClusterVersion(c *gin.Context) {
 	if err := json.Unmarshal(stdout, result); err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to Unmarshal result: ["+string(stdout)+"]", err)
 		logrus.Trace("stdout: ", string(stdout), "\nstderr: ", string(stderr))
+		logrus.Trace("duration: ", duration/1000000)
 		return
 	}
 

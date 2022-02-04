@@ -72,8 +72,8 @@ export default {
       if (this.active) {
         result += ' active'
       }
-      if (this.onlineNodes[this.name]) {
-        result += ' online'
+      if (this.onlineNodes[this.name] && this.onlineNodes[this.name].status === 'SUCCESS') {
+        result += ' online_node'
       }
       if (this.pendingAction === 'remove_node') {
         result += ' delete_node'
@@ -247,12 +247,6 @@ export default {
       background-color: var(--el-color-warning);
     }
   }
-  .node.online {
-    border-color: var(--el-color-success);
-  }
-  .node.online.active {
-    background-color: var(--el-color-success-lighter);
-  }
   .node.delete_node {
     text-decoration-line: line-through;
     border-color: var(--el-color-danger) !important;
@@ -265,8 +259,12 @@ export default {
     border-inline-style: dashed;
   }
   .node.online_node {
+    border-color: var(--el-color-success);
     border-block-style: solid;
     border-inline-style: solid;
+  }
+  .node.online_node.active {
+    background-color: var(--el-color-success-lighter);
   }
   .node.offline_node {
     border-block-style: dashed;
@@ -277,11 +275,12 @@ export default {
       background-color: var(--el-color-info-light);
     }
   }
-  .node.active.offline_node {
+  .node.offline_node.active {
     .role {
       opacity: 0.5;
       background-color: var(--el-color-info);
     }
+    border-color: var(--el-color-warning);
   }
   .node.gap {
     background-color: var(--el-color-primary-light-9) !important;
@@ -291,13 +290,13 @@ export default {
     background-color: var(--el-color-primary-light-6) !important;
   }
   .node.error_node {
-    border-color: var(--el-color-danger) !important;
     .role {
       opacity: 0.5;
       background-color: var(--el-color-info);
     }
   }
   .node.error_node.active {
+    border-color: var(--el-color-danger) !important;
     background-color: var(--el-color-danger-lighter) !important;
   }
 }

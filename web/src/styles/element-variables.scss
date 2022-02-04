@@ -32,7 +32,7 @@
   overflow: hidden;
 }
 .el-table th {
-  background-color: var(--el-color-primary-light-8);
+  background-color: var(--el-color-primary-light-8) !important;
   color: var(--el-color-primary);
   line-height: 32px;
 }
@@ -45,6 +45,9 @@
   transition: 0.2s;
 }
 
+.el-form-item__content {
+  display: block;
+}
 
 .el-progress--circle, .el-progress--dashboard {
   display: inline-block;

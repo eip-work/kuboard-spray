@@ -4,18 +4,26 @@
       <router-link :to="to"  class="router">
           <div class="kb-content" :style="`width: ${contentSize}; height: ${contentSize}`">
             <slot v-if="!loading">
-              <i :class="`${icon} kb-icon`" :style="`width: ${contentSize}; height: ${contentSize}; font-size: ${contentSize}`"></i>
+              <el-icon :size="contentSize" class="kb-icon" :style="`width: ${contentSize}; height: ${contentSize}; font-size: ${contentSize}`">
+                <component :is="icon"></component>
+              </el-icon>
             </slot>
-            <i v-else class="el-icon-loading kb-icon" :style="`width: ${contentSize}; height: ${contentSize}; font-size: ${contentSize}`"></i>
+            <el-icon v-else :size="contentSize" class="kb-icon" :style="`width: ${contentSize}; height: ${contentSize}; font-size: ${contentSize}`">
+              <component :is="icon"></component>
+            </el-icon>
           </div>
       </router-link>
     </div>
     <div v-else class="kb-button" @click.prevent.stop="_ => {if (!loading) {$emit('click')}}" :style="`width: ${size}; height: ${size}; ${loading ? 'cursor: not-allowed;' : ''}`">
       <div class="kb-content" :style="`width: ${contentSize}; height: ${contentSize}`">
         <slot v-if="!loading">
-          <i :class="`${icon} kb-icon`" :style="`width: ${contentSize}; height: ${contentSize}; font-size: ${contentSize}`"></i>
+          <el-icon :size="contentSize" class="kb-icon" :style="`width: ${contentSize}; height: ${contentSize}; font-size: ${contentSize}`">
+            <component :is="icon"></component>
+          </el-icon>
         </slot>
-        <i v-else class="el-icon-loading kb-icon" :style="`width: ${contentSize}; height: ${contentSize}; font-size: ${contentSize}`"/>
+        <el-icon v-else :size="contentSize" class="kb-icon" :style="`width: ${contentSize}; height: ${contentSize}; font-size: ${contentSize}`">
+          <component :is="icon"></component>
+        </el-icon>
       </div>
     </div>
   </div>
@@ -26,8 +34,8 @@ export default {
   props: {
     icon: { type: String, required: true },
     to: { type: String, required: false, default: undefined },
-    size: { type: String, required: false, default: '30px'},
-    contentSize: { type: String, required: false, default: '15px'},
+    size: { type: String, required: false, default: '30px' },
+    contentSize: { type: Number, required: false, default: 15 },
     loading: { type: Boolean, required: false, default: false },
   },
   data() {
@@ -67,7 +75,11 @@ export default {
 .kb-button:hover {
   background-color: var(--el-color-primary-light-2);
   color: var(--el-color-white);
-  text-align: center;
+  transform:rotate(45deg);
+  -ms-transform:rotate(45deg); 	/* IE 9 */
+  -moz-transform:rotate(45deg); 	/* Firefox */
+  -webkit-transform:rotate(45deg); /* Safari 和 Chrome */
+  -o-transform:rotate(45deg); 
 }
 .kb-content {
   width: 24px;

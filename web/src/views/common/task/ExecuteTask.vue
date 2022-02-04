@@ -54,20 +54,19 @@ zh:
         <el-button type="warning" icon="el-icon-lightning" @click="showConfirm = !showConfirm" @click.prevent.stop :disabled="disabled">{{ title || $t('apply')}}</el-button>
       </template>
       <el-form @submit.prevent.stop label-position="left" label-width="120px">
-        <!-- <div style="height: 10px;"></div> -->
         <template v-if="finished">
-          <!-- <el-alert type="success" effect="dark" style="margin-bottom: 10px;" :closable="false">
-            <i class="el-icon-lightning" style="font-size: 15px; color: white; margin-right: 10px;"></i>
-            <span class="confirmText" style="color: white;">{{$t('succeeded')}} [ {{ $t(lastSuccess.type) }} ]</span>
-          </el-alert> -->
           <el-alert type="warning" effect="dark" style="margin-bottom: 10px;" :closable="false">
-            <i class="el-icon-lightning" style="font-size: 15px; color: white; margin-right: 10px;"></i>
+            <el-icon :size="15" style="width: 15px; height: 15px; vertical-align: middle; margin-right: 10px;">
+              <el-icon-cloudy></el-icon-cloudy>
+            </el-icon>
             <span class="confirmText">{{$t('reset')}} {{title ? `[ ${title} ]` : ''}}</span>
           </el-alert>
         </template>
         <template v-else>
           <el-alert type="error" style="margin-bottom: 10px;" :closable="false">
-            <i class="el-icon-lightning" style="font-size: 16px; color: red; margin-right: 10px;"></i>
+            <el-icon :size="15" style="width: 15px; height: 15px; vertical-align: middle; margin-right: 10px;">
+              <el-icon-lightning></el-icon-lightning>
+            </el-icon>
             <span class="confirmText">{{$t('confirmToExecute')}} {{title ? `[ ${title} ]` : ''}}</span>
           </el-alert>
         </template>

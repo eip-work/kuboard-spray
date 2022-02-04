@@ -19,12 +19,13 @@ zh:
 
 <template>
   <div class="user">
-    <el-popover v-model:visible="visible" placement="bottom-end" width="540" trigger="click">
+    <el-popover placement="bottom-end" :width="540" trigger="click">
       <template #reference>
-        <div>
-          <!-- <div class="img">{{displayName.substring(0, 1).toUpperCase()}}</div> -->
+        <div @click="visible = !visible">
           <span class="font-weight" style="margin-right: 5px;">{{displayName}}</span>
-          <i class="el-icon-caret-bottom"></i>
+          <el-icon>
+            <el-icon-caret-bottom></el-icon-caret-bottom>
+          </el-icon>
         </div>
       </template>
       <div style="padding: 20px; max-height: calc(100vh - 160px); overflow: hidden; overflow-y: auto;">
@@ -51,7 +52,6 @@ export default {
   },
   data() {
     return {
-      visible: false
     }
   },
   computed: {
@@ -64,11 +64,6 @@ export default {
   },
   components: {},
   mounted () {
-  },
-  watch: {
-    '$route': function () {
-      this.visible = false
-    }
   },
   methods: {
     logout () {

@@ -43,34 +43,42 @@ zh:
         <div v-if="status === 'fail'" style="display: flex;" class="app_description">
           <el-scrollbar style="margin-bottom: 10px; min-width: 285px;" height="450px">
             <div v-for="(item, index) in connectivityCheck.stdout_obj.Absent" :key="'absent' + index" style="margin-bottom: 10px;">
-              <el-button type="danger" style="width: 280px;" icon="el-icon-error" :plain="connectivityCheckLog.pod !== item"
+              <el-button type="danger" style="width: 280px;" icon="el-icon-check" :plain="connectivityCheckLog.pod !== item"
                 @click="connectivityCheckLog.pod = item" :loading="connectivityCheckLog.pod === item && connectivityLogsLoading">
                 <span class="app_text_mono">{{ item }}</span>
               </el-button>
             </div>
             <div v-for="(item, index) in connectivityCheck.stdout_obj.Outdated" :key="'outdated' + index" style="margin-bottom: 10px;">
-              <el-button type="danger" style="width: 280px;" icon="el-icon-date" :plain="connectivityCheckLog.pod !== item"
+              <el-button type="danger" style="width: 280px;" icon="el-icon-clock" :plain="connectivityCheckLog.pod !== item"
                 @click="connectivityCheckLog.pod = item" :loading="connectivityCheckLog.pod === item && connectivityLogsLoading">
                 <span class="app_text_mono">{{ item }}</span>
               </el-button>
             </div>
           </el-scrollbar>
           <div style="flex-grow: 1; margin-left: 10px; margin-bottom: 38px;">
-            <el-radio-group v-model="connectivityCheckLog.type">
+            <el-radio-group v-model="connectivityCheckLog.type" size="default">
               <el-radio-button label="podList">
-                <i :class="connectivityCheckLog.type === 'podList' && connectivityLogsLoading ? 'el-icon-loading' : 'el-icon-document-copy'"></i>
+                <el-icon style="vertical-align: top; margin-right: 5px;">
+                  <component :is="connectivityCheckLog.type === 'podList' && connectivityLogsLoading ? 'el-icon-loading' : 'el-icon-copy-document'"></component>
+                </el-icon>
                 {{ $t('podList') }}
               </el-radio-button>
               <el-radio-button label="podDetails">
-                <i :class="connectivityCheckLog.type === 'podDetails' && connectivityLogsLoading ? 'el-icon-loading' : 'el-icon-document-copy'"></i>
+                <el-icon style="vertical-align: top; margin-right: 5px;">
+                  <component :is="connectivityCheckLog.type === 'podList' && connectivityLogsLoading ? 'el-icon-loading' : 'el-icon-document-copy'"></component>
+                </el-icon>
                 {{ $t('podDetails') }}
               </el-radio-button>
               <el-radio-button label="events">
-                <i :class="connectivityCheckLog.type === 'events' && connectivityLogsLoading ? 'el-icon-loading' : 'el-icon-files'"></i>
+                <el-icon style="vertical-align: top; margin-right: 5px;">
+                  <component :is="connectivityCheckLog.type === 'podList' && connectivityLogsLoading ? 'el-icon-loading' : 'el-icon-files'"></component>
+                </el-icon>
                 {{ $t('events') }}
               </el-radio-button>
               <el-radio-button label="logs">
-                <i :class="connectivityCheckLog.type === 'logs' && connectivityLogsLoading ? 'el-icon-loading' : 'el-icon-document'"></i>
+                <el-icon style="vertical-align: top; margin-right: 5px;">
+                  <component :is="connectivityCheckLog.type === 'podList' && connectivityLogsLoading ? 'el-icon-loading' : 'el-icon-document'"></component>
+                </el-icon>
                 {{ $t('logs') }}
               </el-radio-button>
             </el-radio-group>

@@ -31,7 +31,9 @@ zh:
           <el-table-column :label="$t('msg.operations')" min-width="130px">
             <template #default="scope">
               <el-tag v-if="currentVersion === scope.row.version" type="success" effect="dark">
-                <i class="el-icon-circle-check"></i>
+                <el-icon :size="14" style="width: 14px; height: 14px; vertical-align: bottom;">
+                  <el-icon-circle-check></el-icon-circle-check>
+                </el-icon>
                 {{ $t('currentVersion') }}
               </el-tag>
               <template v-else-if="scope.row.yaml">

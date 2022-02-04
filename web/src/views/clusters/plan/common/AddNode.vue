@@ -38,7 +38,9 @@ zh:
     </el-form>
     <div style="text-align: right;">
       <el-link href="https://kuboard-spray.cn/guide/maintain/add-replace-node.html" target="blank" style="float: left;">
-        <i class="el-icon-link" style="margin-right: 5px;"></i>
+        <el-icon :size="14" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 5px;">
+          <el-icon-link></el-icon-link>
+        </el-icon>
         {{$t('msg.help')}}
       </el-link>
       <el-button icon="el-icon-close" @click="addNodeForm.visible = false">{{$t('msg.cancel')}}</el-button>

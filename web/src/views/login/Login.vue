@@ -42,7 +42,11 @@ zh:
             <!-- <el-checkbox v-if="!mfaPolicy.forceSession" style="float: left;" v-model="rememberLogin" @change="changeRememberLogin">7天内保持登录</el-checkbox> -->
             <!-- <span style="float: right;" v-if="brandConfig && !brandConfig.disableHelpLink">
               <a style="text-decoration: none; font-size: 14px" href="https://kuboard.cn/install/v3/reset-password.html" target="_blank">
-                <i class="el-icon-link" style="margin-right: 8px;"></i>重置密码</a>
+                <el-icon>
+                  <el-icon-link></el-icon-link>
+                </el-icon>
+                重置密码
+              </a>
             </span> -->
           </div>
           <div>

@@ -36,8 +36,8 @@ zh:
     <div style="flex-grow: 1;">
       <div :class="expandedRef ? 'config_section_header expanded noselect' : 'config_section_header noselect'" @click="expandedRef = !expandedRef" style="display: flex;">
         <div>
-          <el-icon style="vertical-align: middle;" v-if="expandedRef"><icon-arrow-down-bold /></el-icon>
-          <el-icon style="vertical-align: middle;" v-else><icon-arrow-up-bold /></el-icon>
+          <el-icon style="vertical-align: middle;" v-if="expandedRef"><el-icon-arrow-down-bold /></el-icon>
+          <el-icon style="vertical-align: middle;" v-else><el-icon-arrow-up-bold /></el-icon>
         </div>
         <div style="flex-grow: 1; margin-left: 5px">
           <slot name="header">

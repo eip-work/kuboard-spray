@@ -25,7 +25,9 @@ zh:
     <div class="app_block_title">
       {{ $t('obj.resource') }}
       <el-tag type="warning" effect="dark">
-        <i class="el-icon-cloudy"></i>
+        <el-icon :size="14" style="width: 14px; height: 14px; vertical-align: bottom;">
+          <el-icon-cloudy></el-icon-cloudy>
+        </el-icon>
         {{$t('online')}}
       </el-tag>
     </div>

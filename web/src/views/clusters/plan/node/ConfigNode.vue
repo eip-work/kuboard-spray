@@ -51,14 +51,18 @@ zh:
     <el-alert v-if="pendingDelete" :title="$t('pendingDelete')" type="error" :closable="false" effect="dark" class="app_margin_bottom" show-icon>
       {{$t('pendingDeleteAction')}}
       <el-link href="https://kuboard-spray.cn/guide/maintain/add-replace-node.html" target="blank" style="margin-left: 20px; color: white;">
-        <i class="el-icon-link" style="margin-right: 5px;"></i>
+        <el-icon :size="14" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 5px;">
+          <el-icon-link></el-icon-link>
+        </el-icon>
         {{$t('msg.help')}}
       </el-link>
     </el-alert>
     <el-alert v-if="pendingAdd" :title="$t('pendingAdd')" type="warning" :closable="false" effect="dark" class="app_margin_bottom" show-icon>
       {{$t('pendingAddAction')}}
       <el-link href="https://kuboard-spray.cn/guide/maintain/add-replace-node.html" target="blank" style="margin-left: 20px; color: white;">
-        <i class="el-icon-link" style="margin-right: 5px;"></i>
+        <el-icon :size="14" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 5px;">
+          <el-icon-link></el-icon-link>
+        </el-icon>
         {{$t('msg.help')}}
       </el-link>
     </el-alert>

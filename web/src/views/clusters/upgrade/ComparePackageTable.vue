@@ -35,8 +35,10 @@ zh:
         <template #header>
           <div class="compare_version_header">
             <div>
-              <i class="el-icon-circle-check"></i>
-              {{ $t('versionInResource') }}
+              <el-icon style="vertical-align: middle">
+                <el-icon-circle-check></el-icon-circle-check>
+              </el-icon>
+              <span style="margin-left: 10px;">{{ $t('versionInResource') }}</span>
             </div>
           </div>
           </template>
@@ -47,7 +49,9 @@ zh:
       <el-table-column>
         <template #header>
           <div class="compare_version_header">
-            <i class="el-icon-cloudy"></i>
+            <el-icon style="vertical-align: middle">
+              <el-icon-cloudy></el-icon-cloudy>
+            </el-icon>
             <span style="margin-left: 10px;">{{$t('target_version')}}</span>
           </div>
         </template>

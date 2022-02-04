@@ -108,7 +108,10 @@ zh:
         <template v-for="node in offlineNodes" :key="'exclude' + node">
           <el-tooltip class="box-item" effect="dark" :content="pingpong[node].message" placement="top-end">
             <el-tag type="danger" effect="dark" style="margin: 0 10px 10px 0;">
-              <span class="app_text_mono" style="font-size: 14px; margin-right: 10px;">{{ node }}</span> <i class="el-icon-question"></i>
+              <span class="app_text_mono" style="font-size: 14px; margin-right: 10px;">{{ node }}</span>
+              <el-icon :size="14" style="width: 14px; height: 14px; vertical-align: top;">
+                <el-icon-question-filled></el-icon-question-filled>
+              </el-icon>
             </el-tag>
           </el-tooltip>
         </template>

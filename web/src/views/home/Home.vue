@@ -22,7 +22,7 @@ zh:
     <div style="display: flex; margin-top: 20px;">
       <el-card class="card">
         <template #header>
-          <el-icon :size="20" style="margin-right: 10px;"><icon-box /></el-icon>
+          <el-icon :size="20" style="margin-right: 10px;"><el-icon-box /></el-icon>
           {{$t('resources')}}
         </template>
         <div class="description">

@@ -75,12 +75,16 @@ zh:
       <el-table-column v-if="version === undefined" min-width="180px">
         <template #header>
           <div class="compare_version_header">
-            <i class="el-icon-loading"></i>
+            <el-icon style="vertical-align: middle;">
+              <el-icon-loading></el-icon-loading>
+            </el-icon>
             <span style="margin-left: 10px;">{{$t('loading')}}</span>
           </div>
         </template>
         <template #default>
-          <i class="el-icon-loading"></i>
+          <el-icon>
+            <el-icon-loading></el-icon-loading>
+          </el-icon>
         </template>
       </el-table-column>
     </el-table>

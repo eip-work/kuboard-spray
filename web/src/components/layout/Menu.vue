@@ -26,14 +26,18 @@ zh:
       :collapse="isCollapse" background-color="white"
       ref="menu" router @open="handleOpen" @close="handleClose">
       <el-menu-item index="1" :route="`/clusters`" class="toplevel">
-        <i class="el-icon-s-home"></i>
+        <el-icon>
+          <el-icon-home-filled></el-icon-home-filled>
+        </el-icon>
         <template #title>
           <span>{{$t('clusters')}}</span>
         </template>
       </el-menu-item>
       <el-sub-menu index="2">
         <template #title>
-          <i class="el-icon-setting"></i>
+          <el-icon>
+            <el-icon-setting></el-icon-setting>
+          </el-icon>
           <span>{{$t('settings')}}</span>
         </template>
         <el-menu-item index="2-1" :route="`/settings/resources`">
@@ -49,7 +53,10 @@ zh:
 
     </el-menu>
     <div class="menu-toggler" @click="toggle">
-      <i :class="isCollapse ? 'el-icon-d-arrow-right': 'el-icon-d-arrow-left'"/>
+      <el-icon style="vertical-align: middle;" :size="14">
+        <el-icon-d-arrow-right v-if="isCollapse"></el-icon-d-arrow-right>
+        <el-icon-d-arrow-left v-else></el-icon-d-arrow-left>
+      </el-icon>
       {{isCollapse ? $t('expand') : $t('collapse')}}
     </div>
   </div>

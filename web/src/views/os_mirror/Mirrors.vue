@@ -40,7 +40,9 @@ zh:
             <el-table-column prop="name" :label="$t('msg.name')">
               <template #default="scope">
                 <router-link :to="`/settings/mirrors/${scope.row.name}`">
-                  <i class="el-icon-link"></i>
+                  <el-icon :size="14" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 5px;">
+                    <el-icon-link></el-icon-link>
+                  </el-icon>
                   {{scope.row.name}}
                 </router-link>
               </template>

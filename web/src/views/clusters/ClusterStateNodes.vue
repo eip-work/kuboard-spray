@@ -16,10 +16,10 @@ zh:
     <template #reference>
       <el-button v-if="state.code === undefined" type="info" round icon="el-icon-loading">{{$t('loading')}}</el-button>
       <template v-else-if="state.code === 200">
-        <el-button v-if="healthy" type="success" round icon="el-icon-success">{{$t('nodeCount', { count, etcdCount: state.etcd_members_count })}}</el-button>
-        <el-button v-else type="danger" round icon="el-icon-success">{{$t('nodeCount', { count, etcdCount: state.etcd_members_count })}}</el-button>
+        <el-button v-if="healthy" type="success" round icon="el-icon-success-filled">{{$t('nodeCount', { count, etcdCount: state.etcd_members_count })}}</el-button>
+        <el-button v-else type="danger" round icon="el-icon-success-filled">{{$t('nodeCount', { count, etcdCount: state.etcd_members_count })}}</el-button>
       </template>
-      <el-button v-else type="danger" round icon="el-icon-info">{{$t('unreachable')}}</el-button>
+      <el-button v-else type="danger" round icon="el-icon-info-filled">{{$t('unreachable')}}</el-button>
     </template>
     <div>
       <el-scrollbar max-height="45vh">

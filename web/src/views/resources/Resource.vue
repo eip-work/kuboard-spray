@@ -17,11 +17,15 @@ zh:
       <span class="app_text_mono" style="margin-right: 20px;">{{name}}</span>
       <template v-if="resource">
         <el-tag v-if="isInstalled" type="success" effect="dark" style="margin-right: 20px;">
-          <i class="el-icon-cloudy"></i>
+          <el-icon :size="14" style="width: 14px; height: 14px; vertical-align: bottom;">
+            <el-icon-cloudy></el-icon-cloudy>
+          </el-icon>
           {{$t('loaded')}}
         </el-tag>
         <el-tag v-else type="danger" effect="dark" style="margin-right: 20px;">
-          <i class="el-icon-cloudy"></i>
+          <el-icon :size="14" style="width: 14px; height: 14px; vertical-align: bottom;">
+            <el-icon-cloudy></el-icon-cloudy>
+          </el-icon>
           {{$t('not_load')}}
         </el-tag>
         <ResourceDownload :resource="resource" action="reload" :loading="loading" @refresh="refresh"></ResourceDownload>

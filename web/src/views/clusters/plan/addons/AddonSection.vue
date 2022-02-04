@@ -51,11 +51,15 @@ zh:
       {{ label }}
       <div v-if="cluster && addonState" style="float: right; margin-right: 10px; margin-top: -1px;">
         <el-tag v-if="addonState.is_installed" type="success" style="margin-right: 10px;">
-          <i class="el-icon-check" style="margin-right: 5px;"></i>
+          <el-icon style="margin-right: 5px;">
+            <el-icon-check></el-icon-check>
+          </el-icon>
           {{$t('is_installed_true')}}
         </el-tag>
         <el-tag v-else type="warning" style="margin-right: 10px;">
-          <i class="el-icon-close" style="margin-right: 5px;"></i>
+          <el-icon style="margin-right: 5px;">
+            <el-icon-close></el-icon-close>
+          </el-icon>
           {{$t('is_installed_false')}}
         </el-tag>
         <ExecuteTask v-if="showExecute" :history="cluster.history" placement="left"
@@ -87,7 +91,10 @@ zh:
             <template v-for="node in offlineNodes" :key="'exclude' + node">
               <el-tooltip class="box-item" effect="dark" :content="pingpong[node].message" placement="top-end">
                 <el-tag type="danger" effect="dark" style="margin: 0 10px 10px 0;">
-                  <span class="app_text_mono" style="font-size: 14px; margin-right: 10px;">{{ node }}</span> <i class="el-icon-question"></i>
+                  <span class="app_text_mono" style="font-size: 14px; margin-right: 10px;">{{ node }}</span>
+                  <el-icon :size="14" style="width: 14px; height: 14px; vertical-align: top;">
+                    <el-icon-question-filled></el-icon-question-filled>
+                  </el-icon>
                 </el-tag>
               </el-tooltip>
             </template>

@@ -42,7 +42,7 @@ func ExecuteAdhocCommandWithIp(req AdhocCommandRequestWithIP, args []string) ([]
 					"ansible_become":               req.Become,
 					"ansible_become_user":          req.BecomeUser,
 					"ansible_become_password":      req.BecomePassword,
-					"ansible_ssh_common_args":      "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectionAttempts=1 -F /dev/null" + req.SshCommonArgs,
+					"ansible_ssh_common_args":      "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectionAttempts=1 -F /dev/null " + req.SshCommonArgs,
 					"ansible_ssh_pipelining":       true,
 					"kuboardspray_cluster_dir":     constants.GET_DATA_DIR() + "/" + req.NodeOwnerType + "/" + req.NodeOwner,
 					"ansible_python_interpreter":   "auto",
@@ -121,7 +121,8 @@ func ExecuteAdhocCommandWithInventory(inventoryPath string, args []string) ([]An
 		return nil, errors.New("failed to execute adhoc command " + err.Error())
 	}
 
-	// logrus.Trace(string(stdout))
+	logrus.Trace("stdout:", string(stdout))
+	logrus.Trace("stderr: ", string(stderr))
 
 	var result AnsibleResult
 	if err := json.Unmarshal(stdout, &result); err != nil {

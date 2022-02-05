@@ -69,7 +69,7 @@ func nodefacts(req GetNodeFactRequest) (*ansible_rpc.AnsibleResultNode, error) {
 		return nil, err
 	}
 
-	stdout, _ := json.Marshal(fact)
+	stdout, _ := json.Marshal(fact[0])
 	factPath := factDir + "/" + req.Node + "_" + req.Ip + "_" + req.Port
 	ioutil.WriteFile(factPath, stdout, 0666)
 

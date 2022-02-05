@@ -37,8 +37,8 @@ zh:
       <el-form-item prop="remove_node.nodes_to_remove" :rules="nodes_to_remove_rules">
         <el-checkbox-group v-model="formRef.remove_node.nodes_to_remove">
           <el-checkbox v-for="(item, key) in pendingRemoveNodes" :key="'h' + key" style="margin-top: 10px; margin-right: 10px;" :label="item.name"
-            :disabled="(pingpong[item.name] === undefined || pingpong[item.name].status !== 'SUCCESS') && formRef.remove_node.reset_nodes">
-            <el-tooltip v-if="pingpong[item.name] && pingpong[item.name].status !== 'SUCCESS'" :content="pingpong[item.name].message" placement="top-start">
+            :disabled="(pingpong[item.name] === undefined || pingpong[item.name].ping !== 'pong') && formRef.remove_node.reset_nodes">
+            <el-tooltip v-if="pingpong[item.name] && pingpong[item.name].ping !== 'pong'" :content="pingpong[item.name].message" placement="top-start">
               <span class="app_text_mono">{{item.name}}</span>
             </el-tooltip>
             <span v-else class="app_text_mono">{{item.name}}</span>
@@ -117,7 +117,7 @@ export default {
         for (let node of this.pendingRemoveNodes) {
           let online = false
           if (this.pingpong[node.name]) {
-            online = this.pingpong[node.name].status === 'SUCCESS'
+            online = this.pingpong[node.name].ping === 'pong'
           }
           if ((online) === v) {
             temp.push(node.name)

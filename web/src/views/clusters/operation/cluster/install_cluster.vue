@@ -33,7 +33,7 @@ zh:
     </el-alert>
     <el-form-item :label="$t('nodesToIncludeDesc')">
       <template v-for="(item, key) in hosts" :key="'h' + key">
-        <el-tag v-if="pingpong[key] && pingpong[key].status === 'SUCCESS'" style="margin-bottom: 10px; margin-right: 10px;" effect="dark">
+        <el-tag v-if="pingpong[key] && pingpong[key].ping === 'pong'" style="margin-bottom: 10px; margin-right: 10px;" effect="dark">
           <span class="app_text_mono" style="font-size: 14px;">{{key}}</span>
         </el-tag>
       </template>
@@ -65,7 +65,7 @@ export default {
           // 至少有一个被添加的节点在线
           let temp = ''
           for (let node in _this.cluster.inventory.all.hosts) {
-            if (_this.pingpong[node] && _this.pingpong[node].status === 'SUCCESS') {
+            if (_this.pingpong[node] && _this.pingpong[node].ping === 'pong') {
               temp += node + ','
             }
           }
@@ -76,7 +76,7 @@ export default {
           // 至少有一个工作节点
           let countKubeNodeCount = 0
           for (let node in _this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts) {
-            if (_this.pingpong[node] && _this.pingpong[node].status === 'SUCCESS') {
+            if (_this.pingpong[node] && _this.pingpong[node].ping === 'pong') {
               countKubeNodeCount ++
             }
           }
@@ -88,7 +88,7 @@ export default {
           // 所有的控制节点必须在线
           let controlPlaneCount = 0
           for (let controlPlane in _this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts) {
-            if (_this.pingpong[controlPlane] === undefined || _this.pingpong[controlPlane].status !== 'SUCCESS') {
+            if (_this.pingpong[controlPlane] === undefined || _this.pingpong[controlPlane].ping !== 'pong') {
               return callback(_this.$t('requiresAllControlNodeOnline', { node: controlPlane }))
             }
             controlPlaneCount ++
@@ -99,7 +99,7 @@ export default {
           // 所有的 etcd 节点必须在线
           let etcdCount = 0
           for (let etcd in _this.cluster.inventory.all.children.target.children.etcd.hosts) {
-            if (_this.pingpong[etcd] === undefined || _this.pingpong[etcd].status !== 'SUCCESS') {
+            if (_this.pingpong[etcd] === undefined || _this.pingpong[etcd].ping !== 'pong') {
               return callback(_this.$t('requiresAllEtcdNodeOnline, { node: etcd }'))
             }
             etcdCount ++

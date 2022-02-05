@@ -15,7 +15,7 @@ zh:
       {{ $t('sync_nginx_config_desc') }}
     </div>
     <template v-for="(item, key) in cluster.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts" :key="'node' + key">
-      <el-tag v-if="pingpong[key] && pingpong[key].status === 'SUCCESS'
+      <el-tag v-if="pingpong[key] && pingpong[key].ping === 'pong'
           && cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[key] === undefined
           && cluster.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts[key] !== undefined
           && cluster.inventory.all.hosts[key].kuboardspray_node_action !== 'add_node'" 

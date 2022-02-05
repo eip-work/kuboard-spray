@@ -22,7 +22,7 @@ zh:
     </div>
     <div>
       <template v-for="(item, key) in cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts" :key="'kcp' + key">
-        <el-tag v-if="pingpong[key] && pingpong[key].status === 'SUCCESS'" style="margin-right: 10px; margin-bottom: 10px;" effect="dark"
+        <el-tag v-if="pingpong[key] && pingpong[key].ping === 'pong'" style="margin-right: 10px; margin-bottom: 10px;" effect="dark"
           :type="cluster.inventory.all.hosts[key].kuboardspray_node_action === undefined ? '' : 'warning'">
           <span class="app_text_mono">{{key}}</span>
         </el-tag>
@@ -49,7 +49,7 @@ export default {
           // 所有控制节点必须在线
           let controlPlaneCount = 0
           for (let controlPlane in _this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts) {
-            if (_this.pingpong[controlPlane] === undefined || _this.pingpong[controlPlane].status !== 'SUCCESS') {
+            if (_this.pingpong[controlPlane] === undefined || _this.pingpong[controlPlane].ping !== 'pong') {
               return callback(_this.$t('requiresAllControlNodeOnline', { node: controlPlane }))
             }
             // 所有控制节点必须都已经完成添加/删除操作

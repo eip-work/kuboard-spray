@@ -45,7 +45,11 @@ func setupRouter() *gin.Engine {
 	api.POST("/clusters/:cluster/install_addon", operation.InstallAddon)
 	api.POST("/clusters/:cluster/remove_addon", operation.RemoveAddon)
 	api.POST("/clusters/:cluster/change_resource_package_version", cluster.ChangeResourcePackageVersion)
-	api.POST("/clusters/:cluster/upgrade_cluster", operation.UpgradeCluster)
+	api.POST("/clusters/:cluster/upgrade_all_nodes", operation.UpgradeCluster)
+	api.POST("/clusters/:cluster/upgrade_master_nodes", operation.UpgradeCluster)
+	api.POST("/clusters/:cluster/upgrade_single_node", operation.UpgradeCluster)
+	api.POST("/clusters/:cluster/upgrade_multi_nodes", operation.UpgradeCluster)
+	api.POST("/clusters/:cluster/download_binaries", operation.DownloadBinaries)
 
 	api.GET("/clusters/:cluster/access/kubeconfig", cluster_access.GetKubeConfig)
 

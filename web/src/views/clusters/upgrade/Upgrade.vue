@@ -46,7 +46,7 @@ zh:
     <el-alert v-else-if="errMsg" type="error" :closable="false">
       <pre>{{errMsg}}</pre>
     </el-alert>
-    <CompareVersion v-else :cluster="cluster" :version="version" :controlPlanePendingUpgrade="controlPlanePendingUpgrade"></CompareVersion>
+    <CompareVersion v-else :cluster="cluster" :version="version" :controlPlanePendingUpgrade="controlPlanePendingUpgrade" @refresh="$emit('refresh')"></CompareVersion>
     <ChooseNewResourcePackage ref="choose" :cluster="cluster" @refresh="$emit('refresh')"></ChooseNewResourcePackage>
   </el-scrollbar>
 </template>

@@ -17,7 +17,8 @@ import (
 
 type UpgradeClusterRequest struct {
 	OperationCommonRequest
-	Nodes string `json:"nodes"`
+	Nodes         string `json:"nodes"`
+	SkipDownloads bool   `json:"skip_downloads"`
 }
 
 func UpgradeCluster(c *gin.Context) {
@@ -27,6 +28,10 @@ func UpgradeCluster(c *gin.Context) {
 	c.ShouldBindJSON(&req)
 	req.Operation = "upgrade_cluster"
 
+	doUpgrade(req, c)
+}
+
+func doUpgrade(req UpgradeClusterRequest, c *gin.Context) {
 	inventory, resourcePackage, err := updateResourcePackageVarsToInventory(req.OperationCommonRequest)
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to process inventory", err)
@@ -68,8 +73,8 @@ func UpgradeCluster(c *gin.Context) {
 
 		if count > 0 {
 			message += "\n"
-			message = "\033[32m[ " + "Succeeded in upgrading " + strconv.Itoa(count) + " nodes: " + upgradedNodes + ". ]\033[0m \n"
-			message += "\033[32m[ 成功升级了 " + strconv.Itoa(count) + " 个节点: " + upgradedNodes + " ]\033[0m \n"
+			message = "\033[32m[ " + "Succeeded in upgrading " + strconv.Itoa(count) + " nodes: " + upgradedNodes + " ]\033[0m \n"
+			message += "\033[32m[ 已经成功升级了 " + strconv.Itoa(count) + " 个节点: " + upgradedNodes + " ]\033[0m \n"
 		} else {
 			message += "\n"
 			message = "\033[31m\033[01m\033[05m[" + "Failed to upgrade. Please review the logs and fix the problem." + "]\033[0m \n"
@@ -89,6 +94,9 @@ func UpgradeCluster(c *gin.Context) {
 			result := []string{"-i", execute_dir + "/inventory.yaml", playbook}
 			result = appendCommonParams(result, req.OperationCommonRequest, true)
 			result = append(result, "--limit", req.Nodes)
+			if req.SkipDownloads {
+				result = append(result, "-e", "skip_downloads=True")
+			}
 			return result
 		},
 		Dir:      cluster_common.ResourcePackageDirForInventory(inventory),

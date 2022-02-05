@@ -14,14 +14,16 @@ en:
   offlineNodes: Offline nodes
   offlineNodesDesc: Exclude the following offline nodes.
 
-  download: Distribute installation binaries
-  download_desc: In the process of upgrading, we are going to change image version in some daemonsets, it would be the best if we distribute all required binaries and container images before we do the cactual upgrading.
+  download_binaries: Distribute installation binaries
+  download_binaries_desc: In the process of upgrading, we are going to change image version in some daemonsets, it would be the best if we distribute all required binaries and container images before we do the cactual upgrading.
+
+  skip_downloads: Skip distributing installation binaries
 
   upgrade_cluster: "Upgrade cluster"
-  upgrade_kube_node: Upgrade kube_nodes
-  upgrade_kube_node_desc: Please select nodes to upgrade in this task run.
-  upgrade_node_by_name: Upgrade {nodeName}
-  upgrade_node_by_name_desc: Upgrade one node per task run.
+  upgrade_multi_nodes: Upgrade kube_nodes
+  upgrade_multi_nodes_desc: Please select nodes to upgrade in this task run.
+  upgrade_single_node: Upgrade {nodeName}
+  upgrade_single_node_desc: Upgrade one node per task run.
   
   upgrade_all_nodes: Upgrade all nodes in one run
   upgrade_master_nodes: Upgrade kube_control_plane and etcd nodes first
@@ -40,19 +42,21 @@ zh:
   offlineNodes: 离线节点
   offlineNodesDesc: 排除以下不在线的节点：
 
-  download: 分发安装包
-  download_desc: 升级过程中，将会改变一些 daemonset 的版本（例如：kube-proxy, calico-node 等），如果不事先分发这些镜像到所有各个节点，将导致升级过程中，部分节点可能因为缺少对应版本的镜像而出现问题。
+  download_binaries: 分发安装包
+  download_binaries_desc: 升级过程中，将会改变一些 daemonset 的版本（例如：kube-proxy, calico-node 等），如果不事先分发这些镜像到所有各个节点，将导致升级过程中，部分节点可能因为缺少对应版本的镜像而出现问题。
+
+  skip_downloads: 跳过加载安装包
 
   upgrade_cluster: 升级集群
-  upgrade_kube_node: 升级多个工作节点
-  upgrade_kube_node_desc: 请选择本次任务中要升级的节点
-  upgrade_node_by_name: 升级 {nodeName}
-  upgrade_node_by_name_desc: 一次只升级一个节点
+  upgrade_multi_nodes: 升级多个工作节点
+  upgrade_multi_nodes_desc: 请选择本次任务中要升级的节点
+  upgrade_single_node: 升级 {nodeName}
+  upgrade_single_node_desc: 一次只升级一个节点
 
   upgrade_all_nodes: 升级所有节点
   upgrade_all_nodes_desc: 一次性升级所有节点，如果当前有工作负载正在运行，将造成服务中断
   upgrade_master_nodes: 升级控制节点和 ETCD 节点
-  upgrade_master_nodes_desc: 先升级控制节点和 ETCD 节点，然后再逐个排空、升级工作节点，避免造成服务中断
+  upgrade_master_nodes_desc: 先逐个升级控制节点和 ETCD 节点，然后再逐个排空、升级工作节点，避免造成服务中断。（如果有3个控制节点，大约耗时 18 分钟）
 </i18n>
 
 <template>
@@ -79,26 +83,31 @@ zh:
         <el-form-item :label="$t('operation')" prop="action" style="margin-top: 10px;">
           <el-radio-group v-model="form.action" class="app_margin_bottom">
             <template v-if="nodeName === undefined">
-              <el-radio-button label="download" :disabled="!requireDownload">
-                {{ $t('download') }}
+              <el-radio-button label="download_binaries" :disabled="!requireSeparateDownloadAction">
+                {{ $t('download_binaries') }}
               </el-radio-button>
-              <el-radio-button label="upgrade_all_nodes" :disabled="requireDownload || !controlPlanePendingUpgrade">
+              <el-radio-button label="upgrade_all_nodes" :disabled="requireSeparateDownloadAction || !controlPlanePendingUpgrade">
                 {{ $t('upgrade_all_nodes') }}
               </el-radio-button>
-              <el-radio-button label="upgrade_master_nodes" :disabled="requireDownload || !controlPlanePendingUpgrade">
+              <el-radio-button label="upgrade_master_nodes" :disabled="requireSeparateDownloadAction || !controlPlanePendingUpgrade">
                 {{ $t('upgrade_master_nodes') }}
               </el-radio-button>
-              <el-radio-button label="upgrade_kube_node" :disabled="requireDownload || controlPlanePendingUpgrade">{{$t('upgrade_kube_node')}}</el-radio-button>
+              <el-radio-button label="upgrade_multi_nodes" :disabled="requireSeparateDownloadAction || controlPlanePendingUpgrade">{{$t('upgrade_multi_nodes')}}</el-radio-button>
             </template>
-            <el-radio-button v-else label="upgrade_node_by_name">{{$t('upgrade_node_by_name', {nodeName})}}</el-radio-button>
+            <el-radio-button v-else label="upgrade_single_node">{{$t('upgrade_single_node', {nodeName})}}</el-radio-button>
           </el-radio-group>
           <div class="form_description" :style="form.action === 'upgrade_all_nodes' ? 'color: var(--el-color-danger)':''">{{ $t(form.action + '_desc') }}</div>
-          <div v-if="form.action === 'upgrade_kube_node'" :rules="kube_nodes_to_upgrade_rules">
-            <el-checkbox-group v-model="form.kube_nodes_to_upgrade">
-              <template v-for="(node, nodeName) in cluster.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts" :key="'nu' + nodeName">
-                <el-checkbox v-if="cluster.inventory.all.hosts[nodeName].kuboardspray_node_action === 'upgrade_node'" :label="nodeName">{{nodeName}}</el-checkbox>
-              </template>
-            </el-checkbox-group>
+          <div v-if="form.action === 'upgrade_multi_nodes'" :rules="kube_nodes_to_upgrade_rules" style="margin-bottom: 18px;">
+            <el-form-item prop="kube_nodes_to_upgrade" required>
+              <el-checkbox-group v-model="form.kube_nodes_to_upgrade" @change="form.skip_downloads = !requireDownloadForNodes(form.kube_nodes_to_upgrade)">
+                <template v-for="(node, nodeName) in cluster.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts" :key="'nu' + nodeName">
+                  <el-checkbox v-if="cluster.inventory.all.hosts[nodeName].kuboardspray_node_action === 'upgrade_node'" :label="nodeName">{{nodeName}}</el-checkbox>
+                </template>
+              </el-checkbox-group>
+            </el-form-item>
+          </div>
+          <div v-if="form.action === 'upgrade_multi_nodes' || form.action === 'upgrade_single_node'">
+            <el-switch v-model="form.skip_downloads" :disabled="requireDownloadForNodes(form.kube_nodes_to_upgrade)" :active-text="$t('skip_downloads')"></el-switch>
           </div>
         </el-form-item>
 
@@ -151,12 +160,13 @@ export default {
         min_resource_package_version: '',
         nodes_to_exclude: [],
         kube_nodes_to_upgrade: [],
+        skip_downloads: false,
       },
       min_resource_package_version_rules: [
         { required: true, message: this.$t('newResourcePackageRequired') }
       ],
       kube_nodes_to_upgrade_rules: [
-        { required: true, message: this.$t('upgrade_kube_node_desc') }
+        { required: true, message: this.$t('upgrade_multi_nodes_desc') }
       ],
       pingpong: {},
       pingpong_loading: true,
@@ -165,22 +175,16 @@ export default {
   computed: {
     title () {
       if (this.nodeName) {
-        return this.$t('upgrade_node_by_name', { nodeName: this.nodeName })
+        return this.$t('upgrade_single_node', { nodeName: this.nodeName })
       }
       return this.$t('upgrade_cluster') + ' : ' + this.$t(this.form.action)
     },
-    requireDownload () {
+    requireSeparateDownloadAction () {
       for (let hostName in this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts) {
         let host = this.cluster.inventory.all.hosts[hostName]
         if (host.kuboardspray_require_download) {
           return true
         }
-      }
-      return false
-    },
-    requireDownloadForNode () {
-      if (this.nodeName) {
-        return this.cluster.inventory.all.hosts[this.nodeName] === true
       }
       return false
     },
@@ -199,6 +203,14 @@ export default {
     this.setAction()
   },
   methods: {
+    requireDownloadForNodes(nodes) {
+      for (let node of nodes) {
+        if (this.cluster.inventory.all.hosts[node].kuboardspray_require_download) {
+          return true
+        }
+      }
+      return false
+    },
     onVisibleChange(flag) {
       if (flag) {
         this.setAction()
@@ -209,13 +221,16 @@ export default {
     setAction () {
       if (!this.controlPlanePendingUpgrade) {
         if (this.nodeName === undefined) {
-          this.form.action = 'upgrade_kube_node'
+          this.form.action = 'upgrade_multi_nodes'
+          this.form.skip_downloads = false
         } else {
-          this.form.action = 'upgrade_node_by_name'
+          this.form.action = 'upgrade_single_node'
+          this.form.skip_downloads = !this.requireDownloadForNodes([this.nodeName])
+          console.log(this.nodeName, this.requireDownloadForNodes([this.nodeName]), this.form.skip_downloads)
         }
       }
-      if (this.requireDownload) {
-        this.form.action = 'download'
+      if (this.requireSeparateDownloadAction) {
+        this.form.action = 'download_binaries'
       }
     },
     testPingPong (nodes) {
@@ -231,7 +246,6 @@ export default {
         } else {
           this.$message.error('不能测试节点是否在线: ' + e)
         }
-        this.pingpong_loading = false
       })
     },
     async execute () {
@@ -259,23 +273,26 @@ export default {
             }
             if (this.form.action === 'upgrade_all_nodes') {
               req.nodes = 'target'
+              req.skip_downloads = true
             } else if (this.form.action === 'upgrade_master_nodes') {
               req.nodes = 'kube_control_plane,etcd'
-            } else if (this.form.action === 'upgrade_kube_node') {
+              req.skip_downloads = true
+            } else if (this.form.action === 'upgrade_multi_nodes') {
               let temp = ''
               for (let item of this.form.kube_nodes_to_upgrade) {
                 temp += item + ','
               }
               temp = trimMark(temp)
               req.nodes = temp
-            } else if (this.form.action === 'upgrade_node_by_name') {
+              req.skip_downloads = this.form.skip_downloads
+            } else if (this.form.action === 'upgrade_single_node') {
               req.nodes = this.nodeName
+              req.skip_downloads = this.form.skip_downloads
             }
-            this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/upgrade_cluster`, req).then(resp => {
+            this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/${this.form.action}`, req).then(resp => {
               let pid = resp.data.data.pid
               resolve(pid)
             }).catch(e => {
-              // this.$message.error('' + e.response.data.message)
               reject(e.response.data.message)
             })
           } else {

@@ -60,7 +60,7 @@ zh:
         <el-table-column v-for="(nodeVersion, nodeName) in version" :key="'col' + nodeName" min-width="120px">
           <template #header>
             <div class="compare_version_header">
-              <UpgradeTask v-if="showUpgradeButton(nodeName)" :cluster="cluster" :nodeName="nodeName" :controlPlanePendingUpgrade="false"></UpgradeTask>
+              <UpgradeTask v-if="showUpgradeButton(nodeName)" :cluster="cluster" :nodeName="nodeName" :controlPlanePendingUpgrade="false" @refresh="$emit('refresh')"></UpgradeTask>
               <div v-else class="nowrap">{{ nodeName }}</div>
             </div>
           </template>
@@ -75,6 +75,12 @@ zh:
               </el-tooltip>
               <el-tag v-else-if="nodeVersion[scope.row.name].stdout === scope.row.version" type="success">{{ nodeVersion[scope.row.name].stdout }}</el-tag>
               <el-tag v-else-if="nodeVersion[scope.row.name].stdout" type="danger">{{ nodeVersion[scope.row.name].stdout }}</el-tag>
+              <el-tooltip v-else-if="nodeVersion[scope.row.name].stderr" trigger="hover" placement="top" width="420">
+                <el-tag type="danger" effect="dark" style="cursor: pointer">error</el-tag>
+                <template #content>
+                  <pre style="margin: 0 10px; width: 450px;">{{ nodeVersion[scope.row.name].stderr }}</pre>
+                </template>
+              </el-tooltip>
               <el-tag v-else type="info">empty</el-tag>
             </template>
           </template>

@@ -14,12 +14,7 @@ zh:
       <li>Kuboard 通过 kubernetes 的 apiserver 执行集群的日常管理操作，例如：名称空间创建、Deployment 创建修改、Service 的创建修改等，Kuboard 支持细致的权限控制，可以使不同的团队共享使用同一个集群。</li>
       <p>
         通过此链接，详细了解 Kuboard。
-        <el-link target="blank" href="https://kuboard.cn">
-          <el-icon style="vertical-align: text-bottom;">
-            <el-icon-link></el-icon-link>
-          </el-icon>
-          https://kuboard.cn
-        </el-link> 
+        <KuboardSprayLink href="https://kuboard.cn">https://kuboard.cn</KuboardSprayLink>
       </p>
 
     </div>
@@ -54,6 +49,8 @@ export default {
 
 <style scoped lang="css">
 .description {
+  background-color: var(--el-color-white);
+  border-radius: 5px;
   font-size: 13px;
   padding: 20px;
   line-height: 28px;

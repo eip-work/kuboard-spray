@@ -13,7 +13,7 @@ zh:
   <div style="text-align: left;">
     <el-dialog :title="$t('msg.prompt')" v-model="dialogVisible" width="60%" :before-close="handleClose">
       <p>{{$t('referto')}}</p>
-      <el-link href="https://kuboard-spray.cn/guide/extra/websocket.html" target="blank">查看如何配置反向代理</el-link>
+      <KuboardSprayLink href="https://kuboard-spray.cn/guide/extra/websocket.html" :size="14">查看如何配置反向代理</KuboardSprayLink>
     </el-dialog>
   </div>
 </template>

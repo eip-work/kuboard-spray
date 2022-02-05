@@ -22,7 +22,7 @@ zh:
 <template>
   <div>
     <div class="app_block_title">{{$t('titleRepo')}}</div>
-    <el-alert :title="$t('titleRepo')" type="info" :closable="false">
+    <el-alert :title="$t('titleRepo')" :closable="false" class="app_white_alert">
       <div class="description">
         <li>{{$t('repoDescription1')}}</li>
         <li>{{$t('repoDescription2')}}</li>
@@ -51,7 +51,7 @@ zh:
             <el-table-column prop="status.kind" :label="$t('kind')" width="120px"></el-table-column>
             <el-table-column prop="status.url" label="url">
               <template #default="scope">
-                <el-link v-if="scope.row.status" target="_blank" :href="scope.row.status.url" style="font-size: 12px;">{{scope.row.status.url}}</el-link>
+                <KuboardSprayLink v-if="scope.row.status" :href="scope.row.status.url" :size="12">{{scope.row.status.url}}</KuboardSprayLink>
               </template>
             </el-table-column>
             <el-table-column prop="status.status" :label="$t('status')" width="120px"></el-table-column>

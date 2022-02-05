@@ -61,7 +61,7 @@ zh:
     <div class="access_details">
       <el-alert :closable="false" type="success" effect="dark" :title="$t('proposeKuboard')"></el-alert>
       <div class="details">
-        <el-link class="app_margin_top" href="https://www.kuboard.cn/" target="_blank">https://www.kuboard.cn</el-link>
+        <KuboardSprayLink class="app_margin_top" href="https://www.kuboard.cn/">https://www.kuboard.cn/</KuboardSprayLink>
       </div>
     </div>
     <div class="app_block_title">etcd</div>

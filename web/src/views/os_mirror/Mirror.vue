@@ -50,7 +50,7 @@ zh:
           <div style="margin-bottom: -20px;">
             <el-form-item :label="$t('url')" prop="status.url" :rules="urlRules">
               <span v-if="mode === 'view'">
-                <el-link target="_blank" :href="os_mirror.status.url" icon="el-icon-link">{{os_mirror.status.url}}</el-link>
+                <KuboardSprayLink :href="os_mirror.status.url">{{os_mirror.status.url}}</KuboardSprayLink>
               </span>
               <el-input v-else v-model.trim="mirror_url" :placeholder="$t('url_placeholder')"></el-input>
             </el-form-item>

@@ -44,10 +44,10 @@ zh:
           <div class="horizontalConnection" :style="bastionEnabled ? '' : 'border-color: white;'"></div>
         </div>
         <div style="line-height: 28px;">
-          <el-link href="https://kuboard-spray.cn/guide/install-k8s.html" target="blank">如何安装 K8S 集群？</el-link>
-          <el-link href="https://kuboard-spray.cn/guide/maintain/ha-mode.html" target="blank">如何实现高可用？</el-link>
-          <el-link href="https://kuboard-spray.cn/guide/maintain/add-replace-node.html" target="blank">如何添加删除节点？</el-link>
-          <el-link href="https://kuboard-spray.cn/guide/maintain/upgrade.html" target="blank">如何升级集群？</el-link>
+          <KuboardSprayLink href="https://kuboard-spray.cn/guide/install-k8s.html" :size="12">安装 K8S 集群？</KuboardSprayLink>
+          <KuboardSprayLink href="https://kuboard-spray.cn/guide/maintain/ha-mode.html" :size="12">实现高可用？</KuboardSprayLink>
+          <KuboardSprayLink href="https://kuboard-spray.cn/guide/maintain/add-replace-node.html" :size="12">添加删除节点？</KuboardSprayLink>
+          <KuboardSprayLink href="https://kuboard-spray.cn/guide/maintain/upgrade.html" :size="12">升级集群？</KuboardSprayLink>
         </div>
       </div>
       <div class="right">

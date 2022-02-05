@@ -30,9 +30,7 @@ zh:
     <div class="app_block_title">{{ $t('connectivity_check') }}</div>
     <div class="app_description">
       {{ $t('connectivity_check_desc') }}
-      <el-link icon="el-icon-link" href="https://kuboard-spray.cn/guide/addons/netchecker.html" target="_blank" style="margin-left: 20px;">
-        <span style="font-size: 13px;">{{$t('msg.help')}}</span>
-      </el-link>
+      <KuboardSprayLink href="https://kuboard-spray.cn/guide/addons/netchecker.html" style="margin-left: 20px;" :size="13"></KuboardSprayLink>
     </div>
     <div v-if="installed">
       <el-skeleton v-if="loading" animated class="app_margin_top"></el-skeleton>
@@ -101,11 +99,7 @@ zh:
     </div>
     <el-alert v-else type="warning" :closable="false" :title="$t('installNetchecker')">
       {{ $t('netcheckerNotInstalled') }}
-      <el-link href="https://kuboard-spray.cn/guide/addons/netchecker.html" target="blank" style="vertical-align: top;" icon="el-icon-link">
-        <span style="font-size: 12px;">
-          {{ $t('installNetchecker') }}
-        </span>
-      </el-link>
+      <KuboardSprayLink href="https://kuboard-spray.cn/guide/addons/netchecker.html" style="margin-left: 20px;" :size="12">{{ $t('installNetchecker') }}</KuboardSprayLink>
     </el-alert>
   </div>
 </template>

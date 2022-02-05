@@ -10,6 +10,7 @@ import ConfigSection from './ConfigSection.vue'
 import CopyToClipBoard from './clipboard/CopyToClipBoard.vue'
 import ConfirmButton from './page/ConfirmButton.vue'
 import PreviewYaml from './PreviewYaml.vue'
+import KuboardSprayLink from './KuboardSprayLink.vue'
 
 export default {
   install(app) {
@@ -25,5 +26,6 @@ export default {
     app.component('CopyToClipBoard', CopyToClipBoard)
     app.component('ConfirmButton', ConfirmButton)
     app.component('PreviewYaml', PreviewYaml)
+    app.component('KuboardSprayLink', KuboardSprayLink)
   } 
 }

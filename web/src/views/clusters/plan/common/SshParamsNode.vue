@@ -46,7 +46,7 @@ zh:
       :placeholder="placeholder('ansible_password')"></FieldString>
     <el-alert type="warning" :closable="false" v-if="cluster && cluster.inventory.all.hosts.bastion && (holder.ansible_password || cluster.inventory.all.children.target.vars.ansible_password)" style="margin-left: 120px; width: calc(100% - 120px);">
       {{ $t('password_and_bastion') }}
-      <el-link target="blank" href="https://kuboard-spray.cn/guide/extra/speedup.html" icon="el-icon-link" style="font-size: 12px; margin-left: 10px;">{{$t('speedup')}}</el-link>
+      <KuboardSprayLink href="https://kuboard-spray.cn/guide/extra/speedup.html" style="margin-left: 10px;" :size="12"></KuboardSprayLink>
       <li v-if="cluster && cluster.inventory.all.children.target.vars.ansible_password">{{ $t('password_in_global') }}</li>
     </el-alert>
     <FieldCommon :holder="holder" fieldName="ansible_become" anti-freeze>

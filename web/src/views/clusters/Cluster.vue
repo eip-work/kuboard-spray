@@ -69,10 +69,10 @@ zh:
         <ClusterHealthCheck v-if="isClusterInstalled && isClusterOnline && currentTab == 'health_check'" :cluster="cluster"></ClusterHealthCheck>
       </el-tab-pane>
       <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('backup')">
-        <el-alert>对 etcd 及 control-plane 做备份及恢复，正在建设...</el-alert>      
+        <Backup></Backup>
       </el-tab-pane>
       <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('csi_scan')">
-        <el-alert>CIS 扫描，正在建设...</el-alert>
+        <CIS></CIS>
       </el-tab-pane>
       <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('upgrade')" name="upgrade">
         <template  v-if="currentTab == 'upgrade'">
@@ -89,6 +89,8 @@ import mixin from '../../mixins/mixin.js'
 import yaml from 'js-yaml'
 import ClusterProcessing from './operation/ClusterProcessing.vue'
 import Access from './access/Access.vue'
+import Backup from './backup/Backup.vue'
+import CIS  from './cis_scan/CIS.vue'
 import { computed } from 'vue'
 import ClusterStateNodes from './ClusterStateNodes.vue'
 import clone from 'clone'
@@ -184,7 +186,7 @@ export default {
       }),
     }
   },
-  components: { Plan, ClusterProcessing, Access, ClusterStateNodes, ClusterHealthCheck, Upgrade },
+  components: { Plan, ClusterProcessing, Access, ClusterStateNodes, ClusterHealthCheck, Upgrade, Backup, CIS },
   watch: {
     'cluster.inventory.all.hosts.localhost.kuboardspray_resource_package': function() {
       this.loadResourcePackage()

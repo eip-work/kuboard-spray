@@ -36,6 +36,7 @@ zh:
                 </template>
               </template>
             </template>
+            <KuboardSprayLink href="https://kuboard-spray.cn/guide/maintain/upgrade.html" style="margin-left: 20px;" :size="12"></KuboardSprayLink>
           </div>
         </el-form-item>
       </el-form>

@@ -14,9 +14,8 @@ zh:
       <div style="height: calc(90vh - 180px);">
         <el-alert :closable="false" type="warning" class="app_margin_bottom">
           <div style="line-height: 20px;">
-            如果您 KuboardSpray 所在机器不能联网，请从如下链接中的任意一个获取离线导入文件：
-            <li><el-link href="https://www.kuboard-spray.cn/support" target="_blank">https://www.kuboard-spray.cn/support</el-link></li>
-            <li><el-link href="https://www.kuboard.cn/support/kuboard-spray" target="_blank">https://www.kuboard.cn/support/kuboard-spray</el-link></li>
+            如果您 KuboardSpray 所在机器不能联网，请从如下链接获取离线导入文件：
+            <li><KuboardSprayLink href="https://www.kuboard-spray.cn/support">https://www.kuboard-spray.cn/support</KuboardSprayLink></li>
           </div>
         </el-alert>
         <div v-if="contentVisible">

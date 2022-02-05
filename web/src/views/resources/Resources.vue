@@ -38,15 +38,15 @@ zh:
 <template>
   <div>
     <div class="app_block_title">{{$t('title')}}</div>
-    <el-alert :title="$t('title')" type="info" :closable="false">
+    <el-alert :title="$t('title')" type="info" :closable="false" class="app_white_alert">
       <div class="description">
         <li>{{$t('resourceDescription1')}}</li>
         <li>{{$t('resourceDescription2')}}</li>
       </div>
     </el-alert>
     <div style="text-align: right;">
-      <el-link v-if="cannot_reach_online_repository" href="https://kuboard-spray.cn/support" target="blank" type="danger" icon="el-icon-link"
-        style="margin-right: 10px; color: var(--el-color-danger)">{{ $t('cannot_reach_online_repository') }}</el-link>
+      <KuboardSprayLink v-if="cannot_reach_online_repository" href="https://kuboard-spray.cn/support" type="danger"
+        style="margin-right: 10px; color: var(--el-color-danger)">{{ $t('cannot_reach_online_repository') }}</KuboardSprayLink>
       <ResourcesCreateOffline class="app_margin_top"></ResourcesCreateOffline>
     </div>
     <div class="contentList">

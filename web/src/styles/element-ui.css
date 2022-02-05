@@ -257,6 +257,11 @@ a {
   color: white;
 }
 
+.app_white_alert.el-alert {
+  background-color: var(--el-color-white) !important;
+  color: var(--el-text-color-regular) !important;
+}
+
 .app_description {
   background-color: #f4f4f5;
   padding: 10px 20px 10px 20px;

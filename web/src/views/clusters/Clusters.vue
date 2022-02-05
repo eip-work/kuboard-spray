@@ -17,7 +17,7 @@ zh:
       {{$t('obj.cluster')}}
     </div>
     <div class="app_margin_bottom">
-      <el-alert :closable="false" title="集群管理" type="info">
+      <el-alert :closable="false" title="集群管理" class="app_white_alert">
         <div style="line-height: 20px;">
           您可以：
           <li>制定新的集群安装计划</li>

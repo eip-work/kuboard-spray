@@ -112,7 +112,7 @@ export default {
 </script>
 
 
-<style lang="css">
+<style lang="scss">
 .markdown {
   font-family: Consolas,Menlo,Bitstream Vera Sans Mono,Monaco,"微软雅黑",monospace;
   font-size: 13px;

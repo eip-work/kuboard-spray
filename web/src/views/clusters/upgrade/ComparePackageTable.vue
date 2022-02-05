@@ -56,7 +56,9 @@ zh:
           </div>
         </template>
         <template #default="scope">
-          <el-tag v-if="targetComponents[scope.row.name] && scope.row.version" :type="tagType(targetComponents[scope.row.name], scope.row.version)" :effect="tagType(targetComponents[scope.row.name], scope.row.version) === 'error' ? 'dark' : 'light'">
+          <el-tag v-if="targetComponents[scope.row.name] && scope.row.version" 
+            :type="tagType(targetComponents[scope.row.name], scope.row.version)"
+            :effect="tagType(targetComponents[scope.row.name], scope.row.version) === '' ? 'light' : 'dark'">
             {{ targetComponents[scope.row.name] }}
           </el-tag>
         </template>
@@ -96,13 +98,14 @@ export default {
       for (let ce of res.container_engine) {
         if (ce.container_manager === 'docker') {
           result.docker = ce.params.docker_version
-          result.containerd = ce.params.docker_containerd_version
+          // result.containerd = ce.params.docker_containerd_version
         } else {
           result.containerd = ce.params.containerd_version
         }
       }
 
       result.etcd = res.etcd.etcd_version
+      result.etcd_docker = res.etcd.etcd_version
 
       for (let np of res.network_plugin) {
         for (let param in np.params) {

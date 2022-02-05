@@ -32,11 +32,6 @@ func GetEnvDefault(key, defVal string) string {
 	return val
 }
 
-func GET_ADHOC_CFG_PATH() string {
-	dir, _ := os.Getwd()
-	return dir + "/ansible-script/ansible-adhoc.cfg"
-}
-
 func GET_ANSIBLE_SCRIPT_DIR() string {
 	dir, _ := os.Getwd()
 	return dir + "/ansible-script"

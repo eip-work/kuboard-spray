@@ -8,6 +8,8 @@ zh:
 
 <template>
   <div>
+    <SshParamsBastion v-if="cluster && cluster.inventory" :cluster="cluster" nodeName="bastion" :holder="inventory.all.hosts.bastion || {}" 
+      prop="all.hosts.bastion"></SshParamsBastion>
     <SshParamsCluster :cluster="cluster" :holder="cluster.inventory.all.children.target.vars" prop="all.children.target.vars" :description="$t('sshcommon')"></SshParamsCluster>
     <HttpProxy v-if="showHttpProxy" :cluster="cluster"></HttpProxy>
     <ContainerManager :cluster="cluster"></ContainerManager>
@@ -20,6 +22,7 @@ import SshParamsCluster from '../common/SshParamsCluster.vue'
 import OsMirror from './OsMirror.vue'
 import ContainerManager from './ContainerManager.vue'
 import HttpProxy from './HttpProxy.vue'
+import SshParamsBastion from './SshParamsBastion.vue'
 
 export default {
   props: {
@@ -33,9 +36,15 @@ export default {
   computed: {
     showHttpProxy () {
       return location.hash.indexOf("showHttpProxy=true") > 0
-    }
+    },
+    inventory: {
+      get () {
+        return this.cluster.inventory
+      },
+      set () {}
+    },
   },
-  components: { SshParamsCluster, OsMirror, ContainerManager, HttpProxy },
+  components: { SshParamsCluster, OsMirror, ContainerManager, HttpProxy, SshParamsBastion },
   mounted () {
   },
   methods: {

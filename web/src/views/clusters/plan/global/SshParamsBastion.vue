@@ -5,14 +5,14 @@ en:
   ansible_host_placeholder: 'KuboardSpray use this ip or hostname to connect to the node.'
   default_value: 'Default: {default_value} (inhirit from value configured in Global Config tab)'
   duplicateIP: "IP address conflict with {node}"
-  description: Access target nodes throguh bastion/jumpserver【Cannot work now.】
+  description: Access target nodes throguh bastion/jumpserver
 zh:
   bastionUsage: KuboardSpray 可以通过跳板机或堡垒机访问将要安装 K8S 集群的目标节点。
   addSshKey: 添加私钥
   ansible_host_placeholder: 'KuboardSpray 连接该主机时所使用的主机名或 IP 地址'
   default_value: '默认值：{default_value} （继承自全局设置标签页中的配置）'
   duplicateIP: "IP 地址不能与其他节点相同：{node}"
-  description: 通过跳板机或者堡垒机访问目标节点【待完善】
+  description: 通过跳板机或者堡垒机访问目标节点
 </i18n>
 
 

@@ -23,14 +23,11 @@ zh:
         <ResourceDetails :resourcePackage="resourcePackage"></ResourceDetails>
       </div>
     </ConfigSection>
-    <SshParamsBastion v-if="cluster && cluster.inventory" :cluster="cluster" nodeName="bastion" :holder="inventory.all.hosts.bastion || {}" 
-      prop="all.hosts.bastion"></SshParamsBastion>
   </div>
 </template>
 
 <script>
 import ResourceDetails from '../../../resources/details/ResourceDetails.vue'
-import SshParamsBastion from './SshParamsBastion.vue'
 
 export default {
   props: {
@@ -62,7 +59,7 @@ export default {
       set () {}
     },
   },
-  components: { ResourceDetails, SshParamsBastion },
+  components: { ResourceDetails },
   mounted () {
   },
   methods: {

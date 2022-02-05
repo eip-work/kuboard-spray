@@ -6,7 +6,6 @@ en:
   enabledBation: Enabled
   disabledBation: Disabled
   selectANode: Please select a node from the diagram to the left.
-  bastionPrompt: Bastion params are placed at the bottom of KuboardSpray tab.
 zh:
   singleNode: 单个节点
   global_config: 全局设置
@@ -14,7 +13,6 @@ zh:
   enabledBation: 使用跳板机
   disabledBation: 不使用跳板机
   selectANode: 请从左侧图中选择一个节点
-  bastionPrompt: 跳板机参数设置在 KuboardSpray 标签页的最后
 </i18n>
 
 <template>
@@ -323,14 +321,10 @@ export default {
       return roles.etcd && !roles.kube_control_plane
     },
     showBastion () {
-      this.currentPropertiesTab = 'localhost'; 
-      // setTimeout(() => {
-      //   this.$refs.configKuboardSprayScroll.setScrollTop(10)
-      // }, 200)
+      this.currentPropertiesTab = 'global_config'; 
       setTimeout(() => {
-        this.$refs.configKuboardSprayScroll.setScrollTop(3000)
+        this.$refs.configKuboardSprayScroll.setScrollTop(0)
       }, 400)
-      this.$message.info(this.$t('bastionPrompt'))
     },
     ping () {
       this.pingpong = {}

@@ -336,6 +336,16 @@ export default {
       this.pingpong = {}
       this.pingpong_loading = true
       let req = { nodes: 'target' }
+      let count = 0
+      for (let key in this.cluster.inventory.all.hosts) {
+        if (key !== 'localhost' && key !== 'bastion') {
+          count ++
+        }
+      }
+      if (count == 0) {
+        this.pingpong_loading = false
+        return
+      }
       this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/state/ping`, req).then(resp => {
         this.pingpong = resp.data.data.items
         this.pingpong_loading = false

@@ -9,6 +9,7 @@ en:
   backup: Backup/Restore
   csi_scan: CSI Scan
   upgrade: Upgrade Cluster
+  faile_validate_form: Please validate the form
 zh:
   clusterList: 集群列表
   cluster: 集群
@@ -19,6 +20,7 @@ zh:
   backup: 备份/恢复
   csi_scan: CIS扫描
   upgrade: 升级集群
+  faile_validate_form: 请完善表单
 </i18n>
 
 <template>
@@ -340,6 +342,8 @@ export default {
           }).catch(e => {
             this.$message.error(this.$t('msg.save_failed', e.response.data.message))
           })
+        } else {
+          this.$message.error(this.$t('faile_validate_form'))
         }
       })
     },

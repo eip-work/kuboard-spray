@@ -52,6 +52,7 @@ ENV GIN_MODE=release
 ENV KUBOARD_SPRAY_LOGRUS_LEVEL="info"
 
 COPY ./server/ansible-script ansible-script
+COPY ./server/ansible-rpc ansible-rpc
 COPY ./server/kuboard-spray kuboard-spray
 COPY ./web/dist /kuboard-spray/ui
 COPY ./server/pull-resource-package.sh pull-resource-package.sh

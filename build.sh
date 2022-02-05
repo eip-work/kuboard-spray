@@ -2,6 +2,7 @@
 
 datetime=`date "+%Y-%m-%d %H:%M:%S"`
 echo $datetime
+echo "【构建】 ${1}"
 
 tag=eipwork/kuboard-spray
 tag_backup=swr.cn-east-2.myhuaweicloud.com/kuboard/kuboard-spray
@@ -34,7 +35,6 @@ docker build -f Dockerfile -t $tag:$1-amd64 .
 echo "【构建 成功】"
 echo $tag:$1-amd64
 
-
 docker tag $tag:$1-amd64 $tag:latest-amd64
 docker tag $tag:$1-amd64 $tag_backup:$1-amd64
 docker tag $tag:$1-amd64 $tag_backup:latest-amd64
@@ -49,7 +49,8 @@ then
 
 else
 
-  echo "稍后推送镜像："
+  echo
+  echo "【稍后推送镜像：】"
 
   echo "#!/bin/bash" > push.sh
   echo "docker push $tag:$1-amd64" >> push.sh

@@ -26,12 +26,12 @@ zh:
               <template v-else>
                 <el-button type="danger" icon="el-icon-upload" @click="$refs.choose.show()" style="margin-left: 20px;">{{$t('chooseNewResourcePackage')}}</el-button>
                 <template v-if="cluster.inventory.all.hosts.localhost.kuboardspray_resource_package_previous">
-                  <el-popover placement="top-start" :title="$t('finished_upgrade_title')" :width="320" trigger="hover">
+                  <el-popover placement="top-start" :title="$t('finished_upgrade_title')" :width="350" trigger="hover">
                     <template #reference>
                       <el-button type="success" round icon="el-icon-circle-check">{{ $t('finished_upgrade_title') }}</el-button>
                     </template>
                     <div>{{$t('finished_upgrade')}}</div>
-                    <div class="app_text_mono">{{cluster.inventory.all.hosts.localhost.kuboardspray_resource_package_previous}}</div>
+                    <div class="app_text_mono" style="line-height: 36px; color: var(--el-color-primary);">{{cluster.inventory.all.hosts.localhost.kuboardspray_resource_package_previous}}</div>
                   </el-popover>
                 </template>
               </template>

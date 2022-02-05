@@ -281,7 +281,7 @@ export default {
       })
       // this.percentage += 20
       this.kuboardSprayApi.get(`/clusters/${this.name}/state/etcd_member_health`).then(resp => {
-        console.log(resp.data.data)
+        // console.log(resp.data.data)
         if (resp.data.data && resp.data.data.length == 2) {
           temp.etcd_code = 200
           let count = 0

@@ -84,7 +84,7 @@ zh:
           <el-alert :closable="false" type="error">
             <pre class="app_text_mono">{{fact.msg}}</pre>
             <pre v-if="fact.module_stdout"><el-tag style="margin-right: 5px;">stdout</el-tag>{{fact.module_stdout}}</pre>
-            <pre v-if="fact.module_stderr"><el-tag type="error" effect="dark" style="margin-right: 5px;">stderr</el-tag>{{fact.module_stderr}}</pre>
+            <pre v-if="fact.module_stderr"><el-tag type="danger" effect="dark" style="margin-right: 5px;">stderr</el-tag>{{fact.module_stderr}}</pre>
           </el-alert>
         </div>
       </div>

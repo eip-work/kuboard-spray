@@ -42,6 +42,8 @@ type PingPongItem struct {
 	Ping        string `json:"ping"`
 	UnReachable bool   `json:"unreachable"`
 	Message     string `json:"message"`
+	StdOut      string `json:"stdout"`
+	StdErr      string `json:"stderr"`
 }
 
 func PingPong(clusterName string, nodes string) (*PingPongResult, error) {
@@ -63,6 +65,8 @@ func PingPong(clusterName string, nodes string) (*PingPongResult, error) {
 			Ping:        temp.Ping,
 			UnReachable: temp.UnReachable,
 			Message:     temp.Msg,
+			StdOut:      temp.ModuleStdOut,
+			StdErr:      temp.ModuleStdErr,
 		}
 		result.Items[item.NodeName] = item
 	}

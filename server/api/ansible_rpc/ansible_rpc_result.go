@@ -31,6 +31,8 @@ type AnsibleResultNode struct {
 	AnsibleFacts      map[string]interface{} `json:"ansible_facts,omitempty"`
 	InventoryHostName string                 `json:"ansible_inventory_hostname,omitempty"`
 	Ping              string                 `json:"ping,omitempty"`
+	ModuleStdErr      string                 `json:"module_stderr"`
+	ModuleStdOut      string                 `json:"module_stdout"`
 }
 
 type AnsibleResultTaskMeta struct {

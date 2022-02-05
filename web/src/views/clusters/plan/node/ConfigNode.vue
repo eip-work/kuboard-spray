@@ -34,15 +34,18 @@ zh:
         <span class="app_text_mono">PING : {{nodeName}}</span>
       </template>
       <div v-if="pingpong[nodeName]" class="app_text_mono">
-        <div v-if="pingpong[nodeName].unreachable === false">
+        <div v-if="pingpong[nodeName].ping === 'pong'">
           {{ pingpong[nodeName].ping }}
           <el-button style="float: right; margin-right: -8px;" @click="openUrlInBlank(`#/ssh/cluster/${cluster.name}/${nodeName}`)" icon="el-icon-monitor" type="primary">{{ $t('terminal')}}</el-button>
         </div>
         <span v-else>
           <div class="app_margin_bottom">
             <pre>{{ pingpong[nodeName].message }}</pre>
+            <pre v-if="pingpong[nodeName].stdout"><el-tag style="margin-right: 5px;">stdout</el-tag>{{pingpong[nodeName].stdout}}</pre>
+            <pre v-if="pingpong[nodeName].stderr"><el-tag style="margin-right: 5px;" type="danger" effect="dark">stderr</el-tag>{{pingpong[nodeName].stderr}}</pre>
           </div>
-          <el-button type="primary" @click="$emit('ping')" :loading="pingpongLoading" icon="el-icon-lightning">PING</el-button>  
+          <el-button type="primary" @click="$emit('ping')" :loading="pingpongLoading" icon="el-icon-lightning">PING</el-button>
+          <el-button v-if="pingpong[nodeName].unreachable === false" style="float: right; margin-right: -8px;" @click="openUrlInBlank(`#/ssh/cluster/${cluster.name}/${nodeName}`)" icon="el-icon-monitor" type="primary">{{ $t('terminal')}}</el-button>
         </span>
       </div>
       <div v-else>
@@ -140,7 +143,7 @@ export default {
   computed: {
     pingpongType () {
       if (this.pingpong[this.nodeName]) {
-        return this.pingpong[this.nodeName].unreachable ? 'error' : 'success'
+        return this.pingpong[this.nodeName].ping === 'pong' ? 'success' : 'error'
       }
       return 'info'
     },

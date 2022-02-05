@@ -41,7 +41,7 @@ zh:
         </el-form-item>
       </el-form>
     </div>
-    <el-alert v-if="resource.data.supported_playbooks.cluster_version === undefined" type="warning" :closable="false">
+    <el-alert v-if="resource.data.supported_playbooks['cluster_version_'+cluster.inventory.all.children.target.vars.container_manager] === undefined" type="warning" :closable="false">
       {{ $t('not_support_cluster_version') }}
     </el-alert>
     <el-alert v-else-if="errMsg" type="error" :closable="false">
@@ -101,7 +101,7 @@ export default {
   },
   methods: {
     async loadClusterVersion() {
-      if (this.resource.data.supported_playbooks.cluster_version === undefined) {
+      if (this.resource.data.supported_playbooks['cluster_version_'+this.cluster.inventory.all.children.target.vars.container_manager] === undefined) {
         return
       }
       this.loading = true

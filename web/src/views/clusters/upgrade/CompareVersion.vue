@@ -49,7 +49,7 @@ zh:
             <div class="compare_version_header">{{ $t('command_for_version') }}</div>
           </template>
           <template #default="scope">
-            <el-tooltip trigger="click" v-if="firstNode && firstNode[scope.row.name]" placement="top" width="420">
+            <el-tooltip trigger="click" v-if="firstNode && firstNode[scope.row.name] && firstNode[scope.row.name].cmd" placement="top" width="420">
               <el-button icon="el-icon-finished">{{$t('command_for_version')}}</el-button>
               <template #content>
                 <pre style="margin: 0 10px;">{{ firstNode[scope.row.name].cmd }}</pre>
@@ -74,7 +74,10 @@ zh:
                 </template>
               </el-tooltip>
               <el-tag v-else-if="nodeVersion[scope.row.name].stdout === scope.row.version" type="success">{{ nodeVersion[scope.row.name].stdout }}</el-tag>
-              <el-tag v-else-if="nodeVersion[scope.row.name].stdout" type="danger">{{ nodeVersion[scope.row.name].stdout }}</el-tag>
+              <el-tag v-else-if="nodeVersion[scope.row.name].stdout" 
+                :type="scope.row.name === 'docker' && nodeVersion[scope.row.name].stdout.indexOf(scope.row.version) === 0 ? 'success' : 'danger'">
+                {{ nodeVersion[scope.row.name].stdout }}
+              </el-tag>
               <el-tooltip v-else-if="nodeVersion[scope.row.name].stderr" trigger="hover" placement="top" width="420">
                 <el-tag type="danger" effect="dark" style="cursor: pointer">error</el-tag>
                 <template #content>

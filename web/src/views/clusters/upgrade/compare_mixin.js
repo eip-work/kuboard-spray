@@ -22,7 +22,7 @@ const mixin = {
         if (ce.container_manager == inv.all.children.target.vars.container_manager) {
           if (ce.container_manager === 'docker') {
             containerEngine.children.push({ name: 'docker', version: ce.params.docker_version })
-            containerEngine.children.push({ name: 'containerd', version: ce.params.docker_containerd_version })
+            // containerEngine.children.push({ name: 'containerd', version: ce.params.docker_containerd_version })
           } else {
             containerEngine.children.push({ name: 'containerd', version: ce.params.containerd_version })
           }
@@ -30,9 +30,12 @@ const mixin = {
       }
       result.push(containerEngine)
 
-      result.push({ name: 'etcd_cluster', version: undefined, children: [
-        { name: 'etcd', version: res.etcd.etcd_version }
-      ] })
+      let etcd_children = [ { name: 'etcd', version: res.etcd.etcd_version } ]
+      if (inv.all.children.target.children.etcd.vars.etcd_deployment_type === 'docker') {
+        etcd_children = [ { name: 'etcd_docker', version: res.etcd.etcd_version } ]
+      }
+      result.push({ name: 'etcd_cluster', version: undefined, children: etcd_children })
+
 
       let networkPlugin = { name: 'network_plugin', children: [] }
       for (let np of res.network_plugin) {

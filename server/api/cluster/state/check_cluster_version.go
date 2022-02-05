@@ -28,7 +28,7 @@ func CheckClusterVersion(c *gin.Context) {
 		return
 	}
 
-	playbook := common.MapGetString(cluster.ResourcePackage, "data.supported_playbooks.cluster_version")
+	playbook := common.MapGetString(cluster.ResourcePackage, "data.supported_playbooks.cluster_version_"+common.MapGetString(cluster.Inventory, "all.children.target.vars.container_manager"))
 	if playbook == "" {
 		common.HandleError(c, http.StatusInternalServerError, "current resource package doesnot support the operation to view cluster version", nil)
 		return

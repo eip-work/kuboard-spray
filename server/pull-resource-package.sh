@@ -39,6 +39,11 @@ dataDir=${dataDir%/*}/data
 rm -rf "${dataDir}/resource/${version}/content/"
 docker cp "${version}:/kuboard-spray/resource/content/" "${dataDir}/resource/${version}/content/"
 
+if [ $? -ne 0 ]; then
+  echo -e "      \033[31m\033[01m\033[05m[ 加载资源包失败。]\033[0m "
+  exit
+fi
+
 echo -e "      \033[32m[ 加载成功。]\033[0m "
 
 echo ""

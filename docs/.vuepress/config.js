@@ -47,15 +47,16 @@ module.exports = {
           path: '/',
         },
         {
-          title: '集群安装',
-          path: '/guide/install-k8s.md',
-        },
-        {
           title: '集群维护',
           children: [
+            {
+              title: '集群安装',
+              path: '/guide/install-k8s.md',
+            },
             '/guide/maintain/ha-mode.md',
             '/guide/maintain/add-replace-node.md',
-            '/guide/maintain/upgrade.md'
+            '/guide/maintain/upgrade.md',
+            '/guide/extra/speedup.md'
           ]
         },
         {

@@ -1,7 +1,6 @@
 # Use imutable image tags rather than mutable tags (like ubuntu:18.04)
 FROM ubuntu:focal-20220105
 
-ADD .docker/sources.list /etc/apt/sources.list
 ADD .docker/pip.conf /root/.pip/pip.conf
 
 # RUN apt-get update -y \

@@ -9,6 +9,8 @@ en:
   os: Operation System
   cpumem: CPU/Mem
   no_cached_facts: no cached facts found, please click the Validate Connection button above.
+  python_executable: Python Executable
+  python_version: Python Version
 zh:
   validate: 验证连接
   facts: 主机信息
@@ -19,6 +21,8 @@ zh:
   os: 操作系统
   cpumem: CPU/内存
   no_cached_facts: 未找到该节点的缓存信息，请点击上方的 "验证连接" 按钮
+  python_executable: Python 路径
+  python_version: Python 版本
 
 </i18n>
 
@@ -37,6 +41,9 @@ zh:
                 <span class="package_title">{{$t('baseInfo')}}</span>
               </template>
               <div class="package_info">
+                <NodeFactField :holder="fact.ansible_facts.ansible_python" fieldName="executable" :label="$t('python_executable')"></NodeFactField>
+                <NodeFactField :holder="fact.ansible_facts" fieldName="ansible_python_version" :label="$t('python_version')"></NodeFactField>
+                <el-divider style="margin: 10px 0;"></el-divider>
                 <NodeFactField v-if="fact.ansible_facts.ansible_lsb && fact.ansible_facts.ansible_lsb.description" :holder="fact.ansible_facts.ansible_lsb" fieldName="description" :label="$t('os')"></NodeFactField>
                 <el-form-item v-else :label="$t('os')">
                   <span class="field_value app_text_mono">{{fact.ansible_facts.ansible_distribution}} {{fact.ansible_facts.ansible_distribution_version}}</span>

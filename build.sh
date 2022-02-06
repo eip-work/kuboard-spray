@@ -37,7 +37,7 @@ ls -lh ./server/kuboard-spray
 echo
 echo "【构建 镜像】"
 
-docker build -f Dockerfile -t $tag:$1-${arch} .
+docker build -f Dockerfile -t $tag:$1-${arch} ----build-arg arch=${arch} .
 
 echo "【构建 成功】"
 echo $tag:$1-${arch}

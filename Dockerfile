@@ -24,7 +24,8 @@ RUN apt-get update -y \
 #     && apt-get update -y && apt-get install --no-install-recommends -y docker-ce \
 #     && rm -rf /var/lib/apt/lists/*
 
-RUN curl -o docker-ce-cli.deb https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/dists/focal/pool/stable/amd64/docker-ce-cli_20.10.12~3-0~ubuntu-focal_amd64.deb \
+ARG arch
+RUN curl -o docker-ce-cli.deb https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/dists/focal/pool/stable/$arch/docker-ce-cli_20.10.12~3-0~ubuntu-focal_$arch.deb \
     && dpkg -i docker-ce-cli.deb \
     && rm -rf docker-ce-cli.deb
 

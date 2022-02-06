@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+  "runtime"
 
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/eip-work/kuboard-spray/constants"
@@ -78,6 +79,10 @@ func CreateCluster(c *gin.Context) {
 			}
 		}
 	}
+
+  if runtime.GOARCH == "arm64" {
+    common.MapSet(inventory, "all.children.target.vars.container_manager", "docker")
+  }
 
 	content, _ := yaml.Marshal(inventory)
 

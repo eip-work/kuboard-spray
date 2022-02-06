@@ -51,6 +51,13 @@ const mixin = {
       
       let dependency = { name: 'dependency', children: [] }
       for (let dep of res.dependency) {
+        if (inv.all.children.target.vars.container_manager === 'docker') {
+          if (dep.name === 'runc' || dep.name === 'nerdctl' || dep.name === 'crictl')
+          continue
+        }
+        if (dep.name === 'crun' || dep.name === 'pause' || dep.name === 'cni-plugins') {
+          continue
+        }
         dependency.children.push({ name: dep.name, version: dep.version })
       }
       result.push(dependency)

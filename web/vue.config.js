@@ -6,7 +6,7 @@ module.exports = {
         port: 25702,
         host: '0.0.0.0',
         public: 'kb:25702',
-        allowedHosts: ['kb'],
+        allowedHosts: ['kb', 'kb-arm'],
         disableHostCheck: true,
         compress: true,
         hot: true,

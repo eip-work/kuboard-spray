@@ -7,6 +7,7 @@ en:
   currentCluster: "Current Cluster"
   logoutAction: "Please go to {type} to logout"
   stayLogin: "Cancel logout, stay login"
+  changePassword: Change Password
 zh:
   currentLogin: "当前登录用户"
   logout: "退 出"
@@ -15,11 +16,12 @@ zh:
   currentCluster: "当前集群"
   logoutAction: "请到 {type} 退出登录"
   stayLogin: "取消退出，保持登录状态"
+  changePassword: 修改密码
 </i18n>
 
 <template>
   <div class="user">
-    <el-popover placement="bottom-end" :width="540" trigger="click">
+    <el-popover v-model:visible="visible" placement="bottom-end" :width="540" trigger="mannual">
       <template #reference>
         <div @click="visible = !visible">
           <span class="font-weight" style="margin-right: 5px;">{{displayName}}</span>
@@ -33,6 +35,12 @@ zh:
           <div class="label">{{$t('username')}}</div>
           <div class="value">
             admin
+          </div>
+        </div>
+        <div class="item">
+          <div class="label">{{$t('changePassword')}}</div>
+          <div class="value">
+            <el-button type="text" @click="visible = false; $router.push('/settings/profile')" icon="el-icon-link">{{$t('changePassword')}}</el-button>
           </div>
         </div>
         <div class="app_text_right" style="float: right; margin-top: 20px;">
@@ -52,6 +60,7 @@ export default {
   },
   data() {
     return {
+      visible: false,
     }
   },
   computed: {

@@ -188,7 +188,7 @@ export default {
   },
   data () {
     return {
-      currentPropertiesTab: 'k8s_cluster',
+      currentPropertiesTab: 'global_config',
       pingpong: {},
       pingpong_loading: false,
     }

@@ -1,6 +1,8 @@
 package login
 
 import (
+	"crypto/md5"
+	"fmt"
 	"net/http"
 
 	"github.com/eip-work/kuboard-spray/common"
@@ -20,7 +22,14 @@ func AuthHandler(c *gin.Context) {
 		return
 	}
 
-	if user.Username == "admin" && user.Password == "Kuboard123" {
+	userInfo, err := readUserRepository(user.Username)
+	if err != nil {
+		common.HandleError(c, http.StatusInternalServerError, "", err)
+		return
+	}
+	m := md5.Sum([]byte(user.Password))
+	md5str1 := fmt.Sprintf("%x", m)
+	if userInfo.Password == md5str1 {
 		tokenString, _ := GenerateToken(user.Username)
 		c.JSON(http.StatusOK, gin.H{
 			"code":    http.StatusOK,

@@ -50,7 +50,7 @@ zh:
             </span> -->
           </div>
           <div>
-            <el-button style="width: 100%;" size="large" type="primary" icon="el-icon-s-promotion" @click="login">登 录</el-button>
+            <el-button style="width: 100%;" size="large" type="primary" icon="el-icon-promotion" @click="login">登 录</el-button>
           </div>
         </el-form>
       </el-card>
@@ -80,9 +80,8 @@ export default {
   },
   methods: {
     login() {
-      console.log(this.form)
       this.kuboardSprayApi.post('/login', this.form).then(resp => {
-        console.log(resp)
+        console.log('success', resp.data)
         setupCookie(resp.data.data.token, 7)
         this.$router.replace('/')
       }).catch(e => {

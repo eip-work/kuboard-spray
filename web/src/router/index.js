@@ -81,6 +81,11 @@ const constantRouterMap = [
         path: 'kuboard',
         name: 'Kuboard',
         component: () => import('../views/kuboard/Kuboard.vue')
+      },
+      {
+        path: 'profile',
+        name: 'Profile',
+        component: () => import('../views/login/Profile.vue')
       }
     ]
   }

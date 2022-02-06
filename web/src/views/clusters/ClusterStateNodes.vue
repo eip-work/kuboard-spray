@@ -14,7 +14,7 @@ zh:
 <template>
   <el-popover placement="bottom-start" :title="$t('title')" :width="600" trigger="click">
     <template #reference>
-      <el-button v-if="state.code === undefined" type="info" round icon="el-icon-loading">{{$t('loading')}}</el-button>
+      <el-button v-if="state.code === undefined" type="info" round :loading="true">{{$t('loading')}}</el-button>
       <template v-else-if="state.code === 200">
         <el-button v-if="healthy" type="success" round icon="el-icon-success-filled">{{$t('nodeCount', { count, etcdCount: state.etcd_members_count })}}</el-button>
         <el-button v-else type="danger" round icon="el-icon-success-filled">{{$t('nodeCount', { count, etcdCount: state.etcd_members_count })}}</el-button>

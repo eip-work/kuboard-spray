@@ -7,6 +7,7 @@ en:
   resources: Resources Package
   mirrors: OS Mirrors
   kuboard: Kuboard Integration
+  profile: Change Password
 zh:
   expand: 展开
   collapse: 收起
@@ -15,6 +16,7 @@ zh:
   resources: 资源包管理
   mirrors: OS 软件源
   kuboard: Kuboard 集成
+  profile: 修改密码
 </i18n>
 
 <template>
@@ -48,6 +50,9 @@ zh:
         </el-menu-item>
         <el-menu-item index="2-3" :route="`/settings/kuboard`">
           {{$t('kuboard')}}
+        </el-menu-item>
+        <el-menu-item index="2-4" :route="`/settings/profile`">
+          {{$t('profile')}}
         </el-menu-item>
       </el-sub-menu>
 
@@ -117,7 +122,8 @@ export default {
         'ResourceOnAir': '2-1',
         'Mirrors': '2-2',
         'Mirror': '2-2',
-        'Kuboard': '2-3'
+        'Kuboard': '2-3',
+        'Profile': '2-4',
       }
       if (map[this.$route.name]) {
         return map[this.$route.name]

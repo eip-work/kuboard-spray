@@ -31,6 +31,10 @@ func setupRouter() *gin.Engine {
 	root.POST("/api/login", login.AuthHandler)
 
 	api := root.Group("/api", login.JWTAuthMiddleware())
+
+	api.GET("/profile", login.GetProfile)
+	api.POST("/profile/change_password", login.ChangePassword)
+
 	api.GET("/clusters", cluster.ListClusters)
 	api.POST("/clusters", cluster.CreateCluster)
 	api.GET("/clusters/:cluster", cluster.GetCluster)

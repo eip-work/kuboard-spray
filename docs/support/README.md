@@ -10,3 +10,8 @@ kuboard-spray 作为开源项目，您可以在 kuboard-spray 的社群获得支
 <ClientOnly>
 <KuboardSprayResources/>
 </ClientOnly>
+
+
+<ClientOnly>
+<KuboardSprayResources arch="-arm64"/>
+</ClientOnly>

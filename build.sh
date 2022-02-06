@@ -1,20 +1,21 @@
 #!/bin/bash
 
 datetime=`date "+%Y-%m-%d %H:%M:%S"`
+
 echo $datetime
-echo "【构建】 ${1}"
-
-tag=eipwork/kuboard-spray
-tag_backup=swr.cn-east-2.myhuaweicloud.com/kuboard/kuboard-spray
-
-echo
-echo "【构建 web】"
 
 arch="amd64"
 if [ $(uname -m) != "x86_64" ]; then
   arch="arm64"
 fi
 
+echo "【构建】 ${1}-${arch}"
+
+tag=eipwork/kuboard-spray
+tag_backup=swr.cn-east-2.myhuaweicloud.com/kuboard/kuboard-spray
+
+echo
+echo "【构建 web】"
 
 cd web
 yarn install
@@ -56,7 +57,7 @@ then
 else
 
   echo
-  echo "【稍后推送镜像：】"
+  echo "【稍后推送镜像】"
 
   echo "#!/bin/bash" > push.sh
   echo "docker push $tag:$1-${arch}" >> push.sh

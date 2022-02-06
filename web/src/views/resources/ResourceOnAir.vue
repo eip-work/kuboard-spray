@@ -45,6 +45,7 @@ import axios from 'axios'
 import yaml from 'js-yaml'
 import ResourceDownload from './ResourceDownload.vue'
 import compareVersions from 'compare-versions'
+import repositoryPrefix from './repository_prefix.js'
 
 export default {
   mixins: [mixin],
@@ -86,13 +87,13 @@ export default {
   methods: {
     async refresh () {
       this.loading = true
-      await axios.get(`https://addons.kuboard.cn/v-kuboard-spray/${this.name}/package.yaml?nocache=${new Date().getTime()}`).then(resp => {
+      await axios.get(`${repositoryPrefix()}/${this.name}/package.yaml?nocache=${new Date().getTime()}`).then(resp => {
         this.resourcePackage = yaml.load(resp.data)
       }).catch(e => {
         console.log(e)
         this.$message.error('离线环境')
       })
-      await axios.get(`https://addons.kuboard.cn/v-kuboard-spray/${this.name}/release.md?nocache=${new Date().getTime()}`).then(resp => {
+      await axios.get(`${repositoryPrefix()}//${this.name}/release.md?nocache=${new Date().getTime()}`).then(resp => {
         this.releaseNote = resp.data
       }).catch(e => {
         console.log(e)

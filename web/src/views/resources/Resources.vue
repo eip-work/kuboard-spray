@@ -174,6 +174,7 @@ import axios from 'axios'
 import yaml from 'js-yaml'
 import ResourcesCreateOffline from './ResourcesCreateOffline.vue'
 import compareVersions from 'compare-versions'
+import repositoryPrefix from './repository_prefix.js'
 
 export default {
   props: {
@@ -208,7 +209,7 @@ export default {
         result.push(this.availablePackageList[i])
       }
       return result
-    }
+    },
   },
   components: { ResourcesCreateOffline },
   mounted () {
@@ -219,7 +220,7 @@ export default {
       this.importedPackageMap = {}
       this.availablePackageList = undefined
       this.cannot_reach_online_repository = false
-      await axios.get('https://addons.kuboard.cn/v-kuboard-spray/package-list.yaml?nocache=' + new Date().getTime()).then(resp => {
+      await axios.get(`${repositoryPrefix()}/package-list.yaml?nocache=${new Date().getTime()}`).then(resp => {
         this.availablePackageList = yaml.load(resp.data).items
       }).catch(e => {
         console.log(e)
@@ -256,7 +257,7 @@ export default {
       })
     },
     loadPackageFromRepository (packageVersion) {
-      axios.get(`https://addons.kuboard.cn/v-kuboard-spray/${packageVersion.version}/package.yaml?nocache=${new Date().getTime()}`).then(resp => {
+      axios.get(`${repositoryPrefix()}/${packageVersion.version}/package.yaml?nocache=${new Date().getTime()}`).then(resp => {
         setTimeout(() => {
           let temp = yaml.load(resp.data)
           this.packageYaml[packageVersion.version] = temp

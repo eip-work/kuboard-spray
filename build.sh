@@ -10,11 +10,17 @@ tag_backup=swr.cn-east-2.myhuaweicloud.com/kuboard/kuboard-spray
 echo
 echo "【构建 web】"
 
+arch="amd64"
+if [ $(uname -m) != "x86_64" ]; then
+  arch="arm64"
+fi
+
+
 cd web
 yarn install
 yarn build
 
-echo \{\"version\":\"${1}-amd64\",\"buildDate\":\"$datetime\"\} > ./dist/version.json
+echo \{\"version\":\"${1}-${arch}\",\"buildDate\":\"$datetime\"\} > ./dist/version.json
 cd ..
 
 echo
@@ -30,22 +36,22 @@ ls -lh ./server/kuboard-spray
 echo
 echo "【构建 镜像】"
 
-docker build -f Dockerfile -t $tag:$1-amd64 .
+docker build -f Dockerfile -t $tag:$1-${arch} .
 
 echo "【构建 成功】"
-echo $tag:$1-amd64
+echo $tag:$1-${arch}
 
-docker tag $tag:$1-amd64 $tag:latest-amd64
-docker tag $tag:$1-amd64 $tag_backup:$1-amd64
-docker tag $tag:$1-amd64 $tag_backup:latest-amd64
+docker tag $tag:$1-${arch} $tag:latest-${arch}
+docker tag $tag:$1-${arch} $tag_backup:$1-${arch}
+docker tag $tag:$1-${arch} $tag_backup:latest-${arch}
 
 if [ "$2" == "" ]
 then
 
-  docker push $tag:$1-amd64
-  docker push $tag:latest-amd64
-  docker push $tag_backup:$1-amd64
-  docker push $tag_backup:latest-amd64
+  docker push $tag:$1-${arch}
+  docker push $tag:latest-${arch}
+  docker push $tag_backup:$1-${arch}
+  docker push $tag_backup:latest-${arch}
 
 else
 
@@ -53,10 +59,10 @@ else
   echo "【稍后推送镜像：】"
 
   echo "#!/bin/bash" > push.sh
-  echo "docker push $tag:$1-amd64" >> push.sh
-  echo "docker push $tag:latest-amd64" >> push.sh
-  echo "docker push $tag_backup:$1-amd64" >> push.sh
-  echo "docker push $tag_backup:latest-amd64" >> push.sh
+  echo "docker push $tag:$1-${arch}" >> push.sh
+  echo "docker push $tag:latest-${arch}" >> push.sh
+  echo "docker push $tag_backup:$1-${arch}" >> push.sh
+  echo "docker push $tag_backup:latest-${arch}" >> push.sh
 
 fi
 

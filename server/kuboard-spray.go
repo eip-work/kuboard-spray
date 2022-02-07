@@ -29,6 +29,7 @@ func setupRouter() *gin.Engine {
 
 	root := router.Group("/")
 	root.POST("/api/login", login.AuthHandler)
+	root.POST("/api/validate_password", login.ValidatePassword)
 
 	api := root.Group("/api", login.JWTAuthMiddleware())
 

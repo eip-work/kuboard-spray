@@ -1,8 +1,8 @@
 <i18n>
 en:
-  hi: kuboard
+  password_error: Username password doesnot match.
 zh:
-  hi: kuboard
+  password_error: 用户名密码错误
 </i18n>
 
 <template>
@@ -32,7 +32,7 @@ zh:
             </template>
             <el-input v-model.trim="form.username" placeholder="请输入用户名" @keyup.enter="$refs.passwordInput.focus()" autofocus disabled></el-input>
           </el-form-item>
-          <el-form-item prop="password" :rules="[{ required: true, message: '请输入密码', trigger: 'blur' }]" ref="passwordFormItem">
+          <el-form-item prop="password" :rules="passwordRules" ref="passwordFormItem">
             <template #label>
               <span style="font-weight: bolder">密 码</span>
             </template>
@@ -70,7 +70,24 @@ export default {
       form: {
         username: 'admin',
         password: '',
-      }
+      },
+      passwordRules: [
+        { required: true, message: '请输入密码', trigger: 'blur' },
+        {
+          validator: (rule, value, callback) => {
+            this.kuboardSprayApi.post(`/validate_password`, this.form).then(resp => {
+              if (resp.data.data === 'ok') {
+                return callback()
+              } else {
+                return callback(this.$t('password_error'))
+              }
+            }).catch(e => {
+              return callback('failed to validate password: ' + e)
+            })
+          },
+          trigger: 'blur'
+        }
+      ]
     }
   },
   computed: {

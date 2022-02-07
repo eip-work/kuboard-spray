@@ -275,6 +275,10 @@ export default {
           temp.code = 500
           temp.msg = resp.data.data.stdout_obj.msg
         }
+        if (resp.data.data.stderr) {
+          temp.code = resp.data.data.rc
+          temp.msg = resp.data.data.stderr
+        }
       }).catch(e => {
         temp.code = 500
         temp.msg = e.response.data.message
@@ -299,6 +303,13 @@ export default {
         if (resp.data.data.return_code == '' && resp.data.data.stdout_obj.changed === false && resp.data.data.stdout_obj.msg) {
           temp.etcd_code = 500
           temp.etcd_msg = resp.data.data.stdout_obj.msg
+        }
+        for (let index in resp.data.data) {
+          let a = resp.data.data[index]
+          if (a.stderr) {
+            temp.etcd_code = a.rc
+            temp.etcd_msg = a.stderr
+          }
         }
         this.stateNodesLoaded(temp)
       }).catch(e => {

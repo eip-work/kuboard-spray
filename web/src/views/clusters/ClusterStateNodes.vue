@@ -28,8 +28,9 @@ zh:
             <ClusterStateNodesItem :node="node" :name="name"></ClusterStateNodesItem>
           </div>
         </div>
-        <el-alert v-else type="error" :closable="false" :title="$t('unreachable')" effect="dark" show-icon>
-          {{state.msg}}
+        <el-alert v-else type="error" :closable="false" :title="$t('unreachable')" effect="dark">
+          <pre>{{state.msg}}</pre>
+          <pre>{{state.etcd_msg}}</pre>
         </el-alert>
       </el-scrollbar>
     </div>

@@ -97,12 +97,15 @@ export default {
   },
   methods: {
     login() {
-      this.kuboardSprayApi.post('/login', this.form).then(resp => {
-        console.log('success', resp.data)
-        setupCookie(resp.data.data.token, 7)
-        this.$router.replace('/')
-      }).catch(e => {
-        console.log(e.response)
+      this.$refs.form.validate(flag => {
+        if (flag) {
+          this.kuboardSprayApi.post('/login', this.form).then(resp => {
+            setupCookie(resp.data.data.token, 7)
+            this.$router.replace('/')
+          }).catch(e => {
+            console.log(e.response)
+          })
+        }
       })
     }
   }

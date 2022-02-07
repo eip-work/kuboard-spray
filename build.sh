@@ -60,10 +60,14 @@ else
   echo "【稍后推送镜像】"
 
   echo "#!/bin/bash" > push.sh
+  echo "echo $datetime" >> push.sh
   echo "docker push $tag:$1-${arch}" >> push.sh
   echo "docker push $tag:latest-${arch}" >> push.sh
   echo "docker push $tag_backup:$1-${arch}" >> push.sh
   echo "docker push $tag_backup:latest-${arch}" >> push.sh
+  echo "echo $datetime" >> push.sh
+
+  echo "【已生成 push.sh】"
 
 fi
 

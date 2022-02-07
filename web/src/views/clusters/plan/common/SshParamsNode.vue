@@ -222,9 +222,18 @@ export default {
     async loadPythonInterpreter() {
       let result = [
         { label: 'auto', value: 'auto' },
-        { label: '/usr/bin/python', value: '/usr/bin/python' },
-        { label: '/usr/bin/python2', value: '/usr/bin/python2' },
+        { label: 'python3.10', value: 'python3.10' },
+        { label: 'python3.9', value: 'python3.9' },
+        { label: 'python3.8', value: 'python3.8' },
+        { label: 'python3.7', value: 'python3.7' },
+        { label: 'python3.6', value: 'python3.6' },
+        { label: 'python3.5', value: 'python3.5' },
         { label: '/usr/bin/python3', value: '/usr/bin/python3' },
+        { label: '/usr/libexec/platform-python', value: '/usr/libexec/platform-python' },
+        { label: 'python2.7', value: 'python2.7' },
+        { label: 'python2.6', value: 'python2.6' },
+        { label: '/usr/bin/python', value: '/usr/bin/python' },
+        { label: 'python', value: 'python' },
       ]
       return result
     }

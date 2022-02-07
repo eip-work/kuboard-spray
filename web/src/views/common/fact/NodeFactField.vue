@@ -8,6 +8,7 @@
       </template>
       <span v-else class="app_text_mono" style="font-size: 13px;">
         {{holder[fieldName]}}
+        <slot></slot>
       </span>
     </div>
   </el-form-item>

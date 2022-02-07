@@ -11,6 +11,7 @@ en:
   no_cached_facts: no cached facts found, please click the Validate Connection button above.
   python_executable: Python Executable
   python_version: Python Version
+  choosen: Bind To
 zh:
   validate: 验证连接
   facts: 主机信息
@@ -23,6 +24,7 @@ zh:
   no_cached_facts: 未找到该节点的缓存信息，请点击上方的 "验证连接" 按钮
   python_executable: Python 路径
   python_version: Python 版本
+  choosen: 绑定到此IP
 
 </i18n>
 
@@ -58,16 +60,19 @@ zh:
               <template #title>
                 <span class="package_title">{{$t('network')}}</span>
               </template>
-              <div class="package_info" v-if="preferredIpV4">
-                <NodeFactField :holder="preferredIpV4" fieldName="type"></NodeFactField>
-                <NodeFactField :holder="preferredIpV4" fieldName="device"></NodeFactField>
-                <NodeFactField :holder="preferredIpV4.ipv4" fieldName="address"></NodeFactField>
-                <NodeFactField :holder="preferredIpV4.ipv4" fieldName="network"></NodeFactField>
-                <!-- <NodeFactField :holder="preferredIpV4" fieldName="gateway"></NodeFactField> -->
-                <NodeFactField :holder="preferredIpV4.ipv4" fieldName="broadcast"></NodeFactField>
-                <NodeFactField :holder="preferredIpV4.ipv4" fieldName="netmask"></NodeFactField>
-                <NodeFactField :holder="preferredIpV4" fieldName="macaddress"></NodeFactField>
-                <NodeFactField :holder="preferredIpV4" fieldName="mtu"></NodeFactField>
+              <div class="package_info" v-for="(ipv4, index) in ipv4s" :key="'ip'+index">
+                <el-divider v-if="index !== 0" style="margin: 10px 0;"></el-divider>
+                <NodeFactField :holder="ipv4.ipv4" fieldName="type"></NodeFactField>
+                <NodeFactField :holder="ipv4.ipv4" fieldName="device"></NodeFactField>
+                <NodeFactField :holder="ipv4.ipv4.ipv4" fieldName="address">
+                  <el-tag type="success" effect="dark" v-if="ipv4.isPrefered">{{$t('choosen')}}</el-tag>
+                </NodeFactField>
+                <!-- <NodeFactField :holder="ipv4.ipv4.ipv4" fieldName="network"></NodeFactField> -->
+                <!-- <NodeFactField :holder="ipv4" fieldName="gateway"></NodeFactField> -->
+                <!-- <NodeFactField :holder="ipv4.ipv4.ipv4" fieldName="broadcast"></NodeFactField> -->
+                <NodeFactField :holder="ipv4.ipv4.ipv4" fieldName="netmask"></NodeFactField>
+                <NodeFactField :holder="ipv4.ipv4" fieldName="macaddress"></NodeFactField>
+                <!-- <NodeFactField :holder="ipv4.ipv4" fieldName="mtu"></NodeFactField> -->
               </div>
             </el-collapse-item>
             <el-collapse-item name="3">
@@ -115,17 +120,20 @@ export default {
     }
   },
   computed: {
-    preferredIpV4 () {
+    ipv4s () {
+      let result = []
       if (this.fact) {
         let defaultIp = this.ip || this.ansible_host
-        for (let key in this.fact.ansible_facts) {
-          let temp = this.fact.ansible_facts[key]
-          if (temp.ipv4 && temp.ipv4.address == defaultIp) {
-            return temp
+        for (let ip of this.fact.ansible_facts.ansible_all_ipv4_addresses) {
+          for (let key in this.fact.ansible_facts) {
+            let temp = this.fact.ansible_facts[key]
+            if (temp.ipv4 && temp.ipv4.address == ip) {
+              result.push({ ipv4: temp, isPrefered: defaultIp === temp.ipv4.address })
+            }
           }
         }
       }
-      return undefined
+      return result
     }
   },
   components: { NodeFactField },
@@ -162,6 +170,7 @@ export default {
         ansible_become_password: this.ansible_become_password,
         ansible_ssh_common_args: this.ansible_ssh_common_args,
         ansible_python_interpreter: this.ansible_python_interpreter,
+        gather_subset: '!all,network,hardware',
       }
       await this.kuboardSprayApi.post(`/facts/${this.node_owner_type}/${this.node_owner}/${this.node_name}`, req).then(resp => {
         if (fromCache) {

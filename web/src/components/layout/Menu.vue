@@ -26,7 +26,7 @@ zh:
     </div>
     <el-menu :default-active="defaultActive" class="kuboard_namespaced_menu" unique-opened
       :collapse="isCollapse" background-color="white"
-      ref="menu" router @open="handleOpen" @close="handleClose">
+      ref="menu" router>
       <el-menu-item index="1" :route="`/clusters`" class="toplevel">
         <el-icon>
           <el-icon-home-filled></el-icon-home-filled>
@@ -136,12 +136,6 @@ export default {
       localStorage.setItem('menu-collapse', this.isCollapse)
       this.$emit('collapse', this.isCollapse)
     },
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
-    }
   }
 }
 </script>

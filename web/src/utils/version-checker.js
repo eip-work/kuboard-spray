@@ -15,7 +15,7 @@ async function init () {
       let newVersion = currentVersion.version
       console.log('installed version: ' + installed)
       console.log('      new version: ' + newVersion)
-      if (installed === 'v1.0.0-dev-amd64') {
+      if (installed === 'v1.0.0-dev-amd64' || installed === 'v1.0.0-dev-arm64') {
         console.log('ignore new version in dev mode.')
         return
       }

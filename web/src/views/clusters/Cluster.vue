@@ -67,7 +67,8 @@ zh:
         <Access v-if="currentTab == 'access'" ref="access" 
           :cluster="cluster" :loading="loading" @switch="currentTab = $event"></Access>
       </el-tab-pane>
-      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('health_check')" name="health_check">
+      <el-tab-pane v-if="isClusterInstalled && isClusterOnline && cluster.inventory.all.children.target.children.k8s_cluster.vars.deploy_netchecker"
+        :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('health_check')" name="health_check">
         <ClusterHealthCheck v-if="isClusterInstalled && isClusterOnline && currentTab == 'health_check'" :cluster="cluster"></ClusterHealthCheck>
       </el-tab-pane>
       <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('backup')">

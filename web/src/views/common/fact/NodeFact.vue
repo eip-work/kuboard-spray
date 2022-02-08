@@ -116,7 +116,7 @@ export default {
     return {
       loadingFact: false,
       fact: undefined,
-      activeNames: ['1'],
+      activeNames: ['1', '2'],
     }
   },
   computed: {

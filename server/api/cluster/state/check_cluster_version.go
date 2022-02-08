@@ -44,7 +44,7 @@ func CheckClusterVersion(c *gin.Context) {
 			"-e", "kuboardspray_ssh_args='-o ConnectionAttempts=1 -o UserKnownHostsFile=/dev/null -F /dev/null'",
 		},
 		Env:     []string{"ANSIBLE_CONFIG=./ansible.cfg"},
-		Timeout: 20,
+		Timeout: 60,
 		Dir:     "./ansible-rpc",
 	}
 

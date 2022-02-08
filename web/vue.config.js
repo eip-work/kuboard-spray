@@ -2,14 +2,16 @@ const fs = require('fs')
 const os = require('os')
 
 let public = 'kb:25702'
+let port = '25702'
 if (os.arch() === 'arm64') {
-  public = 'kb-arm:25702'
+  public = 'kb-arm:25703'
+  port = 25703
 }
 
 module.exports = {
     publicPath: './',
     devServer: {
-        port: 25702,
+        port: port,
         host: '0.0.0.0',
         public: public,
         allowedHosts: ['kb', 'kb-arm'],

@@ -9,6 +9,7 @@ import (
 	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
 	"github.com/eip-work/kuboard-spray/api/command"
 	"github.com/eip-work/kuboard-spray/common"
+	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -43,7 +44,7 @@ func CheckClusterVersion(c *gin.Context) {
 			"--timeout", "3",
 			"-e", "kuboardspray_ssh_args='-o ConnectionAttempts=1 -o UserKnownHostsFile=/dev/null -F /dev/null'",
 		},
-		Env:     []string{"ANSIBLE_CONFIG=./ansible.cfg"},
+		Env:     []string{"ANSIBLE_CONFIG=./ansible.cfg", "ANSIBLE_CACHE_PLUGIN_CONNECTION=" + constants.GET_DATA_CLUSTER_DIR() + "/" + request.ClusterName + "/fact"},
 		Timeout: 60,
 		Dir:     "./ansible-rpc",
 	}

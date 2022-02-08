@@ -67,7 +67,7 @@ func ExecuteShellCommands(owner_type, owner_name, target string, commands []Ansi
 			"-f", "200",
 			"-e", "kuboardspray_ssh_args='-o ConnectionAttempts=1 -o UserKnownHostsFile=/dev/null -F /dev/null'",
 		},
-		Env:     []string{"ANSIBLE_CONFIG=./ansible-rpc/ansible.cfg"},
+		Env:     []string{"ANSIBLE_CONFIG=./ansible-rpc/ansible.cfg", "ANSIBLE_CACHE_PLUGIN_CONNECTION=" + constants.GET_DATA_DIR() + "/" + owner_type + "/" + owner_name + "/fact"},
 		Timeout: 20,
 	}
 

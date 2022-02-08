@@ -128,6 +128,7 @@ func (execute *Execute) exec() {
 	cmd.Stderr = logFile
 	cmd.Dir = execute.Dir
 	cmd.Env = append(os.Environ(), execute.Env...)
+	cmd.Env = append(cmd.Env, "ANSIBLE_CACHE_PLUGIN_CONNECTION="+constants.GET_DATA_DIR()+"/"+execute.OwnerType+"/"+execute.OwnerName+"/fact")
 
 	if err := cmd.Start(); err != nil {
 		execute.R_Error = errors.New("failed to start command " + cmd.String() + " : " + err.Error())

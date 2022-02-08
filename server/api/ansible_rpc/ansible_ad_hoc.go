@@ -75,7 +75,7 @@ func ExecuteAdhocCommandWithIp(req AdhocCommandRequestWithIP, args []string) ([]
 	run := command.Run{
 		Cmd:  "ansible",
 		Args: arguments,
-		Env:  []string{"ANSIBLE_CONFIG=./ansible.cfg"},
+		Env:  []string{"ANSIBLE_CONFIG=./ansible.cfg", "ANSIBLE_CACHE_PLUGIN_CONNECTION=" + constants.GET_DATA_DIR() + "/" + req.NodeOwnerType + "/" + req.NodeOwner + "/fact"},
 		Dir:  "./ansible-rpc",
 	}
 
@@ -110,7 +110,7 @@ func ExecuteAdhocCommandWithInventory(inventoryPath string, args []string) ([]An
 	run := command.Run{
 		Cmd:  "ansible",
 		Args: arguments,
-		Env:  []string{"ANSIBLE_CONFIG=./ansible.cfg"},
+		Env:  []string{"ANSIBLE_CONFIG=./ansible.cfg", "ANSIBLE_CACHE_PLUGIN_CONNECTION=" + inventoryPath[0:(len(inventoryPath)-14)] + "/fact"},
 		Dir:  "./ansible-rpc",
 	}
 

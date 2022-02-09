@@ -50,6 +50,8 @@ func (run *Run) Run() ([]byte, []byte, error) {
 
 	err = cmd.Start()
 
+	flagOut := false
+	flagErr := false
 	errContent := ""
 	go func() {
 		buf := new(strings.Builder)
@@ -62,6 +64,7 @@ func (run *Run) Run() ([]byte, []byte, error) {
 		}
 		errContent = buf.String()
 		logrus.Trace("terminated err reader thread.")
+		flagErr = true
 	}()
 
 	outContent := ""
@@ -76,6 +79,7 @@ func (run *Run) Run() ([]byte, []byte, error) {
 		}
 		outContent = buf.String()
 		logrus.Trace("terminated out reader thread.")
+		flagOut = true
 	}()
 
 	if run.Timeout > 0 {
@@ -87,5 +91,9 @@ func (run *Run) Run() ([]byte, []byte, error) {
 	}
 
 	cmd.Wait()
+	for !flagErr || !flagOut {
+		logrus.Trace("wait..")
+		time.Sleep(time.Millisecond * 100)
+	}
 	return []byte(outContent), []byte(errContent), err
 }

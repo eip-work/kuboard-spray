@@ -46,7 +46,6 @@ import ChangeFontSize from './ChangeFontSize'
 import Find from './Find'
 import ChangeColor from './ChangeColor'
 import SshQuickCommands from './SshQuickCommands.vue'
-// import {encode} from 'js-base64'
 
 function trimSlash(str) {
   if (str[str.length - 1] === '/') {
@@ -216,7 +215,7 @@ export ETCDCTL_CACERT=/etc/ssl/etcd/ssl/ca.pem
         this.socketReadyState = this.socket.readyState
       }, 2000)
 
-      document.title = `${this.$t('terminal')} - ${this.ownerType} / ${this.ownerName}`
+      document.title = `${this.$t('terminal')} - ${this.ownerName} / ${this.nodeName}`
     }
   }
 }

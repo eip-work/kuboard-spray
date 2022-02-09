@@ -10,6 +10,7 @@ en:
   password_and_bastion: You are using bastion/jumpserver to access the node, if you use password here, it takes longer time to create ssh connection, it would be better to clear the password and provide ssh_private_key.
   password_in_global: You defined password in global configuration, it's suggested that you clear it.
   speedup: SSH Multiplexing
+  cannotUseLocalhostAsTarget: Cannot use the machine that kuboardspray runs on as a target node.
 zh:
   addSshKey: 添加私钥
   ansible_host_placeholder: 'KuboardSpray 连接该主机时所使用的主机名或 IP 地址'
@@ -22,6 +23,7 @@ zh:
   password_and_bastion: 您将使用跳板机访问节点，如果在此处使用密码访问，创建 ssh 连接的时间较长，建议清除密码并提供 “私钥文件”。
   password_in_global: 您在全局参数中配置了密码，建议清除。
   speedup: 加速执行
+  cannotUseLocalhostAsTarget: 不能使用 KuboardSpray 所在机器作为目标节点
 </i18n>
 
 
@@ -98,6 +100,10 @@ export default {
         { required: true, message: this.$t('field.ansible_host') + this.$t('field.is_required_field'), trigger: 'blur' },
         {
           validator: (rule, value, callback) => {
+            if (value === location.hostname) {
+              console.log(location.hostname)
+              return callback(this.$t('cannotUseLocalhostAsTarget'))
+            }
             for (let key in this.cluster.inventory.all.hosts) {
               if (key !== this.nodeName && this.cluster.inventory.all.hosts[key].ansible_host === value) {
                 return callback(this.$t('duplicateIP', {node: key}))

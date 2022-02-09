@@ -43,7 +43,7 @@ func ModifyOsMirro(c *gin.Context) {
 	}
 
 	inventoryFilePath := constants.GET_DATA_MIRROR_DIR() + "/" + req.Name + "/inventory.yaml"
-	inventoryFile, err := os.OpenFile(inventoryFilePath, os.O_RDWR|os.O_APPEND, 0655)
+	inventoryFile, err := os.OpenFile(inventoryFilePath, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0655)
 
 	if err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to open os_mirror file.", err)

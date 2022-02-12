@@ -8,6 +8,9 @@ en:
   type: Type
   kind: Provision Method
   status: Status
+  os: OS
+  mirror_type_os: OS source
+  mirror_type_docker: Docker source
 zh:
   titleRepo: OS 软件源
   repoDescription1: 您必须定义您集群机器可以访问的操作系统软件地址（例如 CentOS 的 yum 源、Ubuntu 的 apt 源等）以供使用
@@ -17,6 +20,9 @@ zh:
   type: 类 型
   kind: 提供方式
   status: 状 态
+  os: 操作系统
+  mirror_type_os: 操作系统软件源
+  mirror_type_docker: docker 软件源
 </i18n>
 
 <template>
@@ -43,12 +49,23 @@ zh:
                   <el-icon :size="14" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 5px;">
                     <el-icon-link></el-icon-link>
                   </el-icon>
-                  {{scope.row.name}}
+                  {{ cleanName(scope.row.name) }}
                 </router-link>
               </template>
             </el-table-column>
-            <el-table-column prop="status.type" :label="$t('type')" width="150px"></el-table-column>
-            <el-table-column prop="status.kind" :label="$t('kind')" width="120px"></el-table-column>
+            <el-table-column prop="status.type" :label="$t('type')" width="150px">
+              <template #default="scope">
+                <el-tag v-if="scope.row.name.indexOf('docker_') === 0">{{$t('mirror_type_docker')}}</el-tag>
+                <el-tag type="warning" v-else>{{$t('mirror_type_os')}}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="status.type" :label="$t('os')" width="150px">
+              <template #default="scope">
+                <span v-if="scope.row.name.indexOf('docker_') === 0">{{ scope.row.name.split('_')[1].split('-')[0] }}</span>
+                <span v-else>{{ scope.row.name.split('-')[0] }}</span>
+              </template>
+            </el-table-column>
+            <!-- <el-table-column prop="status.kind" :label="$t('kind')" width="120px"></el-table-column> -->
             <el-table-column prop="status.url" label="url">
               <template #default="scope">
                 <KuboardSprayLink v-if="scope.row.status" :href="scope.row.status.url" :size="12">{{scope.row.status.url}}</KuboardSprayLink>
@@ -87,6 +104,7 @@ zh:
 <script>
 import mixin from '../../mixins/mixin.js'
 import MirrorCreate from './MirrorCreate.vue'
+import mirror_options from './mirror_options.js'
 
 export default {
   mixins: [mixin],
@@ -116,6 +134,14 @@ export default {
     this.refresh()
   },
   methods: {
+    cleanName(name) {
+      for (let key in mirror_options) {
+        if (name.indexOf(key) === 0) {
+          return name.slice(key.length + 1)
+        }
+      }
+      return name
+    },
     async refresh () {
       this.loading = true
       this.mirrors = undefined

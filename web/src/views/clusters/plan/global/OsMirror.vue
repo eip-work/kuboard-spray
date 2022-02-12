@@ -43,7 +43,7 @@ zh:
       <FieldSelect :holder="vars" :fieldName="'kuboardspray_repo_' + item" :loadOptions="loadRepoOptions" label-width="150px"
         :label="item + ' ' + $t('source')" required :prop="prop" anti-freeze>
         <template #edit>
-          <ConfirmButton @confirm="openUrlInBlank('/#/settings/mirrors')" buttonStyle="margin-left: 10px;"
+          <ConfirmButton @confirm="openUrlInBlank('/#/settings/mirrors')" buttonStyle="margin-left: 10px;" placement="top-end"
             icon="el-icon-plus" plain :text="$t('addSource')" :message="$t('goToMirrorPage')"></ConfirmButton>
         </template>
       </FieldSelect>
@@ -51,7 +51,7 @@ zh:
         <FieldSelect :holder="vars" :fieldName="'kuboardspray_repo_docker_' + item" :loadOptions="loadRepoOptions" label-width="150px"
           :label="'docker_' + item + ' ' + $t('source')" required :prop="prop" anti-freeze>
           <template #edit>
-            <ConfirmButton @confirm="openUrlInBlank('/#/settings/mirrors')" buttonStyle="margin-left: 10px;"
+            <ConfirmButton @confirm="openUrlInBlank('/#/settings/mirrors')" buttonStyle="margin-left: 10px;" placement="top-end"
               icon="el-icon-plus" plain :text="$t('addSource')" :message="$t('goToMirrorPage')"></ConfirmButton>
           </template>
         </FieldSelect>
@@ -113,7 +113,7 @@ export default {
         for (let os in this.supportedOs) {
           let key = os.toLowerCase()
           if (t[key]) {
-            this.vars['kuboardspray_repo_' + key] = this.vars['kuboardspray_repo_' + key] || ''
+            this.vars['kuboardspray_repo_' + key] = this.vars['kuboardspray_repo_' + key] || 'AS_IS'
           } else {
             delete this.vars['kuboardspray_repo_' + key]
           }
@@ -123,6 +123,24 @@ export default {
     temp: {
       get () { return { os: this.os } },
       set () {}
+    }
+  },
+  watch: {
+    os: {
+      deep: true,
+      handler (newValue) {
+        for (let item of newValue) {
+          this.vars['kuboardspray_repo_docker_' + item] = this.vars['kuboardspray_repo_docker_' + item] || 'AS_IS'
+        }
+      }
+    },
+    'vars.container_manager': {
+      deep: true,
+      handler () {
+        for (let item of this.os) {
+          this.vars['kuboardspray_repo_docker_' + item] = this.vars['kuboardspray_repo_docker_' + item] || 'AS_IS'
+        }
+      }
     }
   },
   components: { },

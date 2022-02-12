@@ -10,6 +10,13 @@ en:
   centos: Centos yum repo
   docker_ubuntu: Ubuntu apt mirror for docker
   docker_centos: Centos yum repo for docker
+
+  os_type: OS Type
+  mirror_type: Source Type
+  mirror_type_os: OS source
+  mirror_type_os_desc: OS Source
+  mirror_type_docker: Docker source
+  mirror_type_docker_desc: contains installation packages for docker-ce / docker-cli / containerd.
 zh:
   addMirror: 添加 OS 软件源
   name: 名称
@@ -21,6 +28,13 @@ zh:
   centos: Centos yum repo
   docker_ubuntu: Docker 的 Ubuntu apt mirror
   docker_centos: Docker 的 Centos yum repo
+
+  os_type: 操作系统
+  mirror_type: 软件源类型
+  mirror_type_os: 操作系统软件源
+  mirror_type_os_desc: 操作系统提供的软件源
+  mirror_type_docker: docker 软件源
+  mirror_type_docker_desc: 安装 docker-ce / docker-cli / containerd 等软件包的源
 </i18n>
 
 
@@ -29,10 +43,26 @@ zh:
     <el-dialog v-model="dialogVisible" :close-on-click-modal="false" :modal="true" top="20vh"
       :title="$t('addMirror')" width="45%">
       <el-form :model="form" label-position="left" label-width="120px" v-if="dialogVisible" ref="form">
-        <FieldSelect :holder="form" fieldName="kuboardspray_os_mirror_type" :loadOptions="loadMirrorTypeList" required>
-        </FieldSelect>
+        <el-form-item :label="$t('mirror_type')">
+          <el-radio-group v-model="mirror_type">
+            <el-radio-button label="os">{{ $t('mirror_type_os') }}</el-radio-button>
+            <el-radio-button label="docker">{{ $t('mirror_type_docker') }}</el-radio-button>
+          </el-radio-group>
+          <span style="margin-left: 20px; vertical-align: bottom; color: var(--el-text-color-secondary);">{{$t('mirror_type_' + mirror_type + '_desc')}}</span>
+        </el-form-item>
+        <el-form-item :label="$t('os_type')" prop="kuboardspray_os_mirror_type" :rules="[{ required: true, message: 'required', trigger: 'change' }]">
+          <el-radio-group v-model="os_type">
+            <el-radio-button label="anolis">Anolis</el-radio-button>
+            <el-radio-button label="centos">Centos</el-radio-button>
+            <el-radio-button label="openeuler">openEuler</el-radio-button>
+            <el-radio-button label="oraclelinux">OracleLinux</el-radio-button>
+            <el-radio-button label="redhat">Redhat</el-radio-button>
+            <el-radio-button label="rocky">Rocky</el-radio-button>
+            <el-radio-button label="ubuntu">Ubuntu</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
         <FieldString :holder="form" fieldName="kuboardspray_os_mirror_name" required :rules="nameRules" :disabled="!form.kuboardspray_os_mirror_type"></FieldString>
-        <FieldRadio :holder="form" fieldName="kuboardspray_os_mirror_kind" required :options="['existing', 'provision']">
+        <FieldRadio :holder="form" fieldName="kuboardspray_os_mirror_kind" required :options="['existing']">
           <template #edit>
             <div class="create_kind">
               <div v-if="form.kuboardspray_os_mirror_kind === 'provision'">
@@ -59,6 +89,7 @@ zh:
 import {ref} from 'vue'
 import clone from 'clone'
 import {syncParams} from './params/sync_params.js'
+import mirror_options from './mirror_options.js'
 
 export default {
   setup () {
@@ -111,6 +142,41 @@ export default {
     }
   },
   computed: {
+    mirror_type: {
+      get () {
+        if (this.form.kuboardspray_os_mirror_type && this.form.kuboardspray_os_mirror_type.indexOf('docker_') === 0) {
+          return 'docker'
+        } else {
+          return 'os'
+        }
+      },
+      set (v) {
+        if (v === 'docker') {
+          this.form.kuboardspray_os_mirror_type = 'docker_' + this.os_type
+        } else {
+          this.form.kuboardspray_os_mirror_type = this.os_type
+        }
+        this.form.kuboardspray_os_mirror_url = undefined
+      }
+    },
+    os_type: {
+      get () {
+        let os_mirror_type = this.form.kuboardspray_os_mirror_type
+        if ( os_mirror_type && os_mirror_type.indexOf('docker_') === 0) {
+          return os_mirror_type.split('_')[1]
+        } else {
+          return os_mirror_type.split('_')[0]
+        }
+      },
+      set (v) {
+        if (this.mirror_type === 'docker') {
+          this.form.kuboardspray_os_mirror_type = 'docker_' + v
+        } else {
+          this.form.kuboardspray_os_mirror_type = v
+        }
+        this.form.kuboardspray_os_mirror_url = undefined
+      }
+    }
   },
   components: { },
   mounted () {
@@ -119,45 +185,9 @@ export default {
     show () {
       this.dialogVisible = true
     },
-    async loadMirrorTypeList () {
-      let result = [
-        { label: this.$t('ubuntu'), value: 'ubuntu' },
-        { label: this.$t('centos'), value: 'centos' },
-        { label: this.$t('docker_ubuntu'), value: 'docker_ubuntu' },
-        { label: this.$t('docker_centos'), value: 'docker_centos' },
-      ]
-      return result
-    },
     async loadMirrorList () {
-      let temp = {
-        ubuntu: [
-            'https://repo.huaweicloud.com/ubuntu/',
-            'https://mirrors.aliyun.com/ubuntu/',
-            'https://mirrors.tuna.tsinghua.edu.cn/ubuntu/',
-            'http://cn.archive.ubuntu.com/ubuntu/',
-            'https://mirrors.cloud.tencent.com/ubuntu/',
-            'http://ftp.sjtu.edu.cn/ubuntu',
-            'http://mirrors.163.com/ubuntu/',
-            'http://mirrors.nju.edu.cn/ubuntu/',
-          ],
-        docker_ubuntu: [
-            'https://repo.huaweicloud.com/docker-ce/linux/ubuntu/',
-            'https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/',
-            'https://mirrors.aliyun.com/docker-ce/linux/ubuntu/',
-            'https://mirrors.cloud.tencent.com/docker-ce/linux/ubuntu/',
-          ],
-        centos: [
-          'http://mirrors.aliyun.com/repo/',
-          'https://repo.huaweicloud.com/centos/',
-          'https://mirrors.tuna.tsinghua.edu.cn/centos/',
-          'https://mirrors.cloud.tencent.com/centos/',
-        ],
-        docker_centos: [
-          'https://download.docker.com/linux/centos/',
-        ],
-      }
       let result = []
-      for (let item of temp[this.form.kuboardspray_os_mirror_type]) {
+      for (let item of mirror_options[this.form.kuboardspray_os_mirror_type]) {
         result.push({ label: item, value: item })
       }
       return result

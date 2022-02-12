@@ -75,7 +75,7 @@ func ExecuteAdhocCommandWithIp(req AdhocCommandRequestWithIP, args []string) ([]
 	run := command.Run{
 		Cmd:  "ansible",
 		Args: arguments,
-		Env:  []string{"ANSIBLE_CONFIG=./ansible.cfg", "ANSIBLE_CACHE_PLUGIN_CONNECTION=" + constants.GET_DATA_DIR() + "/" + req.NodeOwnerType + "/" + req.NodeOwner + "/fact"},
+		Env:  []string{"ANSIBLE_CONFIG=./ansible.cfg", "ANSIBLE_CACHE_PLUGIN=memory", "ANSIBLE_CACHE_PLUGIN_CONNECTION=" + constants.GET_DATA_DIR() + "/" + req.NodeOwnerType + "/" + req.NodeOwner + "/fact"},
 		Dir:  "./ansible-rpc",
 	}
 

@@ -56,6 +56,7 @@ zh:
             <el-radio-button label="centos">Centos</el-radio-button>
             <el-radio-button label="openeuler">openEuler</el-radio-button>
             <el-radio-button label="oraclelinux">OracleLinux</el-radio-button>
+            <!-- <el-radio-button label="kylin linux advanced server">中标麒麟V10</el-radio-button> -->
             <el-radio-button label="redhat">Redhat</el-radio-button>
             <el-radio-button label="rocky">Rocky</el-radio-button>
             <el-radio-button label="ubuntu">Ubuntu</el-radio-button>

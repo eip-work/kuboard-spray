@@ -20,9 +20,10 @@ export function syncParams (params, type, url) {
         params[`${type}_repo_base_url`] = trimSlash(url) + '/{{ ansible_distribution_major_version }}/$basearch/stable'
         params[`${type}_repo_gpgkey`] = trimSlash(url) + '/gpg'
         break
+      case 'docker_kylin linux advanced server':
       case 'docker_openeuler':
-        params.docker_openeuler_repo_base_url = trimSlash(url) + '/8/$basearch/stable'
-        params.docker_openeuler_repo_gpgkey = trimSlash(url) + '/gpg'
+        params[`${type}_repo_base_url`] = trimSlash(url) + '/8/$basearch/stable'
+        params[`${type}_repo_gpgkey`] = trimSlash(url) + '/gpg'
         break
       default:
 

@@ -40,27 +40,15 @@ zh:
       </template>
     </FieldCommon>
     <template v-for="(item, index) in os" :key="'repo' + index">
-      <FieldSelect :holder="vars" :fieldName="'kuboardspray_repo_' + item" :loadOptions="loadRepoOptions" label-width="150px"
-        :label="item + ' ' + $t('source')" required :prop="prop" anti-freeze>
-        <template #edit>
-          <ConfirmButton @confirm="openUrlInBlank('/#/settings/mirrors')" buttonStyle="margin-left: 10px;" placement="top-end"
-            icon="el-icon-plus" plain :text="$t('addSource')" :message="$t('goToMirrorPage')"></ConfirmButton>
-        </template>
-      </FieldSelect>
-      <template v-if="vars.container_manager === 'docker'">
-        <FieldSelect :holder="vars" :fieldName="'kuboardspray_repo_docker_' + item" :loadOptions="loadRepoOptions" label-width="150px"
-          :label="'docker_' + item + ' ' + $t('source')" required :prop="prop" anti-freeze>
-          <template #edit>
-            <ConfirmButton @confirm="openUrlInBlank('/#/settings/mirrors')" buttonStyle="margin-left: 10px;" placement="top-end"
-              icon="el-icon-plus" plain :text="$t('addSource')" :message="$t('goToMirrorPage')"></ConfirmButton>
-          </template>
-        </FieldSelect>
-      </template>
+      <OsMirrorSelectRepo :holder="vars" :type="item" :prop="prop"></OsMirrorSelectRepo>
+      <OsMirrorSelectRepo :holder="vars" :type="item" isdocker :prop="prop"></OsMirrorSelectRepo>
     </template>
   </ConfigSection>
 </template>
 
 <script>
+import OsMirrorSelectRepo from './OsMirrorSelectRepo.vue'
+
 export default {
   props: {
     cluster: { type: Object, required: true },
@@ -143,26 +131,10 @@ export default {
       }
     }
   },
-  components: { },
+  components: { OsMirrorSelectRepo },
   mounted () {
   },
   methods: {
-    async loadRepoOptions (type) {
-      let result = []
-      await this.kuboardSprayApi.get(`/mirrors`, { params: { type: type.slice(18) } }).then(resp => {
-        if (type.slice(18).indexOf('docker_') !== 0) {
-          result.push({ label: this.$t('asis'), value: 'AS_IS'})
-        } else {
-          result.push({ label: this.$t('docker_asis'), value: 'AS_IS'})
-        }
-        for (let item of resp.data.data) {
-          result.push({ label: item, value: item })
-        }
-      }).catch(e => {
-        console.log(e)
-      })
-      return result
-    }
   }
 }
 </script>

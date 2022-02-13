@@ -60,6 +60,7 @@ zh:
             <el-radio-button label="redhat">Redhat</el-radio-button>
             <el-radio-button label="rocky">Rocky</el-radio-button>
             <el-radio-button label="ubuntu">Ubuntu</el-radio-button>
+            <el-radio-button label="opensuse leap" disabled>openSUSE</el-radio-button>
           </el-radio-group>
         </el-form-item>
         <FieldString :holder="form" fieldName="kuboardspray_os_mirror_name" required :rules="nameRules" :disabled="!form.kuboardspray_os_mirror_type"></FieldString>

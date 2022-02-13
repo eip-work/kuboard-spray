@@ -8,6 +8,7 @@ en:
   asis: Use pre-configured source in the OS.
   docker_asis: Use docker official repository download.docker.com
   goToMirrorPage: It's about to open OS Software Source management page in new window, do you confirm?
+  install_docker_from_distro: SUSE distributions always install Docker from the distro repos
 zh:
   label: 软件源
   description: OS 软件源（为操作系统指定软件源，例如 yum 源、apt 源等）
@@ -17,13 +18,18 @@ zh:
   asis: 使用操作系统预先配置的软件源
   docker_asis: 使用 Docker 官方软件源 download.docker.com
   goToMirrorPage: 此操作将将在新窗口打开软件源管理页面，完成设置后，可以切换窗口回到本页面，是否继续？
+  install_docker_from_distro: SUSE 将始终从操作系统的软件源中安装 Docker
 </i18n>
 
 <template>
-  <FieldCommon :holder="vars" :fieldName="fieldName" label-width="150px"
-    :label="type + ' ' + $t('source')" required :prop="prop" anti-freeze>
+  <FieldCommon :holder="vars" :fieldName="fieldName" label-width="150px" :placeholder="type.indexOf('opensuse') >= 0 ? $t('install_docker_from_distro') : $t('asis')"
+    :label="type + ' ' + $t('source')" :required="type.indexOf('opensuse') < 0" :prop="prop" anti-freeze>
     <template #edit>
-      <div style="display: flex;">
+      <template v-if="type.indexOf('opensuse') >= 0">
+        <span v-if="type.indexOf('docker_') === 0">{{ $t('install_docker_from_distro') }}</span>
+        <span v-else>{{ $t('asis') }}</span>
+      </template>
+      <div style="display: flex;" v-else>
         <el-select v-model="vars[fieldName]" @visible-change="loadKuboardsprayRepoOptions" style="flex-grow: 1;">
           <template v-for="(option, index) in options" :key="fieldName + index">
             <el-option :value="option.value" class="kuboardspray_mirror_select" :label="option.label">
@@ -60,15 +66,20 @@ zh:
       </template>
     </template>
     <template #view>
+      <span v-if="type.indexOf('opensuse') >= 0" style="color: var(--el-text-color-placeholder)">
+        {{$t('asis')}}
+      </span>
       <template v-for="(option, index) in options" :key="fieldName + 'ep' + index">
         <div v-if="option.value === vars[fieldName]">
-          <div>{{option.label}}</div>
-          <div v-if="option.data" class="preview">
-            <div v-for="(value, key) in option.data.status.params" :key="fieldName + index + key">
-              <el-tag effect="dark">{{key}}</el-tag>
-              <el-tag>{{value}}</el-tag>
+          <template>
+            <div>{{option.label}}</div>
+            <div v-if="option.data" class="preview">
+              <div v-for="(value, key) in option.data.status.params" :key="fieldName + index + key">
+                <el-tag effect="dark">{{key}}</el-tag>
+                <el-tag>{{value}}</el-tag>
+              </div>
             </div>
-          </div>
+          </template>
         </div>
       </template>
     </template>

@@ -41,7 +41,7 @@ zh:
     </FieldCommon>
     <template v-for="(item, index) in os" :key="'repo' + index">
       <OsMirrorSelectRepo :holder="vars" :type="item" :prop="prop"></OsMirrorSelectRepo>
-      <OsMirrorSelectRepo :holder="vars" :type="item" isdocker :prop="prop"></OsMirrorSelectRepo>
+      <OsMirrorSelectRepo v-if="vars.container_manager === 'docker'" :holder="vars" :type="'docker_' + item" isdocker :prop="prop"></OsMirrorSelectRepo>
     </template>
   </ConfigSection>
 </template>

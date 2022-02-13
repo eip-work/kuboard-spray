@@ -42,6 +42,9 @@ let temp = {
   docker_openeuler: docker_centos,
   docker_oraclelinux: docker_centos,
   'docker_kylin linux advanced server': docker_centos,
+  // 'opensuse leap': [
+  //   'https://mirrors.tuna.tsinghua.edu.cn/opensuse',
+  // ],
 }
 if (window.KuboardSpray.version.arch === 'arm64') {
   temp.openeuler = [

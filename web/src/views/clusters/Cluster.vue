@@ -74,8 +74,8 @@ zh:
       <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('backup')">
         <Backup></Backup>
       </el-tab-pane>
-      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('csi_scan')">
-        <CIS></CIS>
+      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('csi_scan')" name="cis_scan">
+        <CIS v-if="currentTab === 'cis_scan'" :cluster="cluster"></CIS>
       </el-tab-pane>
       <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('upgrade')" name="upgrade">
         <template  v-if="currentTab == 'upgrade'">

@@ -14,6 +14,10 @@ import (
 )
 
 func ExecuteShellCommands(owner_type, owner_name, target string, commands []AnsibleCommandsRequest) (*AnsibleResult, error) {
+	return ExecuteShellCommandsWithStrategy(owner_type, owner_name, target, commands, "free")
+}
+
+func ExecuteShellCommandsWithStrategy(owner_type, owner_name, target string, commands []AnsibleCommandsRequest, strategy string) (*AnsibleResult, error) {
 
 	startTime := time.Now()
 
@@ -40,7 +44,7 @@ func ExecuteShellCommands(owner_type, owner_name, target string, commands []Ansi
 	playbook := gin.H{
 		"name":         "temp_play",
 		"gather_facts": false,
-		"strategy":     "free",
+		"strategy":     strategy,
 		"hosts":        target,
 		"tasks":        tasks,
 		"environment": gin.H{

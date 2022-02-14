@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/eip-work/kuboard-spray/api/cluster"
+	"github.com/eip-work/kuboard-spray/api/cluster/cis_scan"
 	"github.com/eip-work/kuboard-spray/api/cluster/cluster_access"
 	"github.com/eip-work/kuboard-spray/api/cluster/health_check"
 	"github.com/eip-work/kuboard-spray/api/cluster/operation"
@@ -55,6 +56,8 @@ func setupRouter() *gin.Engine {
 	api.POST("/clusters/:cluster/upgrade_single_node", operation.UpgradeCluster)
 	api.POST("/clusters/:cluster/upgrade_multi_nodes", operation.UpgradeCluster)
 	api.POST("/clusters/:cluster/download_binaries", operation.DownloadBinaries)
+
+	api.POST("/clusters/:cluster/cis_scan", cis_scan.CisScan)
 
 	api.GET("/clusters/:cluster/access/kubeconfig", cluster_access.GetKubeConfig)
 

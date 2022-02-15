@@ -2,6 +2,7 @@ package cis_scan
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/eip-work/kuboard-spray/api/ansible_rpc"
 	"github.com/eip-work/kuboard-spray/common"
@@ -20,12 +21,13 @@ func CisScan(c *gin.Context) {
 	c.ShouldBindJSON(&req)
 
 	if req.CacheMode != "ignore_cache" {
-		result, ok := GetCisCache(req.ClusterName, req.Target)
+		result, modTime, ok := GetCisCache(req.ClusterName, req.Target)
 		if ok {
-			c.JSON(http.StatusOK, common.KuboardSprayResponse{
-				Code:    http.StatusOK,
-				Message: "success",
-				Data:    result,
+			c.JSON(http.StatusOK, gin.H{
+				"code":          http.StatusOK,
+				"message":       "success",
+				"last_run_time": modTime,
+				"data":          result,
 			})
 			return
 		}
@@ -66,9 +68,10 @@ func CisScan(c *gin.Context) {
 
 	SaveCisCache(req.ClusterName, req.Target, result)
 
-	c.JSON(http.StatusOK, common.KuboardSprayResponse{
-		Code:    http.StatusOK,
-		Message: "success",
-		Data:    result,
+	c.JSON(http.StatusOK, gin.H{
+		"code":          http.StatusOK,
+		"message":       "success",
+		"last_run_time": time.Now(),
+		"data":          result,
 	})
 }

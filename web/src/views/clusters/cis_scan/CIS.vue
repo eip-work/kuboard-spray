@@ -9,6 +9,7 @@ en:
   AuditEnv: Audit Env
   AuditConfig: AuditConfig
   expected_and_remediation: Expected and remediation
+  last_run_time: Scaned at
 zh:
   execute_scan: 重新执行 CIS 扫描
   expected_result: 预期结果
@@ -19,6 +20,7 @@ zh:
   AuditEnv: 审计命令环境变量
   AuditConfig: 审计命令配置文件
   expected_and_remediation: 预期及修复
+  last_run_time: 检查时间
 </i18n>
 
 <template>
@@ -33,6 +35,10 @@ zh:
         <div v-if="loadingPercentage < 100" style="display: inline-block; width: 200px; margin-left: 20px; vertical-align: middle;">
           <el-progress :percentage="loadingPercentage" :stroke-width="20" text-inside></el-progress>
         </div>
+        <span v-else style="font-size: 13px; font-weight: normal; margin-left: 20px;">
+          {{ $t('last_run_time') }}
+          <KuboardSprayTime :time="last_run_time"></KuboardSprayTime>
+        </span>
         <KuboardSprayLink style="float: right;" href="https://kuboard-spray.cn/guide/cis-scan/kube-bench.html" target="blank">Kubebench CIS Scan</KuboardSprayLink>
       </div>
       <div>
@@ -117,21 +123,21 @@ zh:
                   <el-tag v-if="node[scope.row.id].status === 'WARN'" type="warning">{{node[scope.row.id].status}}</el-tag>
                   <el-tag v-if="node[scope.row.id].status === 'FAIL'" type="danger">{{node[scope.row.id].status}}</el-tag>
                   <el-tag v-if="node[scope.row.id].status === 'INFO'" type="info">{{node[scope.row.id].status}}</el-tag>
-                  <el-tooltip v-if="node[scope.row.id].actual_value && node[scope.row.id].status !== 'PASS'" class="box-item" effect="dark"
-                    placement="top-end" trigger="click">
-                    <template #content>
-                      <pre style="width: 650px;">{{node[scope.row.id].actual_value}}</pre>
-                    </template>
-                    <el-tag class="reason" type="info">{{$t('actual_value')}}</el-tag>
-                  </el-tooltip>
-                  <el-tooltip v-if="node[scope.row.id].reason" class="box-item" effect="dark"
-                    placement="top-end" trigger="click">
-                    <template #content>
-                      <pre style="width: 650px;">{{node[scope.row.id].reason.replaceAll('\\n', '\n')}}</pre>
-                    </template>
-                    <el-tag class="reason" type="info">{{$t('reason')}}</el-tag>
-                  </el-tooltip>
                 </template>
+                <el-tooltip v-if="node[scope.row.id].actual_value && node[scope.row.id].status !== 'PASS'" class="box-item" effect="dark"
+                  placement="top-end" trigger="click">
+                  <template #content>
+                    <pre style="width: 650px;">{{node[scope.row.id].actual_value}}</pre>
+                  </template>
+                  <el-tag class="reason" type="info">{{$t('actual_value')}}</el-tag>
+                </el-tooltip>
+                <el-tooltip v-if="node[scope.row.id].reason" class="box-item" effect="dark"
+                  placement="top-end" trigger="click">
+                  <template #content>
+                    <pre style="width: 650px;">{{node[scope.row.id].reason.replaceAll('\\n', '\n')}}</pre>
+                  </template>
+                  <el-tag class="reason" type="info">{{$t('reason')}}</el-tag>
+                </el-tooltip>
               </template>
             </template>
           </el-table-column>
@@ -156,6 +162,7 @@ export default {
       etcd: undefined,
       metadata: undefined,
       expanedRowKeys: ['1', '2', '3', '4', '5'],
+      last_run_time: undefined,
     }
   },
   computed: {
@@ -239,6 +246,7 @@ export default {
       this[target] = undefined
       this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/cis_scan`, { target: target, cache_mode }).then(resp => {
         this[target] = {}
+        this.last_run_time = resp.data.last_run_time
         for (let index in resp.data.data.plays[0].tasks[0].hosts) {
           let host = resp.data.data.plays[0].tasks[0].hosts[index]
           let hostresult = JSON.parse(host.stdout)
@@ -260,7 +268,11 @@ export default {
       }).catch(e => {
         console.log(e)
         if (e.response && e.response.data.message) {
-          this.$message.error('failed to execute cis_scan: ', e.response.data.message)
+          if (e.response.data.message === 'no cache found') {
+            this[target] = {}
+          } else {
+            this.$message.error('failed to execute cis_scan: ', e.response.data.message)
+          }
         }
       })
     },

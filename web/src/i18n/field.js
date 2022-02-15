@@ -119,6 +119,11 @@ const field = {
     'kube_log_level-2': 'ERROR',
     'kube_log_level-3': 'FATAL',
 
+    kube_apiserver_enable_admission_plugins: "启用 Admission",
+    kube_apiserver_enable_admission_plugins_placeholder: "kube-apiserver 的参数 --enable-admission-plugins",
+    kube_apiserver_disable_admission_plugins: "禁用 Admission",
+    kube_apiserver_disable_admission_plugins_placeholder: "kube-apiserver 的参数 --disable-admission-plugins",
+
     kube_service_addresses: '服务子网',
     kube_service_addresses_placeholder: '默认值 0.233.0.0/18，服务子网',
     kube_pods_subnet: '容器组子网',

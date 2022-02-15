@@ -2,9 +2,15 @@
   <FieldCommon :fieldName="fieldName" :holder="holder" :prop="prop" :rules="rules" :required="required" :label="label" :placeholder="placeholder">
     <template #edit>
       <el-switch v-model.number="obj[fieldName]" :disabled="disabled"></el-switch>
+      <div class="desc">
+        <slot name="edit_desc"></slot>
+      </div>
     </template>
     <template #view>
       <el-switch v-model.number="obj[fieldName]" disabled></el-switch>
+      <div class="desc">
+        <slot name="view_desc"></slot>
+      </div>
     </template>
   </FieldCommon>
 </template>
@@ -67,5 +73,10 @@ export default {
 </script>
 
 <style scoped lang="css">
-
+.desc {
+  color: var(--el-text-color-secondary);
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 10px;
+}
 </style>

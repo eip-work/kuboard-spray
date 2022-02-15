@@ -3,7 +3,7 @@
     <template #edit>
       <div style="display: flex; flex-grow: 1;">
         <el-select v-model.trim="value" style="flex-grow: 1;" :clearable="clearable" :disabled="disabled" :allowCreate="allowCreate" :filterable="filterable"
-          :placeholder="compute_placeholder" @visible-change="load($event)" :loading="loading">
+          :placeholder="compute_placeholder" @visible-change="load($event)" :loading="loading" :multiple="multiple">
           <el-option v-for="(item, index) in options" :key="'i' + index" :value="item.value" :label="item.label" :disabled="item.disabled">
             {{item.label}}
           </el-option>
@@ -37,6 +37,7 @@ export default {
     clearable: { type: Boolean, required: false, default: false },
     allowCreate: { type: Boolean, required: false, default: false },
     filterable: { type: Boolean, required: false, default: false },
+    multiple: { type: Boolean, required: false, default: false },
   },
   data () {
     return {

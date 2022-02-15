@@ -29,6 +29,9 @@ const messages = {
       etcd: 'etcd node',
       k8s_cluster: 'K8s Cluster',
     },
+    cis: {
+      conflict_warn: 'Conflict with CIS WARN rules',
+    },
     msg: {
       preview_yaml: 'Preview Yaml',
       name: 'Name',
@@ -76,6 +79,9 @@ const messages = {
       kube_node: '工作节点',
       etcd: 'ETCD节点',
       k8s_cluster: 'K8s 集群',
+    },
+    cis: {
+      conflict_warn: 'CIS 扫描将出现 WARN',
     },
     msg: {
       preview_yaml: '预览 YAML',

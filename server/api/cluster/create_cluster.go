@@ -158,7 +158,7 @@ func getInventoryTemplate() string {
             kube_cert_dir: "{{ kube_config_dir }}/ssl"
             # This is where all of the bearer tokens will be stored
             kube_token_dir: "{{ kube_config_dir }}/tokens"
-            kube_api_anonymous_auth: true
+            kube_api_anonymous_auth: false
             ## Change this to use another Kubernetes version, e.g. a current beta release
             ## kube_version: v1.22.4
             # Where the binaries will be downloaded.

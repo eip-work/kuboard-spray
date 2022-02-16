@@ -3,9 +3,11 @@ const os = require('os')
 
 let public = 'kb:25702'
 let port = '25702'
+let target = 'http://localhost:8006'
 if (os.arch() === 'arm64') {
   public = 'kb-arm:25703'
   port = 25703
+  target = 'http://localhost:8007'
 }
 
 module.exports = {
@@ -21,7 +23,7 @@ module.exports = {
         historyApiFallback: true,
         proxy: {
           '/api/': {
-            target: 'http://localhost:8006',
+            target: 'http://localhost:8007',
             changeOrigin: true,
             ws: true,
             pathRewrite: {

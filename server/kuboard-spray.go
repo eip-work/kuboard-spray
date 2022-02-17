@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/eip-work/kuboard-spray/api/cluster"
 	"github.com/eip-work/kuboard-spray/api/cluster/cis_scan"
@@ -106,7 +107,14 @@ func main() {
 
 	router := setupRouter()
 
-	router.Run(constants.GetEnvDefault("KUBOARD_SPRAY_PORT", ":8006"))
+	port := ":8006"
+
+	logrus.Trace(runtime.GOARCH)
+	if runtime.GOARCH == "aarch64" || runtime.GOARCH == "arm64" {
+		port = ":8007"
+	}
+
+	router.Run(constants.GetEnvDefault("KUBOARD_SPRAY_PORT", port))
 	// s := &http.Server{
 	// 	Addr:         ":8006",
 	// 	Handler:      router,

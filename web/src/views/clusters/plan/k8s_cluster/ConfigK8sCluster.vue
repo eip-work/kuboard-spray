@@ -3,6 +3,7 @@
     <K8sCluster :cluster="cluster"></K8sCluster>
     <Networking :cluster="cluster"></Networking>
     <NetworkPlugin :cluster="cluster"></NetworkPlugin>
+    <AuditLog :cluster="cluster"></AuditLog>
   </div>
 </template>
 
@@ -10,6 +11,7 @@
 import NetworkPlugin from './NetworkPlugin.vue'
 import K8sCluster from './K8sCluster.vue'
 import Networking from './Networking.vue'
+import AuditLog from './AuditLog.vue'
 
 export default {
   props: {
@@ -22,7 +24,7 @@ export default {
   },
   computed: {
   },
-  components: { NetworkPlugin, K8sCluster, Networking },
+  components: { NetworkPlugin, K8sCluster, Networking, AuditLog },
   mounted () {
   },
   methods: {

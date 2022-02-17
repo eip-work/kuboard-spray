@@ -18,7 +18,7 @@ zh:
     <FieldString :holder="vars" :prop="prop" fieldName="cluster_name" required></FieldString>
     <FieldString :holder="vars" :prop="prop" fieldName="event_ttl_duration" required></FieldString>
     <FieldSelect v-if="cluster.resourcePackage && cluster.resourcePackage.data.kubernetes.candidate_admission_plugins" 
-      :holder="vars" :prop="prop" fieldName="kube_apiserver_enable_admission_plugins" multiple
+      :holder="vars" :prop="prop" fieldName="kube_apiserver_enable_admission_plugins" multiple anti-freeze
       :loadOptions="loadCandidateAdmissionPlugins">
       <template #view>
         <el-tag v-for="(item, index) in vars.kube_apiserver_enable_admission_plugins" :key="'adm' + index" style="margin: 5px;">
@@ -27,7 +27,7 @@ zh:
       </template>
     </FieldSelect>
     <FieldSelect v-if="cluster.resourcePackage && cluster.resourcePackage.data.kubernetes.default_enabled_admission_plugins" 
-      :holder="vars" :prop="prop" fieldName="kube_apiserver_disable_admission_plugins" multiple
+      :holder="vars" :prop="prop" fieldName="kube_apiserver_disable_admission_plugins" multiple anti-freeze
       :loadOptions="loadDisableAdmissionPlugins">
       <template #view>
         <el-tag v-for="(item, index) in vars.kube_apiserver_disable_admission_plugins" :key="'adm' + index" style="margin: 5px;">
@@ -35,13 +35,6 @@ zh:
         </el-tag>
       </template>
     </FieldSelect>
-    <!-- <FieldBool :holder="vars" :prop="prop" fieldName="kube_api_anonymous_auth">
-      <template #edit_desc>
-        <span v-if="vars.kube_api_anonymous_auth">{{$t('cis.conflict_warn')}}</span>
-      </template>
-    </FieldBool>
-    <FieldNumber :holder="vars" :prop="prop" fieldName="kube_apiserver_insecure_port" required :rules="insecurePortRules">
-    </FieldNumber> -->
     <FieldRadio :holder="vars" :prop="prop" fieldName="kube_log_level" :options="[0, 1, 2, 3]" required></FieldRadio>
     <!-- <FieldBool :holder="vars" fieldName="auto_renew_certificates"></FieldBool> -->
 

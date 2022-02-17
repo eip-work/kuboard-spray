@@ -158,7 +158,7 @@ func getInventoryTemplate() string {
             kube_cert_dir: "{{ kube_config_dir }}/ssl"
             # This is where all of the bearer tokens will be stored
             kube_token_dir: "{{ kube_config_dir }}/tokens"
-            kube_api_anonymous_auth: false
+            kube_api_anonymous_auth: true
             ## Change this to use another Kubernetes version, e.g. a current beta release
             ## kube_version: v1.22.4
             # Where the binaries will be downloaded.
@@ -309,10 +309,7 @@ func getInventoryTemplate() string {
             auto_renew_certificates: false
             # First Monday of each month
             # auto_renew_certificates_systemd_calendar: "Mon *-*-1,2,3,4,5,6,7 03:{{ groups['kube_control_plane'].index(inventory_hostname) }}0:00"
-            kube_apiserver_enable_admission_plugins:
-              - AlwaysPullImages
-              - SecurityContextDeny
-              - PodSecurityPolicy
+
       vars:
         bin_dir: /usr/local/bin
         # loadbalancer_apiserver_port: 6443

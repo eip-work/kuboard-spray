@@ -4,14 +4,14 @@
       <el-input v-model.number="obj[fieldName]" :placeholder="compute_placeholder">
         <template #append v-if="$slots.append"><slot name="append"></slot></template>
       </el-input>
-      <div class="desc">
-        <slot name="edit_desc">{{compute_placeholder}}</slot>
+      <div class="desc" v-if="$slots.edit_desc">
+        <slot name="edit_desc"></slot>
       </div>
     </template>
     <template #view>
       {{ obj[fieldName] }} <span class="app_text_mono" style="font-size: 13px;"><slot name="append"></slot></span>
-      <div class="desc">
-        <slot name="view_desc">{{compute_placeholder}}</slot>
+      <div class="desc" v-if="$slots.view_desc">
+        <slot name="view_desc"></slot>
       </div>
     </template>
   </FieldCommon>

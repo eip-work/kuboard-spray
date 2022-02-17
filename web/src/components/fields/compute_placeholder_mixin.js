@@ -6,7 +6,7 @@ const mixin = {
       }
       let temp = this.$t('field.' + this.fieldName + '_placeholder')
       if (temp == ('field.' + this.fieldName + '_placeholder')) {
-        return this.$t('field.please_input') + this.$t(' ' +this.fieldName)
+        return this.$t('field.please_input') + this.$t('field.' + this.fieldName)
       } else {
         return temp
       }

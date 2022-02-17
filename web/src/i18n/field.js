@@ -99,6 +99,15 @@ const field = {
     apt_mirror_limit_rate: '下载速度',
     apt_mirror_nthreads: '下载线程数',
 
+    audit_log_path: '审计日志路径',
+    audit_log_path_placeholder: '默认值 /var/log/audit/kube-apiserver-audit.log',
+    audit_log_maxsize: '日志文件大小',
+    audit_log_maxsize_placeholder: '默认值 100，审计日志文件最大尺寸，单位 MB',
+    audit_log_maxbackups: '日志最大备份数',
+    audit_log_maxbackups_placeholder: '默认值 1，审计日志文件最大的备份数量',
+    audit_log_maxage: '日志保存天数',
+    audit_log_maxage_placeholder: '默认值 30，审计日志文件保留的最大天数',
+
     // Addons
     netchecker_port: '节点端口',
     netchecker_port_placeholder: '默认值 31081，网络检查应用所使用的节点端口',

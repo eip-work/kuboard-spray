@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"runtime"
 	"strings"
 
 	"github.com/eip-work/kuboard-spray/common"
@@ -80,9 +79,9 @@ func CreateCluster(c *gin.Context) {
 		}
 	}
 
-	if runtime.GOARCH == "arm64" {
-		common.MapSet(inventory, "all.children.target.vars.container_manager", "docker")
-	}
+	// if runtime.GOARCH == "arm64" {
+	// 	common.MapSet(inventory, "all.children.target.vars.container_manager", "docker")
+	// }
 
 	content, _ := yaml.Marshal(inventory)
 
@@ -278,7 +277,7 @@ func getInventoryTemplate() string {
             k8s_image_pull_policy: IfNotPresent
 
             # audit log for kubernetes
-            kubernetes_audit: false
+            kubernetes_audit: true
 
             # dynamic kubelet configuration
             # Note: Feature DynamicKubeletConfig is deprecated in 1.22 and will not move to GA.

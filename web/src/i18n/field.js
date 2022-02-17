@@ -68,6 +68,7 @@ const field = {
     container_manager: '容器引擎',
     containerd_insecure_registries: 'HTTP 镜像仓库 insecure registries',
     containerd_use_systemd_cgroup: 'systemd_cgroup',
+    container_manager_on_localhost: '容器引擎 localhost',
 
     docker_orphan_clean_up: '清理孤儿容器',
     docker_insecure_registries: 'HTTP 镜像仓库 insecure registries',
@@ -104,7 +105,7 @@ const field = {
     audit_log_maxsize: '日志文件大小',
     audit_log_maxsize_placeholder: '默认值 100，审计日志文件最大尺寸，单位 MB',
     audit_log_maxbackups: '日志最大备份数',
-    audit_log_maxbackups_placeholder: '默认值 1，审计日志文件最大的备份数量',
+    audit_log_maxbackups_placeholder: '默认值 10，审计日志文件最大的备份数量',
     audit_log_maxage: '日志保存天数',
     audit_log_maxage_placeholder: '默认值 30，审计日志文件保留的最大天数',
 

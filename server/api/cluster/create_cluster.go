@@ -212,7 +212,6 @@ func getInventoryTemplate() string {
             # The port the API Server will be listening on.
             kube_apiserver_ip: "{{ kube_service_addresses|ipaddr('net')|ipaddr(1)|ipaddr('address') }}"
             kube_apiserver_port: 6443  # (https)
-            # kube_apiserver_insecure_port: 8080  # (http)
             # Set to 0 to disable insecure port - Requires RBAC in authorization_modes and kube_api_anonymous_auth: true
             kube_apiserver_insecure_port: 0  # (disabled)
 
@@ -311,7 +310,6 @@ func getInventoryTemplate() string {
             # First Monday of each month
             # auto_renew_certificates_systemd_calendar: "Mon *-*-1,2,3,4,5,6,7 03:{{ groups['kube_control_plane'].index(inventory_hostname) }}0:00"
             kube_apiserver_enable_admission_plugins:
-              - EventRateLimit
               - AlwaysPullImages
               - SecurityContextDeny
               - PodSecurityPolicy

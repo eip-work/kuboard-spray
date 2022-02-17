@@ -124,6 +124,9 @@ const field = {
     kube_apiserver_disable_admission_plugins: "禁用 Admission",
     kube_apiserver_disable_admission_plugins_placeholder: "kube-apiserver 的参数 --disable-admission-plugins",
 
+    kube_apiserver_insecure_port: '非安全端口',
+    kube_apiserver_insecure_port_placeholder: '无需认证即可访问 apiserver，只绑定到 127.0.0.1',
+
     kube_service_addresses: '服务子网',
     kube_service_addresses_placeholder: '默认值 0.233.0.0/18，服务子网',
     kube_pods_subnet: '容器组子网',

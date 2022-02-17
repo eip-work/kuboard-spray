@@ -5,6 +5,7 @@ en:
 zh:
   label: 通用参数
   description: Kubernetes 集群的通用参数
+  kube_api_anonymous_auth_and_insecure_port: 不能同时禁用匿名用户和非安全端口
 </i18n>
 
 <template>
@@ -19,14 +20,28 @@ zh:
     <FieldSelect v-if="cluster.resourcePackage && cluster.resourcePackage.data.kubernetes.candidate_admission_plugins" 
       :holder="vars" :prop="prop" fieldName="kube_apiserver_enable_admission_plugins" multiple
       :loadOptions="loadCandidateAdmissionPlugins">
+      <template #view>
+        <el-tag v-for="(item, index) in vars.kube_apiserver_enable_admission_plugins" :key="'adm' + index" style="margin: 5px;">
+          {{ item }}
+        </el-tag>
+      </template>
     </FieldSelect>
-    <FieldSelect v-if="cluster.resourcePackage && cluster.resourcePackage.data.kubernetes.default_enabled_admission_plugins" :holder="vars" :prop="prop" fieldName="kube_apiserver_disable_admission_plugins" multiple
-      :loadOptions="loadDisableAdmissionPlugins"></FieldSelect>
-    <FieldBool :holder="vars" :prop="prop" fieldName="kube_api_anonymous_auth" required>
+    <FieldSelect v-if="cluster.resourcePackage && cluster.resourcePackage.data.kubernetes.default_enabled_admission_plugins" 
+      :holder="vars" :prop="prop" fieldName="kube_apiserver_disable_admission_plugins" multiple
+      :loadOptions="loadDisableAdmissionPlugins">
+      <template #view>
+        <el-tag v-for="(item, index) in vars.kube_apiserver_disable_admission_plugins" :key="'adm' + index" style="margin: 5px;">
+          {{ item }}
+        </el-tag>
+      </template>
+    </FieldSelect>
+    <!-- <FieldBool :holder="vars" :prop="prop" fieldName="kube_api_anonymous_auth">
       <template #edit_desc>
         <span v-if="vars.kube_api_anonymous_auth">{{$t('cis.conflict_warn')}}</span>
       </template>
     </FieldBool>
+    <FieldNumber :holder="vars" :prop="prop" fieldName="kube_apiserver_insecure_port" required :rules="insecurePortRules">
+    </FieldNumber> -->
     <FieldRadio :holder="vars" :prop="prop" fieldName="kube_log_level" :options="[0, 1, 2, 3]" required></FieldRadio>
     <!-- <FieldBool :holder="vars" fieldName="auto_renew_certificates"></FieldBool> -->
 
@@ -41,6 +56,17 @@ export default {
   },
   data() {
     return {
+      insecurePortRules: [
+        {
+          validator: (rule, value, callback) => {
+            // if (!this.vars.kube_api_anonymous_auth && (value === 0 || value === undefined)) {
+            //   return callback(this.$t('kube_api_anonymous_auth_and_insecure_port'))
+            // }
+            return callback()
+          },
+          trigger: 'blur',
+        }
+      ]
     }
   },
   computed: {

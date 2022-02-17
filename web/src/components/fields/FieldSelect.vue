@@ -12,10 +12,12 @@
       </div>
     </template>
     <template #view>
-      <span v-if="value !== undefined && value !== ''">
-        {{ compute_display_value }}
-      </span>
-      <span v-else class="field_placeholder">{{ compute_placeholder }}</span>
+      <slot name="view">
+        <span v-if="value !== undefined && value !== ''">
+          {{ compute_display_value }}
+        </span>
+        <span v-else class="field_placeholder">{{ compute_placeholder }}</span>
+      </slot>
     </template>
   </FieldCommon>
 </template>

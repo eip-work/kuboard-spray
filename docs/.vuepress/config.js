@@ -53,6 +53,12 @@ module.exports = {
               title: '集群安装',
               path: '/guide/install-k8s.md',
             },
+            {
+              title: '安装选项',
+              children: [
+                '/guide/options/admission-plugins.md',
+              ]
+            },
             '/guide/maintain/ha-mode.md',
             '/guide/maintain/add-replace-node.md',
             '/guide/maintain/upgrade.md',

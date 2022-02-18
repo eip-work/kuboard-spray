@@ -34,7 +34,7 @@ zh:
         </el-checkbox-group>
       </template>
       <template #view>
-        <el-checkbox-group v-model="temp.os" disabled>
+        <el-checkbox-group v-model="os" disabled>
           <el-checkbox v-for="(item, index) in supportedOs" :key="'os_v' + index" :label="index.toLowerCase()">{{index}}</el-checkbox>
         </el-checkbox-group>
       </template>

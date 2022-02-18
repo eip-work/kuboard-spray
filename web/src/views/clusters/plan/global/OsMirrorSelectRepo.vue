@@ -71,7 +71,7 @@ zh:
       </span>
       <template v-for="(option, index) in options" :key="fieldName + 'ep' + index">
         <div v-if="option.value === vars[fieldName]">
-          <template>
+          <div>
             <div>{{option.label}}</div>
             <div v-if="option.data" class="preview">
               <div v-for="(value, key) in option.data.status.params" :key="fieldName + index + key">
@@ -79,7 +79,7 @@ zh:
                 <el-tag>{{value}}</el-tag>
               </div>
             </div>
-          </template>
+          </div>
         </div>
       </template>
     </template>

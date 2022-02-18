@@ -44,11 +44,11 @@ zh:
       <div>
       </div>
       <el-table ref="table" :data="tableRows" style="width: 100%; margin-bottom: 20px" row-key="id"
-        :expand-row-keys="expanedRowKeys"
+        :expand-row-keys="expanedRowKeys" @row-click="clickRow" class="kuboard-spray-cis-table"
         :default-sort="{ prop: 'id', order: 'ascending' }">
         <el-table-column prop="id" label="id" sortable width="420" fixed>
           <template #default="scope">
-            <span class="row_title" @click="$refs.table.toggleRowExpansion(scope.row)">
+            <span class="row_title">
               [{{scope.row.id.trim()}}]
               {{scope.row.text}}
               {{scope.row.desc}}
@@ -101,14 +101,14 @@ zh:
             <template #default="scope">
               <span v-if="loadingPercentage < 100 && scope.row.id === '1'" style="display: none;">{{loadingPercentage}}</span>
               <div v-if="node[scope.row.id] && node[scope.row.id].total_pass !== undefined" 
-                class="row_click" @click="$refs.table.toggleRowExpansion(scope.row)">
+                class="row_click">
                 <el-tag v-if="node[scope.row.id].total_pass" type="success" effect="dark">{{node[scope.row.id].total_pass}}</el-tag>
                 <el-tag v-if="node[scope.row.id].total_fail" type="danger" effect="dark">{{node[scope.row.id].total_fail}}</el-tag>
                 <el-tag v-if="node[scope.row.id].total_warn" type="warning" effect="dark">{{node[scope.row.id].total_warn}}</el-tag>
                 <el-tag v-if="node[scope.row.id].total_info" type="info" effect="light">{{node[scope.row.id].total_info}}</el-tag>
               </div>
               <div v-if="node[scope.row.id] && node[scope.row.id].pass !== undefined"
-                class="row_click" @click="$refs.table.toggleRowExpansion(scope.row)">
+                class="row_click">
                 <el-tag v-if="node[scope.row.id].pass" type="success" effect="dark">{{node[scope.row.id].pass}}</el-tag>
                 <el-tag v-if="node[scope.row.id].fail" type="danger" effect="dark">{{node[scope.row.id].fail}}</el-tag>
                 <el-tag v-if="node[scope.row.id].warn" type="warning" effect="dark">{{node[scope.row.id].warn}}</el-tag>
@@ -276,6 +276,9 @@ export default {
         }
       })
     },
+    clickRow (row) {
+      this.$refs.table.toggleRowExpansion(row)
+    },
     retrieve_metadata() {
       this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/cis_scan`, { target: 'kube_control_plane[0]', cache_mode: 'prefer_cache' }).then(resp => {
         this.metadata = {}
@@ -294,6 +297,12 @@ export default {
   }
 }
 </script>
+
+<style>
+.kuboard-spray-cis-table tr {
+  cursor: pointer;
+}
+</style>
 
 <style scoped lang="scss">
 .test_title {

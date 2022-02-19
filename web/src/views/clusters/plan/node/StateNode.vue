@@ -22,11 +22,11 @@ zh:
       <el-form-item :label="$t('roles')" label-width="100px">
         <div class="info" style="display: flex; flex-wrap: wrap;">
           <template v-if="node.k8s_node">
-            <NodeRoleTag v-if="node.k8s_node.metadata.labels['node-role.kubernetes.io/control-plane'] !== undefined" role="kube_control_plane" style="margin-right: 10px;" enabled read-only></NodeRoleTag>
-            <NodeRoleTag v-if="isKubeNode" role="kube_node" enabled read-only></NodeRoleTag>
+            <NodeRoleTag v-if="node.k8s_node.metadata.labels['node-role.kubernetes.io/control-plane'] !== undefined" role="kube_control_plane" style="margin-right: 10px; margin-bottom: 10px;" enabled read-only></NodeRoleTag>
+            <NodeRoleTag v-if="isKubeNode" role="kube_node" enabled read-only style="margin-bottom: 10px;"></NodeRoleTag>
           </template>
           <template v-if="node.etcd_member">
-            <NodeRoleTag role="etcd" enabled read-only>{{node.etcd_member.name}}</NodeRoleTag>
+            <NodeRoleTag role="etcd" enabled read-only style="margin-bottom: 10px;">{{node.etcd_member.name}}</NodeRoleTag>
           </template>
         </div>
       </el-form-item>

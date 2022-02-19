@@ -2,10 +2,12 @@
 en:
   label: Common
   description: Most frequently referenced params to Kubernetes.
+  nolimit: No Limit
 zh:
   label: 通用参数
   description: Kubernetes 集群的通用参数
   kube_api_anonymous_auth_and_insecure_port: 不能同时禁用匿名用户和非安全端口
+  nolimit: 不限制
 </i18n>
 
 <template>
@@ -36,6 +38,17 @@ zh:
       </template>
     </FieldSelect>
     <FieldRadio :holder="vars" :prop="prop" fieldName="kube_log_level" :options="[0, 1, 2, 3]" required></FieldRadio>
+    <FieldNumber :holder="vars" :prop="prop" fieldName="kubelet_event_record_qps">
+      <template #append>
+        <span v-if="vars.kubelet_event_record_qps === 0">{{$t('nolimit')}}</span>
+        <span v-else>个</span>
+      </template>
+      <template #edit_desc>
+        <span v-if="vars.kubelet_event_record_qps < 10 && vars.kubelet_event_record_qps !== 0" style="color: var(--el-color-danger);">
+          请设置为 0 或者大于等于 10 的数字
+        </span>
+      </template>
+    </FieldNumber>
     <!-- <FieldBool :holder="vars" fieldName="auto_renew_certificates"></FieldBool> -->
 
     <!-- kubelet_rotate_server_certificates -->

@@ -151,7 +151,10 @@ const field = {
     kubelet_max_pods_placeholder: '默认值 110，节点最大容器组数',
 
     nodelocaldns_ip: 'nodelocaldns_ip',
-    nodelocaldns_ip_placeholder: '默认值 169.254.25.10，缓存 DNS 容器的虚拟 IP'
+    nodelocaldns_ip_placeholder: '默认值 169.254.25.10，缓存 DNS 容器的虚拟 IP',
+
+    kubelet_event_record_qps_placeholder: '默认值 5，kubelet 每秒可以创建的最大 event 数量。过小则可能丢失部分 event，过大可能导致 kubelet 负载高',
+    kubelet_event_record_qps: '每秒最大 event 数',
   }
 }
 

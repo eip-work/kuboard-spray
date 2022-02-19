@@ -285,6 +285,8 @@ func getInventoryTemplate() string {
             # Please use alternative ways to update kubelet configuration.
             dynamic_kubelet_configuration: false
 
+            kubelet_event_record_qps: 0
+
             # define kubelet config dir for dynamic kubelet
             # kubelet_config_dir:
             default_kubelet_config_dir: "{{ kube_config_dir }}/dynamic_kubelet_dir"

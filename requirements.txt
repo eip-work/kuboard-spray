@@ -1,3 +1,5 @@
+shyaml==0.6.2
+
 # start kubespray/requirements.txt
 ansible==3.4.0
 ansible-base==2.10.15

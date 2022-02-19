@@ -6,6 +6,7 @@ en:
   enabledBation: Enabled
   disabledBation: Disabled
   selectANode: Please select a node from the diagram to the left.
+  resourcePackage: Resource Package
 zh:
   singleNode: 单个节点
   global_config: 全局设置
@@ -13,6 +14,7 @@ zh:
   enabledBation: 使用跳板机
   disabledBation: 不使用跳板机
   selectANode: 请从左侧图中选择一个节点
+  resourcePackage: 资源包
 </i18n>
 
 <template>
@@ -90,7 +92,7 @@ zh:
         <el-tabs type="card" v-model="currentPropertiesTab">
           <el-tab-pane name="localhost">
             <template #label>
-              {{ $t('obj.localhost') }}
+              {{ $t('resourcePackage') }}
             </template>
             <el-scrollbar max-height="calc(100vh - 276px)" ref="configKuboardSprayScroll">
               <div class="tab_content">

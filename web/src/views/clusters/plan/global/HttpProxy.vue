@@ -20,19 +20,6 @@ zh:
     <FieldString :holder="vars" fieldName="http_proxy" prop="all.children.target.vars" anti-freeze></FieldString>
     <FieldString :holder="vars" fieldName="https_proxy" prop="all.children.target.vars" anti-freeze></FieldString>
     <FieldString :holder="vars" fieldName="additional_no_proxy" prop="all.children.target.vars" anti-freeze></FieldString>
-    <FieldCommon :holder="cluster.inventory.all.vars" fieldName="container_manager_on_localhost" prop="all.children.target.vars" anti-freeze>
-      <template #edit>
-        <el-select v-model="container_manager_on_localhost" style="width: 100%;">
-          <el-option label="docker" value="docker">docker</el-option>
-          <el-option label="containerd" value="containerd">containerd</el-option>
-        </el-select>
-      </template>
-      <template #view>
-        {{ container_manager_on_localhost }}
-      </template>
-    </FieldCommon>
-    <FieldSelect v-if="cluster.inventory.all.vars.container_manager_on_localhost === 'docker'" anti-freeze filterable allowCreate clearable
-      :holder="cluster.inventory.all.vars" fieldName="docker_bin_dir" prop="all.children.target.vars" :loadOptions="loadDockerDirOptions"></FieldSelect>
   </ConfigSection>
 </template>
 
@@ -50,18 +37,6 @@ export default {
     inventory: {
       get () { return this.cluster.inventory },
       set () {},
-    },
-    container_manager_on_localhost: {
-      get () { return this.inventory.all.vars.container_manager_on_localhost },
-      set (v) {
-        if (v === 'docker') {
-          this.inventory.all.vars.image_command_tool_on_localhost = 'docker'
-          this.inventory.all.vars.docker_bin_dir = '/Applications/Docker.app/Contents/Resources/bin'
-        } else {
-          this.inventory.all.vars.image_command_tool_on_localhost = 'nerdctl'
-        }
-        this.inventory.all.vars.container_manager_on_localhost = v
-      }
     },
     vars: {
       get () {
@@ -92,13 +67,6 @@ export default {
   mounted () {
   },
   methods: {
-    async loadDockerDirOptions () {
-      return [
-        { label: '/usr/bin', value: '/usr/bin' },
-        { label: '/usr/local/bin', value: '/usr/local/bin' },
-        { label: '/Applications/Docker.app/Contents/Resources/bin', value: '/Applications/Docker.app/Contents/Resources/bin' },
-      ]
-    }
   }
 }
 </script>

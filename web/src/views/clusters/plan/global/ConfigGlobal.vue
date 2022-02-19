@@ -35,7 +35,7 @@ export default {
   },
   computed: {
     showHttpProxy () {
-      return location.hash.indexOf("showHttpProxy=true") > 0
+      return location.hash.indexOf("showHttpProxy=true") > 0 || this.cluster.inventory.all.children.target.vars.http_proxy !== undefined
     },
     inventory: {
       get () {

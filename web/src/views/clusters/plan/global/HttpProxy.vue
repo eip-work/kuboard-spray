@@ -31,7 +31,7 @@ zh:
         {{ container_manager_on_localhost }}
       </template>
     </FieldCommon>
-    <FieldSelect v-if="cluster.inventory.all.vars.container_manager_on_localhost === 'docker'"
+    <FieldSelect v-if="cluster.inventory.all.vars.container_manager_on_localhost === 'docker'" anti-freeze filterable allowCreate clearable
       :holder="cluster.inventory.all.vars" fieldName="docker_bin_dir" prop="all.children.target.vars" :loadOptions="loadDockerDirOptions"></FieldSelect>
   </ConfigSection>
 </template>

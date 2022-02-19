@@ -86,7 +86,11 @@ const field = {
     cluster_name: '集群名称',
     cluster_name_placeholder: 'cluster domain name',
     event_ttl_duration: '事件保留时长',
-    auto_renew_certificates: '自动更新证书',
+    auto_renew_certificates: '自动更新 apiserver 证书',
+    kubelet_rotate_certificates: '自动更新 kubelet client 证书',
+    kubelet_rotate_certificates_placeholder: '默认值 true，kubelet 客户端证书过期时，自动从 apiserver 申请新证书',
+    kubelet_rotate_server_certificates: '自动更新 kubelet server 证书',
+    kubelet_rotate_server_certificates_placeholder: '默认值 false，kubelet 服务端证书过期时，自动从 apiserver 申请新证书',
 
     apt_mirror_dir: '数据目录',
     apt_mirror_ubuntu_mirror: '上游镜像源地址',

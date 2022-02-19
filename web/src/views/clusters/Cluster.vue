@@ -63,7 +63,7 @@ zh:
       <el-tab-pane :label="$t('plan')" name="plan">
         <Plan v-if="cluster" ref="plan" :cluster="cluster" :mode="mode" @refresh="refresh"></Plan>
       </el-tab-pane>
-      <el-tab-pane :label="$t('access')" name="access" :disabled="disableNonePlanTab">
+      <el-tab-pane :label="$t('access')" name="access" :disabled="disableNonePlanTab || !isClusterOnline">
         <Access v-if="currentTab == 'access'" ref="access" 
           :cluster="cluster" :loading="loading" @switch="currentTab = $event"></Access>
       </el-tab-pane>

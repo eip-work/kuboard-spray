@@ -1,6 +1,7 @@
 <template>
   <div>
     <K8sCluster :cluster="cluster"></K8sCluster>
+    <RotateCertificate :cluster="cluster"></RotateCertificate>
     <Networking :cluster="cluster"></Networking>
     <NetworkPlugin :cluster="cluster"></NetworkPlugin>
     <AuditLog :cluster="cluster"></AuditLog>
@@ -12,6 +13,7 @@ import NetworkPlugin from './NetworkPlugin.vue'
 import K8sCluster from './K8sCluster.vue'
 import Networking from './Networking.vue'
 import AuditLog from './AuditLog.vue'
+import RotateCertificate from './RotateCertificate.vue'
 
 export default {
   props: {
@@ -24,7 +26,7 @@ export default {
   },
   computed: {
   },
-  components: { NetworkPlugin, K8sCluster, Networking, AuditLog },
+  components: { NetworkPlugin, K8sCluster, Networking, AuditLog, RotateCertificate },
   mounted () {
   },
   methods: {

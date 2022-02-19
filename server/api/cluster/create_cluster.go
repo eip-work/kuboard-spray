@@ -305,9 +305,11 @@ func getInventoryTemplate() string {
             event_ttl_duration: "1h0m0s"
 
             ## Automatically renew K8S control plane certificates on first Monday of each month
-            auto_renew_certificates: false
+            auto_renew_certificates: true
             # First Monday of each month
             # auto_renew_certificates_systemd_calendar: "Mon *-*-1,2,3,4,5,6,7 03:{{ groups['kube_control_plane'].index(inventory_hostname) }}0:00"
+            kubelet_rotate_certificates: true
+            kubelet_rotate_server_certificates: true
 
       vars:
         bin_dir: /usr/local/bin

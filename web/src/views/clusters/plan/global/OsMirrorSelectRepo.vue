@@ -101,7 +101,7 @@ export default {
   },
   computed: {
     fieldName() {
-      return 'kuboardspray_repo_' + (this.isdocker ? 'docker_': '')+ this.type
+      return 'kuboardspray_repo_' + this.type
     },
     vars: {
       get () { return this.holder },
@@ -116,7 +116,7 @@ export default {
     loadKuboardsprayRepoOptions(flag, loadAll) {
       if (flag) {
         this.options = []
-        let type = (this.isdocker ? 'docker_': '')+ this.type
+        let type = this.type
         this.kuboardSprayApi.get(`/mirrors`, { params: { type: type } }).then(async resp => {
           if (type.indexOf('docker_') !== 0) {
             this.options.push({ label: this.$t('asis'), value: 'AS_IS'})

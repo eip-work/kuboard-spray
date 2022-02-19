@@ -76,7 +76,7 @@ export default {
 .desc {
   color: var(--el-text-color-secondary);
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: top;
   margin-left: 10px;
 }
 </style>

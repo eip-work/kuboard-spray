@@ -131,6 +131,16 @@ func getInventoryTemplate() string {
             calico_rr:
               hosts: {}
           vars:
+            tls_cipher_suites:
+              - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+              - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+              - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+              - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+              - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+              - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+              - TLS_RSA_WITH_AES_256_GCM_SHA384
+              - TLS_RSA_WITH_AES_128_GCM_SHA256
+
             # addons.yaml
             helm_enabled: false
             registry_enabled: false

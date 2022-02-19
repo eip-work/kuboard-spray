@@ -13,7 +13,7 @@ zh:
       <!-- <el-form-item :label="$t('field.etcd_deployment_type')">
         <span class="app_text_mono">{{etcd_deployment_type}}</span>
       </el-form-item> -->
-      <FieldString :holder="cluster.inventory.all.children.target.children.etcd.vars" prop="all.children.target.children.etcd.vars"
+      <FieldString :holder="cluster.inventory.all.children.target.children.etcd.vars" prop="all.children.target.children.etcd.vars" disabled
         fieldName="etcd_data_dir"></FieldString>
     </ConfigSection>
   </div>

@@ -17,7 +17,7 @@ zh:
         <span class="app_text_mono">{{cluster.resourcePackage.data.kubernetes.kube_version}}</span>
       </el-form-item>
     </template>
-    <FieldString :holder="vars" :prop="prop" fieldName="cluster_name" required></FieldString>
+    <FieldString :holder="vars" :prop="prop" fieldName="cluster_name" required :rules="clusterNameRules"></FieldString>
     <FieldString :holder="vars" :prop="prop" fieldName="event_ttl_duration" required></FieldString>
     <FieldSelect v-if="cluster.resourcePackage && cluster.resourcePackage.data.kubernetes.candidate_admission_plugins" 
       :holder="vars" :prop="prop" fieldName="kube_apiserver_enable_admission_plugins" multiple anti-freeze
@@ -73,6 +73,17 @@ export default {
           },
           trigger: 'blur',
         }
+      ],
+      clusterNameRules: [
+        {
+          validator: (rule, value, callback) => {
+            let reg = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/
+            if (!reg.test(value)) {
+              return callback("^[a-z0-9]([-a-z0-9]*[a-z0-9])?(.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$")
+            }
+            return callback()
+          }
+        }
       ]
     }
   },
@@ -125,28 +136,28 @@ export default {
     },
     async loadTlsCipherOptions () {
       return [
-        "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
-        "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256",
-        "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
-        "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA",
-        "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
-        "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305",
-        "TLS_ECDHE_ECDSA_WITH_RC4_128_SHA",
-        "TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA",
-        "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
-        "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
-        "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
-        "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
-        "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
-        "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305",
-        "TLS_ECDHE_RSA_WITH_RC4_128_SHA",
-        "TLS_RSA_WITH_3DES_EDE_CBC_SHA",
-        "TLS_RSA_WITH_AES_128_CBC_SHA",
-        "TLS_RSA_WITH_AES_128_CBC_SHA256",
-        "TLS_RSA_WITH_AES_128_GCM_SHA256",
-        "TLS_RSA_WITH_AES_256_CBC_SHA",
-        "TLS_RSA_WITH_AES_256_GCM_SHA384",
-        "TLS_RSA_WITH_RC4_128_SHA"
+        { label: "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA", value: "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA" },
+        { label: "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256", value: "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256" },
+        { label: "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256", value: "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256" },
+        { label: "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA", value: "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA" },
+        { label: "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384", value: "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384" },
+        { label: "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305", value: "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305" },
+        { label: "TLS_ECDHE_ECDSA_WITH_RC4_128_SHA", value: "TLS_ECDHE_ECDSA_WITH_RC4_128_SHA" },
+        { label: "TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA", value: "TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA" },
+        { label: "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA", value: "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA" },
+        { label: "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256", value: "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256" },
+        { label: "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256", value: "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256" },
+        { label: "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA", value: "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA" },
+        { label: "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384", value: "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384" },
+        { label: "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305", value: "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305" },
+        { label: "TLS_ECDHE_RSA_WITH_RC4_128_SHA", value: "TLS_ECDHE_RSA_WITH_RC4_128_SHA" },
+        { label: "TLS_RSA_WITH_3DES_EDE_CBC_SHA", value: "TLS_RSA_WITH_3DES_EDE_CBC_SHA" },
+        { label: "TLS_RSA_WITH_AES_128_CBC_SHA", value: "TLS_RSA_WITH_AES_128_CBC_SHA" },
+        { label: "TLS_RSA_WITH_AES_128_CBC_SHA256", value: "TLS_RSA_WITH_AES_128_CBC_SHA256" },
+        { label: "TLS_RSA_WITH_AES_128_GCM_SHA256", value: "TLS_RSA_WITH_AES_128_GCM_SHA256" },
+        { label: "TLS_RSA_WITH_AES_256_CBC_SHA", value: "TLS_RSA_WITH_AES_256_CBC_SHA" },
+        { label: "TLS_RSA_WITH_AES_256_GCM_SHA384", value: "TLS_RSA_WITH_AES_256_GCM_SHA384" },
+        { label: "TLS_RSA_WITH_RC4_128_SHA", value: "TLS_RSA_WITH_RC4_128_SHA" },
       ]
     }
   }

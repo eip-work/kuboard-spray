@@ -137,10 +137,11 @@ func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[strin
 	// <<<< 设置资源包相关参数
 
 	if runtime.GOOS == "darwin" {
+		common.MapSet(inventory, "all.vars.container_manager_on_localhost", "docker")
+		common.MapSet(inventory, "all.vars.docker_bin_dir_on_localhost", "/Applications/Docker.app/Contents/Resources/bin")
 		common.MapSet(inventory, "all.vars.image_command_tool_on_localhost", "docker")
 		common.MapSet(inventory, "all.vars.image_pull_command_on_localhost", "docker pull")
 		common.MapSet(inventory, "all.vars.image_info_command_on_localhost", "docker images -q | xargs -i docker inspect -f {% raw %}'{{ '{{' }} if .RepoTags }}{{ '{{' }} join .RepoTags \",\" }}{{ '{{' }} end }}{{ '{{' }} if .RepoDigests }},{{ '{{' }} join .RepoDigests \",\" }}{{ '{{' }} end }}' {% endraw %} {} | tr '\n' ','")
-		common.MapSet(inventory, "all.vars.docker_bin_dir_on_localhost", "/Applications/Docker.app/Contents/Resources/bin")
 	}
 	common.MapSet(inventory, "all.vars.download_keep_remote_cache", false)
 	common.MapSet(inventory, "all.vars.download_run_once", true)

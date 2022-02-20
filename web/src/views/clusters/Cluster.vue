@@ -75,7 +75,10 @@ zh:
         <Backup></Backup>
       </el-tab-pane>
       <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('csi_scan')" name="cis_scan">
-        <CIS v-if="currentTab === 'cis_scan'" :cluster="cluster"></CIS>
+        <div v-if="cluster && cluster.resourcePackage && !cluster.resourcePackage.data.supported_playbooks.cis_scan" style="height: calc(100vh - 220px);">
+          {{ $t('msg.feature_doesnot_support_selected_resource_package') }}
+        </div>
+        <CIS v-else-if="currentTab === 'cis_scan'" :cluster="cluster"></CIS>
       </el-tab-pane>
       <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('upgrade')" name="upgrade">
         <template  v-if="currentTab == 'upgrade'">

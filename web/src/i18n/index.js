@@ -33,6 +33,7 @@ const messages = {
       conflict_warn: 'Conflict with CIS WARN rules',
     },
     msg: {
+      feature_doesnot_support_selected_resource_package: 'This feature dosenot support the current resource package.',
       preview_yaml: 'Preview Yaml',
       name: 'Name',
       ok: 'OK',
@@ -84,6 +85,7 @@ const messages = {
       conflict_warn: 'CIS 扫描将出现 WARN',
     },
     msg: {
+      feature_doesnot_support_selected_resource_package: '此特性不支持当前版本的资源包',
       preview_yaml: '预览 YAML',
       name: '名 称',
       ok: '确 定',

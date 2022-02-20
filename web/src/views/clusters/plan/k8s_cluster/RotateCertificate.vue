@@ -36,7 +36,7 @@ zh:
         </div>
       </template>
     </FieldBool>
-    <FieldBool labelWidth="180px" :holder="vars" :prop="prop" fieldName="kubelet_rotate_server_certificates">
+    <!-- <FieldBool labelWidth="180px" :holder="vars" :prop="prop" fieldName="kubelet_rotate_server_certificates">
       <template #edit_desc>
         <div v-if="vars.kubelet_rotate_server_certificates" style="color: var(--el-color-danger);">
           自动申请证书后，需要您手动审批证书更新申请
@@ -54,7 +54,7 @@ zh:
           <li>kubectl certificate approve</li>
         </div>
       </template>
-    </FieldBool>
+    </FieldBool> -->
   </ConfigSection>
 </template>
 

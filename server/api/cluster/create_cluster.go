@@ -321,7 +321,7 @@ func getInventoryTemplate() string {
             # First Monday of each month
             # auto_renew_certificates_systemd_calendar: "Mon *-*-1,2,3,4,5,6,7 03:{{ groups['kube_control_plane'].index(inventory_hostname) }}0:00"
             kubelet_rotate_certificates: true
-            kubelet_rotate_server_certificates: true
+            kubelet_rotate_server_certificates: false
 
       vars:
         bin_dir: /usr/local/bin

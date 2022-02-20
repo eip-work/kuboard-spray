@@ -49,6 +49,8 @@ RUN /usr/bin/python3 -m pip install --no-cache-dir pip -U \
     && update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 
 COPY .docker/ansible-patch/config/base.yml /usr/local/lib/python3.8/dist-packages/ansible/config/base.yml
+COPY .docker/ansible-patch/plugins_callback/default.py /usr/local/lib/python3.8/dist-packages/ansible/plugins/callback/default.py
+
 
 ENV KUBOARD_SPRAY_WEB_DIR="/kuboard-spray/ui"
 ENV KUBOARD_SPRAY_PORT=":80"

@@ -68,6 +68,7 @@ Kuboard-Spray 是一款可以在图形界面引导下完成 Kubernetes 高可用
   docker run -d \
     --restart=unless-stopped \
     --name=kuboard-spray \
+    -e TZ=Asia/Shanghai \
     -p 80:80/tcp \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v ~/kuboard-spray-data:/data \

@@ -18,6 +18,7 @@ docker run -d \
   --restart=unless-stopped \
   --name=kuboard-spray \
   -p 80:80/tcp \
+  -e TZ=Asia/Shanghai \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v ~/kuboard-spray-data:/data \
   eipwork/kuboard-spray:latest-amd64

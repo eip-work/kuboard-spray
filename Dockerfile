@@ -9,10 +9,13 @@ ADD .docker/pip.conf /root/.pip/pip.conf
 #     ca-certificates curl gnupg2 software-properties-common python3-pip unzip rsync git \
 #     && rm -rf /var/lib/apt/lists/*
 
+ENV LANG=C.UTF-8
+ENV TZ Asia/Shanghai
+
 RUN apt-get update -y \
-    && apt-get install -y \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     libssl-dev sshpass apt-transport-https moreutils \
-    ca-certificates curl gnupg2 python3-pip unzip rsync \
+    ca-certificates curl gnupg2 python3-pip unzip rsync tzdata \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -38,7 +41,6 @@ RUN curl -o docker-ce-cli.deb https://mirrors.tuna.tsinghua.edu.cn/docker-ce/lin
 # Pip needs this as well at the moment to install ansible
 # (and potentially other packages)
 # See: https://github.com/pypa/pip/issues/10219
-ENV LANG=C.UTF-8
 
 WORKDIR /kuboard-spray
 COPY ./requirements.txt ./requirements.txt

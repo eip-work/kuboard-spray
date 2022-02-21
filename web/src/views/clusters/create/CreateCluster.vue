@@ -80,7 +80,7 @@ export default {
             this.kuboardSprayApi.get(`/clusters/${value}`).then(() => {
               callback(this.$t('conflict', {name: value}))
             }).catch(e => {
-              console.log(e.response)
+              // console.log(e.response)
               if (e.response && e.response.data.code === 500) {
                 callback()
               }

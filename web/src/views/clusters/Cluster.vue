@@ -230,7 +230,7 @@ export default {
       this.refresh()
     },
     async refresh() {
-      console.log('refresh cluster.')
+      // console.log('refresh cluster.')
       this.percentage = 10
       let _this = this
       await this.kuboardSprayApi.get(`/clusters/${this.name}`).then(async function (resp) {

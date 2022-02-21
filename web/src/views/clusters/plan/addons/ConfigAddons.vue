@@ -27,11 +27,11 @@ export default {
   },
   components: { metrics_server, netchecker, nodelocaldns },
   watch: {
-    currentTab (newValue) {
-      if (newValue === 'addons') {
-        console.log('activate')
-      }
-    }
+    // currentTab (newValue) {
+    //   if (newValue === 'addons') {
+    //     console.log('activate')
+    //   }
+    // }
   },
   mounted () {
   },

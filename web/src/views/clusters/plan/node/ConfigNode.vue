@@ -212,7 +212,7 @@ export default {
         return false
       },
       set (v) {
-        console.log('setKubeNode', v)
+        // console.log('setKubeNode', v)
         if (v) {
           this.inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts[this.nodeName] = {}
         } else {

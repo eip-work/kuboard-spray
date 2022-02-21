@@ -20,7 +20,7 @@ zh:
   ip_placeholder: '默认值：{default_value} （默认与主机 IP 相同）'
   longTimeLoading: 加载中... 可能需要 20-30 秒
   ipDescription: kubernetes 使用的地址有可能与 kuboard-spray 访问该机器时所使用的地址不同，此处指定 kubernetes 所使用的地址（必须为内网地址）
-  password_and_bastion: 您将使用跳板机访问节点，如果在此处使用密码访问，创建 ssh 连接的时间较长，建议清除密码并提供 “私钥文件”。
+  password_and_bastion: 您将使用跳板机访问节点，如果在此处使用密码访问，创建 ssh 连接的时间较长，并且有很大的概率会发生ssh连接断开的情况，建议清除密码并提供 “私钥文件”。
   password_in_global: 您在全局参数中配置了密码，建议清除。
   speedup: 加速执行
   cannotUseLocalhostAsTarget: 不能使用 KuboardSpray 所在机器作为目标节点

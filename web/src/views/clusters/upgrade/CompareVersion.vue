@@ -8,6 +8,7 @@ en:
   etcd_cluster: etcd
   loading: Loading versions installed on nodes
   command_for_version: Command
+  cordoned: Cordoned
 zh:
   versionInResource: 资源包中的版本
   componentName: 组件名称
@@ -17,6 +18,7 @@ zh:
   etcd_cluster: etcd
   loading: 查询节点上已安装的版本
   command_for_version: 查询命令
+  cordoned: 已暂停调度
 </i18n>
 
 
@@ -65,7 +67,12 @@ zh:
             </div>
           </template>
           <template #default="scope">
-            <template v-if="nodeVersion[scope.row.name]">
+            <template v-if="scope.row.name === 'kubernetes'">
+              <template v-if="cluster.state.nodes[nodeName]">
+                <el-tag v-if="cluster.state.nodes[nodeName].spec.unschedulable" type="danger" effect="dark">{{ $t('cordoned') }}</el-tag>
+              </template>
+            </template>
+            <template v-else-if="nodeVersion[scope.row.name]">
               <el-tag v-if="nodeVersion[scope.row.name].skipped" type="info">skipped</el-tag>
               <el-tooltip v-else-if="nodeVersion[scope.row.name].unreachable" trigger="hover" placement="top" width="420">
                 <el-tag type="danger" effect="dark" style="cursor: pointer">unreachable</el-tag>
@@ -146,7 +153,13 @@ export default {
         return false
       }
       let host = this.cluster.inventory.all.hosts[nodeName]
-      return (host.kuboardspray_node_action === 'upgrade_node')
+      if (host.kuboardspray_node_action === 'upgrade_node') {
+        return true
+      }
+      if (this.cluster.state.nodes[nodeName].spec.unschedulable) {
+        return true
+      }
+      return this.cluster.state.nodes[nodeName].status.nodeInfo.kubeletVersion !== this.cluster.resourcePackage.data.kubernetes.kube_version
     }
   }
 }

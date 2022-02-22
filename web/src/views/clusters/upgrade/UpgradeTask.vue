@@ -27,6 +27,16 @@ en:
   
   upgrade_all_nodes: Upgrade all nodes in one run
   upgrade_master_nodes: Upgrade kube_control_plane and etcd nodes first
+
+  uncordon_node: Uncordon node {nodeName}
+  uncordon_node_desc: Uncordon node {nodeName} to bring it back.
+  drain_node: Drain node {nodeName}
+  drain_node_desc: Drain node before upgrading it to avoid business interruption.
+  drain_timeout: drain_timeout
+  drain_retries: drain_retries
+  drain_grace_period: drain_grace_period
+  drain_retry_delay_seconds: drain_retry_delay_seconds
+  nodes_to_remove_required: Please select nodes to remove.
 zh:
   verbose: 显示任务参数
   verbose_: 正常输出的日志，通常选用此选项
@@ -51,17 +61,27 @@ zh:
   upgrade_multi_nodes: 升级多个工作节点
   upgrade_multi_nodes_desc: 请选择本次任务中要升级的节点
   upgrade_single_node: 升级 {nodeName}
-  upgrade_single_node_desc: 一次只升级一个节点
+  upgrade_single_node_desc: 一次只升级一个节点。以下是当前节点上的容器组列表，如果存在非 DaemonSet 类型的容器组，请考虑是否先排空该节点。
 
   upgrade_all_nodes: 升级所有节点
   upgrade_all_nodes_desc: 一次性升级所有节点，如果当前有工作负载正在运行，将造成服务中断
   upgrade_master_nodes: 升级控制节点和 ETCD 节点
   upgrade_master_nodes_desc: 先逐个升级控制节点和 ETCD 节点，然后再逐个排空、升级工作节点，避免造成服务中断。（如果有3个控制节点，大约耗时 18 分钟）
+
+  uncordon_node: 恢复调度 {nodeName}
+  uncordon_node_desc: 恢复调度 {nodeName}，以便新的容器组可以调度到该节点上。
+  drain_node: 排空节点 {nodeName}
+  drain_node_desc: 建议在升级节点前，排空节点上的容器组，以避免出现业务中断
+  drain_timeout: 排空节点超时时间
+  drain_retries: 排空节点重试次数
+  drain_grace_period: 应用停止等候时间
+  drain_retry_delay_seconds: 两次排空尝试间隔
+  nodes_to_remove_required: 请选择要删除的节点
 </i18n>
 
 <template>
   <ExecuteTask :history="cluster.history" :loading="loading" :title="title" :startTask="execute" @refresh="$emit('refresh')" @visibleChange="onVisibleChange">
-    <div style="width: 600px;">
+    <div style="width: 850px;">
       <div v-if="pingpong_loading" style="display: block;">
         <el-skeleton animated></el-skeleton>
       </div>
@@ -94,7 +114,19 @@ zh:
               </el-radio-button>
               <el-radio-button label="upgrade_multi_nodes" :disabled="requireSeparateDownloadAction || controlPlanePendingUpgrade">{{$t('upgrade_multi_nodes')}}</el-radio-button>
             </template>
-            <el-radio-button v-else label="upgrade_single_node">{{$t('upgrade_single_node', {nodeName})}}</el-radio-button>
+            <template v-else>
+              <el-radio-button label="drain_node" v-if="cluster.resourcePackage.data.supported_playbooks.drain_node"
+                :disabled="cluster.state.nodes[nodeName].status.nodeInfo.kubeletVersion === cluster.resourcePackage.data.kubernetes.kube_version">
+                {{$t('drain_node', {nodeName})}}
+              </el-radio-button>
+              <el-radio-button label="upgrade_single_node" :disabled="cluster.state.nodes[nodeName].status.nodeInfo.kubeletVersion === cluster.resourcePackage.data.kubernetes.kube_version">
+                {{$t('upgrade_single_node', {nodeName})}}
+              </el-radio-button>
+              <el-radio-button label="uncordon_node" v-if="cluster.state.nodes[nodeName] && cluster.resourcePackage.data.supported_playbooks.uncordon_node"
+                :disabled="!cluster.state.nodes[nodeName].spec.unschedulable">
+                {{$t('uncordon_node', {nodeName})}}
+              </el-radio-button>
+            </template>
           </el-radio-group>
           <div class="form_description" :style="form.action === 'upgrade_all_nodes' ? 'color: var(--el-color-danger)':''">{{ $t(form.action + '_desc') }}</div>
           <div v-if="form.action === 'upgrade_multi_nodes'" :rules="kube_nodes_to_upgrade_rules" style="margin-bottom: 18px;">
@@ -106,6 +138,27 @@ zh:
               </el-checkbox-group>
             </el-form-item>
           </div>
+          <div v-if="form.action === 'drain_node'">
+            <pre class="drain_cmd app_text_mono">kubectl cordon {{ nodeName }}
+kubectl drain --force --ignore-daemonsets --grace-period {{ form.drain_node.drain_grace_period * 60}} --timeout {{ form.drain_node.drain_timeout * 60 }}s</pre>
+            <el-form-item label-width="150px" :label="$t('drain_grace_period')" required prop="drain_node.drain_grace_period">
+              <el-input-number v-model="form.drain_node.drain_grace_period" :min="1" :max="form.drain_node.drain_timeout - 1"></el-input-number> 分钟
+              <span style="margin-left: 20px;" class="form_description">kubectl drain --grace-period</span>
+            </el-form-item>
+            <el-form-item label-width="150px" :label="$t('drain_timeout')" required prop="drain_node.drain_timeout">
+              <el-input-number v-model="form.drain_node.drain_timeout" :min="form.drain_node.drain_grace_period + 1"></el-input-number> 分钟
+              <span style="margin-left: 20px;" class="form_description">kubectl drain --timeout</span>
+            </el-form-item>
+            <el-form-item label-width="150px" :label="$t('drain_retries')" required prop="drain_node.drain_retries">
+              <el-input-number v-model="form.drain_node.drain_retries" :min="1"></el-input-number> 次
+            </el-form-item>
+            <el-form-item label-width="150px" :label="$t('drain_retry_delay_seconds')" required prop="drain_node.drain_retry_delay_seconds">
+              <el-input-number v-model="form.drain_node.drain_retry_delay_seconds" :min="5" :step="5"></el-input-number> 秒
+            </el-form-item>
+          </div>
+          <el-scrollbar v-if="form.action === 'upgrade_single_node'" :max-height="240" style="max-height: 240px; margin-bottom: 10px;">
+            <pre class="pods_on_node">{{pods_on_node}}</pre>
+          </el-scrollbar>
           <div v-if="form.action === 'upgrade_multi_nodes' || form.action === 'upgrade_single_node'">
             <el-switch v-model="form.skip_downloads" :disabled="requireDownloadForNodes(form.kube_nodes_to_upgrade)" :active-text="$t('skip_downloads')"></el-switch>
           </div>
@@ -161,6 +214,9 @@ export default {
         nodes_to_exclude: [],
         kube_nodes_to_upgrade: [],
         skip_downloads: false,
+        drain_node: {
+
+        },
       },
       min_resource_package_version_rules: [
         { required: true, message: this.$t('newResourcePackageRequired') }
@@ -170,6 +226,7 @@ export default {
       ],
       pingpong: {},
       pingpong_loading: true,
+      pods_on_node: undefined,
     }
   },
   computed: {
@@ -216,6 +273,9 @@ export default {
         this.setAction()
         this.form.kube_nodes_to_upgrade = []
         this.testPingPong('target')
+        if (this.nodeName) {
+          this.getPodsOnNode()
+        }
       }
     },
     setAction () {
@@ -224,9 +284,19 @@ export default {
           this.form.action = 'upgrade_multi_nodes'
           this.form.skip_downloads = false
         } else {
-          this.form.action = 'upgrade_single_node'
+          this.form.action = 'drain_node'
           this.form.skip_downloads = !this.requireDownloadForNodes([this.nodeName])
-          console.log(this.nodeName, this.requireDownloadForNodes([this.nodeName]), this.form.skip_downloads)
+          if (this.cluster.state.nodes[this.nodeName].spec.unschedulable) {
+            this.form.action = 'upgrade_single_node'
+          }
+          if (this.cluster.state.nodes[this.nodeName].status.nodeInfo.kubeletVersion === this.cluster.resourcePackage.data.kubernetes.kube_version) {
+            this.form.action = 'uncordon_node'
+          }
+          this.form.drain_node = {}
+          this.form.drain_node.drain_grace_period = 5
+          this.form.drain_node.drain_timeout = 6
+          this.form.drain_node.drain_retries = 2
+          this.form.drain_node.drain_retry_delay_seconds = 10
         }
       }
       if (this.requireSeparateDownloadAction) {
@@ -246,6 +316,12 @@ export default {
         } else {
           this.$message.error('不能测试节点是否在线: ' + e)
         }
+      })
+    },
+    getPodsOnNode () {
+      this.pods_on_node = undefined
+      this.kuboardSprayApi.get(`/clusters/${this.cluster.name}/state/pods_on_node/${this.nodeName}`).then(resp => {
+        this.pods_on_node = resp.data.data.stdout
       })
     },
     async execute () {
@@ -288,6 +364,14 @@ export default {
             } else if (this.form.action === 'upgrade_single_node') {
               req.nodes = this.nodeName
               req.skip_downloads = this.form.skip_downloads
+            } else if (this.form.action === 'drain_node') {
+              req.nodes = this.nodeName
+              req.drain_grace_period = this.form.drain_node.drain_grace_period + ''
+              req.drain_timeout = this.form.drain_node.drain_timeout + 's'
+              req.drain_retries = this.form.drain_node.drain_retries + ''
+              req.drain_retry_delay_seconds = this.form.drain_node.drain_retry_delay_seconds + ''
+            } else if (this.form.action === 'uncordon_node') {
+              req.nodes = this.nodeName
             }
             this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/${this.form.action}`, req).then(resp => {
               let pid = resp.data.data.pid
@@ -310,5 +394,18 @@ export default {
   font-size: 12px;
   color: #aaa;
   max-width: 700px;
+}
+.pods_on_node {
+  background-color: var(--el-text-color-primary);
+  color: var(--el-color-white);
+  padding: 20px;
+  margin: 0;
+  min-height: 200px;
+}
+.drain_cmd {
+  background-color: var(--el-text-color-primary);
+  color: var(--el-color-white);
+  padding: 10px 20px;
+  font-weight: bold;
 }
 </style>

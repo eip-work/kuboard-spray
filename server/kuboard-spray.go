@@ -57,6 +57,8 @@ func setupRouter() *gin.Engine {
 	api.POST("/clusters/:cluster/upgrade_single_node", operation.UpgradeCluster)
 	api.POST("/clusters/:cluster/upgrade_multi_nodes", operation.UpgradeCluster)
 	api.POST("/clusters/:cluster/download_binaries", operation.DownloadBinaries)
+	api.POST("/clusters/:cluster/drain_node", operation.DrainNode)
+	api.POST("/clusters/:cluster/uncordon_node", operation.UncordonNode)
 
 	api.POST("/clusters/:cluster/cis_scan", cis_scan.CisScan)
 
@@ -67,6 +69,7 @@ func setupRouter() *gin.Engine {
 	api.GET("/clusters/:cluster/state/etcd_member_health", state.CheckEtcdEndpoints)
 	api.GET("/clusters/:cluster/state/addons", state.CheckAddonStatus)
 	api.GET("/clusters/:cluster/state/version", state.CheckClusterVersion)
+	api.GET("/clusters/:cluster/state/pods_on_node/:node", state.GetPodsOnNode)
 
 	api.GET("/clusters/:cluster/health_check/connectivity_check", health_check.CheckConnectivity)
 	api.GET("/clusters/:cluster/health_check/details", health_check.CheckConnectivityDetails)

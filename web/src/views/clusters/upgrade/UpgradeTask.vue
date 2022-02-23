@@ -232,7 +232,7 @@ export default {
   computed: {
     title () {
       if (this.nodeName) {
-        return this.$t('upgrade_single_node', { nodeName: this.nodeName })
+        return this.$t(this.form.action, { nodeName: this.nodeName })
       }
       return this.$t('upgrade_cluster') + ' : ' + this.$t(this.form.action)
     },

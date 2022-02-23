@@ -23,7 +23,7 @@ import App from './App.vue'
 import axios from 'axios'
 import checkNewVersion from './utils/version-checker.js'
 
-axios.get("./version.json").then(resp => {
+axios.get("./version.json?nocache=" + new Date().getTime()).then(resp => {
   window.KuboardSpray = { version: resp.data }
   window.KuboardSpray.version.trimed = window.KuboardSpray.version.version.slice(0, window.KuboardSpray.version.version.length - 6)
   window.KuboardSpray.version.arch = window.KuboardSpray.version.version.slice(window.KuboardSpray.version.version.length - 5)

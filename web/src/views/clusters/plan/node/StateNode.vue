@@ -12,7 +12,7 @@ zh:
 
 <template>
   <ConfigSection v-model:enabled="enabled" :label="$t('label')" :description="$t('description', {nodeName: nodeName})" disabled anti-freeze>
-    <div>
+    <div v-if="previewYaml">
       <div style="text-align: right; margin-bottom: 10px;">
         <el-button @click="$refs.previewYaml.show([node.k8s_node], $t('msg.preview_yaml'))" type="primary" icon="el-icon-document">{{$t('msg.preview_yaml')}}</el-button>
       </div>

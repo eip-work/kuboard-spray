@@ -30,12 +30,15 @@ zh:
           </template>
           <el-tag v-if="node.k8s_node.spec.unschedulable" type="danger" effect="dark" style="margin-right: 10px; float: right;">{{ $t('unschedulable') }}</el-tag>
         </template>
+        <template v-else-if="node.etcd_member">
+          <el-tag type="" style="float: right;">{{node.etcd_member.health.endpoint}}</el-tag>
+        </template>
       </div>
     </div>
     <div v-if="node.etcd_member && !node.etcd_member.health.health" class="etcd_error">
       etcd endpoint unhealthy: {{node.etcd_member.health.endpoint}} {{node.etcd_member.health.error}}
     </div>
-    <div>
+    <div v-if="node.k8s_node">
       <div v-for="(condition, index) in node.k8s_node.status.conditions" :key="'condition' + index" style="margin-left: 130px;">
         <StateNodeCondition :condition="condition" hideSuccess></StateNodeCondition>
       </div>

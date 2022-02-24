@@ -2,22 +2,15 @@ package vue
 
 import (
 	"net/http"
-	"os"
-	"strings"
 
+	"github.com/eip-work/kuboard-spray/constants"
 	"github.com/gin-gonic/gin"
 )
-
-var kuboardSprayWebDir string = os.Getenv("KUBOARD_SPRAY_WEB_DIR")
 
 // ServeVue ServeVue
 func ServeVue(router *gin.Engine, root *gin.RouterGroup) {
 
-	if kuboardSprayWebDir == "" {
-		dir, _ := os.Getwd()
-		lastindex := strings.LastIndex(dir, "/")
-		kuboardSprayWebDir = dir[0:lastindex] + "/web/dist"
-	}
+	kuboardSprayWebDir := constants.GetKuboardSprayWebDir()
 
 	static := router.Group("/")
 

@@ -59,6 +59,9 @@ func getMembersInEtcd(clusterName string) ([]string, error) {
 		return nil, err
 	}
 	for _, member := range shellResult[0].StdOutObj.(map[string]interface{})["members"].([]interface{}) {
+		if member == nil {
+			continue
+		}
 		memberObj := member.(map[string]interface{})
 		logrus.Trace("etcd member:", memberObj)
 		if memberObj["name"] == nil {
@@ -68,6 +71,8 @@ func getMembersInEtcd(clusterName string) ([]string, error) {
 		nodeName := memberObj["name"].(string)
 		result = append(result, nodeName)
 	}
+
+	logrus.Trace("members in etcd:", result)
 
 	return result, nil
 }

@@ -56,6 +56,22 @@ func InstallCluster(c *gin.Context) {
 				common.MapDelete(inventoryNew, "all.children.target.children.etcd.hosts."+node+".kuboardspray_node_action")
 			}
 		}
+
+		memberInEtcd, _ := getMembersInEtcd(req.Cluster)
+		for _, member := range memberInEtcd {
+			for etcdNodeName, etcdNode := range common.MapGet(inventoryNew, "all.children.target.children.etcd.hosts").(map[string]interface{}) {
+				logrus.Trace(member, "  --  ", etcdNodeName, etcdNode)
+				if common.MapGet(etcdNode.(map[string]interface{}), "etcd_member_name") == member {
+					if common.MapGet(inventoryNew, "all.hosts."+etcdNodeName+".kuboardspray_node_action") == "add_node" {
+						common.MapDelete(inventoryNew, "all.hosts."+etcdNodeName+".kuboardspray_node_action")
+						common.MapDelete(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_control_plane.hosts."+etcdNodeName+".kuboardspray_node_action")
+						common.MapDelete(inventoryNew, "all.children.target.children.k8s_cluster.children.kube_node.hosts."+etcdNodeName+".kuboardspray_node_action")
+						common.MapDelete(inventoryNew, "all.children.target.children.etcd.hosts."+etcdNodeName+".kuboardspray_node_action")
+					}
+				}
+			}
+		}
+
 		inventoryNewContent, _ := yaml.Marshal(inventoryNew)
 
 		if err := ioutil.WriteFile(inventoryPath, inventoryNewContent, 0655); err != nil {

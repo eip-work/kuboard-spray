@@ -1,6 +1,8 @@
 package operation
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"runtime"
 	"strings"
 
@@ -44,10 +46,10 @@ func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[strin
 	}
 
 	// 设置 kubernetes 版本信息
-	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.kube_version", common.MapGet(resourcePackage, "data.kubernetes.kube_version"))
-	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.image_arch", common.MapGet(resourcePackage, "data.kubernetes.image_arch"))
-	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.gcr_image_repo", common.MapGet(resourcePackage, "data.kubernetes.gcr_image_repo"))
-	common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars.kube_image_repo", common.MapGet(resourcePackage, "data.kubernetes.kube_image_repo"))
+	common.MapSet(inventory, "all.children.target.vars.kube_version", common.MapGet(resourcePackage, "data.kubernetes.kube_version"))
+	common.MapSet(inventory, "all.children.target.vars.image_arch", common.MapGet(resourcePackage, "data.kubernetes.image_arch"))
+	common.MapSet(inventory, "all.children.target.vars.gcr_image_repo", common.MapGet(resourcePackage, "data.kubernetes.gcr_image_repo"))
+	common.MapSet(inventory, "all.children.target.vars.kube_image_repo", common.MapGet(resourcePackage, "data.kubernetes.kube_image_repo"))
 
 	// 设置容器引擎相关参数
 	container_manager := common.MapGet(inventory, "all.children.target.vars.container_manager")
@@ -83,7 +85,7 @@ func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[strin
 		dependency := d.(map[string]interface{})
 		field := dependency["target"].(string)
 		version := dependency["version"]
-		common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+field, version)
+		common.MapSet(inventory, "all.children.target.vars."+field, version)
 	}
 
 	// 设置网络插件信息
@@ -97,7 +99,7 @@ func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[strin
 		}
 	}
 	for key, value := range np_dependency["params"].(map[string]interface{}) {
-		common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+key, value)
+		common.MapSet(inventory, "all.children.target.vars."+key, value)
 	}
 
 	// 设置可选组件参数
@@ -107,7 +109,7 @@ func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[strin
 		enabled := common.MapGet(inventory, "all.children.target.children.k8s_cluster.vars."+addon["target"].(string))
 		if enabled == true {
 			for key, value := range addon["params"].(map[string]interface{}) {
-				common.MapSet(inventory, "all.children.target.children.k8s_cluster.vars."+key, value)
+				common.MapSet(inventory, "all.children.target.vars."+key, value)
 			}
 		}
 	}
@@ -143,6 +145,17 @@ func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[strin
 		common.MapSet(inventory, "all.vars.image_pull_command_on_localhost", "docker pull")
 		common.MapSet(inventory, "all.vars.image_info_command_on_localhost", "docker images -q | xargs -i docker inspect -f {% raw %}'{{ '{{' }} if .RepoTags }}{{ '{{' }} join .RepoTags \",\" }}{{ '{{' }} end }}{{ '{{' }} if .RepoDigests }},{{ '{{' }} join .RepoDigests \",\" }}{{ '{{' }} end }}' {% endraw %} {} | tr '\n' ','")
 	}
+
+	versionJsonPath := constants.GetKuboardSprayWebDir() + "/version.json"
+	versionJson, err := ioutil.ReadFile(versionJsonPath)
+	if err != nil {
+		return nil, nil, err
+	}
+	version := map[string]string{}
+	json.Unmarshal(versionJson, &version)
+
+	common.MapSet(inventory, "all.vars.kuboardspray_version", version["version"])
+
 	common.MapSet(inventory, "all.vars.download_keep_remote_cache", false)
 	common.MapSet(inventory, "all.vars.download_run_once", true)
 	common.MapSet(inventory, "all.vars.download_localhost", true)

@@ -156,10 +156,13 @@ export default {
       if (host.kuboardspray_node_action === 'upgrade_node') {
         return true
       }
-      if (this.cluster.state.nodes[nodeName].spec.unschedulable) {
-        return true
+      if (this.cluster.state.nodes[nodeName]) {
+        if (this.cluster.state.nodes[nodeName].spec.unschedulable) {
+          return true
+        }
+        return this.cluster.state.nodes[nodeName].status.nodeInfo.kubeletVersion !== this.cluster.resourcePackage.data.kubernetes.kube_version
       }
-      return this.cluster.state.nodes[nodeName].status.nodeInfo.kubeletVersion !== this.cluster.resourcePackage.data.kubernetes.kube_version
+      return false
     }
   }
 }

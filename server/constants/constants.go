@@ -40,3 +40,13 @@ func GET_ANSIBLE_SCRIPT_DIR() string {
 func GetInventoryPath(owner_type, owner_name string) string {
 	return GET_DATA_DIR() + "/" + owner_type + "/" + owner_name + "/inventory.yaml"
 }
+
+func GetKuboardSprayWebDir() string {
+	var kuboardSprayWebDir string = os.Getenv("KUBOARD_SPRAY_WEB_DIR")
+	if kuboardSprayWebDir == "" {
+		dir, _ := os.Getwd()
+		lastindex := strings.LastIndex(dir, "/")
+		kuboardSprayWebDir = dir[0:lastindex] + "/web/dist"
+	}
+	return kuboardSprayWebDir
+}

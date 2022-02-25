@@ -14,6 +14,7 @@ docker run -d \
   --restart=unless-stopped \
   --name=kuboard-spray \
   -p 80:80/tcp \
+  -e TZ=Asia/Shanghai \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v ~/kuboard-spray-data:/data \
   eipwork/kuboard-spray:latest-amd64
@@ -34,8 +35,6 @@ Kuboard-Spray 将定期提供最新版本的资源包，可以在 kubord-spray �
 
 ## 社区
 
-对此项目感兴趣的同学，请添加本项目的 Star 以后，扫码加入群聊（提供 star 截图才会被拉入群聊哦！）
+对此项目感兴趣的同学，请添加本项目的 Star 以后，扫码加入群聊，二维码在网站的页尾。
 
-<p>
-  <img frameborder="0" src="https://addons.kuboard.cn/downloads/qr_code_kuboard-spray.jpg" style="width: 150px; height: 150px;"/>
-</p>
+[kuboard-spray.cn](https://kuboard-spray.cn)

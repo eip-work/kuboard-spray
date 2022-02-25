@@ -3,12 +3,14 @@ en:
   confirmDelete: Are you sure to delete this node ?
   noRemoveOffline: cannot remove node when cluster is unreachable
   addNodeFirst: Please complete or cancel the deletion of nodes first.
-  etcdMinCount: Cannot remove etcd node any more, or etcd cluster will become unavailable.
+  cannot_remove_last_etcd: Cannot remove the last etcd node
+  cannot_remove_last_master: Cannot remove the last kube_control_plane
 zh:
   confirmDelete: 您是否确认要删除此节点？
   noRemoveOffline: 集群不在线，不能删除节点
   addNodeFirst: 请先完成或取消节点添加动作，再执行节点删除动作。
-  etcdMinCount: 不能继续删除 etcd 节点，否则 etcd 集群将不可用
+  cannot_remove_last_etcd: 不能删除最后一个 ETCD 节点
+  cannot_remove_last_master: 不能删除最后一个控制节点
 </i18n>
 
 <template>
@@ -147,6 +149,32 @@ export default {
       if (this.pendingAddNodes.length > 0 && this.onlineNodes[this.name] !== undefined) {
         this.$message.error(this.$t('addNodeFirst'))
         return
+      }
+      if (this.roles.etcd) {
+        let count = 0
+        for (let key in this.inventory.all.children.target.children.etcd.hosts) {
+          let host = this.inventory.all.children.target.children.etcd.hosts[key]
+          if (host.kuboardspray_node_action === undefined) {
+            count ++
+          }
+        }
+        if (count === 1) {
+          this.$message.error(this.$t('cannot_remove_last_etcd'))
+          return
+        }
+      }
+      if (this.roles.kube_control_plane) {
+        let count = 0
+        for (let key in this.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts) {
+          let host = this.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts[key]
+          if (host.kuboardspray_node_action === undefined) {
+            count ++
+          }
+        }
+        if (count === 1) {
+          this.$message.error(this.$t('cannot_remove_last_master'))
+          return
+        }
       }
       if (this.onlineNodes[this.name]) {
         this.inventory.all.hosts[this.name].kuboardspray_node_action = 'remove_node'

@@ -53,7 +53,7 @@ zh:
               </el-button>
             </div>
           </el-scrollbar>
-          <div style="flex-grow: 1; margin-left: 10px; margin-bottom: 38px;">
+          <div style="flex-grow: 1; margin-left: 10px;">
             <el-radio-group v-model="connectivityCheckLog.type" size="default">
               <el-radio-button label="podList">
                 <el-icon style="vertical-align: top; margin-right: 5px;">
@@ -80,7 +80,9 @@ zh:
                 {{ $t('logs') }}
               </el-radio-button>
             </el-radio-group>
-            <Codemirror class="connectivity_check_code_mirror" v-model:value="connectivityLogsCompute" :options="cmOptions"></Codemirror>
+            <el-scrollbar :max-height="400" style="margin-top: 10px;">
+              <pre class="app_code" style="min-height: 360px;">{{connectivityLogsCompute}}</pre>
+            </el-scrollbar>
           </div>
         </div>
       </div>
@@ -105,11 +107,6 @@ zh:
 </template>
 
 <script>
-import Codemirror from "codemirror-editor-vue3"
-import "codemirror/theme/darcula.css"
-import "codemirror/mode/yaml/yaml.js"
-import "codemirror/mode/shell/shell.js"
-
 export default {
   props: {
     cluster: { type: Object, required: true },
@@ -125,16 +122,6 @@ export default {
         type: 'events',
         pod: '',
       },
-      cmOptions: {
-        mode: "shell",
-        theme: "darcula",
-        lineNumbers: true,
-        lineWrapping: true,
-        smartIndent: true,
-        indentUnit: 2,
-        foldGutter: true,
-        styleActiveLine: true,
-      }
     }
   },
   computed: {
@@ -156,7 +143,7 @@ export default {
       set () {}
     }
   },
-  components: { Codemirror },
+  components: { },
   mounted () {
     this.refresh()
   },
@@ -207,13 +194,4 @@ export default {
 </script>
 
 <style lang="css">
-.connectivity_check_code_mirror .CodeMirror {
-  height: 380px;
-}
-
-.connectivity_check_code_mirror .CodeMirror-scroll {
-  height: 380px;
-  overflow-y: hidden;
-  overflow-x: auto;
-}
 </style>

@@ -70,6 +70,7 @@ func setupRouter() *gin.Engine {
 	api.GET("/clusters/:cluster/state/addons", state.CheckAddonStatus)
 	api.GET("/clusters/:cluster/state/version", state.CheckClusterVersion)
 	api.GET("/clusters/:cluster/state/pods_on_node/:node", state.GetPodsOnNode)
+	api.GET("/clusters/:cluster/state/check_cert_expiration", state.CheckCertExpiration)
 
 	api.GET("/clusters/:cluster/health_check/connectivity_check", health_check.CheckConnectivity)
 	api.GET("/clusters/:cluster/health_check/details", health_check.CheckConnectivityDetails)

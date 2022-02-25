@@ -8,14 +8,15 @@ zh:
 <template>
   <div>
     <el-scrollbar height="calc(100vh - 220px)">
-      <ConnectivityCheck :cluster="cluster"></ConnectivityCheck>
-      
+      <ConnectivityCheck :cluster="cluster" class="app_margin_bottom"></ConnectivityCheck>
+      <CertExpirationCheck :cluster="cluster"></CertExpirationCheck>
     </el-scrollbar>
   </div>
 </template>
 
 <script>
 import ConnectivityCheck from './ConnectivityCheck.vue'
+import CertExpirationCheck from './CertExpirationCheck.vue'
 
 export default {
   props: {
@@ -28,7 +29,7 @@ export default {
   },
   computed: {
   },
-  components: { ConnectivityCheck },
+  components: { ConnectivityCheck, CertExpirationCheck },
   mounted () {
 
   },

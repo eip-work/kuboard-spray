@@ -37,6 +37,8 @@ en:
   drain_grace_period: drain_grace_period
   drain_retry_delay_seconds: drain_retry_delay_seconds
   nodes_to_remove_required: Please select nodes to remove.
+
+  newResourcePackageRequired: This resource package does not support the operation, please choose a new one.
 zh:
   verbose: 显示任务参数
   verbose_: 正常输出的日志，通常选用此选项
@@ -77,6 +79,8 @@ zh:
   drain_grace_period: 应用停止等候时间
   drain_retry_delay_seconds: 两次排空尝试间隔
   nodes_to_remove_required: 请选择要删除的节点
+
+  newResourcePackageRequired: 当前资源包不支持此操作，请使用新的资源包
 </i18n>
 
 <template>

@@ -182,14 +182,13 @@ input {
 }
 
 .app_code {
-  background-color: black;
-  padding: 10px 20px;
+  background-color: var(--el-text-color-primary);
+  color: var(--el-color-white);
+  padding: 20px 20px;
   border-radius: 3px;
   font-weight: 600;
-  font-family: Monaco,Menlo,Consolas,Bitstream Vera Sans Mono,monospace;
-}
-.app_code code {
-  color: white;
+  font-size: 13px;
+  font-family: Consolas,Menlo,Bitstream Vera Sans Mono,Monaco,"微软雅黑",monospace !important;
 }
 
 /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
@@ -273,4 +272,5 @@ pre {
   font-family: Consolas,Menlo,Bitstream Vera Sans Mono,Monaco,"微软雅黑",monospace;
   word-spacing: normal;
   white-space: pre-wrap;
+  margin: 0;
 }

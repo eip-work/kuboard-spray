@@ -9,7 +9,7 @@ zh:
   <div>
     <el-scrollbar height="calc(100vh - 220px)">
       <ConnectivityCheck :cluster="cluster" class="app_margin_bottom"></ConnectivityCheck>
-      <CertExpirationCheck :cluster="cluster"></CertExpirationCheck>
+      <CertExpirationCheck :cluster="cluster" @refresh="$emit('refresh')"></CertExpirationCheck>
     </el-scrollbar>
   </div>
 </template>

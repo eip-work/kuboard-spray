@@ -188,7 +188,7 @@ export default {
           if (flag) {
             let req = {
               verbose: this.form.verbose,
-              fork: this.form.fork,
+              fork: 1,
             }
             { // 排除节点
               let temp = ''
@@ -201,33 +201,7 @@ export default {
               }
               req.nodes_to_exclude = trimMark(temp)
             }
-            if (this.form.action === 'upgrade_all_nodes') {
-              req.nodes = 'target'
-              req.skip_downloads = true
-            } else if (this.form.action === 'upgrade_master_nodes') {
-              req.nodes = 'kube_control_plane,etcd'
-              req.skip_downloads = true
-            } else if (this.form.action === 'upgrade_multi_nodes') {
-              let temp = ''
-              for (let item of this.form.kube_nodes_to_upgrade) {
-                temp += item + ','
-              }
-              temp = trimMark(temp)
-              req.nodes = temp
-              req.skip_downloads = this.form.skip_downloads
-            } else if (this.form.action === 'upgrade_single_node') {
-              req.nodes = this.nodeName
-              req.skip_downloads = this.form.skip_downloads
-            } else if (this.form.action === 'drain_node') {
-              req.nodes = this.nodeName
-              req.drain_grace_period = this.form.drain_node.drain_grace_period + ''
-              req.drain_timeout = this.form.drain_node.drain_timeout + 's'
-              req.drain_retries = this.form.drain_node.drain_retries + ''
-              req.drain_retry_delay_seconds = this.form.drain_node.drain_retry_delay_seconds + ''
-            } else if (this.form.action === 'uncordon_node') {
-              req.nodes = this.nodeName
-            }
-            this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/${this.form.action}`, req).then(resp => {
+            this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/renew_cert`, req).then(resp => {
               let pid = resp.data.data.pid
               resolve(pid)
             }).catch(e => {

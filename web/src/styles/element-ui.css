@@ -186,7 +186,6 @@ input {
   color: var(--el-color-white);
   padding: 20px 20px;
   border-radius: 3px;
-  font-weight: 600;
   font-size: 13px;
   font-family: Consolas,Menlo,Bitstream Vera Sans Mono,Monaco,"微软雅黑",monospace !important;
 }

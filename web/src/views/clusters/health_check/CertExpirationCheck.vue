@@ -2,11 +2,9 @@
 en:
   cert_expiration_check: Cert expiration check
   cert_expiration_check_desc: Check certificate expiration date of APIServer
-  check_node: "Check certificate expiration on node {nodeName}: kubeadm certs check-expiration"
 zh:
   cert_expiration_check: 证书有效期检查
   cert_expiration_check_desc: 检查 APIServer 的证书有效期
-  check_node: "检查节点 {nodeName} 证书有效期: kubeadm certs check-expiration"
 </i18n>
 
 <template>
@@ -15,15 +13,14 @@ zh:
     <div class="app_description">
       {{ $t('cert_expiration_check_desc') }}
       <el-button type="primary" style="margin-left: 20px;" icon="el-icon-promotion" @click="checkCertExpiration">{{$t('cert_expiration_check')}}</el-button>
-      <!-- <el-button type="primary" style="margin-left: 20px;" icon="el-icon-promotion" @click="renewCert">{{$t('cert_renew')}}</el-button> -->
-      <CertRenew :cluster="cluster"></CertRenew>
+      <CertRenew v-if="cluster.resourcePackage.data.supported_playbooks.renew_cert && !cluster.history.processing" :cluster="cluster" @refresh="$emit('refresh')"></CertRenew>
     </div>
     <el-skeleton v-if="loading" animated class="app_margin_top"></el-skeleton>
     <div v-else-if="checkResult">
       <el-tabs v-model="activeName" type="card">
         <el-tab-pane v-for="(result, nodeName) in certExpiration" :key="'cert' + nodeName" :label="nodeName">
           <el-scrollbar class="result" :max-height="285">
-            <pre class="app_code">{{ $t('check_node', {nodeName: nodeName})}}
+            <pre class="app_code"><span style="color: var(--el-color-success); font-weight: bolder;">[root@{{ nodeName }}]</span># kubeadm certs check-expiration
 
 {{result.stdout}}</pre>
           </el-scrollbar>

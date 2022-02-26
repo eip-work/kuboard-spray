@@ -49,7 +49,11 @@ zh:
         </span>
       </template>
     </FieldNumber>
-    <FieldSelect :holder="vars" :prop="prop" fieldName="tls_cipher_suites" :loadOptions="loadTlsCipherOptions" multiple></FieldSelect>
+    <FieldSelect :holder="vars" :prop="prop" fieldName="tls_cipher_suites" :loadOptions="loadTlsCipherOptions" multiple>
+      <template #view>
+        <el-tag v-for="cipher in vars.tls_cipher_suites" :key="cipher" type="info">{{ cipher }}</el-tag>
+      </template>
+    </FieldSelect>
     <!-- <FieldBool :holder="vars" fieldName="auto_renew_certificates"></FieldBool> -->
 
     <!-- kubelet_rotate_server_certificates -->

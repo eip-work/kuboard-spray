@@ -61,7 +61,7 @@ zh:
     </el-card>
     <el-tabs type="border-card" v-else v-model="currentTab">
       <el-tab-pane :label="$t('plan')" name="plan">
-        <Plan v-if="cluster" ref="plan" :cluster="cluster" :mode="mode" @refresh="refresh"></Plan>
+        <Plan v-if="cluster" ref="plan" :cluster="cluster" :mode="mode" @refresh="refresh" @switchTab="currentTab = $event"></Plan>
       </el-tab-pane>
       <el-tab-pane :label="$t('access')" name="access" :disabled="disableNonePlanTab || !isClusterOnline">
         <Access v-if="currentTab == 'access'" ref="access" 

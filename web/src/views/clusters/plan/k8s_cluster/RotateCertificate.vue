@@ -2,9 +2,11 @@
 en:
   label: Certificate
   description: Auto rotate certificates
+  check: Check certificates expiration
 zh:
   label: 证书更新
   description: 自动更新证书
+  check: 检查证书有效期
 </i18n>
 
 <template>
@@ -55,6 +57,9 @@ zh:
         </div>
       </template>
     </FieldBool> -->
+    <el-form-item labelWidth="180px" :label="$t('check')" v-if="isClusterOnline">
+      <el-button type="text" icon="el-icon-link" @click="$emit('switchTab', 'health_check')">{{ $t('check') }}</el-button>
+    </el-form-item>
   </ConfigSection>
 </template>
 
@@ -68,6 +73,7 @@ export default {
 
     }
   },
+  inject: ['isClusterOnline'],
   computed: {
     prop () {
       return 'all.children.target.children.k8s_cluster.vars'

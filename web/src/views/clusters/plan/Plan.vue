@@ -116,7 +116,7 @@ zh:
             </template>
             <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
-                <ConfigK8sCluster :cluster="cluster"></ConfigK8sCluster>
+                <ConfigK8sCluster :cluster="cluster" @switchTab="$emit('switchTab', $event)"></ConfigK8sCluster>
               </div>
             </el-scrollbar>
           </el-tab-pane>

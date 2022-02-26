@@ -1,7 +1,7 @@
 <template>
   <div>
     <K8sCluster :cluster="cluster"></K8sCluster>
-    <RotateCertificate :cluster="cluster"></RotateCertificate>
+    <RotateCertificate :cluster="cluster" @switchTab="$emit('switchTab', $event)"></RotateCertificate>
     <Networking :cluster="cluster"></Networking>
     <NetworkPlugin :cluster="cluster"></NetworkPlugin>
     <AuditLog :cluster="cluster"></AuditLog>

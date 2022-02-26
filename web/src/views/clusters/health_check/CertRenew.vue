@@ -13,6 +13,8 @@ en:
   offlineNodesDesc: Exclude the following offline nodes.
 
   cert_renew: Renew Certificate
+  cert_renew_desc: Renew Certificates of APIServers restart APIServers one bye one.
+  desc_label: Task description
 zh:
   verbose: 显示任务参数
   verbose_: 正常输出的日志，通常选用此选项
@@ -27,6 +29,8 @@ zh:
   offlineNodesDesc: 排除以下不在线的节点：
 
   cert_renew: 更新 APIServer 证书
+  cert_renew_desc: 将会逐个更新 APIServer 的证书并重启 APIServer
+  desc_label: 任务描述
 </i18n>
 
 <template>
@@ -57,6 +61,10 @@ zh:
               </el-tag>
             </el-tooltip>
           </template>
+        </el-form-item>
+
+        <el-form-item :label="$t('desc_label')">
+          <span style="font-weight: bold;">{{ $t('cert_renew_desc') }}</span>
         </el-form-item>
 
         <el-form-item v-if="cluster && cluster.resourcePackage && cluster.resourcePackage.data.supported_playbooks['upgrade_cluster'] === undefined" prop="min_resource_package_version" 

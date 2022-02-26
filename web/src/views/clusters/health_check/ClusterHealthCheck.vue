@@ -8,7 +8,7 @@ zh:
 <template>
   <div>
     <el-scrollbar height="calc(100vh - 220px)">
-      <ConnectivityCheck :cluster="cluster" class="app_margin_bottom"></ConnectivityCheck>
+      <ConnectivityCheck v-if="cluster.inventory && cluster.inventory.all.children.target.children.k8s_cluster.vars.deploy_netchecker" :cluster="cluster" class="app_margin_bottom"></ConnectivityCheck>
       <CertExpirationCheck :cluster="cluster" @refresh="$emit('refresh')"></CertExpirationCheck>
     </el-scrollbar>
   </div>

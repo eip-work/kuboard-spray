@@ -8,7 +8,7 @@ zh:
 </i18n>
 
 <template>
-  <el-form-item :rules="computedRules" :prop="prop ? prop + '.' + fieldName : fieldName" :label-width="labelWidth">
+  <el-form-item :rules="computedRules" :prop="prop_compute" :label-width="labelWidth">
     <template #label>
       {{ compute_label }}
     </template>
@@ -43,6 +43,15 @@ export default {
   },
   inject: ['editMode'],
   computed: {
+    prop_compute () {
+      if (this.prop === null) {
+        return undefined
+      }
+      if (this.prop) {
+        return this.prop + '[' + this.fieldName + ']'
+      }
+      return this.fieldName
+    },
     obj: {
       get () {
         return this.holder

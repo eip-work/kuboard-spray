@@ -151,7 +151,7 @@ export default {
   },
   data() {
     return {
-      activeNames: this.expandAll ? ['1','2','3','4','5','6'] : ['2'],
+      activeNames: this.expandAll ? ['1','2','3','4','5','6'] : ['1', '2'],
     }
   },
   computed: {

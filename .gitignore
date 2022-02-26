@@ -24,3 +24,7 @@ __debug_bin
 
 push.sh
 deploy.sh
+.DS_Store
+*.swp
+
+

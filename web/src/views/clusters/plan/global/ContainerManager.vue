@@ -4,11 +4,13 @@ en:
   description: Container Manager
   insecure_registries_placeholder: e.g. 172.19.16.11:5000, use http protocol to pull from the registry
   registry_mirrors_placeholder: Registry Mirrors
+
 zh:
   label: 容器引擎
   description: 设置集群范围内所有节点使用的容器引擎相关参数
   insecure_registries_placeholder: 例如：172.19.16.11:5000，使用 http 协议从该仓库拉取镜像
   registry_mirrors_placeholder: 镜像仓库 mirror，例如：https://registry.docker-cn.com
+  
 </i18n>
 
 <template>
@@ -18,11 +20,7 @@ zh:
     </FieldSelect>
     <template v-if="vars.container_manager === 'containerd'">
       <FieldBool :holder="vars" :prop="prop" fieldName="containerd_use_systemd_cgroup" disabled></FieldBool>
-      <FieldArray :holder="vars" :prop="prop" newItemTemplate="" fieldName="containerd_insecure_registries" :itemRules="insecureRegistriesItemRules" anti-freeze>
-        <template v-slot:editItem="scope">
-          <el-input v-model.trim="vars.containerd_insecure_registries[scope.index]" :placeholder="$t('insecure_registries_placeholder')"></el-input>
-        </template>
-      </FieldArray>
+      <ContainerMangerIrCnd :cluster="cluster"></ContainerMangerIrCnd>
     </template>
     <template v-else>
       <el-alert class="app_alert_mini app_margin_bottom" type="warning">KuboardSpray 资源包中并不包含 docker 安装文件，必须在 “OS 软件源” 中设置 docker-ce 软件源</el-alert>
@@ -42,6 +40,8 @@ zh:
 </template>
 
 <script>
+import ContainerMangerIrCnd from './ContainerMangerIrCnd.vue'
+
 export default {
   props: {
     cluster: { type: Object, required: true },
@@ -50,7 +50,7 @@ export default {
     return {
       insecureRegistriesItemRules: [
         { required: true, type: 'string', message: 'cannot be empty', trigger: 'blur' },
-      ]
+      ],
     }
   },
   computed: {
@@ -64,7 +64,7 @@ export default {
     },
     prop() { return 'all.children.target.vars' }
   },
-  components: { },
+  components: { ContainerMangerIrCnd },
   mounted () {
   },
   methods: {
@@ -90,6 +90,5 @@ export default {
 }
 </script>
 
-<style scoped lang="css">
-
+<style scoped lang="scss">
 </style>

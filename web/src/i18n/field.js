@@ -66,7 +66,7 @@ const field = {
     ansible_python_interpreter: 'Python 路径',
 
     container_manager: '容器引擎',
-    containerd_insecure_registries: 'HTTP 镜像仓库 insecure registries',
+    containerd_insecure_registries: '自签名镜像仓库（或 http）',
     containerd_use_systemd_cgroup: 'systemd_cgroup',
     container_manager_on_localhost: '容器引擎 localhost',
 

@@ -3,7 +3,7 @@
     <template #edit>
       <div style="flex-wrap: wrap; margin: -5px;" class="app_form_mini">
         <template v-for="(item, index) in value" :key="index + 'item'">
-          <el-form-item :prop="`${prop}.${fieldName}.${index}`" :rules="itemRules" class="item_in_array">
+          <el-form-item :rules="itemRules" class="item_in_array">
             <div style="display: flex;">
               <slot name="editItem" :index="index" :item="item"></slot>
               <el-button style="margin-left: 10px;" icon="el-icon-delete" type="text" @click="obj[fieldName].splice(index, 1)"></el-button>

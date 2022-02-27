@@ -36,7 +36,7 @@ zh:
             </div>
             <div class="version" v-if="showGithubStar">
               <div class="dot"></div>
-              <iframe id="github-star-iframe" style="display:inline-block;vertical-align:middle;" src="https://addons.kuboard.cn/downloads/github-star-kuboard-spray.html" frameborder="0" scrolling="0" width="120" height="20" title="GitHub"></iframe>
+              <iframe id="github-star-iframe" style="display:inline-block;vertical-align:middle;" :src="`https://addons.kuboard.cn/downloads/github-star-kuboard-spray.html?nocache=${Math.random()}`" frameborder="0" scrolling="0" width="120" height="20" title="GitHub"></iframe>
             </div>
           </div>
           <LoginInfo></LoginInfo>
@@ -94,7 +94,9 @@ export default {
       this.current = this.current + 1
     }, 5000)
     axios.get('https://addons.kuboard.cn/downloads/github-star-kuboard-spray.html').then(() => {
-      this.showGithubStar = true
+      setTimeout(() => {
+        this.showGithubStar = true
+      }, 200)
     }).catch(e => {
       console.log('hide github-star', e)
     })

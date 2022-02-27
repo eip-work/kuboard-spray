@@ -67,7 +67,8 @@ zh:
         </el-form-item>
 
         <el-form-item :label="$t('desc_label')">
-          <span style="font-weight: bold;">{{ $t('sync_params_desc') }}</span>
+          <li style="font-weight: bold;">{{ $t('sync_params_desc') }}</li>
+          <li style="font-weight: bold;">{{ $t('sync_params_desc_2') }}</li>
         </el-form-item>
 
         <el-form-item v-if="cluster && cluster.resourcePackage && cluster.resourcePackage.data.supported_playbooks['sync_container_engine_params'] === undefined" prop="min_resource_package_version" 

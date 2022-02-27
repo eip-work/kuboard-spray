@@ -17,6 +17,12 @@ zh:
   <ConfigSection v-if="cluster && cluster.resourcePackage" v-model:enabled="enabled" :label="$t('label')" :description="$t('description')" disabled anti-freeze>
     <FieldSelect :holder="vars" fieldName="container_manager"
       :prop="prop" required :loadOptions="loadContainerEngines" :disabled="cluster.resourcePackage === undefined">
+      <template #view_append>
+        <span style="float: right;">
+          <ContainerMangerSyncParamsTask v-if="isClusterOnline && cluster.resourcePackage.data.supported_playbooks.sync_container_engine_params" 
+            :cluster="cluster"></ContainerMangerSyncParamsTask>
+        </span>
+      </template>
     </FieldSelect>
     <template v-if="vars.container_manager === 'containerd'">
       <FieldBool :holder="vars" :prop="prop" fieldName="containerd_use_systemd_cgroup" disabled></FieldBool>
@@ -41,6 +47,7 @@ zh:
 
 <script>
 import ContainerMangerIrCnd from './ContainerMangerIrCnd.vue'
+import ContainerMangerSyncParamsTask from './ContainerMangerSyncParamsTask.vue'
 
 export default {
   props: {
@@ -53,6 +60,7 @@ export default {
       ],
     }
   },
+  inject: ['isClusterOnline'],
   computed: {
     enabled: {
       get () {return true},
@@ -64,7 +72,7 @@ export default {
     },
     prop() { return 'all.children.target.vars' }
   },
-  components: { ContainerMangerIrCnd },
+  components: { ContainerMangerIrCnd, ContainerMangerSyncParamsTask },
   mounted () {
   },
   methods: {

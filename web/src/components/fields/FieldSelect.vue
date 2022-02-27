@@ -17,6 +17,7 @@
           {{ compute_display_value }}
         </span>
         <span v-else class="field_placeholder">{{ compute_placeholder }}</span>
+        <slot name="view_append"></slot>
       </slot>
     </template>
   </FieldCommon>

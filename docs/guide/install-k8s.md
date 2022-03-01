@@ -64,8 +64,9 @@ Kuboard-Spray 是一款可以在图形界面引导下完成 Kubernetes 高可用
 
   待执行的命令如下：
 
-  ```sh {5,6,7}
+  ```sh {6,7,8}
   docker run -d \
+    --privileged \
     --restart=unless-stopped \
     --name=kuboard-spray \
     -e TZ=Asia/Shanghai \

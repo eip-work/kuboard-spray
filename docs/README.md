@@ -15,6 +15,7 @@ sidebarDepth: 0
 
 ``` sh
 docker run -d \
+  --privileged \
   --restart=unless-stopped \
   --name=kuboard-spray \
   -p 80:80/tcp \
@@ -31,7 +32,6 @@ docker run -d \
 
 ::: tip 常见问题
 
-* 导入资源包时，可能会碰到 `no such file or directory` 或者 `permission denied` 之类的错误提示，通常是因为您开启了 SELinux，导致 kuboard-spray 不能读取映射到容器 `/data` 的路径
 * kuboard-spray 所在机器不能当做 K8S 集群的一个节点，因为安装过程中会重启集群节点的容器引擎，这会导致 kuboard-spray 被重启掉。
 
 :::

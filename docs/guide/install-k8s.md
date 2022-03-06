@@ -81,7 +81,8 @@ Kuboard-Spray 是一款可以在图形界面引导下完成 Kubernetes 高可用
   ::: tip 持久化
 
   * KuboardSpray 的信息保存在容器的 `/data` 路径，请将其映射到一个您认为安全的地方，上面的命令中，将其映射到了 `~/kuboard-spray-data` 路径；
-  * 只要此路径的内容不受损坏，重启、升级、重新安装 Kuboard-Spray，或者将数据及 Kuboard-Spray 迁移到另外一台机器上，您都可以找回到原来的信息。
+  * 只要此路径的内容不受损坏，重启、升级、重新安装 Kuboard-Spray，或者将数据及 Kuboard-Spray 迁移到另外一台机器上，您都可以找回到原来的信息；
+  * 加个 [GITHUB Star](https://github.com/eip-work/kuboard-spray)，避免迷路。
 
   :::
 

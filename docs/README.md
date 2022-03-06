@@ -32,7 +32,9 @@ docker run -d \
 
 ::: tip 常见问题
 
-* kuboard-spray 所在机器不能当做 K8S 集群的一个节点，因为安装过程中会重启集群节点的容器引擎，这会导致 kuboard-spray 被重启掉。
+* KuboardSpray 的信息保存在容器的 `/data` 路径，请将其映射到一个您认为安全的地方，上面的命令中，将其映射到了 `~/kuboard-spray-data` 路径；
+* 只要此路径的内容不受损坏，重启、升级、重新安装 Kuboard-Spray，或者将数据及 Kuboard-Spray 迁移到另外一台机器上，您都可以找回到原来的信息；
+* 加个 [GITHUB Star](https://github.com/eip-work/kuboard-spray)，避免迷路。
 
 :::
 

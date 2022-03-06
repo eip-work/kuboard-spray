@@ -5,7 +5,7 @@ let public = 'kb:25702'
 let port = '25702'
 let target = 'http://localhost:8006'
 if (os.arch() === 'arm64') {
-  public = 'kb-arm:25703'
+  public = 'kuboard-spray-arm:25703'
   port = 25703
   target = 'http://localhost:8007'
 }
@@ -16,7 +16,7 @@ module.exports = {
         port: port,
         host: '0.0.0.0',
         public: public,
-        allowedHosts: ['kb', 'kb-arm'],
+        allowedHosts: ['kb', 'kuboard-spray-arm'],
         disableHostCheck: true,
         compress: true,
         hot: true,

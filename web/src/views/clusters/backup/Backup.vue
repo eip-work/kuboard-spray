@@ -15,7 +15,7 @@ zh:
   <div>
     <el-scrollbar height="calc(100vh - 220px)">
       <div v-if="cluster">
-        <template v-if="cluster.resourcePackage && cluster.resourcePackage.data.supported_playbooks.backup_etcdd">
+        <template v-if="cluster.resourcePackage && cluster.resourcePackage.data.supported_playbooks.backup_etcd">
           <BackupTask :cluster="cluster"></BackupTask>
           <div class="app_margin_bottom"></div>
           <el-alert v-if="backups.length === 0" type="warning" :closable="false">

@@ -6,6 +6,7 @@ import (
 	"runtime"
 
 	"github.com/eip-work/kuboard-spray/api/cluster"
+	"github.com/eip-work/kuboard-spray/api/cluster/backup"
 	"github.com/eip-work/kuboard-spray/api/cluster/cis_scan"
 	"github.com/eip-work/kuboard-spray/api/cluster/cluster_access"
 	"github.com/eip-work/kuboard-spray/api/cluster/health_check"
@@ -61,10 +62,13 @@ func setupRouter() *gin.Engine {
 	api.POST("/clusters/:cluster/uncordon_node", operation.UncordonNode)
 	api.POST("/clusters/:cluster/renew_cert", operation.RenewCert)
 	api.POST("/clusters/:cluster/sync_container_engine_params", operation.SyncContainerEngineParams)
+	api.POST("/clusters/:cluster/backup_etcd", operation.BackupEtcd)
 
 	api.POST("/clusters/:cluster/cis_scan", cis_scan.CisScan)
 
 	api.GET("/clusters/:cluster/access/kubeconfig", cluster_access.GetKubeConfig)
+
+	api.GET("/clusters/:cluster/backup", backup.ListBackup)
 
 	api.POST("/clusters/:cluster/state/ping", state.Ping)
 	api.GET("/clusters/:cluster/state/nodes", state.GetNodes)

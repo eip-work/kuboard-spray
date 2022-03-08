@@ -72,8 +72,9 @@ zh:
         <ClusterHealthCheck v-if="isClusterInstalled && isClusterOnline && currentTab == 'health_check'" :cluster="cluster" @refresh="refresh"></ClusterHealthCheck>
         <el-skeleton v-else style="height: calc(100vh - 220px);"></el-skeleton>
       </el-tab-pane>
-      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('backup')">
-        <Backup></Backup>
+      <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('backup')" name="backup">
+        <Backup v-if="isClusterInstalled && isClusterOnline && currentTab == 'backup'" :cluster="cluster"></Backup>
+        <el-skeleton v-else animated :rows="10" style="height: calc(100vh - 220px);"></el-skeleton>
       </el-tab-pane>
       <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('csi_scan')" name="cis_scan">
         <div v-if="cluster && cluster.resourcePackage && !cluster.resourcePackage.data.supported_playbooks.cis_scan" style="height: calc(100vh - 220px);">

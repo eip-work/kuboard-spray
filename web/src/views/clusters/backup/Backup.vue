@@ -4,11 +4,13 @@ en:
   etcd_member_name: ETCD member name
   backup_name: Backup name
   size: Size
+  refresh: Refresh
 zh:
   node: 节点名称
   etcd_member_name: ETCD 成员名称
   backup_name: 备份名称
   size: 备份文件大小
+  refresh: 刷 新
 </i18n>
 
 <template>
@@ -16,11 +18,17 @@ zh:
     <el-scrollbar height="calc(100vh - 220px)">
       <div v-if="cluster">
         <template v-if="cluster.resourcePackage && cluster.resourcePackage.data.supported_playbooks.backup_etcd">
-          <BackupTask :cluster="cluster"></BackupTask>
+          <div style="display: flex;">
+            <el-button type="danger" icon="el-icon-delete" style="margin-right: 10px;" @click="remove_backups" 
+              :disabled="selection.length === 0" :loading="loading">{{ $t('msg.delete') }}</el-button>
+            <el-button type="primary" plain icon="el-icon-refresh" style="margin-right: 10px;" @click="list">{{ $t('refresh') }}</el-button>
+            <BackupTask :cluster="cluster" style="margin-right: 10px;" :loading="loading"></BackupTask>
+          </div>
           <div class="app_margin_bottom"></div>
           <el-alert v-if="backups.length === 0" type="warning" :closable="false">
             当前没有备份
           </el-alert>
+          <el-skeleton v-else-if="loading" animated></el-skeleton>
           <div v-else>
             <el-table :data="backups" style="width: 100%" @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="55"></el-table-column>
@@ -49,6 +57,7 @@ export default {
       backups: [],
       backupToRestore: undefined,
       selection: [],
+      loading: false,
     }
   },
   computed: {
@@ -59,14 +68,33 @@ export default {
   },
   methods: {
     list () {
+      this.loading = true
       this.kuboardSprayApi.get(`/clusters/${this.cluster.name}/backup`).then(resp => {
         this.backups = resp.data.data
+        this.loading = false
       }).catch(e => {
+        this.loading = false
         console.log(e)
       })
     },
     handleSelectionChange(val) {
       this.selection = val
+    },
+    remove_backups () {
+      let req = {
+        backups_to_remove: []
+      }
+      for (let item of this.selection) {
+        req.backups_to_remove.push(`${item.node_name}/${item.etcd_member_name}/${item.backup_name}`)
+      }
+      this.loading = true
+      this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/backup/remove`, req).then(resp => {
+        console.log(resp.data)
+        this.list()
+      }).catch(e => {
+        console.log(e)
+        this.loading = false
+      })
     }
   }
 }

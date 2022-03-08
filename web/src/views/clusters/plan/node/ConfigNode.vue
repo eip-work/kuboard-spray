@@ -5,6 +5,7 @@ en:
   etcd: "ETCD params (scope: node {nodeName})"
   etcd_member_name_required: Please input etcd_member_name
   etcd_member_name_conflict: "etcd_member_name conflict with that in node {nodeName}"
+  invalidName: Hostname must consist of lower case alphanumeric characters or digit, and must start with an alphanumeric character
   roles: Node Role
   roleDescription: 'Node Role (scope: node {nodeName})'
   requiresAtLeastOneRole: Requires at least one role
@@ -18,6 +19,7 @@ zh:
   etcd: "ETCD 参数（适用范围：节点 {nodeName}）"
   etcd_member_name_required: 请填写 ETCD 成员名称
   etcd_member_name_conflict: "ETCD成员名称与节点 {nodeName} 的ETCD成员名称冲突"
+  invalidName: 必须由小写字母、数字组成，且必须以字母开头，以字母/数字结尾
   roles: 节点角色
   roleDescription: 节点角色（适用范围：节点 {nodeName}）
   requiresAtLeastOneRole: 至少需要一个角色
@@ -127,6 +129,9 @@ export default {
       etcd_member_name_rules: [
         {
           validator: (rule, value, callback) => {
+            if (!/^[a-z]([_a-z0-9]*[a-z0-9])?$/.test(value)) {
+              return callback(this.$t('invalidName'))
+            }
             for (let key in this.inventory.all.children.target.children.etcd.hosts) {
               if (key !== this.nodeName && this.inventory.all.children.target.children.etcd.hosts[key].etcd_member_name === value) {
                 return callback(this.$t('etcd_member_name_conflict', {nodeName: key}))

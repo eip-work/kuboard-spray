@@ -106,6 +106,9 @@ export default {
     },
     computedRules () {
       let result = []
+      if (this.editMode === 'frozen' && !this.antiFreeze) {
+        return []
+      }
       if (this.required) {
         let message = this.$t('field.' + this.fieldName) + ' ' + this.$t('field.is_required_field')
         result.push({

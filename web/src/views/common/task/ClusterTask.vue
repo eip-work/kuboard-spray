@@ -53,7 +53,9 @@ zh:
           </el-form-item>
         </el-form-item>
         
-        <slot v-bind:form="form"></slot>
+        <div style="font-size: 12px;">
+          <slot v-bind:form="form"></slot>
+        </div>
 
         <el-form-item :label="$t('offlineNodes')" class="app_margin_top" v-if="offlineNodes.length > 0">
           <div class="form_description">{{ $t('offlineNodesDesc') }}</div>
@@ -130,6 +132,12 @@ export default {
   methods: {
     onVisibleChange(flag) {
       if (flag) {
+        let count = 0
+        for (let key in this.cluster.inventory.all.hosts) {
+          if (key !== 'localhost')
+          count ++
+        }
+        this.form.fork = count
         this.testPingPong('target')
         this.$emit('onShow')
       }

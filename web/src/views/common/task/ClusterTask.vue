@@ -33,7 +33,7 @@ zh:
 
 <template>
   <ExecuteTask :history="cluster.history" :loading="loading" :title="title" :startTask="execute" @refresh="$emit('refresh')" @visibleChange="onVisibleChange">
-    <div style="width: 850px;">
+    <div :style="`width: ${width}px;`">
       <div v-if="pingpong_loading" style="display: block;">
         <el-skeleton animated></el-skeleton>
       </div>
@@ -71,7 +71,7 @@ zh:
           </template>
         </el-form-item>
 
-        <el-form-item v-if="action && cluster && cluster.resourcePackage && cluster.resourcePackage.data.supported_playbooks[action] === undefined" prop="min_resource_package_version" 
+        <el-form-item v-if="action && cluster && cluster.resourcePackage && cluster.resourcePackage.data.supported_playbooks[playbook_check || action] === undefined" prop="min_resource_package_version" 
           style="margin-top: -10px;"
           :rules="min_resource_package_version_rules">
         </el-form-item>
@@ -94,8 +94,10 @@ export default {
   props: {
     cluster: { type: Object, required: true },
     action: { type: String, required: false, default: undefined },
+    playbook_check: { type: String, required: false, default: undefined },
     title: { type: String, required: true },
     populateRequest: { type: Function, required: true },
+    width: { type: Number, required: false, default: 850 },
   },
   data() {
     return {
@@ -129,6 +131,7 @@ export default {
   components: { ExecuteTask },
   mounted () {
   },
+  emits: ['onShow'],
   methods: {
     onVisibleChange(flag) {
       if (flag) {
@@ -162,17 +165,18 @@ export default {
         this.$message.error('Wait ..')
         return
       }
+      let _this = this
       return new Promise((resolve, reject) => {
-        this.$refs.form.validate(flag => {
+        _this.$refs.form.validate(flag => {
           if (flag) {
             let req = {
-              verbose: this.form.verbose,
-              fork: this.form.fork,
+              verbose: _this.form.verbose,
+              fork: _this.form.fork,
             }
             { // 排除节点
               let temp = ''
               let excludes = {}
-              for (let node of this.offlineNodes) {
+              for (let node of _this.offlineNodes) {
                 excludes[node] = true
               }
               for (let node in excludes) {
@@ -181,13 +185,16 @@ export default {
               req.nodes_to_exclude = trimMark(temp)
             }
 
-            req = Object.assign(req, this.populateRequest(this.form))
-
-            this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/${this.action}`, req).then(resp => {
-              let pid = resp.data.data.pid
-              resolve(pid)
+            _this.populateRequest(_this.form).then(r => {
+              req = Object.assign(req, r)
+              _this.kuboardSprayApi.post(`/clusters/${_this.cluster.name}/${_this.action}`, req).then(resp => {
+                let pid = resp.data.data.pid
+                resolve(pid)
+              }).catch(e => {
+                reject(e.response.data.message)
+              })
             }).catch(e => {
-              reject(e.response.data.message)
+              console.error(e)
             })
           } else {
             reject('请验证表单')

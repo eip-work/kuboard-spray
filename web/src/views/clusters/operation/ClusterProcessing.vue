@@ -55,7 +55,8 @@ zh:
 
 <template>
   <ExecuteTask v-if="!loading" :history="cluster.history" :loading="loading" :title="title" :startTask="applyPlan" @refresh="$emit('refresh')" @visibleChange="onVisibleChange">
-    <div v-if="pingpong_loading" style="display: block; min-width: 420px;">
+    <div style="min-width: 765px;"></div>
+    <div v-if="pingpong_loading" style="display: block;">
       <el-skeleton animated></el-skeleton>
     </div>
     <el-form v-else ref="form" :model="form" @submit.prevent.stop label-position="left" label-width="120px" class="app_form_mini">

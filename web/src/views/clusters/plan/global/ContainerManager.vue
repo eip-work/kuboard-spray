@@ -20,7 +20,7 @@ zh:
       <template #view_append>
         <span style="float: right;">
           <ContainerMangerSyncParamsTask v-if="isClusterOnline && cluster.resourcePackage.data.supported_playbooks.sync_container_engine_params" 
-            :cluster="cluster"></ContainerMangerSyncParamsTask>
+            :cluster="cluster" @refresh="$emit('refresh')"></ContainerMangerSyncParamsTask>
         </span>
       </template>
     </FieldSelect>

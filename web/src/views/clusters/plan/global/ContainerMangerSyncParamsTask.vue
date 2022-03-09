@@ -13,7 +13,7 @@ zh:
 
 <template>
   <ClusterTask v-if="!cluster.history.processing" :history="cluster.history" :title="title" action="sync_container_engine_params" :cluster="cluster"
-    placement="top-end" @refresh="$emit('refresh')" :populateRequest="populateRequest">
+    placement="top-end" @refresh="$emit('refresh')" :populateRequest="populateRequest" :width="600">
     <div style="width: 450px;">
       <el-form-item :label="$t('desc_label')">
         <li style="font-weight: bold;">{{ $t('sync_params_desc') }}</li>
@@ -43,7 +43,7 @@ export default {
   mounted () {
   },
   methods: {
-    populateRequest () {
+    async populateRequest () {
       return {}
     }
   }

@@ -106,7 +106,7 @@ zh:
             </template>
             <el-scrollbar max-height="calc(100vh - 276px)">
               <div class="tab_content">
-                <ConfigGlobal :cluster="cluster"></ConfigGlobal>
+                <ConfigGlobal :cluster="cluster" @refresh="$emit('refresh')"></ConfigGlobal>
               </div>
             </el-scrollbar>
           </el-tab-pane>

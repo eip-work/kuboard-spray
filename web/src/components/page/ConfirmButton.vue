@@ -8,8 +8,8 @@ zh:
 <template>
   <el-popover v-model:visible="showConfirm" :placement="placement" :width="width" trigger="mannual">
     <template #reference>
-      <el-button v-if="buttonText === ''" :style="buttonStyle" :type="type" :circle="circle" :icon="icon" @click="showConfirm = !showConfirm" :plain="plain"></el-button>
-      <el-button v-else :style="buttonStyle" :type="type" :circle="circle" :icon="icon" @click="showConfirm = !showConfirm" :plain="plain">{{ buttonText || text }}</el-button>
+      <el-button v-if="buttonText === ''" :style="buttonStyle" :type="type" :disabled="disabled" :circle="circle" :icon="icon" @click="showConfirm = !showConfirm" :plain="plain"></el-button>
+      <el-button v-else :style="buttonStyle" :type="type" :circle="circle" :disabled="disabled" :icon="icon" @click="showConfirm = !showConfirm" :plain="plain">{{ buttonText || text }}</el-button>
     </template>
     <el-alert :type="alertType[type]" effect="light" :title="text" :icon="icon" :closable="false">
       <span>{{message}}</span>
@@ -35,6 +35,7 @@ export default {
     message: { type: String, required: false, default: 'message' },
     buttonStyle: { type: String, required: false, default: '' },
     plain: { type: Boolean, required: false, default: false },
+    disabled: { type: Boolean, required: false, default: false },
   },
   data() {
     return {

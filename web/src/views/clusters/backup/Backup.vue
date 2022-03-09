@@ -5,12 +5,14 @@ en:
   backup_name: Backup name
   size: Size
   refresh: Refresh
+  delete_message: Delete selected backups.
 zh:
   node: 节点名称
   etcd_member_name: ETCD 成员名称
   backup_name: 备份名称
   size: 备份文件大小
   refresh: 刷 新
+  delete_message: 删除选中的备份文件。
 </i18n>
 
 <template>
@@ -19,8 +21,9 @@ zh:
       <div v-if="cluster">
         <template v-if="cluster.resourcePackage && cluster.resourcePackage.data.supported_playbooks.backup_etcd">
           <div style="display: flex;">
-            <el-button type="danger" icon="el-icon-delete" style="margin-right: 10px;" @click="remove_backups" 
-              :disabled="selection.length === 0" :loading="loading">{{ $t('msg.delete') }}</el-button>
+            <ConfirmButton type="danger" :text="$t('msg.delete')" icon="el-icon-delete" @confirm="remove_backups" placement="right" :message="$t('delete_message')"
+              :disabled="selection.length === 0" style="margin-right: 10px;">
+            </ConfirmButton>
             <el-button type="primary" plain icon="el-icon-refresh" style="margin-right: 10px;" @click="list">{{ $t('refresh') }}</el-button>
             <BackupTask :cluster="cluster" style="margin-right: 10px;" :loading="loading"></BackupTask>
           </div>
@@ -37,7 +40,9 @@ zh:
               <el-table-column prop="backup_name" :label="$t('backup_name')" sortable />
               <el-table-column prop="size" :label="$t('size')" sortable align="right" width="200">
                 <template #default="scope">
-                  {{ scope.row.size ? String(scope.row.size).replace(/(\d)(?=(\d{3})+$)/g, "$1,") : ''}}
+                  <span style="margin-right: 10px;">
+                    {{ scope.row.size ? String(scope.row.size).replace(/(\d)(?=(\d{3})+$)/g, "$1,") : ''}}
+                  </span>
                 </template>
               </el-table-column>
             </el-table>
@@ -94,6 +99,7 @@ export default {
       this.loading = true
       this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/backup/remove`, req).then(resp => {
         console.log(resp.data)
+        this.selection = []
         this.list()
       }).catch(e => {
         console.log(e)

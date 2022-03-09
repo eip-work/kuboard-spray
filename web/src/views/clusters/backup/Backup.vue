@@ -35,7 +35,11 @@ zh:
               <el-table-column prop="node_name" :label="$t('node_name')" sortable />
               <el-table-column prop="etcd_member_name" :label="$t('etcd_member_name')" sortable />
               <el-table-column prop="backup_name" :label="$t('backup_name')" sortable />
-              <el-table-column prop="size" :label="$t('size')" sortable />
+              <el-table-column prop="size" :label="$t('size')" sortable align="right" width="200">
+                <template #default="scope">
+                  {{ scope.row.size ? String(scope.row.size).replace(/(\d)(?=(\d{3})+$)/g, "$1,") : ''}}
+                </template>
+              </el-table-column>
             </el-table>
           </div>
         </template>

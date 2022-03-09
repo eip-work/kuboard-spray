@@ -126,6 +126,6 @@ export default {
   color: var(--el-color-text-secondary);
   line-height: 24px;
   padding: 10px;
-  background-color: var(--el-color-info-lighter);
+  background-color: var(--el-color-info-light-9);
 }
 </style>

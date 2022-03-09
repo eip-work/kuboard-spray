@@ -73,7 +73,7 @@ export default {
   line-height: 18px;
   .title {
     padding: 5px 10px;
-    background-color: var(--el-color-success-lighter);
+    background-color: var(--el-color-success-light-9);
     cursor: pointer;
     display: flex;
   }

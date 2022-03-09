@@ -59,7 +59,7 @@ export default {
   font-weight: bold;
 }
 .etcd {
-  background-color: var(--el-color-warning-lighter);
+  background-color: var(--el-color-warning-light-9);
 }
 .etcd.selected {
   background-color: var(--el-color-warning);
@@ -71,7 +71,7 @@ export default {
   background-color: var(--el-color-primary);
 }
 .kube_node {
-  background-color: var(--el-color-success-lighter);
+  background-color: var(--el-color-success-light-9);
 }
 .kube_node.selected {
   background-color: var(--el-color-success);

@@ -193,7 +193,7 @@ etcdctl member list
   margin-bottom: 20px;
 }
 .details {
-  background-color: var(--el-color-info)-lighter;
+  background-color: var(--el-color-info-light-9);
   padding: 10px 20px 20px 20px;
 }
 .node_text {

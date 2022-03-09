@@ -130,7 +130,7 @@
 }
 
 .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
-  background-color: var(--el-color-warning-lighter);
+  background-color: var(--el-color-warning-light-9);
   color: var(--el-color-warning);
   border-bottom-color: var(--el-color-warning);
   border-bottom-width: 4px;
@@ -140,7 +140,7 @@
 }
 
 .el-tabs--border-card > .el-tabs__header .el-tabs__item.is-active {
-  background-color: var(--el-color-warning-lighter);
+  background-color: var(--el-color-warning-light-9);
   color: var(--el-color-warning);
   border-bottom-color: var(--el-color-warning);
   border-bottom-width: 4px;

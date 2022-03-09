@@ -237,10 +237,10 @@ export default {
       background-color: var(--el-color-primary-light-9);
     }
     .kube_node {
-      background-color: var(--el-color-success-lighter);
+      background-color: var(--el-color-success-light-9);
     }
     .etcd {
-      background-color: var(--el-color-warning-lighter);
+      background-color: var(--el-color-warning-light-9);
     }
   }
   .node:hover {
@@ -261,7 +261,7 @@ export default {
   }
   .node.active {
     border-color: var(--el-color-warning);
-    background-color: var(--el-color-warning-lighter);
+    background-color: var(--el-color-warning-light-9);
     .role {
       color: white;
     }
@@ -280,7 +280,7 @@ export default {
     border-color: var(--el-color-danger) !important;
   }
   .node.delete_node.active {
-    background-color: var(--el-color-danger-lighter) !important;
+    background-color: var(--el-color-danger-light-9) !important;
   }
   .node.unknown_status {
     border-block-style: dashed;
@@ -292,12 +292,12 @@ export default {
     border-inline-style: solid;
   }
   .node.online_node.active {
-    background-color: var(--el-color-success-lighter);
+    background-color: var(--el-color-success-light-9);
   }
   .node.offline_node {
     border-block-style: dashed;
     border-inline-style: dashed;
-    background-color: var(--el-color-info-lighter);
+    background-color: var(--el-color-info-light-9);
     border-color: var(--el-color-info);
     .role {
       background-color: var(--el-color-info-light);
@@ -325,7 +325,7 @@ export default {
   }
   .node.error_node.active {
     border-color: var(--el-color-danger) !important;
-    background-color: var(--el-color-danger-lighter) !important;
+    background-color: var(--el-color-danger-light-9) !important;
   }
 }
 

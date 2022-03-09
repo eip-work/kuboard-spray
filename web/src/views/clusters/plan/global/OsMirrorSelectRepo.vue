@@ -151,6 +151,6 @@ export default {
 <style scoped lang="scss">
 .preview {
   padding: 10px;
-  background-color: var(--el-color-info-lighter);
+  background-color: var(--el-color-info-light-9);
 }
 </style>

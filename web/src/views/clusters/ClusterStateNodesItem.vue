@@ -88,7 +88,7 @@ export default {
 .nodeInfo {
   padding: 10px 20px;
   margin-bottom: 10px;
-  background-color: var(--el-color-info-light);
+  background-color: var(--el-color-info-light-9);
   .etcd_error {
     font-size: 12px;
     padding: 2px 10px;

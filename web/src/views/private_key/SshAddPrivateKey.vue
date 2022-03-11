@@ -187,7 +187,7 @@ export default {
 <style scoped lang="css">
 .uploadSection {
   margin-top: 20px;
-  border: 1px solid var(--el-border-color-light);
+  border: 1px solid var(--el-border-color-light-9);
   border-radius: 10px;
   padding: 20px;
 }

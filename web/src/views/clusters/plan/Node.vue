@@ -217,7 +217,7 @@ export default {
     display: none;
   }
   .node {
-    border: solid 1px var(--el-border-color-light);
+    border: solid 1px var(--el-border-color-light-9);
     border-radius: 5px;
     width: 120px;
     margin: 5px;
@@ -300,7 +300,7 @@ export default {
     background-color: var(--el-color-info-light-9);
     border-color: var(--el-color-info);
     .role {
-      background-color: var(--el-color-info-light);
+      background-color: var(--el-color-info-light-9);
     }
   }
   .node.offline_node.active {

@@ -78,7 +78,7 @@ export default {
     display: flex;
   }
   .expand {
-    border: solid 1px var(--el-color-success-light);
+    border: solid 1px var(--el-color-success-light-9);
     border-top: none;
     padding: 5px 10px;
     .label {

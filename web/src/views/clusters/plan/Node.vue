@@ -217,7 +217,7 @@ export default {
     display: none;
   }
   .node {
-    border: solid 1px var(--el-border-color-light-9);
+    border: solid 1px var(--el-border-color-light);
     border-radius: 5px;
     width: 120px;
     margin: 5px;

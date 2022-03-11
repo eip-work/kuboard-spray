@@ -10,6 +10,7 @@ en:
 
   nodeRequirement1: The machine on which KuboardSpray runs cannot be used as a k8s node.
   nodeRequirement2: Please make sure to use a clean machine as a node (haven't tried to install k8s on it, and no other programs run on it).
+  nodeRequirement3: Plaese make sure that all nodes are connected to each other via internal network.
 zh:
   addNode: 添加节点
   nodeName: 节点名称
@@ -21,6 +22,7 @@ zh:
 
   nodeRequirement1: KuboardSpray 所在机器不能用作 k8s 节点
   nodeRequirement2: 请确保您的节点服务器是一个干净的机器（没有安装过 k8s，不用来运行其他程序）
+  nodeRequirement3: 请确保所有节点之间可以通过内网 IP 地址互通
 </i18n>
 
 <template>
@@ -44,6 +46,7 @@ zh:
       <div class="app_margin_bottom">
         <li class="desc">{{ $t('nodeRequirement1') }}</li>
         <li class="desc">{{ $t('nodeRequirement2') }}</li>
+        <li class="desc">{{ $t('nodeRequirement3') }}</li>
       </div>
     </el-form>
     <div style="text-align: right;">

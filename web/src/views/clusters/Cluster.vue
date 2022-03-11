@@ -73,7 +73,7 @@ zh:
         <el-skeleton v-else style="height: calc(100vh - 220px);"></el-skeleton>
       </el-tab-pane>
       <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('backup')" name="backup">
-        <Backup v-if="isClusterInstalled && isClusterOnline && currentTab == 'backup'" :cluster="cluster"></Backup>
+        <Backup v-if="isClusterInstalled && isClusterOnline && currentTab == 'backup'" :cluster="cluster" @refresh="refresh"></Backup>
         <el-skeleton v-else animated :rows="10" style="height: calc(100vh - 220px);"></el-skeleton>
       </el-tab-pane>
       <el-tab-pane :disabled="disableNonePlanTab || !isClusterOnline" :label="$t('csi_scan')" name="cis_scan">

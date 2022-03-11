@@ -32,6 +32,7 @@ export default {
   computed: {
   },
   components: { ClusterTask },
+  emits: ['refresh'],
   mounted () {
   },
   methods: {

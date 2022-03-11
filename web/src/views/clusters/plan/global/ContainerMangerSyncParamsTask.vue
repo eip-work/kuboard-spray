@@ -40,6 +40,7 @@ export default {
     },
   },
   components: { ClusterTask },
+  emits: ['refresh'],
   mounted () {
   },
   methods: {

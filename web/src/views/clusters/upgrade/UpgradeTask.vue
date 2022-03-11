@@ -178,6 +178,7 @@ export default {
     },
   },
   components: { ClusterTask },
+  emits: ['refresh'],
   mounted () {
     this.setAction()
   },

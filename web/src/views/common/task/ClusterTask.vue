@@ -32,7 +32,8 @@ zh:
 </i18n>
 
 <template>
-  <ExecuteTask :history="cluster.history" :loading="loading" :title="title" :startTask="execute" @refresh="$emit('refresh')" @visibleChange="onVisibleChange">
+  <ExecuteTask :history="cluster.history" :loading="loading" :title="title" :startTask="execute" @refresh="$emit('refresh')"
+    :disabled="disabled" :type="type" @visibleChange="onVisibleChange">
     <div :style="`width: ${width}px;`">
       <div v-if="pingpong_loading" style="display: block;">
         <el-skeleton animated></el-skeleton>
@@ -98,6 +99,8 @@ export default {
     title: { type: String, required: true },
     populateRequest: { type: Function, required: true },
     width: { type: Number, required: false, default: 850 },
+    type: { type: String, required: false, default: 'warning' },
+    disabled: { type: Boolean, required: false, default: false },
   },
   data() {
     return {
@@ -131,7 +134,7 @@ export default {
   components: { ExecuteTask },
   mounted () {
   },
-  emits: ['onShow'],
+  emits: ['onShow', 'refresh'],
   methods: {
     onVisibleChange(flag) {
       if (flag) {
@@ -185,7 +188,7 @@ export default {
               req.nodes_to_exclude = trimMark(temp)
             }
 
-            _this.populateRequest(_this.form).then(r => {
+            _this.populateRequest.apply(_this.$parent, _this.form).then(r => {
               req = Object.assign(req, r)
               _this.kuboardSprayApi.post(`/clusters/${_this.cluster.name}/${_this.action}`, req).then(resp => {
                 let pid = resp.data.data.pid

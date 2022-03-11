@@ -6,6 +6,7 @@ en:
   size: Size
   refresh: Refresh
   delete_message: Delete selected backups.
+  select_one_backup_to_restore: Select one backup file to restore etcd cluster.
 zh:
   node: 节点名称
   etcd_member_name: ETCD 成员名称
@@ -13,6 +14,7 @@ zh:
   size: 备份文件大小
   refresh: 刷 新
   delete_message: 删除选中的备份文件。
+  select_one_backup_to_restore: 选择一个备份文件即可恢复整个 ETCD 集群
 </i18n>
 
 <template>
@@ -25,7 +27,10 @@ zh:
               :disabled="selection.length === 0" style="margin-right: 10px;">
             </ConfirmButton>
             <el-button type="primary" plain icon="el-icon-refresh" style="margin-right: 10px;" @click="list">{{ $t('refresh') }}</el-button>
-            <BackupTask :cluster="cluster" style="margin-right: 10px;" :loading="loading"></BackupTask>
+            <BackupTask :cluster="cluster" style="margin-right: 10px;" :loading="loading" @refresh="$emit('refresh')"></BackupTask>
+            <RestoreTask :cluster="cluster" style="margin-right: 10px;" :loading="loading" @refresh="$emit('refresh')" 
+              :disabled="selection.length !== 1" :backupFile="selection[0]"></RestoreTask>
+            <span style="font-size: 12px; color: var(--el-text-color-secondary); line-height: 28px;">{{ $t('select_one_backup_to_restore') }}</span>
           </div>
           <div class="app_margin_bottom"></div>
           <el-alert v-if="backups.length === 0" type="warning" :closable="false">
@@ -56,6 +61,7 @@ zh:
 
 <script>
 import BackupTask from './BackupTask.vue'
+import RestoreTask from './RestoreTask.vue'
 
 export default {
   props: {
@@ -71,7 +77,7 @@ export default {
   },
   computed: {
   },
-  components: { BackupTask },
+  components: { BackupTask, RestoreTask },
   mounted () {
     this.list()
   },

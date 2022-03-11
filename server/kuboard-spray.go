@@ -63,6 +63,7 @@ func setupRouter() *gin.Engine {
 	api.POST("/clusters/:cluster/renew_cert", operation.RenewCert)
 	api.POST("/clusters/:cluster/sync_container_engine_params", operation.SyncContainerEngineParams)
 	api.POST("/clusters/:cluster/backup_etcd", operation.BackupEtcd)
+	api.POST("/clusters/:cluster/restore_etcd", operation.RestoreBackup)
 
 	api.POST("/clusters/:cluster/cis_scan", cis_scan.CisScan)
 

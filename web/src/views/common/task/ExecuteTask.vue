@@ -38,7 +38,7 @@ zh:
 <template>
   <div v-if="dialogVisible" style="display: inline-block; width: 0px; height: 0px;">
     <el-dialog v-model="dialogVisible" :title="$t('processingTitle')" width="50%" :close-on-click-modal="false" :append-to-body="true" :show-close="false">
-      <el-alert type="warning" :closable="false" :title="$t('processingTitle')" show-icon effect="dark" style="margin-top: 20px;">
+      <el-alert :type="type === 'primary' ? 'info' : type" :closable="false" :title="$t('processingTitle')" show-icon effect="dark" style="margin-top: 20px;">
         <span>{{$t('processingHints')}}</span>
       </el-alert>
       <template #footer>
@@ -51,11 +51,11 @@ zh:
   <template v-else-if="!loading">
     <el-popover v-if="!(finished && hideOnSuccess) && !history.processing" v-model:visible="showConfirm" :placement="placement" width="420" trigger="manual" :disabled="disabled">
       <template #reference>
-        <el-button type="warning" icon="el-icon-lightning" @click="showConfirm = !showConfirm" @click.prevent.stop :disabled="disabled">{{ title || $t('apply')}}</el-button>
+        <el-button :type="type" icon="el-icon-lightning" @click="showConfirm = !showConfirm" @click.prevent.stop :disabled="disabled">{{ title || $t('apply')}}</el-button>
       </template>
       <el-form @submit.prevent.stop label-position="left" label-width="120px">
         <template v-if="finished">
-          <el-alert type="warning" effect="dark" style="margin-bottom: 10px;" :closable="false">
+        <el-alert :type="type === 'primary' ? 'info' : type" effect="dark" style="margin-bottom: 10px;" :closable="false">
             <el-icon :size="15" style="width: 15px; height: 15px; vertical-align: middle; margin-right: 10px;">
               <el-icon-cloudy></el-icon-cloudy>
             </el-icon>
@@ -98,6 +98,7 @@ export default {
     hideOnSuccess: { type: Boolean, required: false, default: false },
     placement: { type: String, required: false, default: 'bottom-start' },
     disabled: { type: Boolean, required: false, default: false },
+    type: { type: String, required: false, default: 'warning' },
   },
   data() {
     return {

@@ -85,6 +85,7 @@ export default {
     list () {
       this.loading = true
       this.kuboardSprayApi.get(`/clusters/${this.cluster.name}/backup`).then(resp => {
+        this.selection = []
         this.backups = resp.data.data
         this.loading = false
       }).catch(e => {
@@ -105,7 +106,6 @@ export default {
       this.loading = true
       this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/backup/remove`, req).then(resp => {
         console.log(resp.data)
-        this.selection = []
         this.list()
       }).catch(e => {
         console.log(e)

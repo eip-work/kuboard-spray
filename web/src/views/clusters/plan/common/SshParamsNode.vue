@@ -124,10 +124,21 @@ export default {
                 return callback(this.$t('duplicateIP', {node: key}))
               }
             }
+
+            let block = new Netmask(this.cluster.inventory.all.children.target.children.k8s_cluster.vars.kube_pods_subnet)
+            if (block.contains(value)) {
+              return callback('IP 不能被包含在容器组子网中 ' + this.cluster.inventory.all.children.target.children.k8s_cluster.vars.kube_pods_subnet)
+            }
+            
+            block = new Netmask(this.cluster.inventory.all.children.target.children.k8s_cluster.vars.kube_service_addresses)
+            if (block.contains(value)) {
+              return callback('IP 不能被包含在服务子网中 ' + this.cluster.inventory.all.children.target.children.k8s_cluster.vars.kube_service_addresses)
+            }
+
             // A类地址：10.0.0.0--10.255.255.255
             // B类地址：172.16.0.0--172.31.255.255 
             // C类地址：192.168.0.0--192.168.255.255
-            let block = new Netmask('10.0.0.0/8')
+            block = new Netmask('10.0.0.0/8')
             if (block.contains(value)) {
               return callback()
             }

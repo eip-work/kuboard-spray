@@ -198,7 +198,7 @@ func getInventoryTemplate() string {
             # This network must be unused in your network infrastructure!
             kube_pods_subnet: 10.234.0.0/16
 
-            kube_network_node_prefix: 22
+            kube_network_node_prefix: 23
 
             # Configure Dual Stack networking (i.e. both IPv4 and IPv6)
             enable_dual_stack_networks: false

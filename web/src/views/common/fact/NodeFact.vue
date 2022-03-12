@@ -35,6 +35,13 @@ zh:
       </div>
       <el-skeleton v-if="loadingFact" animated></el-skeleton>
       <div v-if="fact" class="app_form_mini app_margin_top">
+        <div v-if="fact.msg" style="margin-bottom: 20px;">
+          <el-alert :closable="false" type="error">
+            <pre class="app_text_mono">{{fact.msg}}</pre>
+            <pre v-if="fact.module_stdout"><el-tag style="margin-right: 5px;">stdout</el-tag>{{fact.module_stdout}}</pre>
+            <pre v-if="fact.module_stderr"><el-tag type="danger" effect="dark" style="margin-right: 5px;">stderr</el-tag>{{fact.module_stderr}}</pre>
+          </el-alert>
+        </div>
         <el-form v-if="fact.ansible_facts" label-width="160px" label-position="left">
           <div style="text-align: center; margin-bottom: 10px; margin-top: -10px; font-weight: bold;">[ {{$t('facts')}} ]</div>
           <el-collapse v-model="activeNames">
@@ -92,13 +99,6 @@ zh:
             </el-collapse-item>
           </el-collapse>
         </el-form>
-        <div v-else>
-          <el-alert :closable="false" type="error">
-            <pre class="app_text_mono">{{fact.msg}}</pre>
-            <pre v-if="fact.module_stdout"><el-tag style="margin-right: 5px;">stdout</el-tag>{{fact.module_stdout}}</pre>
-            <pre v-if="fact.module_stderr"><el-tag type="danger" effect="dark" style="margin-right: 5px;">stderr</el-tag>{{fact.module_stderr}}</pre>
-          </el-alert>
-        </div>
       </div>
   </div>
 </template>
@@ -124,7 +124,8 @@ export default {
       let result = []
       if (this.fact) {
         let defaultIp = this.ip || this.ansible_host
-        for (let ip of this.fact.ansible_facts.ansible_all_ipv4_addresses) {
+        for (let ip_key in this.fact.ansible_facts.ansible_all_ipv4_addresses) {
+          let ip = this.fact.ansible_facts.ansible_all_ipv4_addresses[ip_key]
           for (let key in this.fact.ansible_facts) {
             let temp = this.fact.ansible_facts[key]
             if (temp.ipv4 && temp.ipv4.address == ip) {

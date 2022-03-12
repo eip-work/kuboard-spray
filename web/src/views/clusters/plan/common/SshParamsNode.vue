@@ -61,7 +61,7 @@ zh:
     </FieldCommon>
     <template v-if="ansible_become">
       <FieldString :holder="holder" fieldName="ansible_become_user" :placeholder="placeholder('ansible_become_user')" anti-freeze></FieldString>
-      <FieldString :holder="holder" fieldName="ansible_become_password" :placeholder="placeholder('ansible_become_password')" anti-freeze clearable></FieldString>
+      <FieldString :holder="holder" fieldName="ansible_become_password" show-password :placeholder="placeholder('ansible_become_password')" anti-freeze clearable></FieldString>
     </template>
     <FieldSelect :holder="holder" fieldName="ansible_python_interpreter" anti-freeze clearable :loadOptions="loadPythonInterpreter" :placeholder="placeholder('ansible_python_interpreter')" allow-create filterable></FieldSelect>
     <FieldCommon :holder="holder" fieldName="ip" :prop="`all.hosts.${nodeName}`" :anti-freeze="onlineNodes[nodeName] === undefined" :label="$t('ip')"

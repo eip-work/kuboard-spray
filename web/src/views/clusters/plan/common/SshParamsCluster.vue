@@ -31,7 +31,7 @@ zh:
     <FieldBool :holder="holder" fieldName="ansible_become" anti-freeze></FieldBool>
     <template v-if="holder.ansible_become">
       <FieldString :holder="holder" fieldName="ansible_become_user" anti-freeze></FieldString>
-      <FieldString :holder="holder" fieldName="ansible_become_password" anti-freeze clearable></FieldString>
+      <FieldString :holder="holder" fieldName="ansible_become_password" show-password anti-freeze clearable></FieldString>
     </template>
     <FieldSelect :holder="holder" fieldName="ansible_python_interpreter" anti-freeze clearable :loadOptions="loadPythonInterpreter" allow-create filterable></FieldSelect>
     <slot></slot>

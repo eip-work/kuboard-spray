@@ -31,6 +31,7 @@ zh:
             <RestoreTask :cluster="cluster" style="margin-right: 10px;" :loading="loading" @refresh="$emit('refresh')" 
               :disabled="selection.length !== 1" :backupFile="selection[0]"></RestoreTask>
             <span style="font-size: 12px; color: var(--el-text-color-secondary); line-height: 28px;">{{ $t('select_one_backup_to_restore') }}</span>
+            <kuboard-spray-link href="https://kuboard-spray.cn/guide/maintain/backup.html" style="margin-left: 20px;" size="12px;"></kuboard-spray-link>
           </div>
           <div class="app_margin_bottom"></div>
           <el-alert v-if="backups.length === 0" type="warning" :closable="false">
@@ -53,7 +54,10 @@ zh:
             </el-table>
           </div>
         </template>
-        <el-alert v-else :closable="false">当前资源包不支持备份 ETCD 数据，请升级到最新的资源包。</el-alert>
+        <el-alert v-else :closable="false">
+          当前资源包不支持备份 ETCD 数据，请升级到最新的资源包。
+          <kuboard-spray-link href="https://kuboard-spray.cn/guide/maintain/backup.html" style="margin-left: 20px;" size="12px;"></kuboard-spray-link>
+        </el-alert>
       </div>
     </el-scrollbar>
   </div>

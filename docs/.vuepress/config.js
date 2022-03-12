@@ -62,6 +62,7 @@ module.exports = {
             '/guide/maintain/ha-mode.md',
             '/guide/maintain/add-replace-node.md',
             '/guide/maintain/upgrade.md',
+            '/guide/maintain/backup.md',
             '/guide/extra/speedup.md'
           ]
         },

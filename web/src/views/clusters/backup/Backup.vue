@@ -84,14 +84,16 @@ export default {
   methods: {
     list () {
       this.loading = true
-      this.kuboardSprayApi.get(`/clusters/${this.cluster.name}/backup`).then(resp => {
-        this.selection = []
-        this.backups = resp.data.data
-        this.loading = false
-      }).catch(e => {
-        this.loading = false
-        console.log(e)
-      })
+      if (this.cluster.resourcePackage && this.cluster.resourcePackage.data.supported_playbooks.backup_etcd) {
+        this.kuboardSprayApi.get(`/clusters/${this.cluster.name}/backup`).then(resp => {
+          this.selection = []
+          this.backups = resp.data.data
+          this.loading = false
+        }).catch(e => {
+          this.loading = false
+          console.log(e)
+        })
+      }
     },
     handleSelectionChange(val) {
       this.selection = val

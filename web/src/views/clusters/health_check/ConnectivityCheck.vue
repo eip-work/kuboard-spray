@@ -30,6 +30,7 @@ zh:
     <div class="app_block_title">{{ $t('connectivity_check') }}</div>
     <div class="app_description">
       {{ $t('connectivity_check_desc') }}
+      <el-button @click="refresh" icon="el-icon-refresh" type="primary">{{ $t('msg.refresh') }}</el-button>
       <KuboardSprayLink href="https://kuboard-spray.cn/guide/addons/netchecker.html" style="margin-left: 20px;" :size="13"></KuboardSprayLink>
     </div>
     <div v-if="installed">

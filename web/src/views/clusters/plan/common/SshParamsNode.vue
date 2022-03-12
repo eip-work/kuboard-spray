@@ -65,7 +65,7 @@ zh:
     </template>
     <FieldSelect :holder="holder" fieldName="ansible_python_interpreter" anti-freeze clearable :loadOptions="loadPythonInterpreter" :placeholder="placeholder('ansible_python_interpreter')" allow-create filterable></FieldSelect>
     <FieldCommon :holder="holder" fieldName="ip" :prop="`all.hosts.${nodeName}`" :anti-freeze="onlineNodes[nodeName] === undefined" :label="$t('ip')"
-      :placeholder="$t('ip_placeholder', { default_value: holder.ansible_host})">
+      :placeholder="$t('ip_placeholder', { default_value: holder.ansible_host})" :rules="ipRules">
       <template #edit>
         <el-select v-model="holderRef.ip" style="width: 100%;" :loading="optionIpsLoading" @visible-change="loadOptionIps" :loading-text="$t('longTimeLoading')">
           <el-option v-for="item in optionIps" :key="item" :value="item">
@@ -85,6 +85,7 @@ zh:
 
 <script>
 import SshAddPrivateKey from '../../../private_key/SshAddPrivateKey.vue'
+import { Netmask } from 'netmask'
 
 export default {
   props: {
@@ -112,6 +113,35 @@ export default {
             return callback()
           },
           trigger: 'blur'
+        },
+      ],
+      ipRules: [
+        { required: true, message: this.$t('ip') + this.$t('field.is_required_field'), trigger: 'change' },
+        {
+          validator: (rule, value, callback) => {
+            for (let key in this.cluster.inventory.all.hosts) {
+              if (key !== this.nodeName && this.cluster.inventory.all.hosts[key].ip === value) {
+                return callback(this.$t('duplicateIP', {node: key}))
+              }
+            }
+            // A类地址：10.0.0.0--10.255.255.255
+            // B类地址：172.16.0.0--172.31.255.255 
+            // C类地址：192.168.0.0--192.168.255.255
+            let block = new Netmask('10.0.0.0/8')
+            if (block.contains(value)) {
+              return callback()
+            }
+            block = new Netmask('172.16.0.0/12')
+            if (block.contains(value)) {
+              return callback()
+            }
+            block = new Netmask('192.168.0.0/16') 
+            if (block.contains(value)) {
+              return callback()
+            }
+            return callback('必须绑定到内网 IP')
+          },
+          trigger: 'change'
         },
       ],
       optionIps: [],

@@ -4,11 +4,13 @@ en:
   ansible_host_placeholder: 'Should provide at node level.'
   password_and_bastion: You are using bastion/jumpserver to access the node, if you use password here, it takes longer time to create ssh connection, it would be better to clear the password and provide ssh_private_key.
   speedup: SSH Multiplexing
+  rootuser: Must use root user
 zh:
   addSshKey: 添加私钥
   ansible_host_placeholder: '必须在节点级别设置'
   password_and_bastion: 您将使用跳板机访问节点，如果在此处使用密码访问，创建 ssh 连接的时间较长，建议清除密码并提供 “私钥文件”。
   speedup: 加速执行
+  rootuser: 必须使用 root 用户
 </i18n>
 
 
@@ -17,7 +19,12 @@ zh:
     <FieldString disabled :holder="holder" fieldName="ansible_host" :prop="isNode ? `all.hosts.${nodeName}` : ''"
       :placeholder="$t('ansible_host_placeholder')"></FieldString>
     <FieldString :holder="holder" fieldName="ansible_port" anti-freeze></FieldString>
-    <FieldString :holder="holder" fieldName="ansible_user" anti-freeze></FieldString>
+    <FieldCommon :holder="holder" fieldName="ansible_user" anti-freeze>
+      <template #edit>
+        <el-input v-model.trim="ansible_user"></el-input>
+        <el-tag class="app_text_mono" style="display: block; line-height: 18px;" type="warning">{{ $t('rootuser') }}</el-tag>
+      </template>
+    </FieldCommon>
     <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList" anti-freeze clearable>
       <template #edit>
         <el-button type="primary" plain style="margin-left: 10px;" icon="el-icon-plus" @click="$refs.addPrivateKey.show()">{{$t('addSshKey')}}</el-button>
@@ -28,11 +35,19 @@ zh:
       {{ $t('password_and_bastion') }}
       <KuboardSprayLink href="https://kuboard-spray.cn/guide/extra/speedup.html" style="margin-left: 10px;" :size="12"></KuboardSprayLink>
     </el-alert>
-    <FieldBool :holder="holder" fieldName="ansible_become" anti-freeze></FieldBool>
+    <!-- <FieldCommon :holder="holder" fieldName="ansible_become" anti-freeze>
+      <template #view>
+        <el-switch v-model="ansible_become" disabled></el-switch>
+      </template>
+      <template #edit>
+        <el-switch v-model="ansible_become" disabled></el-switch>
+      </template>
+    </FieldCommon>
     <template v-if="holder.ansible_become">
-      <FieldString :holder="holder" fieldName="ansible_become_user" anti-freeze></FieldString>
+      <FieldString :holder="holder" fieldName="ansible_become_user" anti-freeze disabled></FieldString>
       <FieldString :holder="holder" fieldName="ansible_become_password" show-password anti-freeze clearable></FieldString>
-    </template>
+      <div v-if="editMode !== 'view'">{{ $t('become_password_desc', {ansible_user}) }}</div>
+    </template> -->
     <FieldSelect :holder="holder" fieldName="ansible_python_interpreter" anti-freeze clearable :loadOptions="loadPythonInterpreter" allow-create filterable></FieldSelect>
     <slot></slot>
     <SshAddPrivateKey ref="addPrivateKey" ownerType="cluster" :ownerName="cluster.name"></SshAddPrivateKey>
@@ -56,6 +71,7 @@ export default {
 
     }
   },
+  inject: ['editMode'],
   computed: {
     enableSsh: {
       get () {
@@ -65,6 +81,41 @@ export default {
         console.log(v)
       }
     },
+    holderRef: {
+      get () {return this.holder || {}},
+      set () {}
+    },
+    ansible_user: {
+      get () {
+        return this.holder.ansible_user
+      },
+      set (v) {
+        this.holderRef.ansible_user = 'root'
+        if (v === 'root') {
+          this.ansible_become = false
+        } else {
+          this.ansible_become = false
+        }
+      }
+    },
+    ansible_become: {
+      get () {
+        return this.holder.ansible_become
+      },
+      set (v) {
+        this.holderRef.ansible_become = v
+        if (v) {
+          this.holderRef.ansible_become_user = 'root'
+          if (!this.holder.ansible_become_password) {
+            this.holderRef.ansible_become_password = this.holder.ansible_password
+          }
+        } else {
+          this.holderRef.ansible_become = undefined
+          this.holderRef.ansible_become_user = undefined
+          this.holderRef.ansible_become_password = undefined
+        }
+      }
+    }
   },
   components: { SshAddPrivateKey },
   mounted () {

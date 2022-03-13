@@ -75,7 +75,7 @@ zh:
         :ansible_user="inventory.all.hosts[nodeName].ansible_user || inventory.all.children.target.vars.ansible_user"
         :ansible_password="inventory.all.hosts[nodeName].ansible_password || inventory.all.children.target.vars.ansible_password"
         :ansible_ssh_private_key_file="inventory.all.hosts[nodeName].ansible_ssh_private_key_file || inventory.all.children.target.vars.ansible_ssh_private_key_file"
-        :ansible_become="inventory.all.hosts[nodeName].ansible_become || inventory.all.children.target.vars.ansible_become"
+        :ansible_become="inventory.all.hosts[nodeName].ansible_become !== undefined ? inventory.all.hosts[nodeName].ansible_become : inventory.all.children.target.vars.ansible_become"
         :ansible_become_user="inventory.all.hosts[nodeName].ansible_become_user || inventory.all.children.target.vars.ansible_become_user"
         :ansible_become_password="inventory.all.hosts[nodeName].ansible_become_password || inventory.all.children.target.vars.ansible_become_password"
         :ansible_python_interpreter="inventory.all.hosts[nodeName].ansible_python_interpreter || inventory.all.children.target.vars.ansible_python_interpreter"

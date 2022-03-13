@@ -11,6 +11,8 @@ en:
   password_in_global: You defined password in global configuration, it's suggested that you clear it.
   speedup: SSH Multiplexing
   cannotUseLocalhostAsTarget: Cannot use the machine that kuboardspray runs on as a target node.
+  inhirit: inhirit from value configured in Global Config tab
+  rootuser: Must use root user
 zh:
   addSshKey: 添加私钥
   ansible_host_placeholder: 'KuboardSpray 连接该主机时所使用的主机名或 IP 地址'
@@ -24,6 +26,8 @@ zh:
   password_in_global: 您在全局参数中配置了密码，建议清除。
   speedup: 加速执行
   cannotUseLocalhostAsTarget: 不能使用 KuboardSpray 所在机器作为目标节点
+  inhirit: 继承自全局设置标签页中的配置
+  rootuser: 必须使用 root 用户
 </i18n>
 
 
@@ -37,7 +41,12 @@ zh:
     <FieldString :holder="holder" fieldName="ansible_port" :prop="`all.hosts.${nodeName}`"
       :placeholder="placeholder('ansible_port')" anti-freeze
       :required="!cluster.inventory.all.children.target.vars.ansible_port"></FieldString>
-    <FieldString :holder="holder" fieldName="ansible_user" :placeholder="placeholder('ansible_user')" anti-freeze></FieldString>
+    <FieldCommon :holder="holder" fieldName="ansible_user" :placeholder="placeholder('ansible_user')" anti-freeze>
+      <template #edit>
+        <el-input v-model.trim="ansible_user" :placeholder="placeholder('ansible_user')"></el-input>
+        <el-tag class="app_text_mono" style="display: block; line-height: 18px;" type="warning">{{ $t('rootuser') }}</el-tag>
+      </template>
+    </FieldCommon>
     <FieldSelect :holder="holder" fieldName="ansible_ssh_private_key_file" :loadOptions="loadSshKeyList" anti-freeze clearable
       :placeholder="placeholder('ansible_ssh_private_key_file')">
       <template #edit>
@@ -51,18 +60,19 @@ zh:
       <KuboardSprayLink href="https://kuboard-spray.cn/guide/extra/speedup.html" style="margin-left: 10px;" :size="12"></KuboardSprayLink>
       <li v-if="cluster && cluster.inventory.all.children.target.vars.ansible_password">{{ $t('password_in_global') }}</li>
     </el-alert>
-    <FieldCommon :holder="holder" fieldName="ansible_become" anti-freeze>
+    <!-- <FieldCommon :holder="holder" fieldName="ansible_become" anti-freeze>
       <template #view>
         <el-switch v-model="ansible_become" disabled></el-switch>
       </template>
       <template #edit>
-        <el-switch v-model="ansible_become"></el-switch>
+        <el-switch v-model="ansible_become" disabled></el-switch>
+        <el-tag v-if="holder.ansible_become === undefined" style="margin-left: 10px;" type="info">{{ $t('inhirit') }}</el-tag>
       </template>
     </FieldCommon>
     <template v-if="ansible_become">
-      <FieldString :holder="holder" fieldName="ansible_become_user" :placeholder="placeholder('ansible_become_user')" anti-freeze></FieldString>
+      <FieldString :holder="holder" fieldName="ansible_become_user" :placeholder="placeholder('ansible_become_user')" anti-freeze disabled></FieldString>
       <FieldString :holder="holder" fieldName="ansible_become_password" show-password :placeholder="placeholder('ansible_become_password')" anti-freeze clearable></FieldString>
-    </template>
+    </template> -->
     <FieldSelect :holder="holder" fieldName="ansible_python_interpreter" anti-freeze clearable :loadOptions="loadPythonInterpreter" :placeholder="placeholder('ansible_python_interpreter')" allow-create filterable></FieldSelect>
     <FieldCommon :holder="holder" fieldName="ip" :prop="`all.hosts.${nodeName}`" :anti-freeze="onlineNodes[nodeName] === undefined" :label="$t('ip')"
       :placeholder="$t('ip_placeholder', { default_value: holder.ansible_host})" :rules="ipRules">
@@ -182,6 +192,19 @@ export default {
       get () {return this.holder || {}},
       set () {}
     },
+    ansible_user: {
+      get () {
+        return this.holder.ansible_user
+      },
+      set (v) {
+        this.holderRef.ansible_user = 'root'
+        if (v === 'root') {
+          this.ansible_become = false
+        } else {
+          this.ansible_become = false
+        }
+      }
+    },
     ansible_become: {
       get () {
         if (this.holder.ansible_become !== undefined) {
@@ -191,6 +214,16 @@ export default {
       },
       set (v) {
         this.holderRef.ansible_become = v
+        if (v) {
+          this.holderRef.ansible_become_user = 'root'
+          if (!this.holder.ansible_become_password) {
+            this.holderRef.ansible_become_password = this.cluster.inventory.all.children.target.vars.ansible_become_password || this.holder.ansible_password || this.cluster.inventory.all.children.target.vars.ansible_password
+          }
+        } else {
+          this.holderRef.ansible_become = undefined
+          this.holderRef.ansible_become_user = undefined
+          this.holderRef.ansible_become_password = undefined
+        }
       }
     }
   },
@@ -239,7 +272,7 @@ export default {
           ansible_user: this.holder.ansible_user || vars.ansible_user,
           ansible_password: this.holder.ansible_password || vars.ansible_password,
           ansible_ssh_private_key_file: this.holder.ansible_ssh_private_key_file || vars.ansible_ssh_private_key_file,
-          ansible_become: this.holder.ansible_become || vars.ansible_become,
+          ansible_become: this.holder.ansible_become !== undefined ? this.holder.ansible_become : vars.ansible_become,
           ansible_become_user: this.holder.ansible_become_user || vars.ansible_become_user,
           ansible_become_password: this.holder.ansible_become_password || vars.ansible_become_password,
           ansible_ssh_common_args: vars.ansible_ssh_common_args,

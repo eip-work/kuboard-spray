@@ -165,6 +165,17 @@ export default {
             etcd: inventory.all.children.target.children.etcd.hosts[_this.nodeName] !== undefined,
             kube_node: inventory.all.children.target.children.k8s_cluster.children.kube_node.hosts[_this.nodeName] !== undefined,
           }
+          // console.log(inventory.all.hosts[_this.nodeName].ansible_become || inventory.all.children.target.vars.ansible_become)
+          // console.log(inventory.all.hosts[_this.nodeName].ansible_become_user || inventory.all.children.target.vars.ansible_become_user)
+          // console.log(inventory.all.hosts[_this.nodeName].ansible_become_password || inventory.all.children.target.vars.ansible_password)
+          if (inventory.all.hosts[_this.nodeName].ansible_become !== undefined ? inventory.all.hosts[_this.nodeName].ansible_become : inventory.all.children.target.vars.ansible_become) {
+            setTimeout(() => {
+              _this.socket.send('0sudo -i\n')
+              setTimeout(() => {
+                _this.socket.send('0' + (inventory.all.hosts[_this.nodeName].ansible_become_password || inventory.all.children.target.vars.ansible_become_password) + '\n')
+              }, 300)
+            }, 1000)
+          }
           if (inventory.all.children.target.children.etcd.hosts[_this.nodeName]) {
             console.log('this is a etcd node.')
             setTimeout(() => {

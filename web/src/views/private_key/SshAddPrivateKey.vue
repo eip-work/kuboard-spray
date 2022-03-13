@@ -60,7 +60,7 @@ zh:
             </el-form>
           </div>
           <div class="step" style="margin-left: 20px">3</div>
-          <el-button size="small" type="success" :loading="uploading" @click="submitUpload" icon="el-icon-upload2">{{$t('msg.upload')}}</el-button>
+          <el-button size="small" type="success" :loading="uploading" @click="submitUpload" icon="el-icon-upload">{{$t('msg.upload')}}</el-button>
           <template #tip>
             <div class="el-upload__tip">
               {{$t('copyFile')}}

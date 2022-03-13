@@ -10,7 +10,7 @@
       <span v-if="value">
         {{ showPassword && hidePassword ? value.replace(/.?/g, '*') : value }}
       </span>
-      <el-button v-if="showPassword" type="text" icon="el-icon-view" @click="hidePassword = !hidePassword"></el-button>
+      <el-button style="margin-left: 5px;" v-if="showPassword" type="text" icon="el-icon-view" @click="hidePassword = !hidePassword"></el-button>
     </template>
   </FieldCommon>
 </template>

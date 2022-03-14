@@ -147,11 +147,10 @@ export default {
         let data = event.data
         _this.xterm.write(data)
       }
-      this.socket.onerror = function () {
+      this.socket.onerror = function (event) {
+        console.log(event)
         setTimeout(() => {
-          if (!_this.socketClosed) {
-            _this.$refs.errorHint.show(_this.wsUrl)
-          }
+          _this.$refs.errorHint.show(_this.wsUrl)
         }, 2000)
       }
       this.socket.onopen = function () {

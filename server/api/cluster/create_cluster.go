@@ -339,6 +339,7 @@ func getInventoryTemplate() string {
         kuboardspray_repo_docker_ubuntu: AS_IS
         ansible_python_interpreter: auto
         ansible_user: root
+        ansible_port: '22'
   vars:
     ansible_ssh_pipelining: true
 `

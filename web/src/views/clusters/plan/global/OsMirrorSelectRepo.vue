@@ -23,7 +23,7 @@ zh:
 
 <template>
   <FieldCommon :holder="vars" :fieldName="fieldName" label-width="150px" :placeholder="type.indexOf('opensuse') >= 0 ? $t('install_docker_from_distro') : $t('asis')"
-    :label="type + ' ' + $t('source')" :required="type.indexOf('opensuse') < 0" :prop="prop" anti-freeze>
+    class="os_mirror_select_repo" :label="type + ' ' + $t('source')" :required="type.indexOf('opensuse') < 0" :prop="prop" anti-freeze>
     <template #edit>
       <template v-if="type.indexOf('opensuse') >= 0">
         <span v-if="type.indexOf('docker_') === 0">{{ $t('install_docker_from_distro') }}</span>
@@ -145,6 +145,9 @@ export default {
 <style lang="scss">
 .kuboardspray_mirror_select.el-select-dropdown__item {
   height: auto;
+}
+.os_mirror_select_repo label {
+  word-break: break-word;
 }
 </style>
 

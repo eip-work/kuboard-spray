@@ -30,12 +30,12 @@ zh:
     <FieldCommon :holder="temp" fieldName="os" :label="$t('selectOs')" label-width="150px" anti-freeze>
       <template #edit>
         <el-checkbox-group v-model="os">
-          <el-checkbox v-for="(item, index) in supportedOs" :key="'os_e' + index" :label="index.toLowerCase()">{{index}}</el-checkbox>
+          <el-checkbox v-for="(item, index) in supportedOs" :key="'os_e' + index" :label="index.toLowerCase().replaceAll(' ', '_')">{{index}}</el-checkbox>
         </el-checkbox-group>
       </template>
       <template #view>
         <el-checkbox-group v-model="os" disabled>
-          <el-checkbox v-for="(item, index) in supportedOs" :key="'os_v' + index" :label="index.toLowerCase()">{{index}}</el-checkbox>
+          <el-checkbox v-for="(item, index) in supportedOs" :key="'os_v' + index" :label="index.toLowerCase().replaceAll(' ', '_')">{{index}}</el-checkbox>
         </el-checkbox-group>
       </template>
     </FieldCommon>
@@ -100,6 +100,7 @@ export default {
         }
         for (let os in this.supportedOs) {
           let key = os.toLowerCase()
+          key = key.replaceAll(' ', '_')
           if (t[key]) {
             this.vars['kuboardspray_repo_' + key] = this.vars['kuboardspray_repo_' + key] || 'AS_IS'
           } else {

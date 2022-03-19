@@ -21,13 +21,13 @@ zh:
   cannotUseKeyword: 不能使用关键字 {keyword} 作为节点名称
 
   nodeRequirement1: KuboardSpray 所在机器不能用作 k8s 节点
-  nodeRequirement2: 请确保您的节点服务器是一个干净的机器（没有安装过 k8s，不用来运行其他程序）
+  nodeRequirement2: 请确保您的节点服务器是一个干净的机器（没有安装过 k8s 或 docker，不用来运行其他程序）
   nodeRequirement3: 请确保所有节点之间可以通过内网 IP 地址互通
 </i18n>
 
 <template>
   <el-popover placement="right-start" :title="$t('addNode')" v-if="editMode !== 'view'"
-    v-model:visible="visible" :width="480" trigger="manual">
+    v-model:visible="visible" :width="540" trigger="manual">
     <template #reference>
       <el-button icon="el-icon-plus" type="primary" @click="visible = true"
         :disabled="editMode === 'view'">{{$t('addNode')}}</el-button>

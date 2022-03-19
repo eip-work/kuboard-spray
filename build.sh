@@ -29,7 +29,7 @@ echo "【构建 server】"
 rm -f ./server/kuboard-spray
 docker run --rm -v ${PWD}:/usr/src/kuboard-spray \
   -v ~/temp/build-temp/pkg:/go/pkg \
-  -w /usr/src/kuboard-spray/server golang:1.16.5-buster \
+  -w /usr/src/kuboard-spray/server golang:1.18.0-buster \
   sh -c "export GOPROXY=https://goproxy.io,direct && go build kuboard-spray.go"
 
 ls -lh ./server/kuboard-spray

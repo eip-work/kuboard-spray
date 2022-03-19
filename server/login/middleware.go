@@ -23,9 +23,9 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 			token = parts[1]
 		} else { // Token 也可以放在 Cookie 中
 			var err error
-			token, err = c.Cookie("KuboardToken")
+			token, err = c.Cookie("KuboardSprayToken")
 			if err != nil {
-				common.HandleError(c, http.StatusBadRequest, "Authorization header or Cookie KuboardToken can't be empty", err)
+				common.HandleError(c, http.StatusBadRequest, "Authorization header or Cookie KuboardSprayToken can't be empty", err)
 				return
 			}
 		}

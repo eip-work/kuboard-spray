@@ -97,7 +97,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  let token = Cookies.get('KuboardToken')
+  let token = Cookies.get('KuboardSprayToken')
   if (to.name == 'Login') {
     next()
   } else if (token == null || token == undefined || token == '') {

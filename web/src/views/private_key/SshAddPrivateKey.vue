@@ -113,7 +113,7 @@ export default {
       ],
       baseURL,
       headers: {
-        Authorization: `Bearer ${Cookie.get('KuboardToken')}`
+        Authorization: `Bearer ${Cookie.get('KuboardSprayToken')}`
       }
     }
   },

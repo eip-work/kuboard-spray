@@ -20,7 +20,7 @@ const comp = {
       baseURL: baseURL,
       timeout: 120000,
       headers: {
-        Authorization: 'Bearer ' + Cookies.get('KuboardToken')
+        Authorization: 'Bearer ' + Cookies.get('KuboardSprayToken')
       }
     })
     kuboardSprayApi.interceptors.response.use(function (response) {
@@ -48,13 +48,13 @@ export default comp
 export {baseURL}
 
 export function clearAllCookie() {
-  Cookies.remove('KuboardToken', { path: location.pathname })
-  Cookies.remove('KuboardLogin', { path: location.pathname })
+  Cookies.remove('KuboardSprayToken', { path: location.pathname })
+  Cookies.remove('KuboardSprayLogin', { path: location.pathname })
   comp.install(vueapp)
 }
 
 export function setupCookie(token, expires) {
   console.log(token)
-  Cookies.set('KuboardToken', token, { path: location.pathname, expires: expires } )
+  Cookies.set('KuboardSprayToken', token, { path: location.pathname, expires: expires } )
   comp.install(vueapp)
 }

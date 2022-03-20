@@ -30,7 +30,7 @@ zh:
             <template #label>
               <span style="font-weight: bolder">用户名</span>
             </template>
-            <el-input v-model.trim="form.username" placeholder="请输入用户名" @keyup.enter="$refs.passwordInput.focus()" autofocus disabled></el-input>
+            <el-input v-model.trim="form.username" placeholder="请输入用户名" @keyup.enter="$refs.passwordInput.focus()" autofocus></el-input>
           </el-form-item>
           <el-form-item prop="password" :rules="passwordRules" ref="passwordFormItem">
             <template #label>
@@ -68,7 +68,7 @@ export default {
   data() {
     return {
       form: {
-        username: 'admin',
+        username: '',
         password: '',
       },
       passwordRules: [

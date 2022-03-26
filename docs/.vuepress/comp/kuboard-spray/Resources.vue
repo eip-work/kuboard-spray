@@ -9,11 +9,11 @@
     <div v-if="arch === '-arm64'" class="type">ARM 架构</div>
     <div v-else class="type">AMD 架构</div>
     <div class="contentList" v-if="mergedPackageList">
-      <el-table :data="mergedPackageList">
-        <el-table-column prop="version" label="版 本"></el-table-column>
-        <el-table-column prop="package.data.kubespray_version" label="kubespray"></el-table-column>
-        <el-table-column prop="package.data.kubernetes.kube_version" label="kubernetes"></el-table-column>
-        <el-table-column prop="package.data.container_engine" label="容器引擎">
+      <el-table :data="mergedPackageList" class="kubaordspray_resource_packages">
+        <el-table-column prop="version" label="版 本" width="120px"></el-table-column>
+        <!-- <el-table-column prop="package.data.kubespray_version" label="kubespray"></el-table-column> -->
+        <el-table-column prop="package.data.kubernetes.kube_version" label="kubernetes" width="100px"></el-table-column>
+        <el-table-column prop="package.data.container_engine" label="容器引擎" width="150px">
           <template slot-scope="scope">
             <div v-if="scope.row.package" style="margin-bottom: -10px;">
               <div v-for="(engine, key) in scope.row.package.data.container_engine" :key="`c${scope.index}_${key}`">
@@ -22,11 +22,11 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="package.metadata.supported_os" label="操作系统">
+        <el-table-column prop="package.metadata.supported_os" label="操作系统" width="320px">
           <template #default="data">
-            <div v-if="data.row.package" style="margin-bottom: -10px;">
+            <div v-if="data.row.package" style="margin-bottom: -5px; ">
               <div v-for="(os, key) in data.row.package.metadata.supported_os" :key="`os${data.index}_${key}`">
-                <el-tag style="margin-bottom: 10px;">
+                <el-tag style="margin-bottom: 5px;">
                   {{ os.distribution }}<span 
                   v-for="(v, i) in os.versions" :key="key + 'v' + i">_{{v}}</span>
                 </el-tag>
@@ -34,7 +34,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="package.metadata.kuboard_spray_version.min" label="KuboardSpray最低版本"></el-table-column>
+        <el-table-column prop="package.metadata.kuboard_spray_version.min" label="KuboardSpray最低版本" width="170px"></el-table-column>
         <el-table-column label="操 作">
           <template #default="data">
             <el-button type="primary" @click="showVersion(data.row)">离线导入</el-button>
@@ -159,6 +159,12 @@ export default {
 }
 .el-table th {
   padding: 0px !important;
+}
+
+.kubaordspray_resource_packages.el-table th {
+  color: #007af5;
+  background-color: #ecf5ff;
+  font-size: 13px;
 }
 
 </style>

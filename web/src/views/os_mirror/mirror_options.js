@@ -18,6 +18,8 @@ let temp = {
       'https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/',
       'https://mirrors.cloud.tencent.com/docker-ce/linux/ubuntu/',
     ],
+  redhat: [],
+  docker_redhat: docker_centos,
   centos: [
     'http://mirrors.aliyun.com/repo/',
     'https://repo.huaweicloud.com/centos/',

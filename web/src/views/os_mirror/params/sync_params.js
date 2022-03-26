@@ -13,6 +13,7 @@ export function syncParams (params, type, url) {
         params.docker_ubuntu_repo_gpgkey = trimSlash(url) + '/gpg'
         params.docker_ubuntu_repo_repokey = '9DC858229FC7DD38854AE2D88D81803C0EBFCD88'
         break
+      case 'docker_redhat':
       case 'docker_centos':
       case 'docker_rocky':
       case 'docker_oraclelinux':

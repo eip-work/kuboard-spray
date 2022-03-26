@@ -18,7 +18,7 @@ Kuboard-Spray 是一款可以在图形界面引导下完成 Kubernetes 高可用
 
 **安装后的集群版本为**
 
-* Kubernetes v1.23.1
+* Kubernetes v1.23.1 （与您使用的 [资源包版本](../support) 有关）
 
 ### 社区
 

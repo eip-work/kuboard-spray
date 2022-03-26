@@ -51,7 +51,7 @@ zh:
     </div>
     <div class="contentList">
       <el-table v-if="mergedPackageList" :data="mergedPackageList" style="width: 100%">
-        <el-table-column prop="version" :label="$t('version')" min-width="100px">
+        <el-table-column prop="version" :label="$t('version')" width="200px">
           <template #default="scope">
             <template v-if="hideLink">
               {{scope.row.version}}
@@ -72,7 +72,7 @@ zh:
             </template>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('kubespray_version')">
+        <!-- <el-table-column :label="$t('kubespray_version')">
           <template #default="scope">
             <span v-if="packageYaml[scope.row.version]">
               {{ scope.row.yaml.data.kubespray_version }}
@@ -81,8 +81,8 @@ zh:
               <el-icon-loading></el-icon-loading>
             </el-icon>
           </template>
-        </el-table-column>
-        <el-table-column :label="$t('kube_version')">
+        </el-table-column> -->
+        <el-table-column :label="$t('kube_version')" width="100px">
           <template #default="scope">
             <span v-if="scope.row.yaml">
               {{ scope.row.yaml.data.kubernetes.kube_version }}
@@ -92,7 +92,7 @@ zh:
             </el-icon>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('container_engine')">
+        <el-table-column :label="$t('container_engine')" width="180px">
           <template #default="scope">
             <template v-if="scope.row.yaml">
               <div v-for="(engine, key) in scope.row.yaml.data.container_engine" :key="`c${scope.index}_${key}`">
@@ -107,19 +107,19 @@ zh:
         <el-table-column :label="$t('supported_os')">
           <template #default="scope">
             <template v-if="scope.row.yaml">
-              <div v-for="(os, key) in scope.row.yaml.metadata.supported_os" :key="`os${scope.index}_${key}`">
+              <span v-for="(os, key) in scope.row.yaml.metadata.supported_os" :key="`os${scope.index}_${key}`" style="margin-right: 10px;">
                 <el-tag>
                   {{ os.distribution }}<span 
                   v-for="(v, i) in os.versions" :key="key + 'v' + i">_{{v}}</span>
                 </el-tag>
-              </div>
+              </span>
             </template>
             <el-icon v-else :size="12" style="width: 12px; height: 12px; vertical-align: middle;" class="is-loading">
               <el-icon-loading></el-icon-loading>
             </el-icon>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('import_status')">
+        <el-table-column :label="$t('import_status')" width="200px">
           <template #default="scope">
             <template v-if="importedPackageMap">
               <template v-if="importedPackageMap[scope.row.version]">
@@ -148,7 +148,7 @@ zh:
           </template>
         </el-table-column>
         <slot name="columns">
-          <el-table-column :label="$t('msg.operations')" min-width="120px">
+          <el-table-column :label="$t('msg.operations')" width="200px">
             <template #default="scope">
               <template v-if="importedPackageMap">
                 <template v-if="importedPackageMap[scope.row.version]">

@@ -52,6 +52,7 @@ import HeaderBreadCrumb from './HeaderBreadCrumb.vue'
 import KbButton from './KbButton.vue'
 import LoginInfo from './LoginInfo.vue'
 import axios from 'axios'
+import showGithubStar from './GithubStar.js'
 
 export default {
   props: {
@@ -100,6 +101,7 @@ export default {
     }).catch(e => {
       console.log('hide github-star', e)
     })
+    showGithubStar()
   },
   beforeUnmount () {
     clearInterval(this.interval)

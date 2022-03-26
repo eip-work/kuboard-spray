@@ -20,7 +20,7 @@ zh:
       <el-alert :closable="false" title="集群管理" class="app_white_alert">
         <div style="line-height: 20px;">
           您可以：
-          <li>制定新的集群安装计划</li>
+          <li>制定新的集群安装计划，并安装 kubernetes 集群</li>
           <li>维护使用 KuboardSpray 安装的集群</li>
         </div>
       </el-alert>

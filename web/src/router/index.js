@@ -4,6 +4,12 @@ import Cookies from 'js-cookie'
 const constantRouterMap = [
   {
     path: '/',
+    redirect: () => {
+      return { path: '/clusters' }
+    }
+  },
+  {
+    path: '/home',
     component: () => import('../components/layout/Layout.vue'),
     children: [
       {

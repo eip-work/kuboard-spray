@@ -21,7 +21,7 @@ zh:
 
 <template>
   <div class="leftColumn">
-    <div class="menuTitle noselect nowrap" :style="menuStyle" @click="$router.push('/')">
+    <div class="menuTitle noselect nowrap" :style="menuStyle" @click="$router.push('/home')">
         Kuboard Spray
     </div>
     <el-menu :default-active="defaultActive" class="kuboard_namespaced_menu" unique-opened

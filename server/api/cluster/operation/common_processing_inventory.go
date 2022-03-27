@@ -154,7 +154,11 @@ func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[strin
 	version := map[string]string{}
 	json.Unmarshal(versionJson, &version)
 
-	common.MapSet(inventory, "all.vars.kuboardspray_version", version["version"])
+	v := version["version"]
+	v = strings.TrimSuffix(v, "-amd64")
+	v = strings.TrimSuffix(v, "-arm64")
+
+	common.MapSet(inventory, "all.vars.kuboardspray_version", v)
 
 	common.MapSet(inventory, "all.vars.download_keep_remote_cache", false)
 	common.MapSet(inventory, "all.vars.download_run_once", true)

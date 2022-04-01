@@ -22,7 +22,7 @@ docker run -d \
   # swr.cn-east-2.myhuaweicloud.com/kuboard/kuboard-spray:latest-amd64
 ```
 
-在浏览器地址栏中输入 `http://这台机器的IP地址`，输入默认密码 `Kuboard123`，即可登录 kuboard-spray 界面，剩下的事情，在界面上操作一下，您就会啦。如果有困难，试试这篇文档 <a href="https://kuboard-spray.cn/guide/install-k8s.html" target="_blank">使用 KuboardSpray 安装 Kubernetes 集群</a>
+在浏览器地址栏中输入 `http://这台机器的IP地址`，输入用户名 `admin`，默认密码 `Kuboard123`，即可登录 kuboard-spray 界面，剩下的事情，在界面上操作一下，您就会啦。如果有困难，试试这篇文档 <a href="https://kuboard-spray.cn/guide/install-k8s.html" target="_blank">使用 KuboardSpray 安装 Kubernetes 集群</a>
 
 **常见问题**
   * 导入资源包时，可能会碰到 `no such file or directory` 或者 `permission denied` 之类的错误提示，通常是因为您开启了 SELinux，导致 kuboard-spray 不能读取映射到容器 `/data` 的路径

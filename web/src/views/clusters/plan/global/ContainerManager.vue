@@ -18,9 +18,10 @@ zh:
     <FieldSelect :holder="vars" fieldName="container_manager"
       :prop="prop" required :loadOptions="loadContainerEngines" :disabled="cluster.resourcePackage === undefined">
       <template #view_append>
-        <span style="float: right;">
-          <ContainerMangerSyncParamsTask v-if="isClusterOnline && cluster.resourcePackage.data.supported_playbooks.sync_container_engine_params" 
+        <span style="float: right;" v-if="isClusterOnline && cluster.resourcePackage.data.supported_playbooks.sync_container_engine_params">
+          <ContainerMangerSyncParamsTask v-if="editMode === 'view'"
             :cluster="cluster" @refresh="$emit('refresh')"></ContainerMangerSyncParamsTask>
+          <span v-else-if="editMode === 'frozen'">保存后点击 「更新容器引擎参数」 按钮</span>
         </span>
       </template>
     </FieldSelect>
@@ -60,7 +61,7 @@ export default {
       ],
     }
   },
-  inject: ['isClusterOnline'],
+  inject: ['isClusterOnline', 'editMode'],
   computed: {
     enabled: {
       get () {return true},

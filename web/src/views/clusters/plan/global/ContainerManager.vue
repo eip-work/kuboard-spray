@@ -2,13 +2,13 @@
 en:
   label: ContainerManager
   description: Container Manager
-  insecure_registries_placeholder: e.g. 172.19.16.11:5000, use http protocol to pull from the registry
+  insecure_registries_placeholder: e.g. 192.168.30.56:5000, use http protocol to pull from the registry
   registry_mirrors_placeholder: Registry Mirrors
 
 zh:
   label: 容器引擎
   description: 设置集群范围内所有节点使用的容器引擎相关参数
-  insecure_registries_placeholder: 例如：172.19.16.11:5000，使用 http 协议从该仓库拉取镜像
+  insecure_registries_placeholder: 例如：192.168.30.56:5000，使用 http 协议从该仓库拉取镜像
   registry_mirrors_placeholder: 镜像仓库 mirror，例如：https://registry.docker-cn.com
   
 </i18n>
@@ -37,6 +37,9 @@ zh:
           <el-input v-model.trim="vars.docker_insecure_registries[scope.index]" :placeholder="$t('insecure_registries_placeholder')"></el-input>
         </template>
       </FieldArray>
+      <div style="margin: -15px 0 5px 120px;">
+        <KuboardSprayLink href="https://kuboard-spray.cn/guide/options/insecure-registry.html#docker" target="_blank" style="font-size: 12px;">帮 助</KuboardSprayLink>
+      </div>
       <FieldArray :holder="vars" :prop="prop" newItemTemplate="" fieldName="docker_registry_mirrors" :itemRules="insecureRegistriesItemRules" anti-freeze>
         <template v-slot:editItem="scope">
           <el-input v-model.trim="vars.docker_registry_mirrors[scope.index]" :placeholder="$t('registry_mirrors_placeholder')"></el-input>

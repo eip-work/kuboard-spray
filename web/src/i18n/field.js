@@ -66,12 +66,12 @@ const field = {
     ansible_python_interpreter: 'Python 路径',
 
     container_manager: '容器引擎',
-    containerd_insecure_registries: '自签名镜像仓库（或 http）',
+    containerd_insecure_registries: 'insecure_registries',
     containerd_use_systemd_cgroup: 'systemd_cgroup',
     container_manager_on_localhost: '容器引擎 localhost',
 
     docker_orphan_clean_up: '清理孤儿容器',
-    docker_insecure_registries: 'HTTP 镜像仓库 insecure registries',
+    docker_insecure_registries: 'insecure_registries',
     docker_registry_mirrors: '镜像仓库 mirror',
 
     

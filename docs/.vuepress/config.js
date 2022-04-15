@@ -57,6 +57,7 @@ module.exports = {
               title: '安装选项',
               children: [
                 '/guide/options/admission-plugins.md',
+                '/guide/options/insecure-registry.md',
               ]
             },
             '/guide/maintain/ha-mode.md',

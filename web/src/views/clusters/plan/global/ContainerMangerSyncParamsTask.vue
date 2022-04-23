@@ -18,6 +18,7 @@ zh:
       <el-form-item :label="$t('desc_label')">
         <li style="font-weight: bold;">{{ $t('sync_params_desc') }}</li>
         <li style="font-weight: bold;">{{ $t('sync_params_desc_2') }}</li>
+        <li><KuboardSprayLink size="12" href="https://kuboard-spray.cn/guide/options/insecure-registry.html"></KuboardSprayLink></li>
       </el-form-item>
     </div>
   </ClusterTask>

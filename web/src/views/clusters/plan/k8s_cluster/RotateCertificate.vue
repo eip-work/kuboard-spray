@@ -29,12 +29,12 @@ zh:
     <FieldBool labelWidth="180px" :holder="vars" :prop="prop" fieldName="kubelet_rotate_certificates">
       <template #edit_desc>
         <div v-if="vars.kubelet_rotate_certificates">
-          kubelect client 证书过期时自动更新
+          kubelet client 证书过期时自动更新
         </div>
       </template>
       <template #view_desc>
         <div v-if="vars.kubelet_rotate_certificates">
-          kubelect client 证书过期时自动更新
+          kubelet client 证书过期时自动更新
         </div>
       </template>
     </FieldBool>

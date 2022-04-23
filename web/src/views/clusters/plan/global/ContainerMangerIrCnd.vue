@@ -131,7 +131,7 @@ export default {
   margin-bottom: 10px;
   padding: 0 10px 0px 0;
   .header {
-    background-color: var(--el-color-primary-light-2);
+    background-color: var(--el-color-primary-light-3);
     color: white;
     padding: 0 10px;
     margin-bottom: 10px;

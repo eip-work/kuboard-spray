@@ -158,7 +158,7 @@ export default {
   font-size: 13px;
 }
 .config_section_header.expanded {
-  background-color: var(--el-color-primary-light-2);
+  background-color: var(--el-color-primary-light-3);
 }
 .config_section_content {
   padding: 10px 15px 0 15px;

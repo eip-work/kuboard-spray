@@ -73,7 +73,7 @@ export default {
   transition: 0.2s;
 }
 .kb-button:hover {
-  background-color: var(--el-color-primary-light-2);
+  background-color: var(--el-color-primary-light-3);
   color: var(--el-color-white);
   transform:rotate(45deg);
   -ms-transform:rotate(45deg); 	/* IE 9 */

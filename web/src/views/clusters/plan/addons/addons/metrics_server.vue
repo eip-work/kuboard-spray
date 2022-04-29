@@ -3,10 +3,12 @@ en:
   label: Metrics
   description: metrics_server
   addon_function: Regularly takes metris info from K8S components, a must for features like Horizontal Auto Scaler.
+  metrics_server_version: Version
 zh:
   label: Metrics
   description: metrics_server
   addon_function: 定时采集 K8S 各组件的性能数据，是容器组水平伸缩等功能的基础依赖。
+  metrics_server_version: 版本
 </i18n>
 
 <template>
@@ -16,6 +18,7 @@ zh:
       {{$t('addon_function')}}
     </template>
     <FieldString :holder="vars" :prop="prop" fieldName="metrics_server_metric_resolution" :rules="resolutionRules"></FieldString>
+    <FieldString :holder="addon.params" fieldName="metrics_server_version" :label="$t('metrics_server_version')" readOnly></FieldString>
   </AddonSection>
 </template>
 
@@ -25,6 +28,7 @@ import AddonSection from '../AddonSection.vue'
 export default {
   props: {
     cluster: { type: Object, required: true },
+    addon: { type: Object, required: true },
   },
   data() {
     return {

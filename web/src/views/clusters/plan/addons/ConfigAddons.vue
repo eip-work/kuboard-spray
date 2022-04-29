@@ -2,12 +2,13 @@
 <template>
   <div v-if="cluster.resourcePackage">
     <template v-for="(item, index) in cluster.resourcePackage.data.addon" :key="'addon' + index">
-      <Component :is="item.name" :cluster="cluster" :pingpong="pingpong" @refresh="$emit('refresh')"></Component>
+      <Component :is="item.name" :addon="item" :cluster="cluster" :pingpong="pingpong" @refresh="$emit('refresh')"></Component>
     </template>
   </div>
 </template>
 
 <script>
+import kuboard from './addons/kuboard.vue'
 import metrics_server from './addons/metrics_server.vue'
 import netchecker from './addons/netchecker.vue'
 import nodelocaldns from './addons/nodelocaldns.vue'
@@ -25,7 +26,7 @@ export default {
   },
   computed: {
   },
-  components: { metrics_server, netchecker, nodelocaldns },
+  components: { metrics_server, netchecker, nodelocaldns, kuboard },
   watch: {
     // currentTab (newValue) {
     //   if (newValue === 'addons') {

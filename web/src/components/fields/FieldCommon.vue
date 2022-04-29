@@ -24,6 +24,8 @@ zh:
 </template>
 
 <script>
+import compute_placeholder_mixin from './compute_placeholder_mixin.js'
+
 export default {
   props: {
     holder: { type: Object, required: false, undefined },
@@ -42,6 +44,7 @@ export default {
     }
   },
   inject: ['editMode'],
+  mixins: [ compute_placeholder_mixin ],
   computed: {
     prop_compute () {
       if (this.prop === null) {
@@ -93,17 +96,17 @@ export default {
         return temp
       }
     },
-    compute_placeholder () {
-      if (this.placeholder) {
-        return this.placeholder
-      }
-      let temp = this.$t('field.' + this.fieldName + '_placeholder')
-      if (temp == ('field.' + this.fieldName + '_placeholder')) {
-        return this.$t('field.please_input') + this.$t('field.' + this.fieldName)
-      } else {
-        return temp
-      }
-    },
+    // compute_placeholder () {
+    //   if (this.placeholder) {
+    //     return this.placeholder
+    //   }
+    //   let temp = this.$t('field.' + this.fieldName + '_placeholder')
+    //   if (temp == ('field.' + this.fieldName + '_placeholder')) {
+    //     return this.$t('field.please_input') + this.$t('field.' + this.fieldName)
+    //   } else {
+    //     return temp
+    //   }
+    // },
     computedRules () {
       let result = []
       if (this.editMode === 'frozen' && !this.antiFreeze) {

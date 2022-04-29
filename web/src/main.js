@@ -13,6 +13,7 @@ import store from './store'
 import i18n from './i18n'
 import initAxios from './utils/axios.js'
 import openUrlInBlank from './utils/open-in-blank.js'
+import validators from './utils/validators.js'
 
 import components from './components/index.js'
 
@@ -35,6 +36,7 @@ axios.get("./version.json?nocache=" + new Date().getTime()).then(resp => {
   icons(app)
   app.use(components)
   app.use(initAxios)
+  app.use(validators)
   app.use(openUrlInBlank)
   app.use(VueClipboard)
   app.config.unwrapInjectedRef = true

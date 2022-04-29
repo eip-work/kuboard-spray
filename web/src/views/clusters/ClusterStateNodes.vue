@@ -61,7 +61,9 @@ export default {
       let c = 0
       for (let k in this.state.nodes) {
         c ++
-        console.log(k)
+        if (k == '___') {
+          console.log(k)
+        }
       }
       return c
     },

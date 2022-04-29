@@ -114,6 +114,11 @@ const field = {
     audit_log_maxage_placeholder: '默认值 30，审计日志文件保留的最大天数',
 
     // Addons
+    kuboard_version: 'Kuboard 版本',
+    kuboard_port: 'Kuboard 端口',
+    kuboard_cluster_name: '集群名称',
+    kuboard_data_dir: 'Kuboard 数据目录',
+
     netchecker_port: '节点端口',
     netchecker_port_placeholder: '默认值 31081，网络检查应用所使用的节点端口',
     agent_report_interval: '检查间隔',

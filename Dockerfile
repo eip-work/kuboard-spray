@@ -56,11 +56,14 @@ ENV KUBOARD_SPRAY_WEB_DIR="/kuboard-spray/ui"
 ENV KUBOARD_SPRAY_PORT=":80"
 ENV GIN_MODE=release
 ENV KUBOARD_SPRAY_LOGRUS_LEVEL="info"
+ENV KUBOARD_SPRAY_ADMIN_LOGRUS_LEVEL = "info"
 
+COPY ./admin/kuboard-spray-admin kuboard-spray-admin
 COPY ./server/ansible-script ansible-script
 COPY ./server/ansible-rpc ansible-rpc
 COPY ./server/kuboard-spray kuboard-spray
 COPY ./web/dist /kuboard-spray/ui
 COPY ./server/pull-resource-package.sh pull-resource-package.sh
+RUN chmod +x kuboard-spray kuboard-spray-admin
 
 CMD [ "./kuboard-spray" ]

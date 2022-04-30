@@ -1,3 +1,6 @@
 go 1.18
 
 use ./server
+use ./admin
+use ./go-yaml
+

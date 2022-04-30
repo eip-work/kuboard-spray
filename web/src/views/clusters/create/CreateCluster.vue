@@ -122,7 +122,9 @@ export default {
             resource_package: this.form.kuboardspray_resource_package,
           }
           await this.kuboardSprayApi.post('/clusters', req).then(resp => {
-            console.log(resp.data.data)
+            if (resp.status === 500) {
+              console.log(resp.data.data)
+            }
             this.$message.success(this.$t('msg.save_succeeded'))
             this.$router.push(`/clusters/${this.form.cluster_name}?mode=edit`)
           }).catch(e => {

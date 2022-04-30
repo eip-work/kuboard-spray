@@ -18,6 +18,18 @@ const comp = {
         return callback(window.VueAppComponent.$t('validator.dnsName'))
       }
     }
+    app.config.globalProperties.$validators.ipv4 = function (rule, value, callback) {
+      if (!value) {
+        return callback()
+      }
+      let reg = /(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}/
+      console.log(reg.test(value))
+      if (reg.test(value)) {
+        return callback()
+      } else {
+        return callback('非法的 ipv4 地址')
+      }
+    }
   }
 }
 

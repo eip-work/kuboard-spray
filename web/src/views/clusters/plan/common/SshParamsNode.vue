@@ -109,6 +109,7 @@ export default {
     return {
       hostRules: [
         { required: true, message: this.$t('field.ansible_host') + this.$t('field.is_required_field'), trigger: 'blur' },
+        { validator: this.$validators.ipv4, trigger: 'change' },
         {
           validator: (rule, value, callback) => {
             if (value === location.hostname) {
@@ -127,6 +128,7 @@ export default {
       ],
       ipRules: [
         { required: true, message: this.$t('ip') + this.$t('field.is_required_field'), trigger: 'change' },
+        { validator: this.$validators.ipv4, trigger: 'change' },
         {
           validator: (rule, value, callback) => {
             for (let key in this.cluster.inventory.all.hosts) {

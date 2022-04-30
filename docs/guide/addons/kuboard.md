@@ -1,0 +1,7 @@
+---
+---
+
+# Kuboard
+
+<InstallAddon addonName="kuboard"/>
+

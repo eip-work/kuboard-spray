@@ -85,6 +85,7 @@ module.exports = {
           title: '可选组件',
           children: [
             '/guide/addons/install_addon.md',
+            '/guide/addons/kuboard.md',
             '/guide/addons/nodelocaldns.md',
             '/guide/addons/netchecker.md',
             '/guide/addons/metrics_server.md',

@@ -28,6 +28,13 @@ zh:
     </FieldString>
     <FieldString :holder="vars" :prop="prop" fieldName="kuboard_cluster_name" :rules="cluster_name_rules" :placeholder="'默认值 ' + addon.params_default.kuboard_cluster_name + '，显示在 Kuboard 中的集群名称'">
     </FieldString>
+    <el-form-item label-position="left" label="Kuboard 界面" v-if="cluster.state && cluster.state.addons && cluster.state.addons.kuboard.is_installed" class="app_text_mono">
+      <div style="background-color: var(--el-color-success-light-9); padding: 10px; border-radius: 5px;">
+        <KuboardSprayLink :href="kuboard_url">{{ kuboard_url }}</KuboardSprayLink>
+        <div><div style="display: inline-block; width: 72px;">默认用户名</div>:  admin</div>
+        <div><div style="display: inline-block; width: 72px;">默认密 码</div>: Kuboard123</div>
+      </div>
+    </el-form-item>
   </AddonSection>
 </template>
 
@@ -83,6 +90,24 @@ export default {
           delete(this.vars.kuboard_version)
         }
       }
+    },
+    kuboard_url () {
+      let result = 'http://'
+      for (let key in this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts) {
+        result += this.cluster.inventory.all.hosts[key].ip || this.cluster.inventory.all.hosts[key].ansible_host
+        break
+      }
+      let addon = undefined
+      for (let key in this.cluster.resourcePackage.data.addon) {
+        addon = this.cluster.resourcePackage.data.addon[key]
+        if (addon.name === 'kuboard')
+          break
+      }
+      let kuboard_port = this.cluster.inventory.all.children.target.children.k8s_cluster.vars.kuboard_port || addon.params_default.kuboard_port
+      if (kuboard_port != 80) {
+        result += ':' + kuboard_port
+      }
+      return result
     },
     enabled: {
       get () {

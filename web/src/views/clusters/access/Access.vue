@@ -60,9 +60,23 @@ zh:
     <div class="app_block_title">kuboard</div>
     <div class="access_details">
       <el-alert :closable="false" type="success" effect="dark" :title="$t('proposeKuboard')"></el-alert>
-      <div class="details">
-        <KuboardSprayLink class="app_margin_top" href="https://www.kuboard.cn/">https://www.kuboard.cn/</KuboardSprayLink>
-      </div>
+      <template v-if="cluster.state.addons">
+        <div class="details" v-if="cluster.state.addons.kuboard === undefined">
+          <KuboardSprayLink class="app_margin_top" href="https://www.kuboard.cn/">https://www.kuboard.cn/</KuboardSprayLink>
+        </div>
+        <div class="details" v-else>
+          <div v-if="cluster.state.addons.kuboard.is_installed" style="font-size: 13px; line-height: 28px;">
+            <KuboardSprayLink :href="kuboard_url">{{ kuboard_url }}</KuboardSprayLink>
+            <div><div style="display: inline-block; width: 72px;">默认用户名</div>:  admin</div>
+            <div><div style="display: inline-block; width: 72px;">默认密 码</div>: Kuboard123</div>
+          </div>
+          <div v-else>
+            <KuboardSprayLink href="https://kuboard-spray.cn/guide/addons/install_addon.html" target="_blank">安装 kuboard</KuboardSprayLink>
+            <div></div>
+            <KuboardSprayLink class="app_margin_top" href="https://www.kuboard.cn/">https://www.kuboard.cn/</KuboardSprayLink>
+          </div>
+        </div>
+      </template>
     </div>
     <div class="app_block_title">etcd</div>
     <div class="access_details" v-if="cluster.state">
@@ -144,6 +158,24 @@ etcdctl member list
 `
       },
       set () {}
+    },
+    kuboard_url () {
+      let result = 'http://'
+      for (let key in this.cluster.inventory.all.children.target.children.k8s_cluster.children.kube_control_plane.hosts) {
+        result += this.cluster.inventory.all.hosts[key].ip || this.cluster.inventory.all.hosts[key].ansible_host
+        break
+      }
+      let addon = undefined
+      for (let key in this.cluster.resourcePackage.data.addon) {
+        addon = this.cluster.resourcePackage.data.addon[key]
+        if (addon.name === 'kuboard')
+          break
+      }
+      let kuboard_port = this.cluster.inventory.all.children.target.children.k8s_cluster.vars.kuboard_port || addon.params_default.kuboard_port
+      if (kuboard_port != 80) {
+        result += ':' + kuboard_port
+      }
+      return result
     }
   },
   components: { Codemirror },

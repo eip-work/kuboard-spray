@@ -245,7 +245,6 @@ export default {
     },
     onVisibleChange (v) {
       if (v && this.cluster.state && this.addonState) {
-        this.action = this.addonState.is_installed ? 'remove_addon' : 'install_addon'
         this.testPingPong('target')
       }
     },
@@ -284,7 +283,7 @@ export default {
               }
               req.nodes_to_exclude = trimMark(temp)
             }
-            console.log(req)
+            // console.log(req)
             this.kuboardSprayApi.post(`/clusters/${this.cluster.name}/${this.action}`, req).then(resp => {
               let pid = resp.data.data.pid
               resolve(pid)

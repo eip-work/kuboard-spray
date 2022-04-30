@@ -91,6 +91,13 @@ module.exports = {
             '/guide/addons/metrics_server.md',
           ],
         },
+        {
+          title: '其他',
+          children: [
+            '/kuboard-spray/backup.md',
+            '/kuboard-spray/reset-password.md'
+          ]
+        },
         '/support/change-log/v1.md',
       ],
     }

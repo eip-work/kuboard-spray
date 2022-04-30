@@ -40,14 +40,14 @@ zh:
           </el-form-item>
           <div style="height: 40px;">
             <!-- <el-checkbox v-if="!mfaPolicy.forceSession" style="float: left;" v-model="rememberLogin" @change="changeRememberLogin">7天内保持登录</el-checkbox> -->
-            <!-- <span style="float: right;" v-if="brandConfig && !brandConfig.disableHelpLink">
-              <a style="text-decoration: none; font-size: 14px" href="https://kuboard.cn/install/v3/reset-password.html" target="_blank">
+            <span style="float: right;">
+              <a style="text-decoration: none; font-size: 13px" href="https://kuboard-spray.cn/kuboard-spray/reset-password.html" target="_blank">
                 <el-icon>
                   <el-icon-link></el-icon-link>
                 </el-icon>
                 重置密码
               </a>
-            </span> -->
+            </span>
           </div>
           <div>
             <el-button style="width: 100%;" size="large" type="primary" icon="el-icon-promotion" @click="login">登 录</el-button>

@@ -275,8 +275,12 @@ export default {
   },
   components: { Node, ConfigKuboardSpray, ConfigK8sCluster, ConfigGlobal, ConfigAddons, ConfigNode, ConfigEtcd, AddNode, CopyGapNodeToInventory },
   mounted () {
+    this.currentPropertiesTab = sessionStorage.getItem(this.cluster.name + '_plan_tab') || 'global_config'
   },
   watch: {
+    currentPropertiesTab: function () {
+      sessionStorage.setItem(this.cluster.name + '_plan_tab', this.currentPropertiesTab)
+    },
     'inventory.all.hosts': function() {
       if (this.currentPropertiesTab.indexOf('NODE_') !== 0) {
         return

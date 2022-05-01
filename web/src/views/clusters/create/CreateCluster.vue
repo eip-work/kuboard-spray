@@ -4,7 +4,7 @@ en:
   createResource: "Add Resource Package"
   name: Name
   requiresName: Please input name.
-  conflict: conflict with existing one.
+  conflict: conflict with existing one {name}.
   goToResourcePage: This is going to open Resource package management page in a new window, do you confirm?
 zh:
   addCluster: 添加集群安装计划

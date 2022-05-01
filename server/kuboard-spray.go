@@ -44,6 +44,7 @@ func setupRouter() *gin.Engine {
 	api.GET("/clusters/:cluster", cluster.GetCluster)
 	api.PUT("/clusters/:cluster", cluster.ModifyCluster)
 	api.DELETE("/clusters/:cluster", cluster.DeleteCluster)
+	api.PATCH("/clusters/:cluster", cluster.RenameCluster)
 
 	api.POST("/clusters/:cluster/install_cluster", operation.InstallCluster)
 	api.POST("/clusters/:cluster/remove_node", operation.RemoveNode)

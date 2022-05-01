@@ -96,8 +96,8 @@
                 <div style="font-weight: bolder;">{{item.name}}</div>
               </template>
               <div class="app_text_mono">
-                <el-tag type="success" v-if="item.included">已包含</el-tag>
-                <el-tag type="info" v-else>未包含</el-tag>
+                <el-tag type="success">已包含</el-tag>
+                <!-- <el-tag type="info" v-else>未包含 a</el-tag> -->
               </div>
             </el-form-item>
             <div class="package_info">

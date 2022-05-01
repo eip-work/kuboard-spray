@@ -124,7 +124,17 @@ zh:
             </el-form-item>
             <div class="package_info">
               <template v-for="(value, key) in item.params" :key="key + 'addon' + index">
-                <el-form-item :label="key" label-width="280px" v-if="typeof value == 'string' && value.indexOf('{{') < 0">
+                <el-form-item :label="key" label-width="280px" v-if="typeof value == 'string' && value.indexOf('{{') < 0 && key.indexOf('version') >= 0">
+                  <template #label>
+                    <div style="font-size: 12px">{{key}}</div>
+                  </template>
+                  <div class="app_text_mono" style="font-size: 12px">
+                    {{value}}
+                  </div>
+                </el-form-item>
+              </template>
+              <template v-for="(value, key) in item.params_default" :key="key + 'addon_default' + index">
+                <el-form-item :label="key" label-width="280px" v-if="typeof value == 'string' && value.indexOf('{{') < 0 && key.indexOf('version') >= 0">
                   <template #label>
                     <div style="font-size: 12px">{{key}}</div>
                   </template>

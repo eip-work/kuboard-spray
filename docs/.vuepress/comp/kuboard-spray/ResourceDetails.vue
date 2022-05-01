@@ -102,7 +102,17 @@
             </el-form-item>
             <div class="package_info">
               <template v-for="(value, key) in item.params">
-                <el-form-item :label="key" label-width="280px" v-if="(value + '').indexOf('{{') < 0" :key="key + 'addons' + index">
+                <el-form-item :label="key" label-width="280px" v-if="(value + '').indexOf('{{') < 0 && key.indexOf('version') >= 0" :key="key + 'addons' + index">
+                  <template #label>
+                    <div style="font-size: 12px">{{key}}</div>
+                  </template>
+                  <div class="app_text_mono" style="font-size: 12px">
+                    {{value}}
+                  </div>
+                </el-form-item>
+              </template>
+              <template v-for="(value, key) in item.params_default">
+                <el-form-item :label="key" label-width="280px" v-if="(value + '').indexOf('{{') < 0 && key.indexOf('version') >= 0" :key="key + 'addons_default_' + index">
                   <template #label>
                     <div style="font-size: 12px">{{key}}</div>
                   </template>

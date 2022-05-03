@@ -35,6 +35,16 @@ docker run --rm -v ${PWD}:/usr/src/kuboard-spray \
 ls -lh ./server/kuboard-spray
 
 echo
+echo "【构建 admin】"
+rm -f ./admin/kuboard-spray-admin
+docker run --rm -v ${PWD}:/usr/src/kuboard-spray \
+  -v ~/temp/build-temp/pkg:/go/pkg \
+  -w /usr/src/kuboard-spray/admin golang:1.18.0-buster \
+  sh -c "export GOPROXY=https://goproxy.io,direct && go build kuboard-spray-admin.go"
+
+ls -lh ./admin/kuboard-spray-admin
+
+echo
 echo "【构建 镜像】"
 
 docker build -f Dockerfile -t $tag:$1-${arch} --build-arg arch=${arch} .

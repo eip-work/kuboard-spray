@@ -50,6 +50,7 @@ RUN /usr/bin/python3 -m pip install --no-cache-dir pip -U \
 
 COPY .docker/ansible-patch/config/base.yml /usr/local/lib/python3.8/dist-packages/ansible/config/base.yml
 COPY .docker/ansible-patch/plugins_callback/default.py /usr/local/lib/python3.8/dist-packages/ansible/plugins/callback/default.py
+COPY .docker/ansible-patch/plugins_callback/__init__.py /usr/local/lib/python3.8/dist-packages/ansible/plugins/callback/__init__.py
 COPY .docker/ansible-patch/plugins_action/raw.py /usr/local/lib/python3.8/dist-packages/ansible/plugins/action/raw.py
 
 ENV KUBOARD_SPRAY_WEB_DIR="/kuboard-spray/ui"

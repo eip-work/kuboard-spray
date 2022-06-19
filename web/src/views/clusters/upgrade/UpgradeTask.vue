@@ -64,7 +64,7 @@ zh:
       <el-form-item :label="$t('operation')" prop="action" style="margin-top: 10px;">
         <el-radio-group v-model="form.action" class="app_margin_bottom">
           <template v-if="nodeName === undefined">
-            <el-radio-button label="download_binaries" :disabled="!requireSeparateDownloadAction">
+            <el-radio-button label="download_binaries">
               {{ $t('download_binaries') }}
             </el-radio-button>
             <el-radio-button label="upgrade_all_nodes" :disabled="requireSeparateDownloadAction || !controlPlanePendingUpgrade">

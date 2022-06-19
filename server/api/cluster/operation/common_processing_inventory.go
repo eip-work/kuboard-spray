@@ -106,15 +106,17 @@ func updateResourcePackageVarsToInventory(req OperationCommonRequest) (map[strin
 	addons := common.MapGet(resourcePackage, "data.addon").([]interface{})
 	for _, a := range addons {
 		addon := a.(map[string]interface{})
-		enabled := common.MapGet(inventory, "all.children.target.children.k8s_cluster.vars."+addon["target"].(string))
-		if enabled == true {
-			if addon["params_default"] != nil {
-				for key, value := range addon["params_default"].(map[string]interface{}) {
-					if common.MapGet(inventory, "all.children.target.vars."+key) == nil {
-						common.MapSet(inventory, "all.children.target.vars."+key, value)
-					}
+
+		if addon["params_default"] != nil {
+			for key, value := range addon["params_default"].(map[string]interface{}) {
+				if common.MapGet(inventory, "all.children.target.vars."+key) == nil {
+					common.MapSet(inventory, "all.children.target.vars."+key, value)
 				}
 			}
+		}
+
+		enabled := common.MapGet(inventory, "all.children.target.children.k8s_cluster.vars."+addon["target"].(string))
+		if enabled == true {
 			if addon["params"] != nil {
 				for key, value := range addon["params"].(map[string]interface{}) {
 					common.MapSet(inventory, "all.children.target.vars."+key, value)

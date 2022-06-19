@@ -21,28 +21,18 @@ __metaclass__ = type
 
 import difflib
 import json
-import os
 import sys
-import warnings
-
+from collections import OrderedDict
 from copy import deepcopy
 
 from ansible import constants as C
 from ansible.module_utils.common._collections_compat import MutableMapping
-from ansible.module_utils.six import PY3
 from ansible.module_utils._text import to_text
 from ansible.parsing.ajson import AnsibleJSONEncoder
 from ansible.plugins import AnsiblePlugin, get_plugin_class
 from ansible.utils.color import stringc
 from ansible.utils.display import Display
 from ansible.vars.clean import strip_internal_keys, module_response_deepcopy
-
-if PY3:
-    # OrderedDict is needed for a backwards compat shim on Python3.x only
-    # https://github.com/ansible/ansible/pull/49512
-    from collections import OrderedDict
-else:
-    OrderedDict = None
 
 global_display = Display()
 
@@ -74,6 +64,7 @@ class CallbackBase(AnsiblePlugin):
             self._display.vvvv('Loading callback plugin %s of type %s, v%s from %s' % (name, ctype, version, sys.modules[self.__module__].__file__))
 
         self.disabled = False
+        self.wants_implicit_tasks = False
 
         self._plugin_options = {}
         if options is not None:
@@ -97,6 +88,21 @@ class CallbackBase(AnsiblePlugin):
 
         # load from config
         self._plugin_options = C.config.get_plugin_options(get_plugin_class(self), self._load_name, keys=task_keys, variables=var_options, direct=direct)
+
+    @staticmethod
+    def host_label(result):
+        """Return label for the hostname (& delegated hostname) of a task
+        result.
+        """
+        label = "%s" % result._host.get_name()
+        if result._task.delegate_to and result._task.delegate_to != result._host.get_name():
+            # show delegated host
+            label += " -> %s" % result._task.delegate_to
+            # in case we have 'extra resolution'
+            ahost = result._result.get('_ansible_delegated_vars', {}).get('ansible_host', result._task.delegate_to)
+            if result._task.delegate_to != ahost:
+                label += "(%s)" % ahost
+        return label
 
     def _run_is_verbose(self, result, verbosity=0):
         return ((self._display.verbosity > verbosity or result._result.get('_ansible_verbose_always', False) is True)
@@ -239,13 +245,6 @@ class CallbackBase(AnsiblePlugin):
             item = result.get('_ansible_item_label', result.get('item'))
         return item
 
-    def _get_item(self, result):
-        ''' here for backwards compat, really should have always been named: _get_item_label'''
-        cback = getattr(self, 'NAME', os.path.basename(__file__))
-        self._display.deprecated("The %s callback plugin should be updated to use the _get_item_label method instead" % cback,
-                                 version="2.11", collection_name='ansible.builtin')
-        return self._get_item_label(result)
-
     def _process_items(self, result):
         # just remove them as now they get handled by individual callbacks
         del result._result['results']
@@ -264,6 +263,11 @@ class CallbackBase(AnsiblePlugin):
                 # 'var' value as field, so eliminate others and what is left should be varname
                 for hidme in self._hide_in_debug:
                     result.pop(hidme, None)
+
+    def _print_task_path(self, task, color=C.COLOR_DEBUG):
+        path = task.get_path()
+        if path:
+            self._display.display(u"task path: %s" % path, color=color)
 
     def set_play_context(self, play_context):
         pass
@@ -352,7 +356,6 @@ class CallbackBase(AnsiblePlugin):
         host = result._host.get_name()
         self.runner_on_unreachable(host, result._result)
 
-    # FIXME: not called
     def v2_runner_on_async_poll(self, result):
         host = result._host.get_name()
         jid = result._result.get('ansible_job_id')
@@ -360,16 +363,18 @@ class CallbackBase(AnsiblePlugin):
         clock = 0
         self.runner_on_async_poll(host, result._result, jid, clock)
 
-    # FIXME: not called
     def v2_runner_on_async_ok(self, result):
         host = result._host.get_name()
         jid = result._result.get('ansible_job_id')
         self.runner_on_async_ok(host, result._result, jid)
 
-    # FIXME: not called
     def v2_runner_on_async_failed(self, result):
         host = result._host.get_name()
+        # Attempt to get the async job ID. If the job does not finish before the
+        # async timeout value, the ID may be within the unparsed 'async_result' dict.
         jid = result._result.get('ansible_job_id')
+        if not jid and 'async_result' in result._result:
+            jid = result._result['async_result'].get('ansible_job_id')
         self.runner_on_async_failed(host, result._result, jid)
 
     def v2_playbook_on_start(self, playbook):

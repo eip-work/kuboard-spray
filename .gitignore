@@ -23,6 +23,7 @@ __debug_bin
 
 push.sh
 deploy.sh
+launch-node1.sh
 .DS_Store
 *.swp
 

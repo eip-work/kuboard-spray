@@ -12,6 +12,8 @@ en:
   downloadFirstCanReplace: Can replace, go download
   change_resource_package_version_success: Succeed in changing resource package version
   change_resource_package_version_failed: Failed to change resource package version {msg}
+
+  not_supported_cm: Container manager not match
 zh:
   title: 选择升级时使用的资源包
   currentVersion: 当前版本
@@ -25,6 +27,8 @@ zh:
   downloadFirstCanReplace: 可替代，去下载
   change_resource_package_version_success: 已成功修改资源包版本
   change_resource_package_version_failed: 修改资源包版本失败 {msg}
+
+  not_supported_cm: 不支持当前容器引擎
 </i18n>
 
 <template>
@@ -47,7 +51,10 @@ zh:
                 </el-tag>
                 <template v-else>
                   <el-button icon="el-icon-view" type="primary" plain @click="$refs.comparePackage.show(scope.row)">{{ $t('msg.view') }}</el-button>
-                  <template v-if="canReplaceBy(scope.row)">
+                  <template v-if="!matchComponents(scope.row)">
+                    <el-button disabled icon="el-icon-circle-close" type="info">{{ $t('not_supported_cm') }}</el-button>
+                  </template>
+                  <template v-else-if="canReplaceBy(scope.row)">
                     <el-button type="primary" icon="el-icon-download" v-if="!scope.row.isOffline && !scope.row.imported"
                       @click="$router.push(`/settings/resources/${scope.row.version}/on_air`)">
                       {{ $t('downloadFirstCanReplace') }}
@@ -116,6 +123,15 @@ export default {
     },
     canReplaceBy(target) {
       return this.canTarget(target.yaml.metadata.can_replace_to, this.cluster.resourcePackage.metadata.version)
+    },
+    matchComponents(target) {
+      let container_manager = this.cluster.inventory.all.children.target.vars.container_manager
+      for (let ce_index in target.yaml.data.container_engine) {
+        if (target.yaml.data.container_engine[ce_index].container_manager == container_manager) {
+          return true
+        }
+      }
+      return false
     },
     canTarget(rule, originalVersion) {
       if (!rule) {

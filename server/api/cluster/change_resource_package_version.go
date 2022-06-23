@@ -1,8 +1,10 @@
 package cluster
 
 import (
+	"encoding/json"
 	"net/http"
 
+	"github.com/eip-work/kuboard-spray/api/ansible_rpc"
 	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
@@ -43,8 +45,34 @@ func ChangeResourcePackageVersion(c *gin.Context) {
 	common.MapSet(metadata.Inventory, "all.hosts.localhost.kuboardspray_resource_package_previous", common.MapGetString(metadata.Inventory, "all.hosts.localhost.kuboardspray_resource_package"))
 	common.MapSet(metadata.Inventory, "all.hosts.localhost.kuboardspray_resource_package", req.TargetVersion)
 
+	netmanager := common.MapGetString(metadata.Inventory, "all.children.target.children.k8s_cluster.vars.kube_network_plugin")
+
+	if netmanager == "calico" && (common.MapGet(metadata.Inventory, "all.children.target.children.k8s_cluster.vars.calico_ipip_mode") == nil || common.MapGet(metadata.Inventory, "all.children.target.children.k8s_cluster.vars.calico_vxlan_mode") == nil) {
+		shellReq1 := ansible_rpc.AnsibleCommandsRequest{
+			Name:    "calico",
+			Command: `calicoctl.sh get ipPool default-pool -o json`,
+		}
+		shellResult, err := ansible_rpc.ExecuteShellCommandsAbortOnFirstSuccess("cluster", req.Cluster, "kube_control_plane[0]", []ansible_rpc.AnsibleCommandsRequest{shellReq1})
+		if err != nil {
+			common.HandleError(c, http.StatusInternalServerError, "failed to get calico status", err)
+			return
+		}
+		stdout := shellResult[0].StdOut
+		calicoIpPool := map[string]interface{}{}
+		if err := json.Unmarshal([]byte(stdout), &calicoIpPool); err == nil {
+			ipipMode := common.MapGetString(calicoIpPool, "spec.ipipMode")
+			vxlanMode := common.MapGetString(calicoIpPool, "spec.vxlanMode")
+			common.MapSet(metadata.Inventory, "all.children.target.children.k8s_cluster.vars.calico_ipip_mode", ipipMode)
+			common.MapSet(metadata.Inventory, "all.children.target.children.k8s_cluster.vars.calico_vxlan_mode", vxlanMode)
+		} else {
+			common.HandleError(c, http.StatusInternalServerError, "failed to parse calicoIpPool", err)
+			return
+		}
+	}
+
 	if err := cluster_common.SaveInventory(req.Cluster, metadata.Inventory); err != nil {
 		common.HandleError(c, http.StatusInternalServerError, "failed to save inventory", err)
+		return
 	}
 
 	c.JSON(http.StatusOK, common.KuboardSprayResponse{

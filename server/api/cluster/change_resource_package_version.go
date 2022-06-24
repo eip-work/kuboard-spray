@@ -47,12 +47,18 @@ func ChangeResourcePackageVersion(c *gin.Context) {
 
 	netmanager := common.MapGetString(metadata.Inventory, "all.children.target.children.k8s_cluster.vars.kube_network_plugin")
 
-	if netmanager == "calico" && (common.MapGet(metadata.Inventory, "all.children.target.children.k8s_cluster.vars.calico_ipip_mode") == nil || common.MapGet(metadata.Inventory, "all.children.target.children.k8s_cluster.vars.calico_vxlan_mode") == nil) {
+	if netmanager == "calico" && (common.MapGet(metadata.Inventory, "all.children.target.children.k8s_cluster.vars.calico_ipip_mode") == nil ||
+		common.MapGet(metadata.Inventory, "all.children.target.children.k8s_cluster.vars.calico_vxlan_mode") == nil ||
+		common.MapGet(metadata.Inventory, "all.children.target.children.k8s_cluster.vars.calico_backend") == nil) {
 		shellReq1 := ansible_rpc.AnsibleCommandsRequest{
 			Name:    "calico",
 			Command: `calicoctl.sh get ipPool default-pool -o json`,
 		}
-		shellResult, err := ansible_rpc.ExecuteShellCommandsAbortOnFirstSuccess("cluster", req.Cluster, "kube_control_plane[0]", []ansible_rpc.AnsibleCommandsRequest{shellReq1})
+		shellReq2 := ansible_rpc.AnsibleCommandsRequest{
+			Name:    "calico",
+			Command: `kubectl get cm -n kube-system calico-config -o json`,
+		}
+		shellResult, err := ansible_rpc.ExecuteShellCommandsAbortOnFirstSuccess("cluster", req.Cluster, "kube_control_plane[0]", []ansible_rpc.AnsibleCommandsRequest{shellReq1, shellReq2})
 		if err != nil {
 			common.HandleError(c, http.StatusInternalServerError, "failed to get calico status", err)
 			return
@@ -68,6 +74,17 @@ func ChangeResourcePackageVersion(c *gin.Context) {
 			common.HandleError(c, http.StatusInternalServerError, "failed to parse calicoIpPool", err)
 			return
 		}
+
+		stdout2 := shellResult[1].StdOut
+		calicoBackend := map[string]interface{}{}
+		if err := json.Unmarshal([]byte(stdout2), &calicoBackend); err == nil {
+			calico_backend := common.MapGetString(calicoBackend, "data.calico_backend")
+			common.MapSet(metadata.Inventory, "all.children.target.children.k8s_cluster.vars.calico_backend", calico_backend)
+		} else {
+			common.HandleError(c, http.StatusInternalServerError, "failed to parse calico_backend", err)
+			return
+		}
+
 	}
 
 	if err := cluster_common.SaveInventory(req.Cluster, metadata.Inventory); err != nil {

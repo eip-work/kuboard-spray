@@ -51,17 +51,19 @@ export default {
   },
   methods: {
     async loadEtcdDeploymentOptions () {
-      return [
+      let result = [
         {
           label: this.$t('field.etcd_deployment_type-host'),
           value: 'host'
         },
-        {
+      ]
+      if (this.cluster.inventory.all.children.target.vars.container_manager === 'docker') {
+        result.push({
           label: this.$t('field.etcd_deployment_type-docker'),
           value: 'docker',
-          disabled: this.cluster.inventory.all.children.target.vars.container_manager !== 'docker',
-        }
-      ]
+        })
+      }
+      return result
     },
   }
 }

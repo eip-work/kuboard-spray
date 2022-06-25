@@ -11,10 +11,15 @@ zh:
     <FieldSelect :holder="cluster.inventory.all.children.target.children.k8s_cluster.vars" fieldName="kube_network_plugin"
       prop="all.children.target.children.k8s_cluster.vars"
       required :loadOptions="loadKubeNetworkPlugin"></FieldSelect>
+    <el-card v-if="kube_network == 'calico'" shadow="none" :body-style="{padding: '10px 20px 10px 20px', 'background-color': 'var(--el-color-info-light-9)'}" class="app_margin_bottom">
+      <component :is="kube_network" :cluster="cluster"></component>
+    </el-card>
   </ConfigSection>
 </template>
 
 <script>
+import calico from './network_plugin/Calico.vue'
+
 export default {
   props: {
     cluster: { type: Object, required: true },
@@ -42,9 +47,12 @@ export default {
         }
       }
       return this.cluster.inventory.all.children.target.children.k8s_cluster.vars.kube_network_plugin
+    },
+    kube_network () {
+      return this.cluster.inventory.all.children.target.children.k8s_cluster.vars.kube_network_plugin
     }
   },
-  components: { },
+  components: { calico },
   mounted () {
   },
   methods: {

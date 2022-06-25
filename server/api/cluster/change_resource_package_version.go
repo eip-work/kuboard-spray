@@ -49,7 +49,7 @@ func ChangeResourcePackageVersion(c *gin.Context) {
 
 	if netmanager == "calico" && (common.MapGet(metadata.Inventory, "all.children.target.children.k8s_cluster.vars.calico_ipip_mode") == nil ||
 		common.MapGet(metadata.Inventory, "all.children.target.children.k8s_cluster.vars.calico_vxlan_mode") == nil ||
-		common.MapGet(metadata.Inventory, "all.children.target.children.k8s_cluster.vars.calico_backend") == nil) {
+		common.MapGet(metadata.Inventory, "all.children.target.children.k8s_cluster.vars.calico_network_backend") == nil) {
 		shellReq1 := ansible_rpc.AnsibleCommandsRequest{
 			Name:    "calico",
 			Command: `calicoctl.sh get ipPool default-pool -o json`,
@@ -78,10 +78,10 @@ func ChangeResourcePackageVersion(c *gin.Context) {
 		stdout2 := shellResult[1].StdOut
 		calicoBackend := map[string]interface{}{}
 		if err := json.Unmarshal([]byte(stdout2), &calicoBackend); err == nil {
-			calico_backend := common.MapGetString(calicoBackend, "data.calico_backend")
-			common.MapSet(metadata.Inventory, "all.children.target.children.k8s_cluster.vars.calico_backend", calico_backend)
+			calico_network_backend := common.MapGetString(calicoBackend, "data.calico_backend")
+			common.MapSet(metadata.Inventory, "all.children.target.children.k8s_cluster.vars.calico_network_backend", calico_network_backend)
 		} else {
-			common.HandleError(c, http.StatusInternalServerError, "failed to parse calico_backend", err)
+			common.HandleError(c, http.StatusInternalServerError, "failed to parse calico_network_backend", err)
 			return
 		}
 

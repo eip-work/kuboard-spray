@@ -15,10 +15,12 @@ zh:
     <slot v-if="compute_edit_mode" name="edit"></slot>
     <div v-else class="app_text_mono">
       <slot v-if="holder === undefined" name="view"></slot>
-      <span v-else-if="value !== undefined && value !== ''">
-        <slot name="view">{{ compute_display_value }}</slot>
-      </span>
-      <span v-else class="field_placeholder">{{ compute_placeholder }}</span>
+      <slot v-else name="view">
+        <span v-if="value !== undefined && value !== ''">
+          {{ compute_display_value }}
+        </span>
+        <span v-else class="field_placeholder">{{ compute_placeholder }}</span>
+      </slot>
     </div>
   </el-form-item>
 </template>

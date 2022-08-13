@@ -92,6 +92,18 @@ meta:
   yrm use taobao
   ```
 
+* 安装 pip
+  ```sh
+  sudo apt update
+  sudo apt install -y python3-pip
+  sudo pip3 --version
+  ```
+
+* 安装 sshpass
+  ```sh
+  apt install -y sshpass
+  ```
+
 ## 进入开发环境
 
 建议使用 vscode 作为 IDE 环境。
@@ -112,17 +124,34 @@ meta:
 
 ### 导入代码到开发环境
 
-执行如下命令，将代码 clone 到开发环境。
+* 执行如下命令，将代码 clone 到开发环境。
 
-```sh
-git clone https://github.com/eip-work/kuboard-spray.git
-cd kuboard-spray
-git submodule update --init
-```
+  ```sh
+  git clone https://github.com/eip-work/kuboard-spray.git
+  cd kuboard-spray
+  git submodule update --init
+  ```
 
-使用 vscode 打开 kuboard-spray 目录，如下图所示：
+* 使用 vscode 打开 kuboard-spray 目录，如下图所示：
 
-![kuboard-spray](./dev.assets/iShot_2022-08-06_20.07.52.png)
+  ![kuboard-spray](./dev.assets/iShot_2022-08-06_20.07.52.png)
+
+* 在 vscode 中导航到 `kuboard-spray/requirements`，点击右键，并点击 `在集成终端中打开`，如下图所示
+
+  ```sh
+  # 当前路径为 kuboard-spray
+  sudo pip install -r requirements.txt
+  ```
+
+* 替换对 `ansible` 定制的文件：
+
+  ```sh
+  cp .docker/ansible-patch/config/base.yml /usr/local/lib/python3.8/dist-packages/ansible/config/base.yml
+  cp .docker/ansible-patch/plugins_callback/default.py /usr/local/lib/python3.8/dist-packages/ansible/plugins/callback/default.py
+  cp .docker/ansible-patch/plugins_callback/__init__.py /usr/local/lib/python3.8/dist-packages/ansible/plugins/callback/__init__.py
+  cp .docker/ansible-patch/plugins_action/raw.py /usr/local/lib/python3.8/dist-packages/ansible/plugins/action/raw.py
+  ```
+
 
 ## 运行开发环境
 
@@ -140,6 +169,7 @@ git submodule update --init
 * 在集成终端中（kuboard/web 路径下）执行命令：
 
   ```sh
+  ln -s version-amd64.json public/version.json  # 如果您使用 amr64 CPU，请替换 version-amd64.json 为 version-arm64.json
   yarn install
   yarn build
   ```

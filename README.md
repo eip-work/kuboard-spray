@@ -29,6 +29,10 @@ docker run -d \
   * kuboard-spray 所在机器不能当做 K8S 集群的一个节点，因为安装过程中会重启集群节点的容器引擎，这会导致 kuboard-spray 被重启掉。
 
 
+## 配置开发测试环境
+
+[配置开发测试环境](./docs/setup-dev/dev.md)
+
 ## 自制资源包
 
 Kuboard-Spray 将定期提供最新版本的资源包，可以在 kubord-spray 资源包管理界面中查到，如果您是离线环境，也可以在 [https://kuboard.cn/support/kuboard-spray/](https://kuboard-spray.cn/support/)找到最新的资源包。您也可以自己制作资源包，资源包的项目地址在 [kuboard-spray-resource](https://github.com/eip-work/kuboard-spray-resource)，资源包的制作方法会在2022年2月提供文档。

@@ -98,6 +98,12 @@ module.exports = {
             '/kuboard-spray/reset-password.md'
           ]
         },
+        {
+          title: '开发者',
+          children: [
+            '/setup-dev/dev.md',
+          ]
+        },
         '/support/change-log/v1.md',
       ],
     }

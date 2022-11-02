@@ -138,6 +138,8 @@ const field = {
     'kube_log_level-2': 'ERROR',
     'kube_log_level-3': 'FATAL',
 
+    apiserver_loadbalancer_domain_name: "ApiServer 域名",
+    apiserver_loadbalancer_domain_name_placeholder: "apiserver 的外置负载均衡服务器域名，默认值为 lb-apiserver.kubernetes.local",
     kube_apiserver_enable_admission_plugins: "启用 Admission",
     kube_apiserver_enable_admission_plugins_placeholder: "kube-apiserver 的参数 --enable-admission-plugins",
     kube_apiserver_disable_admission_plugins: "禁用 Admission",

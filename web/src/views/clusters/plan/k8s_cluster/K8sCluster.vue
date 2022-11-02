@@ -18,6 +18,7 @@ zh:
       </el-form-item>
     </template>
     <FieldString :holder="vars" :prop="prop" fieldName="cluster_name" required :rules="clusterNameRules"></FieldString>
+    <FieldString :holder="vars" :prop="prop" fieldName="apiserver_loadbalancer_domain_name" :required="false" :rules="donainNameRules"></FieldString>
     <FieldString :holder="vars" :prop="prop" fieldName="event_ttl_duration" required></FieldString>
     <FieldSelect v-if="cluster.resourcePackage && cluster.resourcePackage.data.kubernetes.candidate_admission_plugins" 
       :holder="vars" :prop="prop" fieldName="kube_apiserver_enable_admission_plugins" multiple anti-freeze
@@ -88,6 +89,9 @@ export default {
             return callback()
           }
         }
+      ],
+      donainNameRules: [
+        
       ]
     }
   },

@@ -39,7 +39,7 @@ func DownloadBinaries(c *gin.Context) {
 		failedNodes := ""
 		for _, nodeStatus := range status.NodeStatus {
 			logrus.Trace(nodeStatus)
-			if nodeStatus.Changed != "0" && nodeStatus.Unreachable == "0" && nodeStatus.Failed == "0" {
+			if nodeStatus.OK != "0" && nodeStatus.Unreachable == "0" && nodeStatus.Failed == "0" {
 				common.MapDelete(clusterMetadata.Inventory, "all.hosts."+nodeStatus.NodeName+".kuboardspray_require_download")
 				count++
 				nodes += nodeStatus.NodeName + ","

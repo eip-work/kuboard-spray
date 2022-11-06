@@ -9,7 +9,7 @@ zh:
 </i18n>
 
 <template>
-  <el-form-item label-width="80px" class="config_section_section">
+  <el-form-item :label-width="labelWidth" class="config_section_section">
     <template #label>
       <span v-if="!compute_edit_mode" class="viewLabel">{{label}}</span>
       <template v-else>
@@ -75,6 +75,7 @@ export default {
     disabled: { type: Boolean, required: false, default: false },
     antiFreeze: { type: Boolean, required: false, default: false },
     helpLink: { type: String, required: false, default: undefined },
+    labelWidth: { type: String, required: false, default: '80px'},
   },
   data () {
     return {

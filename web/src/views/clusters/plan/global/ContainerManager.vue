@@ -26,6 +26,9 @@ zh:
       </template>
     </FieldSelect>
     <template v-if="vars.container_manager === 'containerd'">
+      <FieldString :holder="vars" :prop="prop" fieldName="containerd_cfg_dir"></FieldString>
+      <FieldString :holder="vars" :prop="prop" fieldName="containerd_storage_dir"></FieldString>
+      <FieldString :holder="vars" :prop="prop" fieldName="containerd_state_dir"></FieldString>
       <FieldBool :holder="vars" :prop="prop" fieldName="containerd_use_systemd_cgroup" disabled></FieldBool>
       <ContainerMangerIrCnd :cluster="cluster"></ContainerMangerIrCnd>
     </template>

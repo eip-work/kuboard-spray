@@ -1,5 +1,5 @@
 <template>
-  <FieldCommon :fieldName="fieldName" :holder="holder" :prop="prop" :rules="rules" :required="required" :label="label" :placeholder="placeholder">
+  <FieldCommon :fieldName="fieldName" :holder="holder" :prop="prop" :rules="rules" :required="required" :label="label" :placeholder="placeholder" :helpString="helpString" :helpLink="helpLink">
     <template #edit>
       <el-input v-if="showPassword" v-model="value" show-password :disabled="disabled" :clearable="clearable"
         :placeholder="compute_placeholder"></el-input>
@@ -30,6 +30,8 @@ export default {
     label: { type: String, required: false, default: undefined },
     disabled: { type: Boolean, required: false, default: false },
     clearable: { type: Boolean, required: false, default: false },
+    helpString: { type: String, required: false, default: undefined },
+    helpLink: { type: String, required: false, default: undefined },
   },
   data () {
     return {

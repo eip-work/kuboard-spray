@@ -18,8 +18,8 @@ zh:
       </el-form-item>
     </template>
     <FieldString :holder="vars" :prop="prop" fieldName="cluster_name" required :rules="clusterNameRules"></FieldString>
-    <FieldString :holder="vars" :prop="prop" fieldName="apiserver_loadbalancer_domain_name" :required="false" :rules="donainNameRules"></FieldString>
-    <div style="margin: -10px 0 10px 120px; color: var(--el-text-color-secondary)">该域名可以用于从外部访问集群的apiserver，通常，您可以忽略此参数。kuboard-spray 在安装集群时，会将该域名添加到 apiserver 的自签名证书中；如下配置需要您自行完成：1.在您的 dns 里将该域名指向一个 k8s 集群外的负载均衡器；2.由该负载均衡器将请求转发到 apiserver 的 6443 端口。</div>
+    <FieldString :holder="vars" :prop="prop" fieldName="apiserver_loadbalancer_domain_name" :required="false" :rules="donainNameRules"
+      helpString="该域名可以用于从外部访问集群的apiserver，通常，您可以忽略此参数。kuboard-spray 在安装集群时，会将该域名添加到 apiserver 的自签名证书中；如下配置需要您自行完成：1.在您的 dns 里将该域名指向一个 k8s 集群外的负载均衡器；2.由该负载均衡器将请求转发到 apiserver 的 6443 端口。"></FieldString>
     <FieldString :holder="vars" :prop="prop" fieldName="event_ttl_duration" required></FieldString>
     <FieldSelect v-if="cluster.resourcePackage && cluster.resourcePackage.data.kubernetes.candidate_admission_plugins" 
       :holder="vars" :prop="prop" fieldName="kube_apiserver_enable_admission_plugins" multiple anti-freeze
@@ -40,6 +40,8 @@ zh:
       </template>
     </FieldSelect>
     <FieldRadio :holder="vars" :prop="prop" fieldName="kube_log_level" :options="[0, 1, 2, 3]" required></FieldRadio>
+    <!-- <K8sClusterEvictionHard :cluster="cluster" fieldName="eviction_hard_control_plane"></K8sClusterEvictionHard>
+    <K8sClusterEvictionHard :cluster="cluster" fieldName="eviction_hard"></K8sClusterEvictionHard> -->
     <FieldNumber :holder="vars" :prop="prop" fieldName="kubelet_event_record_qps">
       <template #append>
         <span v-if="vars.kubelet_event_record_qps === 0">{{$t('nolimit')}}</span>
@@ -63,6 +65,8 @@ zh:
 </template>
 
 <script>
+// import K8sClusterEvictionHard from './K8sClusterEvictionHard.vue'
+
 export default {
   props: {
     cluster: { type: Object, required: true },
@@ -109,7 +113,7 @@ export default {
       set () {},
     },
   },
-  components: { },
+  // components: { K8sClusterEvictionHard },
   mounted () {
   },
   methods: {

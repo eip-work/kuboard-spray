@@ -22,6 +22,12 @@ zh:
         <span v-else class="field_placeholder">{{ compute_placeholder }}</span>
       </slot>
     </div>
+    <div v-if="compute_edit_mode && (helpString || helpLink)" style="color: var(--el-text-color-secondary)">{{helpString}}
+      <a v-if="helpLink" :href="helpLink" target="_blank">
+        <el-icon style="vertical-align: middle;"><el-icon-link /></el-icon>
+        帮助
+      </a>
+    </div>
   </el-form-item>
 </template>
 
@@ -40,6 +46,8 @@ export default {
     antiFreeze: { type: Boolean, required: false, default: false },
     readOnly: { type: Boolean, required: false, default: false },
     labelWidth: { type: String, required: false, default: undefined },
+    helpString: { type: String, required: false, default: undefined },
+    helpLink: { type: String, required: false, default: undefined },
   },
   data () {
     return {

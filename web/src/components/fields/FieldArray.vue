@@ -1,5 +1,5 @@
 <template>
-  <FieldCommon :fieldName="fieldName" :holder="holder" :prop="prop" :rules="rules" :required="required" :label="label" :placeholder="placeholder">
+  <FieldCommon :fieldName="fieldName" :holder="holder" :prop="prop" :rules="rules" :required="required" :label="label" :placeholder="placeholder" :helpString="helpString" :helpLink="helpLink">
     <template #edit>
       <div style="flex-wrap: wrap; margin: -5px;" class="app_form_mini">
         <template v-for="(item, index) in value" :key="index + 'item'">
@@ -43,6 +43,8 @@ export default {
     label: { type: String, required: false, default: undefined },
     disabled: { type: Boolean, required: false, default: false },
     newItemTemplate: { required: false, default: '' },
+    helpString: { type: String, required: false, default: undefined },
+    helpLink: { type: String, required: false, default: undefined },
   },
   data () {
     return {

@@ -66,6 +66,12 @@ const field = {
     ansible_python_interpreter: 'Python 路径',
 
     container_manager: '容器引擎',
+    containerd_cfg_dir: 'config_dir',
+    containerd_cfg_dir_placeholder: '默认值为 /etc/containerd，不建议修改',
+    containerd_storage_dir: "storage_dir",
+    containerd_storage_dir_placeholder: "默认值为 /var/lib/containerd",
+    containerd_state_dir: "state_dir",
+    containerd_state_dir_placeholder: "默认值为 /run/containerd",
     containerd_insecure_registries: 'insecure_registries',
     containerd_use_systemd_cgroup: 'systemd_cgroup',
     container_manager_on_localhost: '容器引擎 localhost',
@@ -86,6 +92,9 @@ const field = {
     cluster_name: '集群名称',
     cluster_name_placeholder: 'cluster domain name',
     event_ttl_duration: '事件保留时长',
+    eviction_hard: '工作节点 eviction_hard',
+    eviction_hard_control_plane: '控制节点 eviction_hard',
+    
     auto_renew_certificates: '自动更新 apiserver 证书',
     kubelet_rotate_certificates: '自动更新 kubelet client 证书',
     kubelet_rotate_certificates_placeholder: '默认值 true，kubelet 客户端证书过期时，自动从 apiserver 申请新证书',

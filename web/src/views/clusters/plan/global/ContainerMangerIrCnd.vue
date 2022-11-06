@@ -75,7 +75,7 @@ zh:
           </div>
         </div>
       </template>
-      <div style="height: 10px; margin-top: -10px;">
+      <div style="height: 10px; margin-top: 0px;">
         <KuboardSprayLink href="https://kuboard-spray.cn/guide/options/insecure-registry.html#containerd" target="_blank" style="font-size: 12px;">帮 助</KuboardSprayLink>
       </div>
     </template>

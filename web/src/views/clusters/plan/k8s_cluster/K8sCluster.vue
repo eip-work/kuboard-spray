@@ -40,8 +40,10 @@ zh:
       </template>
     </FieldSelect>
     <FieldRadio :holder="vars" :prop="prop" fieldName="kube_log_level" :options="[0, 1, 2, 3]" required></FieldRadio>
-    <!-- <K8sClusterEvictionHard :cluster="cluster" fieldName="eviction_hard_control_plane"></K8sClusterEvictionHard>
-    <K8sClusterEvictionHard :cluster="cluster" fieldName="eviction_hard"></K8sClusterEvictionHard> -->
+    <template v-if="cluster.resourcePackage && cluster.resourcePackage.metadata.supported_feature && cluster.resourcePackage.metadata.supported_feature.eviction_hard">
+      <K8sClusterEvictionHard :cluster="cluster" fieldName="eviction_hard_control_plane"></K8sClusterEvictionHard>
+      <K8sClusterEvictionHard :cluster="cluster" fieldName="eviction_hard"></K8sClusterEvictionHard>
+    </template>
     <FieldNumber :holder="vars" :prop="prop" fieldName="kubelet_event_record_qps">
       <template #append>
         <span v-if="vars.kubelet_event_record_qps === 0">{{$t('nolimit')}}</span>
@@ -65,7 +67,7 @@ zh:
 </template>
 
 <script>
-// import K8sClusterEvictionHard from './K8sClusterEvictionHard.vue'
+import K8sClusterEvictionHard from './K8sClusterEvictionHard.vue'
 
 export default {
   props: {
@@ -113,7 +115,7 @@ export default {
       set () {},
     },
   },
-  // components: { K8sClusterEvictionHard },
+  components: { K8sClusterEvictionHard },
   mounted () {
   },
   methods: {

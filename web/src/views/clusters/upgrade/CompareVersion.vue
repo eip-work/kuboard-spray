@@ -23,8 +23,8 @@ zh:
 
 
 <template>
-  <div>
-    <el-table :data="tableData" style="width: 100%" row-key="name" :expand-row-keys="expanded" height="calc(100vh - 270px)">
+  <div v-loading="cluster.state == undefined" style="min-height: 50vh;">
+    <el-table v-if="cluster.state" :data="tableData" style="width: 100%" row-key="name" :expand-row-keys="expanded" height="calc(100vh - 270px)">
       <el-table-column prop="name" :label="$t('componentName')" width="180" fixed>
         <template #header>
           <div class="compare_version_header">

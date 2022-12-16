@@ -8,6 +8,7 @@ import (
 	"github.com/eip-work/kuboard-spray/api/cluster/cluster_common"
 	"github.com/eip-work/kuboard-spray/common"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type ChangeVersionRequest struct {
@@ -85,6 +86,19 @@ func ChangeResourcePackageVersion(c *gin.Context) {
 			return
 		}
 
+	}
+
+	addons := common.MapGet(metadata.ResourcePackage, "data.addon").([]interface{})
+	for _, addon := range addons {
+		addonMap := addon.(map[string]interface{})
+		targetName := common.MapGetString(addonMap, "target")
+
+		if common.MapGet(metadata.Inventory, "all.children.target.children.k8s_cluster.vars."+targetName) == nil {
+			logrus.Trace("设置变量： all.children.target.children.k8s_cluster.vars." + targetName + " 为 false")
+			common.MapSet(metadata.Inventory, "all.children.target.children.k8s_cluster.vars."+targetName, false)
+		} else {
+			logrus.Trace("已经设置变量： all.children.target.children.k8s_cluster.vars." + targetName)
+		}
 	}
 
 	if err := cluster_common.SaveInventory(req.Cluster, metadata.Inventory); err != nil {

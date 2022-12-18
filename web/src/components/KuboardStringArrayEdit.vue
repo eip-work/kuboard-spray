@@ -72,7 +72,7 @@ export default {
   margin: 5px;
   padding: 3px 12px 3px 20px;
   border-radius: 50px;
-  border: solid 1px var(--el-color-primary-light-6);
+  border: solid 1px var(--el-color-primary-light-7);
   background-color: var(--el-color-primary-light-9);
   height: 28px;
 }

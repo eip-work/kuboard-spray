@@ -274,7 +274,7 @@ func getInventoryTemplate() string {
             enable_coredns_k8s_endpoint_pod_names: false
 
             # Can be docker_dns, host_resolvconf or none
-            resolvconf_mode: docker_dns
+            resolvconf_mode: host_resolvconf
             # Deploy netchecker app to verify DNS resolve as an HTTP service
             deploy_netchecker: false
             # Ip address of the kubernetes skydns service

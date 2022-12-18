@@ -1,18 +1,31 @@
 <template>
   <FieldCommon :fieldName="fieldName" :holder="holder" :prop="prop" :rules="rules" :required="required" :label="label" :placeholder="placeholder" :helpString="helpString" :helpLink="helpLink">
     <template #edit>
-      <div style="flex-wrap: wrap; margin: -5px;" class="app_form_mini">
+      <div style="flex-wrap: wrap; margin: -5px; width: 100%;" class="app_form_mini">
         <template v-for="(item, index) in value" :key="index + 'item'">
-          <el-form-item :rules="itemRules" class="item_in_array">
-            <div style="display: flex;">
-              <slot name="editItem" :index="index" :item="item"></slot>
-              <el-button style="margin-left: 10px;" icon="el-icon-delete" type="text" @click="obj[fieldName].splice(index, 1)"></el-button>
-            </div>
+          <el-form-item :rules="itemRules" :prop="`${prop}.${fieldName}.${index}`" :class="isBlockItem ? 'block_item_in_array' : 'item_in_array'">
+            <template v-if="isBlockItem">
+              <div style="display: flex;">
+                <div style="width: calc(100% - 20px);">
+                  <slot name="editItem" :index="index" :item="item"></slot>
+                </div>
+                <div style="width: 20px;">
+                  <el-button style="margin-left: 0px;" icon="el-icon-delete" type="text" @click="obj[fieldName].splice(index, 1)"></el-button>
+                </div>
+              </div>
+            </template>
+            <template v-else>
+              <div style="display: flex;">
+                <slot name="editItem" :index="index" :item="item"></slot>
+                <el-button style="margin-left: 10px;" icon="el-icon-delete" type="text" @click="obj[fieldName].splice(index, 1)"></el-button>
+              </div>
+            </template>
           </el-form-item>
         </template>
         <div class="item_in_array" @click="addNewItem" style="cursor: pointer; border-style: dashed; flex-grow: 1;">
           <el-button type="text" icon="el-icon-plus">{{ $t('msg.add') }}</el-button>
         </div>
+        <slot name="help"></slot>
       </div>
     </template>
     <template #view>
@@ -22,6 +35,7 @@
             <slot name="viewItem" :index="index" :item="item">{{item}}</slot>
           </div>
         </template>
+        <slot name="helpView"></slot>
       </div>
     </template>
   </FieldCommon>
@@ -45,6 +59,7 @@ export default {
     newItemTemplate: { required: false, default: '' },
     helpString: { type: String, required: false, default: undefined },
     helpLink: { type: String, required: false, default: undefined },
+    isBlockItem: { type: Boolean, required: false, default: false },
   },
   data () {
     return {
@@ -93,9 +108,18 @@ export default {
   margin: 5px;
   padding: 3px 12px 3px 20px;
   border-radius: 50px;
-  border: solid 1px var(--el-color-primary-light-6);
+  border: solid 1px var(--el-color-primary-light-7);
   background-color: var(--el-color-primary-light-9);
   height: 28px;
+}
+.block_item_in_array {
+  display: flex;
+  margin: 5px;
+  padding: 3px 12px 3px 20px;
+  border-radius: 5px;
+  border: solid 1px var(--el-color-primary-light-7);
+  background-color: var(--el-color-white);
+  height: auto;
 }
 .view_item_in_array {
   display: flex;

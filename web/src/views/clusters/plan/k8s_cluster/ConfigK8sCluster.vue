@@ -4,6 +4,7 @@
     <RotateCertificate :cluster="cluster" @switchTab="$emit('switchTab', $event)"></RotateCertificate>
     <Networking :cluster="cluster"></Networking>
     <NetworkPlugin :cluster="cluster"></NetworkPlugin>
+    <NetworkDNS :cluster="cluster"></NetworkDNS>
     <AuditLog :cluster="cluster"></AuditLog>
   </div>
 </template>
@@ -12,6 +13,7 @@
 import NetworkPlugin from './NetworkPlugin.vue'
 import K8sCluster from './K8sCluster.vue'
 import Networking from './Networking.vue'
+import NetworkDNS from './NetworkDNS.vue'
 import AuditLog from './AuditLog.vue'
 import RotateCertificate from './RotateCertificate.vue'
 
@@ -26,7 +28,7 @@ export default {
   },
   computed: {
   },
-  components: { NetworkPlugin, K8sCluster, Networking, AuditLog, RotateCertificate },
+  components: { NetworkPlugin, K8sCluster, Networking, NetworkDNS, AuditLog, RotateCertificate },
   mounted () {
   },
   methods: {

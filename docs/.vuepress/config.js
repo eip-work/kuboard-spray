@@ -58,6 +58,7 @@ module.exports = {
               children: [
                 '/guide/options/admission-plugins.md',
                 '/guide/options/insecure-registry.md',
+                '/guide/options/dns.md',
               ]
             },
             '/guide/maintain/ha-mode.md',
@@ -86,7 +87,7 @@ module.exports = {
           children: [
             '/guide/addons/install_addon.md',
             '/guide/addons/kuboard.md',
-            '/guide/addons/nodelocaldns.md',
+            // '/guide/addons/nodelocaldns.md',
             '/guide/addons/netchecker.md',
             '/guide/addons/metrics_server.md',
           ],

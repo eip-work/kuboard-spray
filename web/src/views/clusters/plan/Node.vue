@@ -315,7 +315,7 @@ export default {
     border-color: var(--el-color-primary);
   }
   .node.gap.active {
-    background-color: var(--el-color-primary-light-6) !important;
+    background-color: var(--el-color-primary-light-7) !important;
   }
   .node.error_node {
     .role {

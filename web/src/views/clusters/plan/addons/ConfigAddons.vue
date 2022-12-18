@@ -2,7 +2,7 @@
 <template>
   <div v-if="cluster.resourcePackage">
     <template v-for="(item, index) in cluster.resourcePackage.data.addon" :key="'addon' + index">
-      <Component :is="item.name" :addon="item" :cluster="cluster" :pingpong="pingpong" @refresh="$emit('refresh')"></Component>
+      <Component v-if="item.name != 'nodelocaldns'" :is="item.name" :addon="item" :cluster="cluster" :pingpong="pingpong" @refresh="$emit('refresh')"></Component>
     </template>
   </div>
 </template>

@@ -94,6 +94,9 @@ const field = {
     event_ttl_duration: '事件保留时长',
     eviction_hard: '工作节点 eviction_hard',
     eviction_hard_control_plane: '控制节点 eviction_hard',
+
+    upstream_dns_servers: "上游DNS服务",
+    coredns_external_zones: "按域名后缀指定集群外DNS",
     
     auto_renew_certificates: '自动更新 apiserver 证书',
     kubelet_rotate_certificates: '自动更新 kubelet client 证书',

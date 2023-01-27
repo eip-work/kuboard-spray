@@ -42,11 +42,11 @@ zh:
       </template>
     </ControlBar>
     <el-form v-if="os_mirror" ref="form" :model="os_mirror" label-position="left" label-width="150px" @submit.prevent.stop>
-      <el-card shadow="none" v-if="loading">
+      <el-card shadow="never" v-if="loading">
         <el-skeleton animated :rows="10"></el-skeleton>
       </el-card>
       <div v-else-if="os_mirror.status">
-        <el-card class="app_margin_bottom" shadow="none">
+        <el-card class="app_margin_bottom" shadow="never">
           <div style="margin-bottom: -20px;">
             <el-form-item :label="$t('url')" prop="status.url" :rules="urlRules">
               <span v-if="mode === 'view'">

@@ -32,7 +32,7 @@ zh:
       </template>
       <div style="padding: 20px; max-height: calc(100vh - 160px); overflow: hidden; overflow-y: auto;">
         <div style="text-align: right; height: 10px;">
-          <el-button style="margin-top: -30px;" size="large" type="text" icon="el-icon-close" @click="visible = false"></el-button>
+          <el-button style="margin-top: -30px;" size="large" type="primary" text icon="el-icon-close" @click="visible = false"></el-button>
         </div>
         <div class="item">
           <div class="label">{{$t('username')}}</div>
@@ -43,7 +43,7 @@ zh:
         <div class="item">
           <div class="label">{{$t('changePassword')}}</div>
           <div class="value">
-            <el-button type="text" @click="visible = false; $router.push('/settings/profile')" icon="el-icon-link">{{$t('changePassword')}}</el-button>
+            <el-button type="primary" text @click="visible = false; $router.push('/settings/profile')" icon="el-icon-link">{{$t('changePassword')}}</el-button>
           </div>
         </div>
         <div class="app_text_right" style="float: right; margin-top: 20px;">

@@ -36,7 +36,7 @@ zh:
     </el-alert>
 
     <div class="contentList">
-      <!-- <el-card shadow="none" style="min-height: 234px;"> -->
+      <!-- <el-card shadow="never" style="min-height: 234px;"> -->
         <el-skeleton v-if="loading" :rows="5" animated />
         <div v-else>
           <div style="text-align: right;" class="app_margin_bottom">
@@ -87,7 +87,7 @@ zh:
           <!-- <div v-for="(item, index) in mirrors" :key="'mirror' + index" class="mirror">
             <div class="deleteButton">
             </div>
-            <el-card shadow="none"
+            <el-card shadow="never"
               @click="$router.push(`/settings/mirrors/${item}`)">
               <div class="noselect">
                 {{item}}

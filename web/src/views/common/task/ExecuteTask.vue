@@ -49,7 +49,7 @@ zh:
     </el-dialog>
   </div>
   <template v-else-if="!loading">
-    <el-popover v-if="!(finished && hideOnSuccess) && !history.processing" v-model:visible="showConfirm" :placement="placement" width="420" trigger="manual" :disabled="disabled">
+    <el-popover v-if="!(finished && hideOnSuccess) && !history.processing" v-model:visible="showConfirm" :placement="placement" width="800" trigger="manual" :disabled="disabled">
       <template #reference>
         <el-button :type="type" icon="el-icon-lightning" @click="showConfirm = !showConfirm" @click.prevent.stop :disabled="disabled">{{ title || $t('apply')}}</el-button>
       </template>

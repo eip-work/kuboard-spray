@@ -10,20 +10,20 @@
                   <slot name="editItem" :index="index" :item="item"></slot>
                 </div>
                 <div style="width: 20px;">
-                  <el-button style="margin-left: 0px;" icon="el-icon-delete" type="text" @click="obj[fieldName].splice(index, 1)"></el-button>
+                  <el-button style="margin-left: 0px;" icon="el-icon-delete" type="primary" text @click="obj[fieldName].splice(index, 1)">s</el-button>
                 </div>
               </div>
             </template>
             <template v-else>
               <div style="display: flex;">
                 <slot name="editItem" :index="index" :item="item"></slot>
-                <el-button style="margin-left: 10px;" icon="el-icon-delete" type="text" @click="obj[fieldName].splice(index, 1)"></el-button>
+                <el-button style="margin-left: 10px;" icon="el-icon-delete" type="primary" text @click="obj[fieldName].splice(index, 1)"></el-button>
               </div>
             </template>
           </el-form-item>
         </template>
         <div class="item_in_array" @click="addNewItem" style="cursor: pointer; border-style: dashed; flex-grow: 1;">
-          <el-button type="text" icon="el-icon-plus">{{ $t('msg.add') }}</el-button>
+          <el-button type="primary" text icon="el-icon-plus">{{ $t('msg.add') }}</el-button>
         </div>
         <slot name="help"></slot>
       </div>

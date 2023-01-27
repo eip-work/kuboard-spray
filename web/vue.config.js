@@ -15,9 +15,9 @@ module.exports = {
     devServer: {
         port: port,
         host: '0.0.0.0',
-        public: public,
+        // public: public,
         allowedHosts: ['kb', 'kuboard-spray-arm'],
-        disableHostCheck: true,
+        // disableHostCheck: true,
         compress: true,
         hot: true,
         historyApiFallback: true,

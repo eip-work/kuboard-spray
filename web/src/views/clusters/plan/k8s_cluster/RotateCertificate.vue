@@ -58,7 +58,7 @@ zh:
       </template>
     </FieldBool> -->
     <el-form-item labelWidth="180px" :label="$t('check')" v-if="isClusterOnline">
-      <el-button type="text" icon="el-icon-link" @click="$emit('switchTab', 'health_check')">{{ $t('check') }}</el-button>
+      <el-button type="primary" text icon="el-icon-link" @click="$emit('switchTab', 'health_check')">{{ $t('check') }}</el-button>
     </el-form-item>
   </ConfigSection>
 </template>

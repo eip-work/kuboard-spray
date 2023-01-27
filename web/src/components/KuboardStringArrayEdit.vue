@@ -13,12 +13,12 @@
         :prop="`${prop}.${index}`" :rules="rules || [{ required: true, message: message, trigger: 'blur' }]">
         <div style="display: flex;">
           <el-input style="flex-grow: 1; margin-right: 10px;" v-model.trim="holderData[fieldName0][fieldName1][index]" :placeholder="placeholder"></el-input>
-          <el-button icon="el-icon-delete" type="text" @click="holderData[fieldName0][fieldName1].splice(index, 1)"></el-button>
+          <el-button icon="el-icon-delete" type="primary" text @click="holderData[fieldName0][fieldName1].splice(index, 1)"></el-button>
         </div>
       </el-form-item>
     </template>
     <div class="arrayItem" :style="`width: ${width}; flex-grow: ${flexGrow}; cursor: pointer; border-style: dashed;`" @click="addItem">
-      <el-button type="text" icon="el-icon-plus" size="default">{{addButtonText || '添 加'}}</el-button>
+      <el-button type="primary" text icon="el-icon-plus" size="default">{{addButtonText || '添 加'}}</el-button>
     </div>
   </div>
 </template>

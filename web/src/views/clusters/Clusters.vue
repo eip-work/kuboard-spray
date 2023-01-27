@@ -27,7 +27,7 @@ zh:
         </div>
       </el-alert>
     </div>
-    <el-card shadow="none" style="min-height: 234px;">
+    <el-card shadow="never" style="min-height: 234px;">
       <el-skeleton v-if="loading" :rows="5" animated />
       <div v-else style="display: flex; flex-wrap: wrap;">
         <div v-for="(item, index) in clusters" :key="'cluster' + index" class="cluster">
@@ -40,7 +40,7 @@ zh:
               </template>
             </el-popconfirm>
           </div>
-          <el-card shadow="none"
+          <el-card shadow="never"
             @click="$router.push(`/clusters/${item}`)">
             <div class="noselect">
               {{item}}

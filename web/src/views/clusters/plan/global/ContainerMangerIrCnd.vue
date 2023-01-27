@@ -18,7 +18,7 @@ zh:
         <div class="insecure_registry">
           <div effect="dark" class="app_text_mono header">
             {{key}}
-            <el-button type="text" style="float: right; color: white;" icon="el-icon-delete" @click="delete vars.containerd_insecure_registries[key]">{{ $t('msg.delete') }}</el-button>
+            <el-button type="primary" text style="float: right; color: white;" icon="el-icon-delete" @click="delete vars.containerd_insecure_registries[key]">{{ $t('msg.delete') }}</el-button>
           </div>
           <FieldArray :holder="vars.containerd_insecure_registries" :prop="null" newItemTemplate="" :fieldName="key" label-width="0px"
             label=" " :itemRules="insecureRegistriesItemRules" anti-freeze>

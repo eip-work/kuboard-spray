@@ -56,7 +56,7 @@ zh:
         <ClusterStateNodes :cluster="cluster"></ClusterStateNodes>
       </template>
     </ControlBar>
-    <el-card shadow="none" v-if="loading">
+    <el-card shadow="never" v-if="loading">
       <el-skeleton animated :rows="10" style="height: calc(100vh - 190px);"></el-skeleton>
     </el-card>
     <el-tabs type="border-card" v-else v-model="currentTab">

@@ -3,7 +3,7 @@
     <template #edit>
       <div style="flex-wrap: wrap; margin: -5px; width: 100%;" class="app_form_mini">
         <template v-for="(item, index) in value" :key="index + 'item'">
-          <el-form-item :rules="itemRules" :prop="`${prop}.${fieldName}.${index}`" :class="isBlockItem ? 'block_item_in_array' : 'item_in_array'">
+          <el-form-item :rules="itemRules" :prop="itemProp ? `${itemProp}.${index}` :`${prop}.${fieldName}.${index}`" :class="isBlockItem ? 'block_item_in_array' : 'item_in_array'">
             <template v-if="isBlockItem">
               <div style="display: flex;">
                 <div style="width: calc(100% - 20px);">
@@ -50,6 +50,7 @@ export default {
     holder: { type: Object, required: true },
     fieldName: { type: String, required: true },
     prop: { type: String, required: false },
+    itemProp: { type: String, required: false },
     required: { type: Boolean, required: false, default: false },
     rules: { type: Array, required: false, default: () => ([])},
     itemRules: { type: Array, required: false, default: ()=> ([]) },

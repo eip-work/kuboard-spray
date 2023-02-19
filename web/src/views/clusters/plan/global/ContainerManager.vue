@@ -30,7 +30,7 @@ zh:
       <FieldString :holder="vars" :prop="prop" fieldName="containerd_storage_dir"></FieldString>
       <FieldString :holder="vars" :prop="prop" fieldName="containerd_state_dir"></FieldString>
       <FieldBool :holder="vars" :prop="prop" fieldName="containerd_use_systemd_cgroup" disabled></FieldBool>
-      <ContainerMangerIrCnd :cluster="cluster"></ContainerMangerIrCnd>
+      <ContainerManagerRegistry v-if="compareVersions(cluster.resourcePackage.data.kubernetes.kube_version, 'v1.26.0') >= 0" :cluster="cluster"></ContainerManagerRegistry>
     </template>
     <template v-else>
       <el-alert class="app_alert_mini app_margin_bottom" type="warning">KuboardSpray 资源包中并不包含 docker 安装文件，必须在 “OS 软件源” 中设置 docker-ce 软件源</el-alert>
@@ -53,8 +53,9 @@ zh:
 </template>
 
 <script>
-import ContainerMangerIrCnd from './ContainerMangerIrCnd.vue'
+import ContainerManagerRegistry from './ContainerManagerRegistry.vue'
 import ContainerMangerSyncParamsTask from './ContainerMangerSyncParamsTask.vue'
+import compareVersions from 'compare-versions'
 
 export default {
   props: {
@@ -63,7 +64,7 @@ export default {
   data() {
     return {
       insecureRegistriesItemRules: [
-        { required: true, type: 'string', message: 'cannot be empty', trigger: 'blur' },
+        { required: true, type: 'string', message: '字段不能为空', trigger: 'blur' },
       ],
     }
   },
@@ -79,10 +80,11 @@ export default {
     },
     prop() { return 'all.children.target.vars' }
   },
-  components: { ContainerMangerIrCnd, ContainerMangerSyncParamsTask },
+  components: { ContainerManagerRegistry, ContainerMangerSyncParamsTask },
   mounted () {
   },
   methods: {
+    compareVersions,
     async loadContainerEngines () {
       let result = []
       let engines = this.cluster.resourcePackage.data.container_engine

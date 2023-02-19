@@ -14,7 +14,7 @@ zh:
 <template>
   <div>
     <el-dialog v-model="dialogVisible" width="80%" top="5vh" :close-on-click-modal="false">
-      <template #title>
+      <template #header>
         <div style="background-color: var(--el-color-primary-light-9); margin-right: 25px; padding: 10px;">
           {{$t('compareTitle')}}
           <el-tag>

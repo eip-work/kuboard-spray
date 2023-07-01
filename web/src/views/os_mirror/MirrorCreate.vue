@@ -53,6 +53,7 @@ zh:
         <el-form-item :label="$t('os_type')" prop="kuboardspray_os_mirror_type" :rules="[{ required: true, message: 'required', trigger: 'change' }]">
           <el-radio-group v-model="os_type">
             <el-radio-button label="anolis">Anolis</el-radio-button>
+            <el-radio-button label="almaLinux">AlmaLinux</el-radio-button>
             <el-radio-button label="centos">Centos</el-radio-button>
             <el-radio-button label="openeuler">openEuler</el-radio-button>
             <el-radio-button label="oraclelinux">OracleLinux</el-radio-button>

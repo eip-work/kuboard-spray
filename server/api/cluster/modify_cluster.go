@@ -35,6 +35,8 @@ func ModifyCluster(c *gin.Context) {
 	}
 
 	common.PopulateKuboardSprayVars(inventory, "cluster", req.Cluster)
+	// Sanitize audit log settings to ensure kube-apiserver won't receive empty/invalid values
+	sanitizeAuditLogConfig(inventory)
 
 	inventoryYamleBytes, err := yaml.Marshal(inventory)
 

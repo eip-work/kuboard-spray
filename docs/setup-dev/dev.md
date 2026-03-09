@@ -169,7 +169,7 @@ meta:
 * 在集成终端中（kuboard/web 路径下）执行命令：
 
   ```sh
-  ln -s version-amd64.json public/version.json  # 如果您使用 amr64 CPU，请替换 version-amd64.json 为 version-arm64.json
+  ln -s version-amd64.json public/version.json  # 如果您使用 arm64 CPU，请替换 version-amd64.json 为 version-arm64.json
   yarn install
   yarn build
   ```

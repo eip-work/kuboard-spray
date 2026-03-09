@@ -1,0 +1,9 @@
+go 1.23.0
+
+toolchain go1.24.2
+
+use ./server
+
+use ./admin
+
+use ./go-yaml

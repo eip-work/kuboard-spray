@@ -1,0 +1,45 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/java
+{
+  "name": "PangeeCluster Dev",
+  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+  // "image": "harbor.dep.devops.cmit.cloud:20030/dev_tools/devcontainer-euler-openjdk-maven-node-pnpm:3.8.8",
+  "dockerComposeFile": "./docker-compose.yaml",
+  "service": "pangeeclusterdev",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "features": {},
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+  // Use 'postCreateCommand' to run commands after the container is created.
+  // "postCreateCommand": "java -version",
+  // Configure tool-specific properties.
+  "remoteUser": "root",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "visualstudioexptteam.vscodeintellicode",
+        "golang.go",
+        "vue.volar",
+        "hollowtree.vue-snippets",
+        "dbaeumer.vscode-eslint",
+        "stylelint.vscode-stylelint",
+        "esbenp.prettier-vscode",
+        "editorconfig.editorconfig",
+        "streetsidesoftware.code-spell-checker",
+        "syler.sass-indented",
+        "mikestead.dotenv",
+        "ms-azuretools.vscode-docker",
+        "ms-vscode.vscode-typescript-next",
+        "humao.rest-client",
+        "stylelint.vscode-stylelint",
+        "redhat.vscode-xml",
+        "redhat.vscode-yaml",
+        "inferrinizzard.prettier-sql-vscode"
+      ]
+    }
+  },
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached"
+  ]
+}

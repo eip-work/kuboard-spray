@@ -1,0 +1,22 @@
+{
+  "scripts": {
+    "docs:dev": "vuepress dev .",
+    "docs:build": "vuepress build ."
+  },
+  "name": "pangee-cluster-docs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
+    "vuepress": "^1.9.10"
+  },
+  "dependencies": {
+    "@soerenmartius/vue3-clipboard": "^0.1.2",
+    "async-validator": "1.11.5",
+    "axios": "^0.24.0",
+    "codemirror": "^5.65.18",
+    "element-ui": "^2.15.14",
+    "js-yaml": "^4.1.0",
+    "vue-clipboard2": "^0.3.3",
+    "vue-codemirror": "^4.0.6"
+  }
+}

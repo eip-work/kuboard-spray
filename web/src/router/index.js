@@ -1,0 +1,105 @@
+import { createRouter, createWebHashHistory } from 'vue-router';
+import Cookies from 'js-cookie'
+
+const constantRouterMap = [
+  {
+    path: '/',
+    redirect: () => {
+      return { path: '/clusters' }
+    }
+  },
+  {
+    path: '/home',
+    component: () => import('../components/layout/Layout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Home',
+        component: () => import('../views/home/Home.vue')
+      }
+    ]
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('../views/login/Login.vue')
+  },
+  {
+    path: '/clusters',
+    component: () => import('../components/layout/Layout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Clusters',
+        component: () => import('../views/clusters/Clusters.vue')
+      },
+      {
+        path: ':name',
+        name: 'Cluster',
+        component: () => import('../views/clusters/Cluster.vue'),
+        props: route => ({ name: route.params.name, mode: route.query.mode })
+      }
+    ],
+  },
+  {
+    path: '/tail/:ownerType/:ownerName/history/:pid/:file',
+    component: () => import('../views/logs/TailFile.vue'),
+    props: route => ({ ownerType: route.params.ownerType, ownerName: route.params.ownerName, pid: route.params.pid, file: route.params.file })
+  },
+  {
+    path: '/tail/:ownerType/:ownerName/history/:operation/:step/:time/:file',
+    component: () => import('../views/logs/TailFile.vue'),
+    props: route => ({ ownerType: route.params.ownerType, ownerName: route.params.ownerName, pid: route.params.operation + "/" + route.params.step + "/" + route.params.time, file: route.params.file })
+  },
+  {
+    path: '/ssh/:ownerType/:ownerName/:nodeName',
+    component: () => import('../views/logs/Ssh.vue'),
+    props: route => ({ ownerType: route.params.ownerType, ownerName: route.params.ownerName, nodeName: route.params.nodeName })
+  },
+  {
+    path: '/settings',
+    component: () => import('../components/layout/Layout.vue'),
+    children: [
+      {
+        path: 'resources',
+        name: 'Resources',
+        component: () => import('../views/resources/ResourcesListPage.vue')
+      },
+      {
+        path: 'resources/:name',
+        name: 'Resource',
+        component: () => import('../views/resources/Resource.vue'),
+        props: route => ({ name: route.params.name, mode: route.query.mode })
+      },
+      {
+        path: 'resources/:version/tag/:tag/on_air',
+        name: 'ResourceOnAir',
+        component: () => import('../views/resources/ResourceOnAir.vue'),
+        props: route => ({ version: route.params.version, tag: route.params.tag, mode: route.query.mode })
+      },
+      {
+        path: 'profile',
+        name: 'Profile',
+        component: () => import('../views/login/Profile.vue')
+      }
+    ]
+  }
+]
+
+const router = createRouter({
+  history: createWebHashHistory(),
+  routes: constantRouterMap
+})
+
+router.beforeEach((to, from, next) => {
+  let token = Cookies.get('PangeeClusterToken')
+  if (to.name == 'Login') {
+    next()
+  } else if (token == null || token == undefined || token == '') {
+    next({ name: 'Login' })
+  } else {
+    next()
+  }
+})
+
+export default router

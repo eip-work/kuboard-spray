@@ -1,0 +1,4 @@
+.vscode
+.git
+node_modules
+.vuepress/.*

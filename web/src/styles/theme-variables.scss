@@ -1,0 +1,29 @@
+@use "sass:map";
+
+@forward "element-plus/theme-chalk/src/common/var.scss" with (
+  $colors: (
+    "primary": (
+      "base": #234883
+    ),
+    "success": (
+      "base": #0fbe8f
+    ),
+    "warning": (
+      "base": #ff8807
+    ),
+    "danger": (
+      "base": #f44656
+    ),
+    "error": (
+      "base": #f44656
+    )
+  ),
+  $common-component-size: (
+    "small": 28px
+  ),
+  $table: (
+    "header-bg-color": var(--bg-color2)
+  )
+);
+
+@use "element-plus/theme-chalk/src/index.scss" as *;

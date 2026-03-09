@@ -1,0 +1,10 @@
+---
+
+- name: test1
+  hosts: kube_control_plane
+  gather_facts: False
+  tasks:
+    - name: abc1
+      shell: kubectl get pods -o wide
+    - name: abc2
+      shell: kubectl get pods -o json

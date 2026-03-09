@@ -1,0 +1,3 @@
+[submodule "go-yaml"]
+	path = go-yaml
+	url = https://github.com/eip-work/yaml.git

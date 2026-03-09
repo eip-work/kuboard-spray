@@ -1,0 +1,48 @@
+# hysca.yaml - 执行sca扫描的配置文件。
+# 将该文件放在待扫描项目的根目录下。
+# 当一个代码仓库包含多个(互不相干的)待扫描项目时，在每个待扫描项目的根目录下都生成一个hysca.yaml(配置文件内容可以不同)文件。这些项目将根据各自配置单独执行构建和扫描。
+# 所有配置都是可选项
+#
+# 常用语言对应启用的approaches：
+# java maven项目:
+#   - maven
+#   - maven-cmd
+# java gradle项目:
+#   - gradle
+#   - gradle-cmd
+# java ant项目：
+#   - ant-cmd
+# python poetry项目：
+#   - poetry
+# python pipenv项目：
+#   - pipenv
+# 使用requirements.txt管理依赖的python项目：
+#   - requirements
+# python项目中只有py脚本：
+#   - pipreqs
+# javascript node项目：
+#   - npm
+#   - npm-cmd
+# golang项目：
+#   - go
+#   - go-cmd
+# c项目：
+#   - c-cmd
+# rust项目:
+#   - rust-cmd
+# ruby项目：
+#   - ruby-cmd # 扫描ruby项目
+# php项目：
+#   - php-cmd # 扫描php项目
+# c#项目：
+#   - "c#-cmd" # 扫描c#项目(注意加双引号来包含#符号)
+---
+approaches: # 启用哪些扫描方式(以下列出了全部可选项，可以选择部分)
+  - npm # 扫描使用npm管理依赖的javascript项目
+  - npm-cmd # 调用npm命令获得依赖信息
+
+
+javascript: # javascript扫描参数。hysca.yaml应与package.json在同一目录
+  npm_cmd_options: ["--registry", "https://registry.npmmirror.com"] # npm命令行参数（支持所有npmrc配置）
+
+

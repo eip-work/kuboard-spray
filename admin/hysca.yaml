@@ -1,0 +1,15 @@
+# golang项目：
+#   - go-cmd
+# 扫描golang项目，CodeScan.yaml应与go.mod在同一目录
+---
+approaches: # 启用哪些扫描方式
+  - go-cmd # 调用go mod 命令获得依赖信息
+
+environments: # 配置项目构建时的环境变量(可选，根据实际需要设置，下面列举了一些例子)
+  GOPROXY: https://goproxy.cn,https://proxy.golang.org,direct # golang项目构建, 指定项目实际的goproxy地址
+
+golang: # golang扫描参数。
+  main: ./ # main.go文件在该项目中的位置
+  
+force: false # 是否忽略检测错误并强制输出结果
+

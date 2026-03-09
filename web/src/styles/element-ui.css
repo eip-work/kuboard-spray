@@ -1,0 +1,282 @@
+.el-dialog {
+  border-radius: 10px !important;
+}
+.el-dialog__body {
+  padding: 10px 20px 30px !important;
+}
+.el-popover__title {
+  margin-top: 10px;
+}
+.button-in-dark.el-button {
+  border: solid 1px #ffffff;
+}
+
+/* .el-button {
+  border-radius: 0 !important;
+} */
+.vjs-tree {
+  font-size: 12px !important;
+}
+.app_block_title_small {
+  padding: 5px 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+.app_alert_mini.el-alert {
+  padding: 0 8px 3px;
+}
+.app_alert_block.el-alert {
+  display: block;
+}
+.app_alert_block.el-alert .el-alert__content {
+  display: block;
+}
+.el-form-item .el-form-item {
+  margin-bottom: 18px;
+}
+.app_form_mini .el-form-item {
+  margin-bottom: 0 !important;
+}
+.app_form_normal .el-form-item {
+  margin-bottom: 18px !important;
+}
+.app_form_mini .el-form-item__label {
+  padding: 0 !important;
+}
+.app_form_item_hide_label .el-form-item__label {
+  display: none;
+}
+.app_form_12px .el-form-item__label {
+  font-size: 12px !important;
+  line-height: 24px !important;
+}
+.app_form_12px .el-form-item__content {
+  font-size: 12px !important;
+  line-height: 24px !important;
+}
+.app_margin_bottom {
+  margin-bottom: 10px;
+}
+.app_margin_top {
+  margin-top: 10px;
+}
+.app_text_label {
+  font-size: 12px;
+  color: #909399;
+}
+.app_text_regular {
+  font-size: 12px;
+  color: #606266;
+}
+.app_text_description {
+  font-size: 13px;
+  color: #909399;
+}
+.app_text_strong {
+  font-weight: 600;
+  color: #3eaf7c;
+}
+.app_text_left {
+  text-align: left;
+}
+.app_text_right {
+  text-align: right;
+}
+.app_text_error {
+  font-weight: 500;
+  color: #f56c6c;
+}
+.noselect {
+  -moz-user-select: -moz-none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.nowrap {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app_text_mono {
+  font-family: Consolas, Menlo, "Bitstream Vera Sans Mono", Monaco, "微软雅黑", monospace;
+}
+.app_input_mono textarea {
+  font-family: Consolas, Menlo, "Bitstream Vera Sans Mono", Monaco, "微软雅黑", monospace;
+}
+textarea {
+  font-family: Consolas, Menlo, "Bitstream Vera Sans Mono", Monaco, "微软雅黑", monospace;
+}
+.app_input_mono input {
+  font-family: Consolas, Menlo, "Bitstream Vera Sans Mono", Monaco, "微软雅黑", monospace;
+}
+input {
+  font-family: Consolas, Menlo, "Bitstream Vera Sans Mono", Monaco, "微软雅黑", monospace;
+}
+.app_button_mono button {
+  font-family: Consolas, Menlo, "Bitstream Vera Sans Mono", Monaco, "微软雅黑", monospace;
+}
+.app_input_right input {
+  text-align: right;
+}
+.app_input_no_border textarea {
+  border: 0;
+}
+.app_font_size {
+  font-size: 14px;
+}
+.app_header_line_height {
+  line-height: 60px;
+}
+.app_header {
+  font-weight: 800;
+  line-height: 60px;
+}
+.app_full_height {
+  height: 100%;
+}
+.app_notify {
+  cursor: pointer;
+}
+.app_namespaced_content {
+  padding-bottom: 30px;
+}
+.app_page_body {
+  margin: 10px 20px 50px;
+  text-align: left;
+}
+.app_code {
+  padding: 20px;
+  font-family: Consolas, Menlo, "Bitstream Vera Sans Mono", Monaco, "微软雅黑", monospace !important;
+  font-size: 13px;
+  color: var(--el-color-white);
+  background-color: var(--el-text-color-primary);
+  border-radius: 3px;
+}
+.app_scrollable_tabs.el-tabs {
+  height: 100%;
+  .el-tab-pane {
+    height: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+  }
+}
+
+/* 定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+/* 定义滚动条轨道 内阴影+圆角 */
+::-webkit-scrollbar-track {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+/* 定义滑块 内阴影+圆角 */
+::-webkit-scrollbar-thumb {
+  /* background-color: rgba(0, 0, 0, 0.25); */
+  background-color: rgba(46, 80, 133, 0.8);
+  border-radius: 10px;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.42);
+}
+
+/* ::-webkit-scrollbar-thumb:window-inactive {
+  background-color: rgba(0, 0, 0, 0.4); 
+  box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.2);
+} */
+a {
+  color: #007af5;
+  text-decoration: none;
+}
+.app_codemirror_auto_height .CodeMirror {
+  height: auto;
+}
+.app_codemirror_auto_height .CodeMirror-wrap pre.CodeMirror-line,
+.CodeMirror-wrap pre.CodeMirror-line-like {
+  word-break: break-all;
+}
+.app_codemirror_auto_height .CodeMirror-scroll {
+  height: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.cm-s-darcula {
+  /* font-family: Consolas, Menlo, Monaco, 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', '"Bitstream Vera Sans Mono"', 'Courier New', "微软雅黑", monospace, serif !important; */
+  font-family: Consolas, Menlo, "Bitstream Vera Sans Mono", Monaco, "微软雅黑", monospace !important;
+}
+.CodeMirror {
+  /* font-family: Consolas, Menlo, Monaco, 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', '"Bitstream Vera Sans Mono"', 'Courier New', "微软雅黑", monospace, serif !important; */
+  font-family: Consolas, Menlo, "Bitstream Vera Sans Mono", Monaco, "微软雅黑", monospace !important;
+  font-size: 13px;
+  line-height: 18px;
+}
+.CodeMirror pre.CodeMirror-line,
+.CodeMirror pre.CodeMirror-line-like {
+  font-family: Consolas, Menlo, "Bitstream Vera Sans Mono", Monaco, "微软雅黑", monospace !important;
+}
+.pangee-cluster-upgrade-notification {
+  width: 400px;
+}
+.app_white_link.el-link {
+  color: white;
+}
+.app_white_alert.el-alert {
+  color: var(--el-text-color-regular) !important;
+  background-color: var(--el-color-white) !important;
+}
+.app_description {
+  padding: 10px 20px;
+  font-size: 13px;
+  color: var(--el-text-color-secondary);
+  background-color: #f4f4f5;
+}
+pre {
+  margin: 0;
+  font-family: Consolas, Menlo, "Bitstream Vera Sans Mono", Monaco, "微软雅黑", monospace;
+  word-spacing: normal;
+  white-space: pre-wrap;
+}
+.el-table__header {
+  height: 56px;
+  color: #24515d !important;
+}
+
+.el-table thead {
+  color: #24515d;
+}
+
+.el-table th.el-table__cell {
+  background-color: #f9fbfb;
+}
+
+.no-radius {
+  border-radius: 0 !important;
+}
+
+/* 整个滚动条 */
+::-webkit-scrollbar {
+  width: 6px; /* 垂直滚动条宽度 */
+  height: 6px; /* 水平滚动条高度 */
+}
+
+/* 滚动条轨道 */
+::-webkit-scrollbar-track {
+  border-radius: 3px;
+  background: rgba(144, 147, 153, 0.3);
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background: rgba(144, 147, 153, 0.5);
+}
+
+/* 鼠标悬停时的滑块样式 */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

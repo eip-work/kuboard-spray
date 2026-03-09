@@ -1,6 +1,8 @@
 # PangeeCluster
 
-基于 [kubespray](https://github.com/kubernetes-sigs/kubespray) 提供图形化的 K8S 集群离线安装、维护工具。
+基于 [二进制安装脚本](https://github.com/opencmit/pangee-cluster-resource-package) 提供的图形化 K8S 集群离线安装、维护工具。
+
+> v1 基于 [kubespray](https://github.com/kubernetes-sigs/kubespray) 请查看对应的分支 [v1](https://github.com/opencmit/pangee-cluster/tree/v1)
 
 ## 快速安装
 
